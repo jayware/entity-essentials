@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="376px" height="222px" viewBox="0 0 376 222" enable-background="new 0 0 376 222" xml:space="preserve">
+<g>
+	
+		<rect x="-43.73" y="207.649" transform="matrix(0.004 1 -1 0.004 264.7919 173.563)" fill="none" width="177.999" height="24.109"/>
+	<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 44.7686 130.8071)" font-family="'Calibri-Bold'" font-size="18">polygon</text>
+	
+		<rect x="-18.343" y="183.967" transform="matrix(0.004 1 -1 0.004 290.6754 148.7715)" fill="none" width="177.999" height="72.668"/>
+	<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 94.4336 131.3076)" font-family="'Calibri-Bold'" font-size="18">position</text>
+	<rect x="39.656" y="184.3" transform="matrix(0.004 1 -1 0.004 348.7792 91.1041)" fill="none" width="178.001" height="72.668"/>
+	<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 152.4346 131.6411)" font-family="'Calibri-Bold'" font-size="18">color</text>
+	<rect x="178.99" y="190.3" transform="matrix(0.004 1 -1 0.004 493.5593 -42.2533)" fill="none" width="178.001" height="72.668"/>
+	<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 291.7676 137.6411)" font-family="'Calibri-Bold'" font-size="18">text</text>
+</g>
+<path fill="#81E2DB" d="M340.519,57.467c6.98,0,12.639,5.373,12.639,12v47c0,6.627-5.658,12-12.639,12h-25.321v51.869
+	c0,3.824-7.493,6.924-16.736,6.924h-1.859c-9.244,0-16.737-3.1-16.737-6.924v-51.869H175.854v39.07
+	c0,2.879-7.492,5.213-16.736,5.213h-1.859c-9.243,0-16.736-2.334-16.736-5.213v-39.07h-22.22v63.197
+	c0,4.654-7.493,8.428-16.737,8.428h-1.858c-9.243,0-16.737-3.773-16.737-8.428v-63.197H68.844v59.365
+	c0,4.372-7.494,7.918-16.737,7.918h-1.858c-9.244,0-16.738-3.546-16.738-7.918v-59.365H0V210c0,6.627,5.373,12,12,12h352
+	c6.627,0,12-5.373,12-12V12c0-6.627-5.373-12-12-12H12C5.373,0,0,5.373,0,12v45.467H340.519z"/>
+<g>
+	<g>
+		<rect x="-129.652" y="77.887" fill="none" width="135.334" height="27.334"/>
+	</g>
+</g>
+</svg>

@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>impress.js | presentation tool based on the power of CSS3 transforms and transitions in modern browsers | by Bartek Szopka @bartaz</title>
+
+    <meta name="description" content="impress.js is a presentation tool based on the power of CSS3 transforms and transitions in modern browsers and inspired by the idea behind prezi.com." />
+    <meta name="author" content="Bartek Szopka" />
+
+    <!--<link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />-->
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+</head>
+
+<body class="impress-not-supported">
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress">
+    <div id="title" class="step" data-x="0" data-y="0" data-z="4000" data-scale="20" style="background: white">
+        <h3>Masterarbeit</h3>
+        <h1>Puffin</h1>
+        <p>Entwicklung eines grafischen Editors zur Modellierung</p>
+        <p style="padding-top: 50px; font-size: 18pt">
+            Markus Neubauer<br>
+            Elmar Schug
+        </p>
+        <div style="position: absolute; bottom: 0px; right: 25px">
+            <img src="../../assets/images/unilogo.svg" width="500">
+        </div>
+    </div>
+    <div id="toc" class="step slide page" data-x="-7000" data-y="-1000" data-z="1000" data-scale="1">
+        <h2>Übersicht</h2>
+        <div class="content">
+            <ul>
+                <li>Motivation und Ziel der Arbeit</li>
+                <li>Vorführung des Editors</li>
+                <li>Architektur</li>
+                <li>Fazit und Diskussion</li>
+            </ul>
+        </div>
+    </div>
+    <div id="motivation-1" class="step slide page" data-x="-5500" data-y="-1000" data-z="1000" data-scale="1">
+        <h2>Motivation</h2>
+        <div class="content">
+            <ul>
+                <li>Modelle werden verwendet, um Strukturen oder Verhalten zu erfassen.</li>
+                <li>Um Modelle zu erstellen und zu bearbeiten benötigt man Werkzeuge.</li>
+                <li>Datenstrukturen bilden ein Modell in Software ab.</li>
+                <li>Diese enthalten nur einen Teil der Informationen, die von den Werkzeugen benötigt werden.</li>
+                <li>Diese erfüllen damit nicht alle Anforderungen von Werkzeugen.</li>
+            </ul>
+            <p style="padding-top: 30px">
+                Bei der Entwicklung von Werkzeugen muss dies ausgeglichen werden.
+            </p>
+        </div>
+    </div>
+    <div id="motivation-2" class="step slide page" data-x="-5500" data-y="-1000" data-z="0" data-scale="1">
+        <h2>Motivation</h2>
+        <h3>Eclipse-basierte Werzeuge</h3>
+        <p style="padding-top: 30px" align="center">
+            <img src="../../assets/images/tools-comparison.png" width="500"/>
+        </p>
+    </div>
+    <div id="motivation-example-1" class="step slide page" data-x="-6500" data-y="-1000" data-z="-2000" data-scale="1">
+        <h2>Motivation</h2>
+        <h3>Zustandsdiagramm: Kanten ins Leere</h3>
+        <p style="padding-top: 30px" align="center">
+            <img src="../../assets/images/statemachine-example-edge-in-the-air.png" width="700"/>
+        </p>
+    </div>
+    <div id="motivation-example-2" class="step slide page" data-x="-4500" data-y="-1000" data-z="-2000" data-scale="1">
+        <h2>Motivation</h2>
+        <h3>Zustandsdiagramm: Kanten auf Kanten</h3>
+        <p style="padding-top: 30px" align="center">
+            <img src="../../assets/images/statemachine-example-edge-on-edge.png" width="700"/>
+        </p>
+    </div>
+    <div id="motivation-summary" class="step slide page" data-x="-5500" data-y="-1000" data-z="-3000" data-scale="1">
+        <h2>Motivation</h2>
+        <h3>Probleme und Einschränkungen</h3>
+        <div class="content" style="padding-top: 30px">
+            <ul>
+                <li>Es ist nicht möglich einen &bdquo;falsches&ldquo; Diagramm zu erstellen. <small>(Correct-By-Construction)</small></li>
+                <li>Kanten können nur zwischen genau zwei Knoten sein.</li>
+                <li>Jeder Knoten hat eine rechteckige BoundingBox.</li>
+                <li>Ein Knoten kann nicht beliebig in Subknoten unterteilt werden.</li>
+                <li>Knoten können nicht mit Knoten verbunden sein.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide page" data-x="-3500" data-y="-1000" data-z="1000" data-scale="1">
+        <h2>Ziel</h2>
+        <p>
+            Entwicklung einer flexiblen, einfachen und leichtgewichtigen Alternative zur Eclipse-basierten Herangehensweise.
+        </p>
+        <div class="content" style="padding-top: 30px">
+            <ul style="list-style-type: none;">
+                <li><b>Flexibel:</b><br>Breites Spektrum an Anwendungsmöglichkeiten</li>
+                <li><b>Einfach:</b><br>Leicht verständliches Grundkonzept und einfache Programmierschnittstelle für Entwickler</li>
+                <li><b>Leichtgewichtig:</b><br>Schlankes Framework; einfache Anbindung und Integration</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="-2000" data-y="2000" data-z="0" data-scale="2" data-scale="2">
+        <h2>Puffin-Editor</h2>
+        <img src="../../assets/images/puffin-editor.png" width="800">
+    </div>
+    <div class="step slide" data-x="-2000" data-y="2000" data-z="-1500" >
+        <h2>Architektur des Puffin-Editors</h2>
+        <img src="../../assets/images/puffin-integrated-architecture.png" width="800"/>
+    </div>
+    <div class="step slide" data-x="-2000" data-y="2000" data-z="-2500" data-scale="0.25">
+        <h2>Abgrenzung</h2>
+        <img src="../../assets/images/puffin-integrated-architecture-divided.png" width="800"/>
+    </div>
+    <div id="javafx-overview" class="step slide" data-x="-4500" data-y="2000" data-z="-1500" data-rotate-y="40">
+        <h2>JavaFX</h2>
+        <h3>Übersicht</h3>
+        <div class="content">
+            <ul>
+                <!--<li>?? Puls vs. Draw-Call ??</li>-->
+                <li>MVC-Architektur</li>
+                <li>Scene-Graph</li>
+                <li>FXML</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="-4500" data-y="3000" data-z="-1500" data-rotate-y="40">
+        <h2>JavaFX</h2>
+        <h3>MVC-Architektur</h3>
+        <img src="../../assets/images/javafx-mvc.png" style="padding-top: 30px" width="800px"/>
+    </div>
+    <div class="step slide" data-x="-4500" data-y="4000" data-z="-1500" data-rotate-y="40">
+        <h2>JavaFX</h2>
+        <h3>Scene-Graph</h3>
+        <img src="../../assets/images/scene-graph.png" style="padding-top: 30px" width="700px"/>
+    </div>
+    <div class="step slide" data-x="-4500" data-y="5000" data-z="-1500" data-rotate-y="40">
+        <h2>JavaFX</h2>
+        <h3>FXML</h3>
+        <p>XML-Dialekt, um eine grafische Oberflächen zu beschreiben.</p>
+        <img src="../../assets/images/fxml-code.png" style="padding-top: 30px" width="800px">
+    </div>
+    <div class="step slide" data-x="-4500" data-y="6000" data-z="-1500" data-rotate-y="40">
+        <h2>Warum JavaFX?</h2>
+        <div class="content">
+            <ul>
+                <li>Moderner Nachfolger von Swing</li>
+                <li>MVC-Architektur begünstigt generische Elemente</li>
+                <li>Hohe Wiederverwendbarkeit</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="-2000" data-y="2000" data-z="-1500" style="display: none;"></div>
+    <div class="step slide" data-x="1000" data-y="2000" data-z="-1500" data-rotate-y="-40">
+        <h2>Component-Based Entity System</h2>
+        <h3>Übersicht</h3>
+        <div style="padding-top: 30px" class="content">
+            <ul>
+                <li>Architekturmuster</li>
+                <li>Ursprung: Computerspiel-Entwicklung</li>
+            </ul>
+            <p style="font-weight: bold; margin-top: 80px;">Komposition an Stelle von Vererbung</p>
+        </div>
+    </div>
+    <div class="step slide" data-x="900" data-y="2230" data-z="-1500" data-rotate-y="-40" data-scale="0.4">
+       <img style="position: absolute; left: -100px" src="../../assets/images/composition-over-inheritance.png" width="1100px"/>
+    </div>
+    <div class="step slide" data-x="2000" data-y="2000" data-z="-900" data-rotate-y="-20">
+        <h2>Component-Based Entity System</h2>
+        <h3>Entitäten</h3>
+        <p style="padding-top: 30px">
+            <img src="../../assets/images/ecs-entity.svg" width="700px">
+        </p>
+        <div class="content">
+            <ul>
+                <li>Eine Entität repräsentiert ein Ding/Objekt.</li>
+                <li>Eine Entität hat eine eindeutige ID.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="3000" data-y="2000" data-z="-800" data-rotate-y="0">
+        <h2>Component-Based Entity System</h2>
+        <h3>Komponenten</h3>
+        <p style="padding-top: 30px">
+            <img src="../../assets/images/ecs-entity-withcompnonents.svg" width="600px">
+        </p>
+        <div class="content">
+            <ul>
+                <li>Eine Komponente speichert Informationen.</li>
+                <li>Eine Komponente wird mit einer Entität verknüpft.</li>
+                <li>Immer nur eine Komponente des selben Typs kann mit einer Entität verknüpft werden.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="4000" data-y="2000" data-z="-1000" data-rotate-y="20">
+        <h2>Component-Based Entity System</h2>
+        <h3>Systeme</h3>
+        <p style="padding-left: 75px; padding-top: 30px">
+            <img src="../../assets/images/ecs-system.svg" width="350px">
+            <!--<img src="../../images/ecs-system-textonly.svg" width="350px">-->
+        </p>
+        <div style="margin-top: 40px" class="content">
+            <ul>
+                <li>Ein System implementiert einen Aspekt der Software.</li>
+                <li>Ein System verarbeitet Entitäten.</li>
+                <li>Ein System benötigt eine bestimmte Menge von Komponenten.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="4900" data-y="2000" data-z="-1600" data-rotate-y="40">
+        <h2>Component-Based Entity System</h2>
+        <h3>Systeme</h3>
+        <p style="padding-top: 50px">
+            <img src="../../assets/images/ecs-complete.svg" width="700px">
+        </p>
+        <div class="content">
+            <ul>
+                <li>Nur die Entitäten, welche die entsprechende Menge von Komponenten aufweisen werden verarbeitet.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="6000" data-y="2000" data-z="-2250" data-rotate-y="20">
+        <h2>Component-Based Entity System</h2>
+        <h3>Zusammenfassung</h3>
+        <p style="padding-top: 50px" align="center">
+            <img src="../../assets/images/ecs-summary.png" width="600px">
+        </p>
+    </div>
+    <div class="step slide" data-x="7200" data-y="2000" data-z="-2500" data-rotate-y="0">
+        <h2>Component-Based Entity System</h2>
+        <h3>Probleme</h3>
+        <div class="content">
+            <ul>
+                <li>Entitäten können nicht gezielt ausgewählt werden.</li>
+                <li>Entitäten haben keine Reihenfolge, Hierarchie oder Struktur.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="7200" data-y="2100" data-z="-2500" data-rotate-y="0" data-scale="0.4">
+        <h3>Lösung</h3> Hierachische Namen
+        <p style="padding-top: 30px" align="center">
+            <img src="../../assets/images/esc-summary-hierarchical.png" width="750px">
+        </p>
+        <p>
+            <b style="padding-right: 10px">Beispiel:</b> /foo/bar/test
+        </p>
+    </div>
+    <!--<div class="step slide" data-x="5750" data-y="2000" data-z="-3500" data-rotate-y="80">-->
+        <!--<h2>Component-Based Entity System</h2>-->
+        <!--<h3>Probleme</h3>-->
+        <!--<div class="content">-->
+            <!--<ul>-->
+                <!--<li>Wie können Entitäten geziehlt ausgewählt werden?</li>-->
+                <!--<li>Wie können Entitäten struktuiert werden?</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="step slide" data-x="3000" data-y="700" data-z="600" data-scale="1">
+        <h2>Puffin-Framework</h2>
+        <p>
+            <img src="../../assets/images/puzzlei.svg" width="750px">
+        </p>
+    </div>
+    <div id="context-module-overview" class="step slide moverview" data-x="2800" data-y="620" data-z="610" data-scale="0.4">
+        <h1>Context</h1>
+        <div style="margin-top: 150px">
+            <h3>Aufgabe:</h3>
+            <p style="width: 500px">
+                Bildung einer geschlossenen Umgebung, um eine Menge von Entitäten und Komponenten abzugrenzen, sodass eine unabhängige Koexistenz mehrerer dieser Umgebungen in einer Anwendung möglich ist.
+            </p>
+        </div>
+    </div>
+    <div id="event-module-overview" class="step slide moverview" data-x="3180" data-y="620" data-z="610" data-scale="0.4">
+        <h1>Event</h1>
+        <div style="margin-top: 150px">
+            <h3>Aufgabe:</h3>
+            <p>
+                Bereitstellung geeigneter Schnittstellen und Strukturen, um Ereignisse zu definieren, auszulösen und zu verarbeiten.
+            </p>
+        </div>
+    </div>
+    <div id="entity-module-overview" class="step slide moverview" data-x="2800" data-y="910" data-z="610" data-scale="0.4">
+        <h1>Entity</h1>
+        <div style="padding-bottom: 150px"></div>
+        <p>
+            <h3>Aufgabe:</h3>
+            Bereitstellung geeigneter Schnittstellen und Strukturen, um Entitäten zu erzeugen, abzufragen, zu verschieben und zu löschen.
+        </p>
+    </div>
+    <div id="component-module-overview" class="step slide moverview" data-x="3180" data-y="910" data-z="610" data-scale="0.4">
+        <h1>Component</h1>
+        <div style="margin-top: 150px; margin-left: 270px">
+            <h3>Aufgabe:</h3>
+             <p>
+                 Bereitstellung geeigneter Schnittstellen und Strukturen, um Komponenten zu erzeugen, abzufragen, zu verarbeiten und zu löschen.
+            </p>
+        </div>
+    </div>
+    <div class="step slide" data-x="3000" data-y="700" data-z="600" data-scale="1">
+    </div>
+    <div class="step slide" data-x="3000" data-y="700" data-z="-600" data-scale="0.75">
+        <h2>Puffin-Framework</h2>
+        <img src="../../assets/images/framework-demo.png" width="800">
+    </div>
+    <div class="step slide" data-x="-2000" data-y="2000" data-z="-1500" style="display: none;"></div>
+    <div class="step slide" data-x="-2000" data-y="750" data-z="-1500">
+        <h2>Integration des Frameworks</h2>
+        <div class="content">
+            <ul>
+                <li>Framework als MVC-Model</li>
+                <li>Informationen werden in Komponenten gespeichert.</li>
+                <li>MVC-View und -Controller als Systeme realisiert.</li>
+                <li>Views übersetzen Entitäten und Komponenten in eine grafische/textuelle Darstellung.</li>
+                <li>Controller übersetzen Benutzerinteraktionen in entsprechende Änderungen an Entitäten und Komponenten.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="step slide" data-x="0" data-y="750" data-z="-1500">
+        <h2>Integration des Frameworks</h2>
+        <img src="../../assets/images/overview_controller-behaviour-skin.png" width="800px">
+    </div>
+    <div class="step slide" data-x="-500" data-y="0" data-z="-2500" data-scale="0.5">
+        <h2>Integration des Frameworks</h2>
+        <h3>Entitäten und Komponenten</h3>
+        <p style="padding-top: 30px">
+            <img src="../../assets/images/ecs-usage-1.png" width="800px">
+        </p>
+    </div>
+    <div class="step slide" data-x="500" data-y="0" data-z="-2500" data-scale="0.5">
+        <h2>Integration des Frameworks</h2>
+        <h3>NodeControls, Skins und Behaviors</h3>
+        <p style="padding-top: 30px">
+            <img src="../../assets/images/ecs-usage-2.png" width="800px">
+        </p>
+    </div>
+    <div class="step slide" data-x="0" data-y="-750" data-z="-1500">
+        <h2>Integration des Frameworks</h2>
+        <h3>Realisierung von Modellelementen</h3>
+        <h4>Kombination von NodeControls, Skins, Behaviors, Entitäten und Komponenten.</h4>
+        <p style="padding-top: 30px">
+            <img src="../../assets/images/ecs-usage-3.png" width="800px">
+            <!--Nachteil: Es ist erst nach der Implementierung zu sehen, um was für ein Modellelement es sich handelt.-->
+        </p>
+    </div>
+    <!--<div class="step slide" data-x="0" data-y="-1250" data-z="-1500">-->
+        <!--<h2>Warum Puffin-Editor?</h2>-->
+        <!--<div class="content">-->
+            <!--<ul>-->
+                <!--<li>Der Puffin-Editor ist ein Prototyp für einen Editor zur grafischen Modellierung.</li>-->
+                <!--<li>Er demonstriert die Anwendung des Puffin-Frameworks.</li>-->
+                <!--<li>Er ist unabhängig von Entwicklungsumgebungen.</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="step" data-x="-3000" data-y="-1000" data-z="1500" data-rotate-y="-15">
+        <div class="slide page" style="transform: rotateY(-25deg) translate3d(150px, 0, -500px);">
+            <h2>Fazit</h2>
+            <div class="content" style="padding-top: 30px">
+                <ul style="list-style-type: none;">
+                    <li><b>Flexibel:</b><br>
+                        Exemplarisches Logikgatter-Diagramm<br>
+                    </li>
+                    <li><b>Einfach:</b><br>
+                        Entitäten, Komponenten und Systeme sind einfach zu verwenden.
+                    </li>
+                    <li><b>Leichtgewichtig:</b><br>
+                        Editor belegt die einfache Integrationen in eine Anwendung.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="step slide page" data-x="-1000" data-y="-1000" data-z="-500" data-rotate-y="-40" data-scale="1">
+        <h2>Ausblick</h2>
+        <div class="content">
+            <ul>
+                <li>Ausbau des Editors</li>
+                <li>Plug-In Mechanismus (OSGi)</li>
+                <li>Zusätzliche Diagrammarten</li>
+                <li>Modellvalidierung und Codegenerierung</li>
+            </ul>
+        </div>
+    </div>
+    <div id="end" class="step slide page" data-x="-7000" data-y="2000" data-z="1000" data-scale="1">
+        <p style="text-align: center" align="center">
+            <h2 style="text-align: center; padding-top: 100px; padding-bottom: 30px">Vielen Dank</h2>
+            <div style="float: left; padding-right: 50px">
+                <img src="../../assets/images/github-octocat.svg" width="200">
+            </div>
+            <p style="padding-top: 60px">
+                Projekt: Entity Essentials
+                <a href="https://github.com/jayware/entity-essentials">https://github.com/jayware/entity-essentials</a>
+            </p>
+        </p>
+    </div>
+    <!--<div class="step slide" data-z="-5000">-->
+        <!--<h2>Warum Puffin-Framework?</h2>-->
+    <!--</div>-->
+    <div id="overview" class="step" data-x="0" data-y="0" data-z="4000" data-scale="20"></div>
+</div>
+<div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script>
+    if ("ontouchstart" in document.documentElement) {
+        document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+    }
+</script>
+<script src="js/impress.js"></script>
+<script>impress().init();</script>
+</body>
+</html>

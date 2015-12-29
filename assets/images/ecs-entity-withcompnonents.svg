@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="686px" height="312px" viewBox="0 0 686 312" enable-background="new 0 0 686 312" xml:space="preserve">
+<rect x="56.172" fill="none" width="107.656" height="14"/>
+<rect x="39.673" y="254.008" fill="none" width="107.656" height="14"/>
+<g>
+	<g>
+		<g>
+			<g>
+				<g>
+					<circle fill="#C0C0C0" cx="166.824" cy="148.634" r="92.833"/>
+					<path fill="#C0C0C0" d="M611.657,170.467c0,6.627-5.658,12-12.639,12H169.296c-6.979,0-12.639-5.373-12.639-12v-47
+						c0-6.627,5.659-12,12.639-12h429.723c6.98,0,12.639,5.373,12.639,12V170.467z"/>
+				</g>
+				<rect x="346.491" y="134.967" fill="none" width="135.334" height="27.334"/>
+				<text transform="matrix(1 0 0 1 346.4912 147.7471)" font-family="'MyriadPro-Regular'" font-size="18">ID:#937234</text>
+			</g>
+			<g>
+				<circle fill="#A4A4A4" cx="166.785" cy="148.419" r="84.785"/>
+				<path fill="#A4A4A4" d="M606.385,165.164c0,5.057-5.168,9.156-11.543,9.156H202.375c-6.375,0-11.543-4.1-11.543-9.156V129.3
+					c0-5.058,5.168-9.157,11.543-9.157h392.467c6.375,0,11.543,4.1,11.543,9.157V165.164z"/>
+				<circle fill="#FFFFFF" cx="125.156" cy="147.633" r="29.451"/>
+			</g>
+		</g>
+		<rect x="345.99" y="135.303" fill="none" width="135.334" height="27.334"/>
+		<text transform="matrix(1 0 0 1 345.9902 152.3418)" font-family="'MyriadPro-Regular'" font-size="24">ID:#937234</text>
+		<path fill="#3FD13F" d="M327.344,182.449v59.383c0,4.372-7.494,7.918-16.737,7.918h-1.858c-9.244,0-16.738-3.546-16.738-7.918
+			v-59.383"/>
+		<path fill="#E59E2C" d="M376.802,182.467v63.197c0,4.654-7.493,8.428-16.737,8.428h-1.858c-9.243,0-16.737-3.773-16.737-8.428
+			v-63.197"/>
+		<path fill="#A772ED" d="M434.354,182.447v39.09c0,2.879-7.492,5.213-16.736,5.213h-1.859c-9.243,0-16.736-2.334-16.736-5.213
+			v-39.09"/>
+		<path fill="#269DC6" d="M573.697,182.426v51.91c0,3.824-7.493,6.924-16.736,6.924h-1.859c-9.244,0-16.737-3.1-16.737-6.924v-51.91
+			"/>
+		
+			<rect x="190.491" y="238.466" transform="matrix(0.004 1 -1 0.004 553.1792 -5.7783)" fill="none" width="177.999" height="72.668"/>
+		<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 303.2676 185.8076)" font-family="'Calibri-Bold'" font-size="18">polygon</text>
+		
+			<rect x="240.157" y="238.967" transform="matrix(0.004 1 -1 0.004 603.151 -54.9444)" fill="none" width="177.999" height="72.668"/>
+		<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 352.9346 186.3076)" font-family="'Calibri-Bold'" font-size="18">position</text>
+		
+			<rect x="298.156" y="237.3" transform="matrix(0.004 1 -1 0.004 659.2548 -114.6038)" fill="none" width="178.001" height="72.668"/>
+		<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 410.9346 184.6416)" font-family="'Calibri-Bold'" font-size="18">color</text>
+		
+			<rect x="437.49" y="244.3" transform="matrix(0.004 1 -1 0.004 805.0334 -246.9655)" fill="none" width="178.001" height="72.668"/>
+		<text transform="matrix(0.0133 0.9999 -0.9999 0.0133 550.2656 191.6416)" font-family="'Calibri-Bold'" font-size="18">text</text>
+	</g>
+</g>
+<g>
+	<rect x="148.691" y="149.902" fill="none" width="107.656" height="14"/>
+	<g>
+		<rect x="9.161" y="241.051" fill="none" width="107.656" height="14"/>
+		<rect x="348.989" y="133.387" fill="none" width="135.334" height="27.334"/>
+	</g>
+</g>
+</svg>
