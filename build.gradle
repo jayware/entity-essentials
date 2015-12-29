@@ -1,11 +1,13 @@
 plugins {
     id "com.github.hierynomus.license" version "0.12.1"
+    id "com.jfrog.bintray" version "1.5"
 }
 
 allprojects {
     apply plugin: 'license'
+    apply plugin: 'com.jfrog.bintray'
 
-    group = "org.jayware.entity-essentials"
+    group = "org.jayware"
 
     repositories {
         mavenCentral()
@@ -14,10 +16,66 @@ allprojects {
     license {
         header rootProject.file('HEADER.txt')
         ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        skipExistingHeaders = true
         include "**/*.java"
     }
 
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+    }
+
     plugins.withType(JavaPlugin) {
+        project.apply plugin: "maven"
+        project.apply plugin: "maven-publish"
+
+        task coveralls(type:Exec, dependsOn: 'generatePom') {
+            commandLine 'mvn', 'clean', 'install', 'test', 'jacoco:report', 'coveralls:report'
+        }
+
+        task generatePom << {
+            pom {
+                project {
+                    groupId project.group
+                    artifactId project.name
+                    version project.version
+                }
+                withXml {
+                    def root = asNode()
+                    def properties = root.appendNode('properties')
+                    properties.appendNode('project.build.sourceEncoding', 'UTF-8')
+                    def build = root.appendNode('build')
+                    def plugins = build.appendNode('plugins')
+                    def jacoco = plugins.appendNode('plugin')
+                    jacoco.appendNode('groupId', 'org.jacoco')
+                    jacoco.appendNode('artifactId', 'jacoco-maven-plugin')
+                    jacoco.appendNode('version', '0.7.5.201505241946')
+                    def executions = jacoco.appendNode('executions')
+                    def execution = executions.appendNode('execution')
+                    execution.appendNode('id', 'prepare-agent')
+                    def goals = execution.appendNode('goals')
+                    goals.appendNode('goal', 'prepare-agent')
+                    def coveralls = plugins.appendNode('plugin')
+                    coveralls.appendNode('groupId', 'org.eluder.coveralls')
+                    coveralls.appendNode('artifactId', 'coveralls-maven-plugin')
+                    coveralls.appendNode('version', '4.1.0')
+                    def configuration = coveralls.appendNode('configuration')
+                    configuration.appendNode('repoToken', '${env.COVERALLS_REPO_TOKEN}')
+                    def javac = plugins.appendNode('plugin')
+                    javac.appendNode('groupId', 'org.apache.maven.plugins')
+                    javac.appendNode('artifactId', 'maven-compiler-plugin')
+                    javac.appendNode('version', '3.3')
+                    configuration = javac.appendNode('configuration')
+                    configuration.appendNode('source', '1.8')
+                    configuration.appendNode('target', '1.8')
+                }
+            }.writeTo("pom.xml")
+        }
+
+        clean{
+            delete "pom.xml"
+        }
+
         task sourcesJar(type: Jar, dependsOn: classes) {
             classifier = 'sources'
             from sourceSets.main.allSource

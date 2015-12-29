@@ -1,0 +1,30 @@
+env:
+  global:
+  # coverity
+  - secure: TVLoaP1AyEMU1F/U72VXRIeAgnDe9CXZSu3Z9TfPE50LbJqg9dO23Lfj/WjfxKNJRfIZ4kF4tn2enS4snnZm1yfxzJZj/v4vds8a0dnPuf95HbjRmRFZ0jbJ7BQb7TsJUW7YVQ/TrD3brl/AXOMrHO8TGBJQdanscg11d3qml5CD/blKl0q+g4iaSTl7oami7KJ2Q0nYlrnTyKV4BgZiwwiZuY2bzNOaexpQZj9G7yAbYpZpkTutWU2rCQbb3F6hNC2jzefb5LyG1R4ve+L/6//c/47RZK8prTudkjL5WCvn2SE5odixTiEy8Wn+s0RVmYRjTzxT9jFSbnp+k+ODyQdQ8m0SngE/TBG3UpjviIS8eKg46Ps0Kv5ybEbnA6hYqji23/9xxHGrk0zUHpqmStThBT6movR0l0kZEmJlM3qjSJKOhV9nAbKCwboPUudvv+e5GSNl3mKgQexX7Fjw52GABFj2Wh3FbOkOepyd2unbisSxJmYYFxC7hxxedlxNeo6aFKhO7A7fH+ASa+bZOUpUPGLMNFVGTSjefaaFcf9kWhmA1r/kPpNnZMR2+fAdAbVIyJ7fhZEaKFabCcEeDYe2gMKlJOI4KscAhC/hdrLQJ8Rvu6Wdp9E/U/u+7FXwkJY6atch7G9FpHvwhEOhmBSLxxRoQakK7YGtpHjd2E4=
+  - COVERITY_SCAN_PROJECT_NAME: jayware/entity-essentials
+  # coveralls
+  - secure: o+LSiHbu45MF/emPgqmdix6X/RddO4x9og3OBZkDsbCamN6yLTq+D8IYD6IqSGFF8uX7DK53vjpbi8koc3bWCUWpAwxlXehmIOBqhgw/XE+7cclS09x77RJWuNWZu6rCZdeY0nE65/9BjZjBQQsaMA0YmVmhvPWNBG0jS8C+I0/VRe+Wy+T2TiUWvGYgUBJKEtWkdBN6OK8f1S/oNWsIzkudn0bOAjwGE5hvdMFnZCqMv+8d6YKc1vtac9mfPPY4uErNKQKP2QbrDDaReq8kA+g4Lx95BLYNVh/EAZ44+FmIbs+wsugGTrM37lhGWeULvBQsOuNvuqhPo0WzgokJy4YN1rsE0ubvPm0t+WvKLLNR+bWA1VyHWSauVmy93oat+EaG+DZP5q3tRUajbgH9jQcZ/jTAKT9Z1/r0hdtm50XrR4KCUKgaIftqf8Kv1w21OlSC2ieuO4724oXtXzwOBC/l7rxlqoQcxO/gsQhuo1pAc3bDHEbb1AQLJ7+ZMjsLgK4adgrx9PV7Rn3M29JSXhVLf4PG/3+mQskhd4pmA2XOD5Zo7vWh/zTIwcunrnTV45t++rsI8+S8jnoAfYvgah6TriO9amCZvm2LK0ueNUGp0QWvBosXIJBl9XfVzkPnDTZ/L2gVE3+Ih9cGiI8CmE3B883NFaGeO/n4ZAa+iYg=
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+branches:
+  only:
+  - master
+  - development
+  - coverity
+
+after_success:
+  - gradle coveralls
+
+addons:
+  coverity_scan:
+    project:
+      name: jayware/entity-essentials
+    notification_email: developers@jayware.org
+    build_command_prepend: cov-configure --java
+    build_command: gradle build -x test
+    branch_pattern: coverity
