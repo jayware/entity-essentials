@@ -1,0 +1,34 @@
+apply plugin: "java"
+apply plugin: "osgi"
+
+dependencies {
+    compile "com.google.guava:guava:18.0"
+    compile "org.slf4j:slf4j-api:1.7.12"
+
+    testCompile "org.testng:testng:6.9.4"
+    testCompile "org.assertj:assertj-core:3.0.0"
+    testCompile "org.mockito:mockito-core:1.10.19"
+    testCompile "ch.qos.logback:logback-classic:1.1.3"
+}
+
+test {
+    useTestNG() {}
+}
+
+jar {
+    from (rootProject.projectDir) {
+        include "LICENSE.txt"
+    }
+    from (projectDir) {
+        include "README.md"
+    }
+    manifest {
+        vendor "jayware.org"
+        name "Entity Essentials API"
+        description "Entity Essentials API"
+        symbolicName "org.jayware.e2.api"
+        license "http://www.gnu.org/licenses/lgpl-3.0.txt"
+        instruction "Bundle-Category", "e2,entity-essentials,api"
+        instruction "Bundle-RequiredExecutionEnvironment", "JavaSE-1.8"
+    }
+}

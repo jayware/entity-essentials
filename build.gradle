@@ -1,0 +1,36 @@
+plugins {
+    id "com.github.hierynomus.license" version "0.12.1"
+}
+
+allprojects {
+    apply plugin: 'license'
+
+    group = "org.jayware.entity-essentials"
+
+    repositories {
+        mavenCentral()
+    }
+
+    license {
+        header rootProject.file('HEADER.txt')
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        include "**/*.java"
+    }
+
+    plugins.withType(JavaPlugin) {
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        artifacts {
+            archives sourcesJar
+            archives javadocJar
+        }
+    }
+}
