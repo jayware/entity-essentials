@@ -1,3 +1,6 @@
+<p align="center">
+    <img src="http://jayware.github.io/entity-essentials/images/e2-logo.jpg" height="250" alt="Entity Essentials">
+</p>
 <p>
     <h1>Entity Essentials - E<sup>2</sup></h1>
     <table>
