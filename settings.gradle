@@ -2,3 +2,5 @@ rootProject.name = "entity-essentials"
 
 include "entity-essentials-api"
 include "entity-essentials-impl"
+
+include "examples"

@@ -75,6 +75,9 @@ public class Quickstart {
 
         /* Commit changes */
         cmp.pushTo(ref);
+
+        /* Shutdown everything */
+        context.dispose();
     }
 
     /* Define a custom component by a java interface */
