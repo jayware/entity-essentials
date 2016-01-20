@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="http://jayware.github.io/entity-essentials/images/e2-logo.png" height="250" alt="Entity Essentials">
+    <img src="http://jayware.github.io/entity-essentials/images/e2-logo.svg" height="250" alt="Entity Essentials">
 </p>
 <p>
     <h1>Entity Essentials - E<sup>2</sup></h1>
