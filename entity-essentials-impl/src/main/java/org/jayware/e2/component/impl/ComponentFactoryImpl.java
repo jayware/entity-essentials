@@ -201,6 +201,17 @@ implements ComponentFactory
                         throw new MalformedComponentException("Invalid getter for property '" + propertyGenerationPlan.getPropertyName() + "'! A getter mustn't have any parameter!");
                     }
 
+                    if (propertyGenerationPlan.hasSetter())
+                    {
+                        final Method setter = propertyGenerationPlan.getPropertySetterMethod();
+                        final Class<?> parameterType = setter.getParameterTypes()[0];
+
+                        if (!parameterType.equals(method.getReturnType()))
+                        {
+                            throw new MalformedComponentException("Invalid getter for property '" + propertyGenerationPlan.getPropertyName() + "'! The return type of the getter does not match the parameter type of the setter!");
+                        }
+                    }
+
                     propertyGenerationPlan.setPropertyGetterMethod(method);
                     propertyGenerationPlan.setPropertyType(method.getReturnType());
                 }
@@ -209,6 +220,17 @@ implements ComponentFactory
                     if (method.getParameterCount() != 1)
                     {
                         throw new MalformedComponentException("Invalid setter for property '" + propertyGenerationPlan.getPropertyName() + "'! A setter has to take exactly one parameter with the appropriate type!");
+                    }
+
+                    if (propertyGenerationPlan.hasGetter())
+                    {
+                        final Method getter = propertyGenerationPlan.getPropertyGetterMethod();
+                        final Class<?> returnType = getter.getReturnType();
+
+                        if (!returnType.equals(method.getParameterTypes()[0]))
+                        {
+                            throw new MalformedComponentException("Invalid setter for property '" + propertyGenerationPlan.getPropertyName() + "'! The parameter type of the setter does not match the return type of the getter!");
+                        }
                     }
 
                     propertyGenerationPlan.setPropertySetterMethod(method);

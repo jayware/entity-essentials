@@ -25,6 +25,7 @@ package org.jayware.e2.component.impl;
 import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.context.api.Context;
 import org.mockito.Mock;
@@ -94,5 +95,11 @@ public class ComponentFactoryImplTest
         {
 
         }
+    }
+
+    @Test(expectedExceptions = MalformedComponentException.class)
+    public void testPrepareComponentShouldFailWhenParameterTypesDoNotMatch()
+    {
+        testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
     }
 }

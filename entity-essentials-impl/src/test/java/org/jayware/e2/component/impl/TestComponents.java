@@ -51,4 +51,12 @@ public class TestComponents
 
         void setString(String value);
     }
+
+    public interface TestComponentWithParameterTypeMismatch
+    extends Component
+    {
+        String getString();
+
+        void setString(int value);
+    }
 }
