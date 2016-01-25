@@ -35,7 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -45,6 +47,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -68,6 +71,9 @@ implements Disposable
     private final Map<Object, Subscription> mySubscriptionsMap;
     private final AtomicInteger mySubscriptionsMapHash;
 
+    private final AtomicReference<Collection<Subscription>> myLastSubscriptionCollection;
+    private final AtomicInteger myLastSubscriptionsMapHash;
+
     private final ReadWriteLock myReadWriteLock = new ReentrantReadWriteLock();
     private final Lock myReadLock = myReadWriteLock.readLock();
     private final Lock myWriteLock = myReadWriteLock.writeLock();
@@ -77,8 +83,14 @@ implements Disposable
         myContext = context;
 
         myEventDispatcherFactory = new EventDispatcherFactoryImpl();
+
         mySubscriptionsMap = new HashMap<>();
         mySubscriptionsMapHash = new AtomicInteger(mySubscriptionsMap.hashCode());
+        myLastSubscriptionCollection = new AtomicReference<>();
+        myLastSubscriptionsMapHash = new AtomicInteger();
+
+        updateLastSubscriptionCollection();
+
         myWorkerPool = new EventBusWorkerPool(4, 64);
     }
 
@@ -153,9 +165,27 @@ implements Disposable
         return mySubscriptionsMap.values();
     }
 
-    protected EventDispatch createEventDispatch(Event event)
+    private void updateLastSubscriptionCollection()
     {
-        return new EventDispatch(event);
+        while (myLastSubscriptionsMapHash.get() != mySubscriptionsMapHash.get())
+        {
+            myReadLock.lock();
+            try
+            {
+                myLastSubscriptionCollection.set(new HashSet<>(mySubscriptionsMap.values()));
+                myLastSubscriptionsMapHash.set(mySubscriptionsMapHash.get());
+            }
+            finally
+            {
+                myReadLock.unlock();
+            }
+        }
+    }
+
+    private EventDispatch createEventDispatch(Event event)
+    {
+        updateLastSubscriptionCollection();
+        return new EventDispatch(event, myLastSubscriptionCollection.get());
     }
 
     private class EventBusWorkerPool
@@ -240,17 +270,12 @@ implements Disposable
         private final BlockingQueue<EventDispatch> myDispatchQueue;
         private final Stack<EventDispatch> myExecutionStack;
 
-        private final List<Subscription> myLocalSubscriptions;
-        private int myLastSubscriptionsMapHash;
-
         private final AtomicBoolean keepRunning = new AtomicBoolean(false);
 
         public EventBusWorker(ThreadGroup threadGroup, String threadName, int queueSize)
         {
             myDispatchQueue = new ArrayBlockingQueue<>(queueSize);
             myExecutionStack = new Stack<>();
-
-            myLocalSubscriptions = new ArrayList<>();
 
             myThread = new Thread(threadGroup, this, threadName);
             myThread.start();
@@ -348,29 +373,7 @@ implements Disposable
                     );
                 }
 
-                // Avoid syncing when delivering a chain of synchronous events,
-                // because this leads to an ConcurrentModificationException.
-                if (myExecutionStack.size() <= 1)
-                {
-                    // Update our local copy until we are synced.
-                    while (myLastSubscriptionsMapHash != mySubscriptionsMapHash.get())
-                    {
-                        myLocalSubscriptions.clear();
-
-                        myReadLock.lock();
-                        try
-                        {
-                            myLocalSubscriptions.addAll(mySubscriptionsMap.values());
-                            myLastSubscriptionsMapHash = mySubscriptionsMapHash.get();
-                        }
-                        finally
-                        {
-                            myReadLock.unlock();
-                        }
-                    }
-                }
-
-                for (Subscription subscription : myLocalSubscriptions)
+                for (Subscription subscription : dispatch.getSubscriptions())
                 {
                     final EventFilter[] filters = subscription.getFilters();
                     final EventDispatcher eventDispatcher = subscription.getEventDispatcher();
@@ -412,11 +415,13 @@ implements Disposable
     private class EventDispatch
     {
         private final Event myEvent;
+        private final Collection<Subscription> mySubscriptions;
         private final CountDownLatch isDispatched;
 
-        private EventDispatch(Event event)
+        private EventDispatch(Event event, Collection<Subscription> subscriptions)
         {
             myEvent = event;
+            mySubscriptions = subscriptions;
             isDispatched = new CountDownLatch(1);
         }
 
@@ -433,6 +438,11 @@ implements Disposable
         public Event getEvent()
         {
             return myEvent;
+        }
+
+        public Collection<Subscription> getSubscriptions()
+        {
+            return mySubscriptions;
         }
 
         public void await()
