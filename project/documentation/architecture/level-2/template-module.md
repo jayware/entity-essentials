@@ -1,5 +1,4 @@
 # Template Module
-----
 
 ## Overview
 

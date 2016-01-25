@@ -1,7 +1,5 @@
 # Component Module
 
-----
-
 ## Overview
 
 ## Dependencies

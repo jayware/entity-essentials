@@ -1,5 +1,4 @@
 # Entity Module
-----
 
 ## Overview
 

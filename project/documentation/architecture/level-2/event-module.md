@@ -1,5 +1,4 @@
 # Event Module
-----
 
 ## Overview
 

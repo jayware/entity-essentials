@@ -1,5 +1,4 @@
 # Architecture
-----
 
 ## Modules
 
