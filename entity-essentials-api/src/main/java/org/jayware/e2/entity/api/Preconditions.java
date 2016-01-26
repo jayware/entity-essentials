@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,13 +19,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.interest.api;
+package org.jayware.e2.entity.api;
 
 
-import org.jayware.e2.context.api.Context;
-
-
-public interface InterestManager
+public class Preconditions
 {
-    Interest createInterest(Context context);
+    /**
+     * Ensures that an {@link EntityRef} passed as a parameter to the calling method is not null and valid.
+     *
+     * @param ref an {@link EntityRef}
+     *
+     * @return the non-null reference that was validated
+     *
+     * @throws IllegalArgumentException if {@link EntityRef} is null.
+     * @throws IllegalStateException if {@link EntityRef} is invalid.
+     */
+    public static EntityRef checkRef(EntityRef ref)
+    {
+        if (ref == null)
+        {
+            throw new IllegalArgumentException();
+        }
+
+        if (ref.isInvalid())
+        {
+            throw new IllegalStateException();
+        }
+
+        return ref;
+    }
 }

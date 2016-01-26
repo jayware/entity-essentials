@@ -21,13 +21,13 @@
  */
 package org.jayware.e2.context.impl;
 
+import org.jayware.e2.assembly.api.AssemblyManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.interest.api.InterestManager;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
 
@@ -49,9 +49,9 @@ implements Context
     private final Lock myReadLock = myLock.readLock();
     private final Lock myWriteLock = myLock.writeLock();
 
-    public ContextImpl(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, InterestManager interestManager, BindingManager bindingManager)
+    public ContextImpl(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, AssemblyManager assemblyManager, BindingManager bindingManager)
     {
-        myContextState = new DefaultContext(entityManager, componentManager, templateManager, eventManager, interestManager, bindingManager);
+        myContextState = new DefaultContext(entityManager, componentManager, templateManager, eventManager, assemblyManager, bindingManager);
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
     }
 
@@ -253,12 +253,12 @@ implements Context
     }
 
     @Override
-    public InterestManager getInterestManager()
+    public AssemblyManager getAssemblyManager()
     {
         myReadLock.lock();
         try
         {
-            return myContextState.getInterestManager();
+            return myContextState.getAssemblyManager();
         }
         finally
         {
@@ -270,7 +270,7 @@ implements Context
     implements Context
     {
         private final EventManager myEventManager;
-        private final InterestManager myInterestManager;
+        private final AssemblyManager myAssemblyManager;
         private final EntityManager myEntityManager;
         private final ComponentManager myComponentManager;
         private final BindingManager myBindingManager;
@@ -278,14 +278,14 @@ implements Context
 
         private final Map<Key, Object> myMap;
 
-        public DefaultContext(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, InterestManager interestManager, BindingManager bindingManager)
+        public DefaultContext(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, AssemblyManager assemblyManager, BindingManager bindingManager)
         {
             myEntityManager = entityManager;
             myComponentManager = componentManager;
-            myBindingManager = bindingManager;
             myTemplateManager = templateManager;
             myEventManager = eventManager;
-            myInterestManager = interestManager;
+            myAssemblyManager = assemblyManager;
+            myBindingManager = bindingManager;
 
             myMap = new HashMap<>();
         }
@@ -405,9 +405,9 @@ implements Context
         }
 
         @Override
-        public InterestManager getInterestManager()
+        public AssemblyManager getAssemblyManager()
         {
-            return myInterestManager;
+            return myAssemblyManager;
         }
     }
 
@@ -499,9 +499,9 @@ implements Context
         }
 
         @Override
-        public InterestManager getInterestManager()
+        public AssemblyManager getAssemblyManager()
         {
-            throw new IllegalStateException("No InterestManager available. Context is disposed!");
+            throw new IllegalStateException("No AssemblyManager available. Context is disposed!");
         }
     }
 

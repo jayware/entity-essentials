@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,19 +19,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.interest.impl;
+package org.jayware.e2.assembly.api;
+
 
 import org.jayware.e2.context.api.Context;
-import org.jayware.e2.interest.api.Interest;
-import org.jayware.e2.interest.api.InterestManager;
+import org.jayware.e2.entity.api.EntityRef;
 
 
-public class InterestManagerImpl
-implements InterestManager
+public interface Group
+extends Iterable<EntityRef>
 {
-    @Override
-    public Interest createInterest(Context context)
-    {
-        return new InterestImpl(context);
+    enum Policy {
+        Manual,
+        Aspect
     }
+
+    Context getContext();
+
+    String getName() throws InvalideGroupException;
+
+    Policy getPolicy() throws InvalideGroupException;
+
+    void add(EntityRef ref) throws InvalideGroupException;
+
+    void remove(EntityRef ref) throws InvalideGroupException;
+
+    boolean isValid();
+
+    boolean isInvalid();
 }

@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,34 +19,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.interest.api;
+package org.jayware.e2.assembly.api;
 
 
-import org.jayware.e2.context.api.Context;
-import org.jayware.e2.entity.api.EntityRef;
-
-
-public interface Interest
+public class GroupNotFoundException
+extends RuntimeException
 {
-    Context getContext();
+    public GroupNotFoundException()
+    {
+    }
 
-    void add(EntityRef ref);
+    public GroupNotFoundException(String message)
+    {
+        super(message);
+    }
 
-    void remove(EntityRef ref);
+    public GroupNotFoundException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 
-    void subscribe(Object subscriber);
+    public GroupNotFoundException(Throwable cause)
+    {
+        super(cause);
+    }
 
-    void unsubscribe(Object subscriber);
-
-    void enable();
-
-    void disable();
-
-    void setEnabled(boolean enabled);
-
-    void setDisabled(boolean disabled);
-
-    boolean isEnabled();
-
-    boolean isDisabled();
+    public GroupNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+    {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

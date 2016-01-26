@@ -21,11 +21,11 @@
  */
 package org.jayware.e2.context.api;
 
+import org.jayware.e2.assembly.api.AssemblyManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.interest.api.InterestManager;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
 
@@ -244,11 +244,11 @@ public interface Context
     EventManager getEventManager() throws IllegalStateException;
 
     /**
-     * Returns the {@link InterestManager} instance of this <code>Context</code>.
+     * Returns the {@link AssemblyManager} instance of this <code>Context</code>.
      *
-     * @return this context's {@link InterestManager}.
+     * @return this context's {@link AssemblyManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    InterestManager getInterestManager() throws IllegalStateException;
+    AssemblyManager getAssemblyManager() throws IllegalStateException;
 }

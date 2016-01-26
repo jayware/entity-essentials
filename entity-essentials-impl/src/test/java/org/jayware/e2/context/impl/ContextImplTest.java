@@ -22,11 +22,11 @@
 package org.jayware.e2.context.impl;
 
 
+import org.jayware.e2.assembly.api.AssemblyManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.interest.api.InterestManager;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
 import org.mockito.Mock;
@@ -54,7 +54,7 @@ public class ContextImplTest
     @Mock private BindingManager bindingManager;
     @Mock private TemplateManager templateManager;
     @Mock private EventManager eventManager;
-    @Mock private InterestManager interestManager;
+    @Mock private AssemblyManager assemblyManager;
 
     final Key<Object> keyA = createKey("foo");
     final Key<Object> keyB = createKey("bar");
@@ -64,7 +64,7 @@ public class ContextImplTest
     {
         initMocks(this);
 
-        testee = new ContextImpl(entityManager, componentManager, templateManager, eventManager, interestManager, bindingManager);
+        testee = new ContextImpl(entityManager, componentManager, templateManager, eventManager, assemblyManager, bindingManager);
     }
 
     @Test
