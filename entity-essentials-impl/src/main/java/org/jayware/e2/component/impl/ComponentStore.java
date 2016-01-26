@@ -49,11 +49,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static java.util.ServiceLoader.load;
 import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.component.api.AspectEvent.NewAspectParam;
 import static org.jayware.e2.component.api.AspectEvent.OldAspectParam;
@@ -87,7 +89,7 @@ implements Disposable
         myContext = context;
         myEventManager = myContext.getEventManager();
 
-        myComponentFactory = new ComponentFactoryImpl();
+        myComponentFactory = load(ComponentFactory.class).iterator().next();
 
         myComponentClassMap = new HashMap<>();
         myComponentDatabase = new HashMap<>();
