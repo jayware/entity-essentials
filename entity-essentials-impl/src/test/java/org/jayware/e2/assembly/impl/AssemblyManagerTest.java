@@ -29,12 +29,15 @@ import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
+import org.mockito.Mockito;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.entity.api.EntityPath.path;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class AssemblyManagerTest
@@ -74,9 +77,145 @@ public class AssemblyManagerTest
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testCreateGroupWithNullContext()
+    public void test_CreateGroup_ThrowsIllegalArgumentExceptionWhenPassedContextIsNull()
     {
         testee.createGroup(null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_CreateGroup_ThrowsIllegalStateExceptionWhenPassedContextIsDisposed()
+    {
+        final Context context = mock(Context.class);
+        when(context.isDisposed()).thenReturn(true);
+
+        testee.createGroup(context);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_CreateGroupWithName_ThrowsIllegalArgumentExceptionWhenPassedContextIsNull()
+    {
+        testee.createGroup(null, "fubar");
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_CreateGroupWithName_ThrowsIllegalStateExceptionWhenPassedContextIsDisposed()
+    {
+        final Context context = mock(Context.class);
+        when(context.isDisposed()).thenReturn(true);
+
+        testee.createGroup(context, "fubar");
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_CreateGroupWithName_ThrowsIllegalArgumentExceptionWhenPassedStringIsNull()
+    {
+        testee.createGroup(testContext, null);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_CreateGroupWithName_ThrowsIllegalArgumentExceptionWhenPassedNameIsEmpty()
+    {
+        testee.createGroup(testContext, "");
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addEntityToGroup_ThrowsIllegalArgumentExceptionWhenPassedEntityRefIsNull()
+    {
+        final Group testGroup = mock(Group.class);
+        testee.addEntityToGroup(null, testGroup);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_addEntityToGroup_ThrowsIllegalStateExceptionWhenPassedEntityRefIsInvalid()
+    {
+        final Group testGroup = mock(Group.class);
+        final EntityRef ref = mock(EntityRef.class);
+
+        when(ref.isInvalid()).thenReturn(true);
+        when(ref.isValid()).thenReturn(false);
+
+        testee.addEntityToGroup(ref, testGroup);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addEntityToGroup_ThrowsIllegalArgumentExceptionWhenPassedGroupIsNull()
+    {
+        testee.addEntityToGroup(testEntityA, null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_addEntityToGroup_ThrowsIllegalStateExceptionWhenPassedGroupIsInvalid()
+    {
+        final Group testGroup = mock(Group.class);
+
+        when(testGroup.isInvalid()).thenReturn(true);
+        when(testGroup.isValid()).thenReturn(false);
+
+        testee.addEntityToGroup(testEntityA, testGroup);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_removeEntityFromGroup_ThrowsIllegalArgumentExceptionWhenPassedEntityRefIsNull()
+    {
+        final Group testGroup = mock(Group.class);
+        testee.removeEntityFromGroup(null, testGroup);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_removeEntityFromGroup_ThrowsIllegalStateExceptionWhenPassedEntityRefIsInvalid()
+    {
+        final Group testGroup = mock(Group.class);
+        final EntityRef ref = mock(EntityRef.class);
+
+        when(ref.isInvalid()).thenReturn(true);
+        when(ref.isValid()).thenReturn(false);
+
+        testee.removeEntityFromGroup(ref, testGroup);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_removeEntityFromGroup_ThrowsIllegalArgumentExceptionWhenPassedGroupIsNull()
+    {
+        testee.removeEntityFromGroup(testEntityA, null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_removeEntityFromGroup_ThrowsIllegalStateExceptionWhenPassedGroupIsInvalid()
+    {
+        final Group testGroup = mock(Group.class);
+
+        when(testGroup.isInvalid()).thenReturn(true);
+        when(testGroup.isValid()).thenReturn(false);
+
+        testee.removeEntityFromGroup(testEntityA, testGroup);
+    }
+
+    @Test
+    public void test_getEntitiesOfGroup()
+    {
+        final Group testGroup = testee.createGroup(testContext);
+        testee.addEntityToGroup(testEntityA, testGroup);
+        testee.addEntityToGroup(testEntityB, testGroup);
+
+        assertThat(testee.getEntitiesOfGroup(testGroup)).contains(testEntityA, testEntityB);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_getEntitiesOfGroup_ThrowsIllegalArgumentExceptionWhenPassedGroupIsNull()
+    {
+        testee.getEntitiesOfGroup(null);
+    }
+
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_getEntitiesOfGroup_ThrowsIllegalStateExceptionWhenPassedGroupIsInvalid()
+    {
+        final Group testGroup = mock(Group.class);
+
+        when(testGroup.isInvalid()).thenReturn(true);
+        when(testGroup.isValid()).thenReturn(false);
+
+        testee.getEntitiesOfGroup(testGroup);
     }
 
     @Test

@@ -25,6 +25,8 @@ package org.jayware.e2.assembly.api;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
 
+import java.util.List;
+
 
 public interface Group
 extends Iterable<EntityRef>
@@ -43,6 +45,8 @@ extends Iterable<EntityRef>
     void add(EntityRef ref) throws InvalideGroupException;
 
     void remove(EntityRef ref) throws InvalideGroupException;
+
+    List<EntityRef> members();
 
     boolean isValid();
 

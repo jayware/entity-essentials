@@ -32,12 +32,15 @@ import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.ObjectArrays.concat;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static org.jayware.e2.assembly.api.AssemblyEvent.AddEntityToGroupEvent;
 import static org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent;
 import static org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent.GroupNameParam;
@@ -184,6 +187,20 @@ implements Disposable
             param(GroupParam, group),
             param(EntityRefParam, member)
         );
+    }
+
+    public List<EntityRef> getEntitiesOfGroup(Group group)
+    {
+        final ComponentManager componentManager = myContext.getComponentManager();
+        final GroupComponent groupComponent = componentManager.getComponent(((GroupImpl) group).getRef(), GroupComponent.class);
+        final EntityRef[] members = groupComponent.getMembers();
+
+        if (members == null || members.length == 0)
+        {
+            return Collections.emptyList();
+        }
+
+        return unmodifiableList(asList(members));
     }
 
     public boolean isEntityMemberOfGroup(EntityRef ref, Group group)

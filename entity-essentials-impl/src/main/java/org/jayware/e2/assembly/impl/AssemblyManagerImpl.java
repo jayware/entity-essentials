@@ -28,12 +28,8 @@ import org.jayware.e2.assembly.api.AssemblyEvent.RemoveEntityFromGroupEvent;
 import org.jayware.e2.assembly.api.AssemblyManager;
 import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupNotFoundException;
-import org.jayware.e2.assembly.api.components.GroupComponent;
-import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
-import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
-import org.jayware.e2.entity.impl.EntityTree;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.util.Key;
 
@@ -46,11 +42,13 @@ import static org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent.GroupPo
 import static org.jayware.e2.assembly.api.AssemblyEvent.GroupEvent.GroupParam;
 import static org.jayware.e2.assembly.api.AssemblyEvent.GroupMembershipEvent.EntityRefParam;
 import static org.jayware.e2.assembly.api.Group.Policy.Manual;
+import static org.jayware.e2.assembly.api.Preconditions.checkGroupNotNullAndValid;
 import static org.jayware.e2.component.api.Aspect.aspect;
-import static org.jayware.e2.context.api.Preconditions.checkContext;
-import static org.jayware.e2.entity.api.Preconditions.checkRef;
+import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
+import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
+import static org.jayware.e2.util.Preconditions.checkStringNotEmpty;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -78,8 +76,8 @@ implements AssemblyManager
     @Override
     public Group createGroup(Context context, String name)
     {
-        checkContext(context);
-        checkNotNull(name);
+        checkContextNotNullAndNotDisposed(context);
+        checkStringNotEmpty(name);
 
         getOrCreateGroupHub(context);
 
@@ -99,7 +97,7 @@ implements AssemblyManager
     @Override
     public void deleteGroup(Group group)
     {
-        checkNotNull(group);
+        checkGroupNotNullAndValid(group);
 
         final Context context = group.getContext();
         final EventManager eventManager = context.getEventManager();
@@ -128,8 +126,8 @@ implements AssemblyManager
     @Override
     public Group findGroup(Context context, String name)
     {
-        checkContext(context);
-        checkNotNull(name);
+        checkContextNotNullAndNotDisposed(context);
+        checkStringNotEmpty(name);
 
         return getOrCreateGroupHub(context).findGroup(name);
     }
@@ -138,8 +136,8 @@ implements AssemblyManager
     public void addEntityToGroup(EntityRef ref, Group group)
     throws IllegalArgumentException
     {
-        checkRef(ref);
-        checkNotNull(group);
+        checkRefNotNullAndValid(ref);
+        checkGroupNotNullAndValid(group);
 
         final Context context = ref.getContext();
         final EventManager eventManager = context.getEventManager();
@@ -156,8 +154,8 @@ implements AssemblyManager
     public void removeEntityFromGroup(EntityRef ref, Group group)
     throws IllegalArgumentException
     {
-        checkRef(ref);
-        checkNotNull(group);
+        checkRefNotNullAndValid(ref);
+        checkGroupNotNullAndValid(group);
 
         final Context context = ref.getContext();
         final EventManager eventManager = context.getEventManager();
@@ -171,10 +169,18 @@ implements AssemblyManager
     }
 
     @Override
+    public List<EntityRef> getEntitiesOfGroup(Group group)
+    {
+        checkGroupNotNullAndValid(group);
+
+        return getOrCreateGroupHub(group.getContext()).getEntitiesOfGroup(group);
+    }
+
+    @Override
     public boolean isEntityMemberOfGroup(EntityRef ref, Group group)
     {
-        checkRef(ref);
-        checkNotNull(group);
+        checkRefNotNullAndValid(ref);
+        checkGroupNotNullAndValid(group);
 
         return getOrCreateGroupHub(ref.getContext()).isEntityMemberOfGroup(ref, group);
     }

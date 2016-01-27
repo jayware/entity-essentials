@@ -78,4 +78,27 @@ public class Preconditions
         }
         return reference;
     }
+
+    /**
+     * Ensures that a {@link String} passed as a parameter to the calling method is not empty.
+     * <p>
+     * <b>Note:</b> This operation is based on the {@link com.google.common.base.Preconditions#checkNotNull(Object)
+     * Google Guavas Preconditions},
+     * but instead of throwing a {@link NullPointerException} when the passed reference is null, this operation
+     * throws an {@link IllegalArgumentException}.
+     *
+     * @param string a {@link String}
+     *
+     * @return the {@link String} that was validated
+     *
+     * @throws IllegalArgumentException if {@code string} is null
+     */
+    public static String checkStringNotEmpty(String string)
+    {
+        if (string == null || string.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        return string;
+    }
 }

@@ -34,7 +34,7 @@ public class Preconditions
      * @throws IllegalArgumentException if {@link EntityRef} is null.
      * @throws IllegalStateException if {@link EntityRef} is invalid.
      */
-    public static EntityRef checkRef(EntityRef ref)
+    public static EntityRef checkRefNotNullAndValid(EntityRef ref)
     {
         if (ref == null)
         {

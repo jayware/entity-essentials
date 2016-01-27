@@ -37,7 +37,7 @@ public class Preconditions
      * @throws IllegalArgumentException if {@link Context} is null.
      * @throws IllegalStateException if {@link Context} is disposed.
      */
-    public static Context checkContext(Context context)
+    public static Context checkContextNotNullAndNotDisposed(Context context)
     {
         if (context == null)
         {

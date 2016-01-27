@@ -28,27 +28,27 @@ import org.jayware.e2.entity.api.EntityRef;
 public class Preconditions
 {
     /**
-     * Ensures that an {@link EntityRef} passed as a parameter to the calling method is not null and valid.
+     * Ensures that a {@link Group} passed as a parameter to the calling method is not null and valid.
      *
-     * @param ref an {@link EntityRef}
+     * @param group an {@link EntityRef}
      *
-     * @return the non-null reference that was validated
+     * @return the {@link Group} that was validated.
      *
-     * @throws IllegalArgumentException if {@link EntityRef} is null.
-     * @throws IllegalStateException if {@link EntityRef} is invalid.
+     * @throws IllegalArgumentException if {@link Group} is null.
+     * @throws IllegalStateException if {@link Group} is invalid.
      */
-    public static EntityRef checkNotNullAndValid(EntityRef ref)
+    public static Group checkGroupNotNullAndValid(Group group)
     {
-        if (ref == null)
+        if (group == null)
         {
             throw new IllegalArgumentException();
         }
 
-        if (ref.isInvalid())
+        if (group.isInvalid())
         {
             throw new IllegalStateException();
         }
 
-        return ref;
+        return group;
     }
 }

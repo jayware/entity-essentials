@@ -29,7 +29,11 @@ import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+
+import static java.util.Collections.unmodifiableList;
 
 
 public class GroupImpl
@@ -84,19 +88,25 @@ implements Group
     @Override
     public void add(EntityRef ref)
     {
-        throw new UnsupportedOperationException("GroupImpl.add");
+        myAssemblyManager.addEntityToGroup(ref, this);
     }
 
     @Override
     public void remove(EntityRef ref)
     {
-        throw new UnsupportedOperationException("GroupImpl.remove");
+        myAssemblyManager.removeEntityFromGroup(ref, this);
+    }
+
+    @Override
+    public List<EntityRef> members()
+    {
+        return myAssemblyManager.getEntitiesOfGroup(this);
     }
 
     @Override
     public Iterator<EntityRef> iterator()
     {
-        throw new UnsupportedOperationException("GroupImpl.iterator");
+        return members().iterator();
     }
 
     @Override
