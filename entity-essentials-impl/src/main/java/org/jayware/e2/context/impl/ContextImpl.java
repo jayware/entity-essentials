@@ -182,6 +182,34 @@ implements Context
     }
 
     @Override
+    public <S> S getService(Class<? extends S> service)
+    {
+        myReadLock.lock();
+        try
+        {
+            return myContextState.getService(service);
+        }
+        finally
+        {
+            myReadLock.unlock();
+        }
+    }
+
+    @Override
+    public <S> S findService(Class<? extends S> service)
+    {
+        myReadLock.lock();
+        try
+        {
+            return myContextState.findService(service);
+        }
+        finally
+        {
+            myReadLock.unlock();
+        }
+    }
+
+    @Override
     public EntityManager getEntityManager()
     {
         myReadLock.lock();
@@ -375,6 +403,18 @@ implements Context
         }
 
         @Override
+        public <S> S getService(Class<? extends S> service)
+        {
+            throw new UnsupportedOperationException("DefaultContext.getService");
+        }
+
+        @Override
+        public <S> S findService(Class<? extends S> service)
+        {
+            throw new UnsupportedOperationException("DefaultContext.findService");
+        }
+
+        @Override
         public EntityManager getEntityManager()
         {
             return myEntityManager;
@@ -465,6 +505,19 @@ implements Context
         public boolean contains(Key key)
         {
             throw new IllegalStateException("Context is disposed!");
+        }
+
+        @Override
+        public <S> S getService(Class<? extends S> service)
+        {
+            throw new IllegalStateException("No services available. Context is disposed!");
+
+        }
+
+        @Override
+        public <S> S findService(Class<? extends S> service)
+        {
+            throw new IllegalStateException("No services available. Context is disposed!");
         }
 
         @Override

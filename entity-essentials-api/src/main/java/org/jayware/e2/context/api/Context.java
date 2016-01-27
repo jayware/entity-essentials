@@ -199,6 +199,32 @@ public interface Context
     boolean contains(Key key) throws IllegalStateException;
 
     /**
+     * Returns the service which offers the interface denoted by the specified {@link Class}.
+     * <p>
+     * <b>Note:</b> In contrast to {@link Context#findService(Class)}, this operation throws
+     * a {@link ServiceNotFoundException} if a suitable service could not be found.
+     *
+     * @param service a {@link Class} representing the service's interface.
+     * @param <S> the type of the service.
+     *
+     * @return a service instance, never <code>null</code>.
+     */
+    <S> S getService(Class<? extends S> service);
+
+    /**
+     * Returns the service which offers the interface denoted by the specified {@link Class}.
+     * <p>
+     * <b>Note:</b> In contrast to {@link Context#getService(Class)}, this operation returns
+     * <code>null</code> if a suitable service could not be found.
+     *
+     * @param service a {@link Class} representing the service's interface.
+     * @param <S> the type of the service.
+     *
+     * @return a service instance or <code>null</code> if a suitable could not be found.
+     */
+    <S> S findService(Class<? extends S> service);
+
+    /**
      * Returns the {@link EntityManager} instance of this <code>Context</code>.
      *
      * @return this context's {@link EntityManager}.
