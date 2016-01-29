@@ -7,8 +7,8 @@ dependencies {
 
     compile "org.ow2.asm:asm-all:5.0.4"
 
-    testCompile "org.testng:testng:6.9.4"
-    testCompile "org.assertj:assertj-core:3.0.0"
+    testCompile "org.testng:testng:6.9.10"
+    testCompile "org.assertj:assertj-core:3.3.0"
     testCompile "org.mockito:mockito-core:1.10.19"
     testCompile "ch.qos.logback:logback-classic:1.1.3"
 }
