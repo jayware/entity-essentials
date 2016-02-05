@@ -30,17 +30,17 @@ import java.util.List;
 
 
 /**
- * The <code>AssemblyManager</code> provides operations to manage sets of {@link Entity Entities}.
+ * The <code>GroupManager</code> provides operations to manage sets of {@link Entity Entities}.
  * <p>
- * The <code>AssemblyManager</code> is context-unaware. By default every {@link Context} offers an
- * <code>AssemblyManager</code> instance but any instance can be used.
+ * The <code>GroupManager</code> is context-unaware. By default every {@link Context} offers an
+ * <code>GroupManager</code> instance but any instance can be used.
  *
  * @see Context
  * @see Entity
  * @see EntityRef
  * @see Group
  */
-public interface AssemblyManager
+public interface GroupManager
 {
     /**
      * Creates a {@link Group} in the specified {@link Context}.
@@ -81,7 +81,7 @@ public interface AssemblyManager
     /**
      * Returns the {@link Group} with the given name in the specified {@link Context}.
      * <p>
-     * <b>Note:</b> In contrast to {@link AssemblyManager#findGroup(Context, String)} this operation
+     * <b>Note:</b> In contrast to {@link GroupManager#findGroup(Context, String)} this operation
      * never returns <code>null</code>. Instead this operations throws an {@link GroupNotFoundException}
      * if a {@link Group} with the specified name doesn't exist in the given {@link Context}.
      * </p>
@@ -101,7 +101,7 @@ public interface AssemblyManager
     /**
      * Returns the {@link Group} with the given name in the specified {@link Context}.
      * <p>
-     * <b>Note:</b> In contrast to {@link AssemblyManager#findGroup(Context, String)}
+     * <b>Note:</b> In contrast to {@link GroupManager#findGroup(Context, String)}
      * this operation returns <code>null</code> if a {@link Group} with the specified
      * name doesn't exist in the given {@link Context}.
      * </p>
@@ -126,7 +126,7 @@ public interface AssemblyManager
      * @throws IllegalArgumentException if the specified {@link EntityRef} is <code>null</code>.
      * @throws IllegalArgumentException if the specified {@link Group} is <code>null</code>.
      * @throws IllegalStateException if the specified {@link EntityRef} is invalid.
-     * @throws IllegalStateException if the specified {@link Group} is invalid.
+     * @throws InvalidGroupException if the specified {@link Group} is invalid.
      */
     void addEntityToGroup(EntityRef ref, Group group) throws IllegalArgumentException, IllegalStateException;
 
@@ -139,7 +139,7 @@ public interface AssemblyManager
      * @throws IllegalArgumentException if the specified {@link EntityRef} is <code>null</code>.
      * @throws IllegalArgumentException if the specified {@link Group} is <code>null</code>.
      * @throws IllegalStateException if the specified {@link EntityRef} is invalid.
-     * @throws IllegalStateException if the specified {@link Group} is invalid.
+     * @throws InvalidGroupException if the specified {@link Group} is invalid.
      */
     void removeEntityFromGroup(EntityRef ref, Group group) throws IllegalArgumentException, IllegalStateException;
 

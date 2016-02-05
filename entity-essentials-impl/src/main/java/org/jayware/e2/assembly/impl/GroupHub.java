@@ -32,7 +32,7 @@ import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -41,17 +41,17 @@ import java.util.Set;
 import static com.google.common.collect.ObjectArrays.concat;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static org.jayware.e2.assembly.api.AssemblyEvent.AddEntityToGroupEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent.GroupNameParam;
-import static org.jayware.e2.assembly.api.AssemblyEvent.DeleteGroupEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.EntityFromGroupRemovedEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.EntityToGroupAddedEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.GroupCreatedEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.GroupDeletedEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.GroupEvent.GroupParam;
-import static org.jayware.e2.assembly.api.AssemblyEvent.GroupMembershipEvent.EntityRefParam;
-import static org.jayware.e2.assembly.api.AssemblyEvent.RemoveEntityFromGroupEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.AddEntityToGroupEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.CreateGroupEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.CreateGroupEvent.GroupNameParam;
+import static org.jayware.e2.assembly.api.events.GroupEvent.DeleteGroupEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.EntityFromGroupRemovedEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.EntityToGroupAddedEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupCreatedEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupDeletedEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupParam;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.EntityRefParam;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.RemoveEntityFromGroupEvent;
 import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
@@ -145,18 +145,19 @@ implements Disposable
     {
         final ComponentManager componentManager = myContext.getComponentManager();
         final EventManager eventManager = myContext.getEventManager();
-        final EntityRef groupRef = ((GroupImpl) group).getRef();
 
-        final GroupComponent groupComponent = componentManager.getComponent(groupRef, GroupComponent.class);
+        final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
         EntityRef[] members = groupComponent.getMembers();
 
         if (members == null)
         {
-            members = new EntityRef[1];
+            members = new EntityRef[0];
         }
 
-        groupComponent.setMembers(concat(member, members));
-        groupComponent.pushTo(groupRef);
+        members = concat(members, member);
+
+        groupComponent.setMembers(members);
+        groupComponent.pushTo(group);
 
         eventManager.post(
             EntityToGroupAddedEvent.class,
@@ -167,19 +168,18 @@ implements Disposable
     }
 
     @Handle(RemoveEntityFromGroupEvent.class)
-    public void handleRemoveEntityToGroupEvent(@Param(GroupParam) Group group,
-                                               @Param(EntityRefParam) EntityRef member)
+    public void handleRemoveEntityFromGroupEvent(@Param(GroupParam) Group group,
+                                                 @Param(EntityRefParam) EntityRef member)
     {
         final ComponentManager componentManager = myContext.getComponentManager();
         final EventManager eventManager = myContext.getEventManager();
-        final EntityRef groupRef = ((GroupImpl) group).getRef();
 
-        final GroupComponent groupComponent = componentManager.getComponent(groupRef, GroupComponent.class);
-        final Set<EntityRef> members = new HashSet(asList(groupComponent.getMembers()));
+        final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
+        final Set<EntityRef> members = new HashSet<>(asList(groupComponent.getMembers()));
 
         members.remove(member);
         groupComponent.setMembers(members.toArray(new EntityRef[members.size()]));
-        groupComponent.pushTo(groupRef);
+        groupComponent.pushTo(group);
 
         eventManager.post(
             EntityFromGroupRemovedEvent.class,
@@ -192,7 +192,7 @@ implements Disposable
     public List<EntityRef> getEntitiesOfGroup(Group group)
     {
         final ComponentManager componentManager = myContext.getComponentManager();
-        final GroupComponent groupComponent = componentManager.getComponent(((GroupImpl) group).getRef(), GroupComponent.class);
+        final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
         final EntityRef[] members = groupComponent.getMembers();
 
         if (members == null || members.length == 0)
@@ -206,8 +206,7 @@ implements Disposable
     public boolean isEntityMemberOfGroup(EntityRef ref, Group group)
     {
         final ComponentManager componentManager = myContext.getComponentManager();
-        final EntityRef groupRef = ((GroupImpl) group).getRef();
-        final GroupComponent groupComponent = componentManager.getComponent(groupRef, GroupComponent.class);
+        final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
         final EntityRef[] members = groupComponent.getMembers();
 
         return members != null && asList(members).contains(ref);

@@ -22,7 +22,6 @@
 package org.jayware.e2.assembly.api.components;
 
 
-import org.jayware.e2.assembly.api.Group.Policy;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.entity.api.EntityRef;
 
@@ -34,9 +33,9 @@ extends Component
 
     void setName(String name);
 
-    Policy getPolicy();
+    EntityRef getParent();
 
-    void setPolicy(Policy policy);
+    void setParent(EntityRef parent);
 
     EntityRef[] getMembers();
 

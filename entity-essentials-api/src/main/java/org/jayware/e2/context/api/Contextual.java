@@ -19,33 +19,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.assembly.api;
+package org.jayware.e2.context.api;
 
 
-public class Preconditions
+/**
+ * A <code>Contextual</code> is an object which belongs to an <code>Context</code>.
+ *
+ * @see Context
+ */
+public interface Contextual
 {
     /**
-     * Ensures that a {@link Group} passed as a parameter to the calling method is not null and valid.
+     * Returns the {@link Context} this object belongs to.
      *
-     * @param group a {@link Group}
-     *
-     * @return the {@link Group} that was validated.
-     *
-     * @throws IllegalArgumentException if {@link Group} is null.
-     * @throws IllegalStateException if {@link Group} is invalid.
+     * @return this object's {@link Context}.
      */
-    public static Group checkGroupNotNullAndValid(Group group)
-    {
-        if (group == null)
-        {
-            throw new IllegalArgumentException();
-        }
+    Context getContext();
 
-        if (group.isInvalid())
-        {
-            throw new InvalidGroupException(group);
-        }
+    /**
+     * Returns whether this object belongs to the specified {@link Context}.
+     *
+     * @param context a {@link Context}.
+     *
+     * @return <code>true</code> if this object belongs to the specified {@link Context}, otherwise <code>false</code>.
+     */
+    boolean belongsTo(Context context);
 
-        return group;
-    }
+    /**
+     * Returns whether this object belongs to the same {@link Context} as the specified one.
+     *
+     * @param contextual a {@link Contextual}.
+     *
+     * @return <code>true</code> if this object belongs to the smae {@link Context} as the specified one, otherwise <code>false</code>.
+     */
+    boolean belongsTo(Contextual contextual);
 }

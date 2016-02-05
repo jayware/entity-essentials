@@ -21,7 +21,7 @@
  */
 package org.jayware.e2.context.impl;
 
-import org.jayware.e2.assembly.api.AssemblyManager;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
@@ -33,6 +33,8 @@ import org.jayware.e2.util.Key;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -43,15 +45,18 @@ import static org.jayware.e2.util.Preconditions.checkNotNull;
 public class ContextImpl
 implements Context
 {
+    private final UUID myContextId;
+
     private Context myContextState;
 
     private final ReadWriteLock myLock = new ReentrantReadWriteLock();
     private final Lock myReadLock = myLock.readLock();
     private final Lock myWriteLock = myLock.writeLock();
 
-    public ContextImpl(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, AssemblyManager assemblyManager, BindingManager bindingManager)
+    public ContextImpl(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, GroupManager groupManager, BindingManager bindingManager)
     {
-        myContextState = new DefaultContext(entityManager, componentManager, templateManager, eventManager, assemblyManager, bindingManager);
+        myContextId = UUID.randomUUID();
+        myContextState = new DefaultContext(entityManager, componentManager, templateManager, eventManager, groupManager, bindingManager);
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
     }
 
@@ -280,13 +285,12 @@ implements Context
         }
     }
 
-    @Override
-    public AssemblyManager getAssemblyManager()
+    public GroupManager getGroupManager()
     {
         myReadLock.lock();
         try
         {
-            return myContextState.getAssemblyManager();
+            return myContextState.getGroupManager();
         }
         finally
         {
@@ -294,11 +298,32 @@ implements Context
         }
     }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final ContextImpl context = (ContextImpl) o;
+        return Objects.equals(myContextId, context.myContextId);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(myContextId);
+    }
+
     private class DefaultContext
     implements Context
     {
         private final EventManager myEventManager;
-        private final AssemblyManager myAssemblyManager;
+        private final GroupManager myGroupManager;
         private final EntityManager myEntityManager;
         private final ComponentManager myComponentManager;
         private final BindingManager myBindingManager;
@@ -306,13 +331,13 @@ implements Context
 
         private final Map<Key, Object> myMap;
 
-        public DefaultContext(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, AssemblyManager assemblyManager, BindingManager bindingManager)
+        public DefaultContext(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, GroupManager groupManager, BindingManager bindingManager)
         {
             myEntityManager = entityManager;
             myComponentManager = componentManager;
             myTemplateManager = templateManager;
             myEventManager = eventManager;
-            myAssemblyManager = assemblyManager;
+            myGroupManager = groupManager;
             myBindingManager = bindingManager;
 
             myMap = new HashMap<>();
@@ -444,10 +469,9 @@ implements Context
             return myEventManager;
         }
 
-        @Override
-        public AssemblyManager getAssemblyManager()
+        public GroupManager getGroupManager()
         {
-            return myAssemblyManager;
+            return myGroupManager;
         }
     }
 
@@ -551,10 +575,9 @@ implements Context
             throw new IllegalStateException("No EventManager available. Context is disposed!");
         }
 
-        @Override
-        public AssemblyManager getAssemblyManager()
+        public GroupManager getGroupManager()
         {
-            throw new IllegalStateException("No AssemblyManager available. Context is disposed!");
+            throw new IllegalStateException("No GroupManager available. Context is disposed!");
         }
     }
 

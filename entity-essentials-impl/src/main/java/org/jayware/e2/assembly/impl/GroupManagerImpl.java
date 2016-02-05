@@ -22,10 +22,10 @@
 package org.jayware.e2.assembly.impl;
 
 
-import org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent;
-import org.jayware.e2.assembly.api.AssemblyEvent.DeleteGroupEvent;
-import org.jayware.e2.assembly.api.AssemblyEvent.RemoveEntityFromGroupEvent;
-import org.jayware.e2.assembly.api.AssemblyManager;
+import org.jayware.e2.assembly.api.events.GroupEvent.CreateGroupEvent;
+import org.jayware.e2.assembly.api.events.GroupEvent.DeleteGroupEvent;
+import org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.RemoveEntityFromGroupEvent;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupNotFoundException;
 import org.jayware.e2.context.api.Context;
@@ -36,24 +36,21 @@ import org.jayware.e2.util.Key;
 import java.util.List;
 import java.util.UUID;
 
-import static org.jayware.e2.assembly.api.AssemblyEvent.AddEntityToGroupEvent;
-import static org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent.GroupNameParam;
-import static org.jayware.e2.assembly.api.AssemblyEvent.CreateGroupEvent.GroupPolicyParam;
-import static org.jayware.e2.assembly.api.AssemblyEvent.GroupEvent.GroupParam;
-import static org.jayware.e2.assembly.api.AssemblyEvent.GroupMembershipEvent.EntityRefParam;
-import static org.jayware.e2.assembly.api.Group.Policy.Manual;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.AddEntityToGroupEvent;
+import static org.jayware.e2.assembly.api.events.GroupEvent.CreateGroupEvent.GroupNameParam;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupParam;
+import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.EntityRefParam;
 import static org.jayware.e2.assembly.api.Preconditions.checkGroupNotNullAndValid;
-import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
+import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
 import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.util.Preconditions.checkStringNotEmpty;
-import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
-public class AssemblyManagerImpl
-implements AssemblyManager
+public class GroupManagerImpl
+implements GroupManager
 {
     private static final Key<GroupHub> GROUP_HUB = Key.createKey("org.jayware.e2.GroupHub");
 
@@ -87,8 +84,7 @@ implements AssemblyManager
             CreateGroupEvent.class,
             param(ContextParam, context),
             param(GroupParam, null),
-            param(GroupNameParam, name),
-            param(GroupPolicyParam, Manual)
+            param(GroupNameParam, name)
         );
 
         return getGroup(context, name);
@@ -138,6 +134,7 @@ implements AssemblyManager
     {
         checkRefNotNullAndValid(ref);
         checkGroupNotNullAndValid(group);
+        checkContextualsNotNullAndSameContext(ref, group);
 
         final Context context = ref.getContext();
         final EventManager eventManager = context.getEventManager();

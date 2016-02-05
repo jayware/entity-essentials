@@ -19,24 +19,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.assembly.api;
+package org.jayware.e2.assembly.api.events;
 
 
-import org.jayware.e2.entity.api.EntityRef;
-
-import java.util.List;
+import org.jayware.e2.event.api.EventType.RootEvent;
 
 
-public interface Group
-extends EntityRef, Iterable<EntityRef>
+public interface AssemblyEvent
+extends RootEvent
 {
-    String getName() throws InvalidGroupException;
 
-    void setName(String name) throws InvalidGroupException;
-
-    void add(EntityRef ref) throws InvalidGroupException;
-
-    void remove(EntityRef ref) throws InvalidGroupException;
-
-    List<EntityRef> members();
 }

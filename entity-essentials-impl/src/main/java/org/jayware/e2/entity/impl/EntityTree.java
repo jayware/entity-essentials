@@ -25,6 +25,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityEvent;
@@ -602,6 +603,18 @@ implements Disposable
         public Context getContext()
         {
             return myContext;
+        }
+
+        @Override
+        public boolean belongsTo(Context context)
+        {
+            return context != null && myContext.equals(context);
+        }
+
+        @Override
+        public boolean belongsTo(Contextual contextual)
+        {
+            return contextual != null && myContext.equals(contextual.getContext());
         }
 
         @Override

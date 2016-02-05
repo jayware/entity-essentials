@@ -22,7 +22,7 @@
 package org.jayware.e2.context.impl;
 
 
-import org.jayware.e2.assembly.api.AssemblyManager;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
@@ -44,9 +44,9 @@ extends ContextProvider
         final ComponentManager componentManager = ServiceLoader.load(ComponentManager.class).iterator().next();
         final TemplateManager templateManager = ServiceLoader.load(TemplateManager.class).iterator().next();
         final EventManager eventManager = ServiceLoader.load(EventManager.class).iterator().next();
-        final AssemblyManager assemblyManager = ServiceLoader.load(AssemblyManager.class).iterator().next();
+        final GroupManager groupManager = ServiceLoader.load(GroupManager.class).iterator().next();
         final BindingManager bindingManager = ServiceLoader.load(BindingManager.class).iterator().next();
 
-        return new ContextImpl(entityManager, componentManager, templateManager, eventManager, assemblyManager, bindingManager);
+        return new ContextImpl(entityManager, componentManager, templateManager, eventManager, groupManager, bindingManager);
     }
 }

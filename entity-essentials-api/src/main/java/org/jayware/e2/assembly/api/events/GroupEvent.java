@@ -19,26 +19,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.assembly.api;
+package org.jayware.e2.assembly.api.events;
 
-
-import org.jayware.e2.assembly.api.Group.Policy;
+import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.entity.api.EntityRef;
-import org.jayware.e2.event.api.EventType;
-import org.jayware.e2.event.api.EventType.RootEvent;
 
 
-public interface AssemblyEvent
-extends RootEvent
+public interface GroupEvent
+extends AssemblyEvent
 {
-    interface GroupEvent
-    extends AssemblyEvent
-    {
-        /**
-         * The {@link Group} which is subject of the event.
-         */
-        String GroupParam = "org.jayware.e2.event.param.Group";
-    }
+    /**
+     * The {@link Group} which is subject of the event.
+     */
+    String GroupParam = "org.jayware.e2.event.param.Group";
 
     interface CreateGroupEvent
     extends GroupEvent
@@ -47,11 +40,6 @@ extends RootEvent
          * The name ({@link String}) of the {@link Group} which is subject of the event.
          */
         String GroupNameParam = "org.jayware.e2.event.param.Group.name";
-
-        /**
-         * The {@link Policy} of the {@link Group} which is subject of the event.
-         */
-        String GroupPolicyParam = "org.jayware.e2.event.param.Group.policy";
     }
 
     interface GroupCreatedEvent extends GroupEvent {}
@@ -67,25 +55,27 @@ extends RootEvent
          * The {@link EntityRef} of the entity which is subject of the event.
          */
         String EntityRefParam = "org.jayware.e2.event.param.EntityRef";
-    }
 
-    interface AddEntityToGroupEvent extends GroupMembershipEvent
-    {
 
-    }
+        interface AddEntityToGroupEvent extends GroupMembershipEvent
+        {
 
-    interface EntityToGroupAddedEvent extends GroupMembershipEvent
-    {
+        }
 
-    }
+        interface EntityToGroupAddedEvent extends GroupMembershipEvent
+        {
 
-    interface RemoveEntityFromGroupEvent extends GroupMembershipEvent
-    {
+        }
 
-    }
+        interface RemoveEntityFromGroupEvent extends GroupMembershipEvent
+        {
 
-    interface EntityFromGroupRemovedEvent extends GroupMembershipEvent
-    {
+        }
+
+        interface EntityFromGroupRemovedEvent extends GroupMembershipEvent
+        {
+
+        }
 
     }
 }

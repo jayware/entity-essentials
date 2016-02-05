@@ -21,7 +21,7 @@
  */
 package org.jayware.e2.entity.api;
 
-import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.Contextual;
 
 
 /**
@@ -33,6 +33,7 @@ import org.jayware.e2.context.api.Context;
  * @since 1.0
  */
 public interface EntityRef
+extends Contextual
 {
     /**
      *
@@ -54,13 +55,6 @@ public interface EntityRef
      * @throws InvalidEntityRefException
      */
     EntityPath getPath() throws InvalidEntityRefException;
-
-    /**
-     * Returns the {@link Context} this {@link EntityRef} belongs to.
-     *
-     * @return this {@link EntityRef EntityRef's} {@link Context}.
-     */
-    Context getContext();
 
     /**
      * Returns whether this {@link EntityRef} is valid.

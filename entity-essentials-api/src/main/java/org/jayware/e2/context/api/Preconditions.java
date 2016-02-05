@@ -22,15 +22,12 @@
 package org.jayware.e2.context.api;
 
 
-import org.jayware.e2.entity.api.EntityRef;
-
-
 public class Preconditions
 {
     /**
      * Ensures that a {@link Context} passed as a parameter to the calling method is not null and not disposed.
      *
-     * @param context an {@link Context}
+     * @param context a {@link Context}
      *
      * @return the {@link Context} that was validated
      *
@@ -50,5 +47,61 @@ public class Preconditions
         }
 
         return context;
+    }
+
+    /**
+     * Ensures that the passed {@link Contextual}s <code>a</code> and <code>b</code> are not <code>null</code> and they
+     * belong to the same valid {@link Context}.
+     *
+     * @param a a {@link Contextual}
+     * @param b a {@link Contextual}
+     *
+     * @throws IllegalArgumentException if <code>a</code> or <code>b</code> are <code>null</code>.
+     * @throws IllegalStateException if either the {@link Context} of <code>a</code> or the {@link Context} of <code>b</code> is disposed.
+     * @throws IllegalContextException if <code>a</code> and <code>b</code> do not belong to the same {@link Context}.
+     */
+    public static void checkContextualsNotNullAndSameContext(Contextual a, Contextual b)
+    {
+        if (a == null || b == null)
+        {
+            throw new IllegalArgumentException();
+        }
+
+        if (!a.belongsTo(b))
+        {
+            throw new IllegalContextException();
+        }
+
+        if (a.getContext().isDisposed())
+        {
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Ensures that the passed {@link Contextual} and the passed {@link Context} are not <code>null</code> and
+     * the {@link Contextual} belongs to the specified {@link Context}.
+     *
+     * @param contextual a {@link Contextual}
+     * @param context a {@link Context}
+     *
+     * @return the {@link Contextual} that was validated
+     *
+     * @throws IllegalArgumentException if either the {@link Contextual} or the {@link Context} are <code>null</code>.
+     * @throws IllegalContextException if the {@link Contextual} does not belong to the specified {@link Context}.
+     */
+    public static <C extends Contextual> C checkContextualNotNullAndBelongsToContext(C contextual, Context context)
+    {
+        if (contextual == null || context == null)
+        {
+            throw new IllegalArgumentException();
+        }
+
+        if (!contextual.belongsTo(context))
+        {
+            throw new IllegalContextException();
+        }
+
+        return contextual;
     }
 }

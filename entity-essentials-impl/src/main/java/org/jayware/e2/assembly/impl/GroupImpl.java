@@ -21,19 +21,18 @@
  */
 package org.jayware.e2.assembly.impl;
 
-import org.jayware.e2.assembly.api.AssemblyManager;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.Group;
-import org.jayware.e2.assembly.api.InvalideGroupException;
+import org.jayware.e2.assembly.api.InvalidGroupException;
 import org.jayware.e2.assembly.api.components.GroupComponent;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.Contextual;
+import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import static java.util.Collections.unmodifiableList;
 
 
 public class GroupImpl
@@ -41,7 +40,7 @@ implements Group
 {
     private final EntityRef myRef;
     private final Context myContext;
-    private final AssemblyManager myAssemblyManager;
+    private final GroupManager myGroupManager;
     private final ComponentManager myComponentManager;
 
     private final GroupComponent myGroupComponent;
@@ -51,8 +50,20 @@ implements Group
         myRef = ref;
         myContext = myRef.getContext();
         myComponentManager = myContext.getComponentManager();
-        myAssemblyManager = myContext.getAssemblyManager();
+        myGroupManager = myContext.getGroupManager();
         myGroupComponent = myComponentManager.getComponent(myRef, GroupComponent.class);
+    }
+
+    @Override
+    public String getId()
+    {
+        return myRef.getId();
+    }
+
+    @Override
+    public EntityPath getPath()
+    {
+        return myRef.getPath();
     }
 
     @Override
@@ -61,9 +72,16 @@ implements Group
         return myRef.getContext();
     }
 
-    public EntityRef getRef()
+    @Override
+    public boolean belongsTo(Context context)
     {
-        return myRef;
+        return context != null && myContext.equals(context);
+    }
+
+    @Override
+    public boolean belongsTo(Contextual contextual)
+    {
+        return contextual != null && myContext.equals(contextual.getContext());
     }
 
     @Override
@@ -76,31 +94,36 @@ implements Group
     }
 
     @Override
-    public Policy getPolicy()
-    throws InvalideGroupException
+    public void setName(String name)
     {
         check();
 
-        myGroupComponent.pullFrom(myRef);
-        return myGroupComponent.getPolicy();
+        myGroupComponent.setName(name);
+        myGroupComponent.pushTo(myRef);
     }
 
     @Override
     public void add(EntityRef ref)
     {
-        myAssemblyManager.addEntityToGroup(ref, this);
+        check();
+
+        myGroupManager.addEntityToGroup(ref, this);
     }
 
     @Override
     public void remove(EntityRef ref)
     {
-        myAssemblyManager.removeEntityFromGroup(ref, this);
+        check();
+
+        myGroupManager.removeEntityFromGroup(ref, this);
     }
 
     @Override
     public List<EntityRef> members()
     {
-        return myAssemblyManager.getEntitiesOfGroup(this);
+        check();
+
+        return myGroupManager.getEntitiesOfGroup(this);
     }
 
     @Override
@@ -121,21 +144,33 @@ implements Group
         return !isValid();
     }
 
-    private void check()
+    @Override
+    public boolean equals(Object other)
+    {
+        return myRef.equals(other);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return myRef.hashCode();
+    }
+
+    protected void check()
     {
         if (myContext.isDisposed())
         {
-            throw new InvalideGroupException(this, "The context has been disposed!");
+            throw new InvalidGroupException(this, "The context has been disposed!");
         }
 
         if (myRef.isInvalid())
         {
-            throw new InvalideGroupException(this, "The corresponding entity has been deleted!");
+            throw new InvalidGroupException(this, "The corresponding entity has been deleted!");
         }
 
         if (!myComponentManager.hasComponent(myRef, GroupComponent.class))
         {
-            throw new InvalideGroupException(this, "The corresponding GroupComponent has been removed!");
+            throw new InvalidGroupException(this, "The corresponding GroupComponent has been removed!");
         }
     }
 }

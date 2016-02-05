@@ -21,7 +21,7 @@
  */
 package org.jayware.e2.context.api;
 
-import org.jayware.e2.assembly.api.AssemblyManager;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.entity.api.EntityManager;
@@ -270,11 +270,11 @@ public interface Context
     EventManager getEventManager() throws IllegalStateException;
 
     /**
-     * Returns the {@link AssemblyManager} instance of this <code>Context</code>.
+     * Returns the {@link GroupManager} instance of this <code>Context</code>.
      *
-     * @return this context's {@link AssemblyManager}.
+     * @return this context's {@link GroupManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    AssemblyManager getAssemblyManager() throws IllegalStateException;
+    GroupManager getGroupManager() throws IllegalStateException;
 }

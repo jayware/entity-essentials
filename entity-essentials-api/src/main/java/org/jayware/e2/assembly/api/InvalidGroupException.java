@@ -22,15 +22,20 @@
 package org.jayware.e2.assembly.api;
 
 
-public class InvalideGroupException
+public class InvalidGroupException
 extends RuntimeException
 {
-    public InvalideGroupException(Group group, String message)
+    public InvalidGroupException(Group group)
+    {
+        this(group, "");
+    }
+
+    public InvalidGroupException(Group group, String message)
     {
         super(message);
     }
 
-    public InvalideGroupException(Group group, String message, Throwable cause)
+    public InvalidGroupException(Group group, String message, Throwable cause)
     {
         super(message, cause);
     }
