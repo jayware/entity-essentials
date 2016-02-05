@@ -3,38 +3,48 @@
 </p>
 <p>
     <h1>Entity Essentials - E<sup>2</sup></h1>
-    <table>
-        <thead>
-            <tr>
-                <th align="center" colspan="2">master</th>
-                <th align="center" colspan="2">development</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td align="center">
-                    <a href="https://travis-ci.org/jayware/entity-essentials">
-                        <img src="https://img.shields.io/travis/jayware/entity-essentials/master.svg?style=flat-square" alt="Build Status">
-                    </a>
-                </td>
-                <td align="center">
-                    <a href="https://coveralls.io/github/jayware/entity-essentials?branch=master">
-                        <img src="https://img.shields.io/coveralls/jayware/entity-essentials/master.svg?style=flat-square" alt="Coverage Status" />
-                    </a>
-                </td>
-                <td align="center">
-                    <a href="https://travis-ci.org/jayware/entity-essentials">
-                        <img src="https://img.shields.io/travis/jayware/entity-essentials/development.svg?style=flat-square" alt="Build Status">
-                    </a>
-                </td>
-                <td align="center">
-                    <a href="https://coveralls.io/github/jayware/entity-essentials?branch=master">
-                        <img src="https://img.shields.io/coveralls/jayware/entity-essentials/development.svg?style=flat-square" alt="Coverage Status" />
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<table>
+    <thead>
+        <tr>
+            <th align="center" colspan="3">master</th>
+            <th align="center" colspan="3">development</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td align="center">
+                <a href="https://travis-ci.org/jayware/entity-essentials">
+                    <img src="https://img.shields.io/travis/jayware/entity-essentials/master.svg?style=flat-square" alt="Build Status">
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://coveralls.io/github/jayware/entity-essentials?branch=master">
+                    <img src="https://img.shields.io/coveralls/jayware/entity-essentials/master.svg?style=flat-square" alt="Coverage Status" />
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://www.versioneye.com/user/projects/56b464390a0ff50035ba7e9f?child=summary">
+                    <img src="https://www.versioneye.com/user/projects/56b464390a0ff50035ba7e9f/badge.svg?style=flat" alt="Dependency Status" />
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://travis-ci.org/jayware/entity-essentials">
+                    <img src="https://img.shields.io/travis/jayware/entity-essentials/development.svg?style=flat-square" alt="Build Status">
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://coveralls.io/github/jayware/entity-essentials?branch=master">
+                    <img src="https://img.shields.io/coveralls/jayware/entity-essentials/development.svg?style=flat-square" alt="Coverage Status" />
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://www.versioneye.com/user/projects/56b465e30a0ff5002c85efe0?child=summary">
+                    <img src="https://www.versioneye.com/user/projects/56b465e30a0ff5002c85efe0/badge.svg?style=flat" alt="Dependency Status" />
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
 </p>
 
 ## Description
