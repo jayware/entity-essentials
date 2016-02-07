@@ -294,10 +294,7 @@ implements Disposable
                     myDispatchQueue.put(dispatch);
                     dispatch.await();
                 }
-                catch (InterruptedException e)
-                {
-                    log.warn("Interrupted while waiting for send!", e);
-                }
+                catch (InterruptedException ignored) {}
             }
             else
             {
@@ -313,10 +310,7 @@ implements Disposable
             {
                 myDispatchQueue.put(dispatch);
             }
-            catch (InterruptedException e)
-            {
-                log.warn("Interrupted while waiting for post!", e);
-            }
+            catch (InterruptedException ignored) {}
         }
 
         public void shutdown()
@@ -328,10 +322,7 @@ implements Disposable
             {
                 myThread.join();
             }
-            catch (InterruptedException e)
-            {
-                log.warn("Interrupted while waiting for shutdown!", e);
-            }
+            catch (InterruptedException ignored) {}
         }
 
         @Override
@@ -344,10 +335,7 @@ implements Disposable
                 {
                     execute(myDispatchQueue.take());
                 }
-                catch (InterruptedException e)
-                {
-                    log.warn("Interrupted while waiting for take!", e);
-                }
+                catch (InterruptedException ignored) {}
                 catch (Exception e)
                 {
                     log.error("Failed to dispatch event!", e);
@@ -451,10 +439,7 @@ implements Disposable
             {
                 isDispatched.await();
             }
-            catch (InterruptedException e)
-            {
-                log.warn("Interrupted while waiting for dispatch!", e);
-            }
+            catch (InterruptedException ignored) {}
         }
     }
 }
