@@ -22,16 +22,8 @@
 package org.jayware.e2.context.impl;
 
 
-import org.jayware.e2.assembly.api.GroupManager;
-import org.jayware.e2.binding.api.BindingManager;
-import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
-import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.template.api.TemplateManager;
-
-import java.util.ServiceLoader;
 
 
 public class ContextProviderImpl
@@ -40,13 +32,6 @@ extends ContextProvider
     @Override
     public Context createContext()
     {
-        final EntityManager entityManager = ServiceLoader.load(EntityManager.class).iterator().next();
-        final ComponentManager componentManager = ServiceLoader.load(ComponentManager.class).iterator().next();
-        final TemplateManager templateManager = ServiceLoader.load(TemplateManager.class).iterator().next();
-        final EventManager eventManager = ServiceLoader.load(EventManager.class).iterator().next();
-        final GroupManager groupManager = ServiceLoader.load(GroupManager.class).iterator().next();
-        final BindingManager bindingManager = ServiceLoader.load(BindingManager.class).iterator().next();
-
-        return new ContextImpl(entityManager, componentManager, templateManager, eventManager, groupManager, bindingManager);
+        return new ContextImpl(new DefaultServiceProviderImpl());
     }
 }

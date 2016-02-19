@@ -26,10 +26,12 @@ import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Disposable;
+import org.jayware.e2.context.api.ServiceProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
+import org.omg.CORBA.COMM_FAILURE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,10 +55,10 @@ implements Context
     private final Lock myReadLock = myLock.readLock();
     private final Lock myWriteLock = myLock.writeLock();
 
-    public ContextImpl(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, GroupManager groupManager, BindingManager bindingManager)
+    public ContextImpl(ServiceProvider serviceProvider)
     {
         myContextId = UUID.randomUUID();
-        myContextState = new DefaultContext(entityManager, componentManager, templateManager, eventManager, groupManager, bindingManager);
+        myContextState = new DefaultContext(serviceProvider);
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
     }
 
@@ -322,24 +324,13 @@ implements Context
     private class DefaultContext
     implements Context
     {
-        private final EventManager myEventManager;
-        private final GroupManager myGroupManager;
-        private final EntityManager myEntityManager;
-        private final ComponentManager myComponentManager;
-        private final BindingManager myBindingManager;
-        private final TemplateManager myTemplateManager;
+        private final ServiceProvider myServiceProvider;
 
         private final Map<Key, Object> myMap;
 
-        public DefaultContext(EntityManager entityManager, ComponentManager componentManager, TemplateManager templateManager, EventManager eventManager, GroupManager groupManager, BindingManager bindingManager)
+        public DefaultContext(ServiceProvider serviceProvider)
         {
-            myEntityManager = entityManager;
-            myComponentManager = componentManager;
-            myTemplateManager = templateManager;
-            myEventManager = eventManager;
-            myGroupManager = groupManager;
-            myBindingManager = bindingManager;
-
+            myServiceProvider = serviceProvider;
             myMap = new HashMap<>();
         }
 
@@ -430,48 +421,48 @@ implements Context
         @Override
         public <S> S getService(Class<? extends S> service)
         {
-            throw new UnsupportedOperationException("DefaultContext.getService");
+            return myServiceProvider.getService(service);
         }
 
         @Override
         public <S> S findService(Class<? extends S> service)
         {
-            throw new UnsupportedOperationException("DefaultContext.findService");
+            return myServiceProvider.findService(service);
         }
 
         @Override
         public EntityManager getEntityManager()
         {
-            return myEntityManager;
+            return getService(EntityManager.class);
         }
 
         @Override
         public ComponentManager getComponentManager()
         {
-            return myComponentManager;
+            return getService(ComponentManager.class);
         }
 
         @Override
         public BindingManager getBindingManager()
         {
-            return myBindingManager;
+            return getService(BindingManager.class);
         }
 
         @Override
         public TemplateManager getTemplateManager()
         {
-            return myTemplateManager;
+            return getService(TemplateManager.class);
         }
 
         @Override
         public EventManager getEventManager()
         {
-            return myEventManager;
+            return getService(EventManager.class);
         }
 
         public GroupManager getGroupManager()
         {
-            return myGroupManager;
+            return getService(GroupManager.class);
         }
     }
 

@@ -202,14 +202,16 @@ public interface Context
      * Returns the service which offers the interface denoted by the specified {@link Class}.
      * <p>
      * <b>Note:</b> In contrast to {@link Context#findService(Class)}, this operation throws
-     * a {@link ServiceNotFoundException} if a suitable service could not be found.
+     * a {@link ServiceUnavailableException} if a suitable service could not be found.
      *
      * @param service a {@link Class} representing the service's interface.
      * @param <S> the type of the service.
      *
      * @return a service instance, never <code>null</code>.
+     *
+     * @throws ServiceUnavailableException if no suitable service could be found.
      */
-    <S> S getService(Class<? extends S> service);
+    <S> S getService(Class<? extends S> service) throws ServiceUnavailableException;
 
     /**
      * Returns the service which offers the interface denoted by the specified {@link Class}.
@@ -225,56 +227,74 @@ public interface Context
     <S> S findService(Class<? extends S> service);
 
     /**
+     * @deprecated in favour of {@link Context#getService(Class)}
+     * <p>
      * Returns the {@link EntityManager} instance of this <code>Context</code>.
      *
      * @return this context's {@link EntityManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
+    @Deprecated
     EntityManager getEntityManager() throws IllegalStateException;
 
     /**
+     * @deprecated in favour of {@link Context#getService(Class)}
+     * <p>
      * Returns the {@link ComponentManager} instance of this <code>Context</code>.
      *
      * @return this context's {@link ComponentManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
+    @Deprecated
     ComponentManager getComponentManager() throws IllegalStateException;
 
     /**
+     * @deprecated in favour of {@link Context#getService(Class)}
+     * <p>
      * Returns the {@link BindingManager} instance of this <code>Context</code>.
      *
      * @return this context's {@link BindingManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
+    @Deprecated
     BindingManager getBindingManager() throws IllegalStateException;
 
     /**
+     * @deprecated in favour of {@link Context#getService(Class)}
+     * <p>
      * Returns the {@link TemplateManager} instance of this <code>Context</code>.
      *
      * @return this context's {@link TemplateManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
+    @Deprecated
     TemplateManager getTemplateManager() throws IllegalStateException;
 
     /**
+     * @deprecated in favour of {@link Context#getService(Class)}
+     * <p>
      * Returns the {@link EventManager} instance of this <code>Context</code>.
      *
      * @return this context's {@link EventManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
+    @Deprecated
     EventManager getEventManager() throws IllegalStateException;
 
     /**
+     * @deprecated in favour of {@link Context#getService(Class)}
+     * <p>
      * Returns the {@link GroupManager} instance of this <code>Context</code>.
      *
      * @return this context's {@link GroupManager}.
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
+    @Deprecated
     GroupManager getGroupManager() throws IllegalStateException;
 }

@@ -25,6 +25,7 @@ package org.jayware.e2.context.impl;
 import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.context.api.ServiceProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
@@ -49,12 +50,14 @@ public class ContextImplTest
 {
     private ContextImpl testee;
 
-    @Mock private EntityManager entityManager;
-    @Mock private ComponentManager componentManager;
-    @Mock private BindingManager bindingManager;
-    @Mock private TemplateManager templateManager;
-    @Mock private EventManager eventManager;
-    @Mock private GroupManager myGroupManager;
+    private @Mock ServiceProvider serviceProvider;
+
+    private @Mock EntityManager entityManager;
+    private @Mock ComponentManager componentManager;
+    private @Mock BindingManager bindingManager;
+    private @Mock TemplateManager templateManager;
+    private @Mock EventManager eventManager;
+    private @Mock GroupManager myGroupManager;
 
     final Key<Object> keyA = createKey("foo");
     final Key<Object> keyB = createKey("bar");
@@ -64,7 +67,14 @@ public class ContextImplTest
     {
         initMocks(this);
 
-        testee = new ContextImpl(entityManager, componentManager, templateManager, eventManager, myGroupManager, bindingManager);
+        when(serviceProvider.getService(EntityManager.class)).thenReturn(entityManager);
+        when(serviceProvider.getService(ComponentManager.class)).thenReturn(componentManager);
+        when(serviceProvider.getService(BindingManager.class)).thenReturn(bindingManager);
+        when(serviceProvider.getService(TemplateManager.class)).thenReturn(templateManager);
+        when(serviceProvider.getService(EventManager.class)).thenReturn(eventManager);
+        when(serviceProvider.getService(GroupManager.class)).thenReturn(myGroupManager);
+
+        testee = new ContextImpl(serviceProvider);
     }
 
     @Test

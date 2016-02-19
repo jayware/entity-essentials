@@ -25,15 +25,18 @@ package org.jayware.e2.context.api;
 import static java.lang.String.valueOf;
 
 
-public class ServiceNotFoundException
+/**
+ * The <code>ServiceUnavailableException</code> is thrown when no service could not be found which suits the appropriate interface.
+ */
+public class ServiceUnavailableException
 extends RuntimeException
 {
-    public ServiceNotFoundException(Class<?> service)
+    public ServiceUnavailableException(Class<?> service)
     {
         super("No service found for: " + valueOf(service));
     }
 
-    public ServiceNotFoundException(Class<?> service, Throwable cause)
+    public ServiceUnavailableException(Class<?> service, Throwable cause)
     {
         super("No service found for: " + valueOf(service), cause);
     }
