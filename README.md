@@ -33,7 +33,7 @@
                 </a>
             </td>
             <td align="center">
-                <a href="https://coveralls.io/github/jayware/entity-essentials?branch=master">
+                <a href="https://coveralls.io/github/jayware/entity-essentials?branch=development">
                     <img src="https://img.shields.io/coveralls/jayware/entity-essentials/development.svg?style=flat-square" alt="Coverage Status" />
                 </a>
             </td>
