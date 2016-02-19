@@ -22,8 +22,8 @@
 package org.jayware.e2.assembly.impl;
 
 
-import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.Group;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.InvalidGroupException;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
@@ -64,14 +64,12 @@ public class GroupManagerTest
 
     @AfterMethod
     public void tearDown()
-    throws Exception
     {
         testContext.dispose();
     }
 
     @Test
     public void testCreateGroup()
-    throws Exception
     {
         assertThat(testee.createGroup(testContext)).isNotNull();
     }
