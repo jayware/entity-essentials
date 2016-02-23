@@ -30,6 +30,8 @@ import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
+import org.jayware.e2.event.api.Query;
+import org.jayware.e2.event.api.Result;
 import org.jayware.e2.event.api.SanityCheck;
 import org.jayware.e2.event.api.SanityCheckFailedException;
 import org.jayware.e2.event.api.SanityChecker;
@@ -79,6 +81,12 @@ implements EventManager
     public Event createEvent(Class<? extends EventType.RootEvent> type, Parameters parameters)
     {
         return new EventImpl(type, parameters);
+    }
+
+    @Override
+    public Query createQuery(Class<? extends EventType.RootEvent> type, Parameter... parameters)
+    {
+        return new QueryImpl(type, parameters);
     }
 
     @Override
@@ -177,6 +185,18 @@ implements EventManager
         final Context context = checkNotNull(event.getParameter(ContextParam));
         final EventBus eventBus = getOrCreateEventBus(context);
         eventBus.post(event);
+    }
+
+    @Override
+    public Result query(Query query)
+    {
+        checkNotNull(query);
+        sanityCheck(query);
+
+        final Context context = checkNotNull(query.getParameter(ContextParam));
+        final EventBus eventBus = getOrCreateEventBus(context);
+
+        return eventBus.query(query);
     }
 
     private EventBus getOrCreateEventBus(Context context)

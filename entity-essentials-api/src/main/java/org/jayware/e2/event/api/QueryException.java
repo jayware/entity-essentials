@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,57 +19,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.util;
+package org.jayware.e2.event.api;
 
 
-import java.util.Objects;
-
-
-/**
- * A <code>Key</code>
- *
- * @param <V> the corresponding value type.
- *
- * @since 1.0
- */
-public class Key<V>
+public class QueryException
+extends RuntimeException
 {
-    private final String myKey;
-
-    private Key(String key)
+    public QueryException(Query query)
     {
-        myKey = key;
+        this("", query);
     }
 
-    public static <V> Key<V> createKey(String key)
+    public QueryException(String message, Query query)
     {
-        return new Key(key);
+        super(message);
     }
 
-    @Override
-    public boolean equals(Object o)
+    public QueryException(Throwable cause, Query query)
     {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
-        final Key<?> key = (Key<?>) o;
-        return Objects.equals(myKey, key.myKey);
+        super(cause);
     }
 
-    @Override
-    public int hashCode()
+    public QueryException(String message, Query query, Throwable cause)
     {
-        return Objects.hash(myKey);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Key{ " + myKey + " }";
+        super(message, cause);
     }
 }

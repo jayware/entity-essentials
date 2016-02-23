@@ -28,14 +28,19 @@ import org.jayware.e2.event.api.EventDispatchException;
 import org.jayware.e2.event.api.EventDispatcher;
 import org.jayware.e2.event.api.EventDispatcherFactory;
 import org.jayware.e2.event.api.EventFilter;
+import org.jayware.e2.event.api.EventType;
+import org.jayware.e2.event.api.Query;
+import org.jayware.e2.event.api.QueryException;
+import org.jayware.e2.event.api.ReadOnlyParameters;
+import org.jayware.e2.event.api.Result;
 import org.jayware.e2.event.api.Subscription;
+import org.jayware.e2.util.Key;
 import org.jayware.e2.util.ReferenceType;
+import org.jayware.e2.util.StateLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,8 +48,10 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -54,6 +61,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntUnaryOperator;
 
 import static java.lang.Thread.currentThread;
+import static org.jayware.e2.event.api.Result.Status.Failed;
+import static org.jayware.e2.event.api.Result.Status.Running;
+import static org.jayware.e2.event.api.Result.Status.Success;
 
 
 public class EventBus
@@ -153,6 +163,11 @@ implements Disposable
         myWorkerPool.post(event);
     }
 
+    public Result query(Query query)
+    {
+        return myWorkerPool.query(query);
+    }
+
     @Override
     public void dispose(Context context)
     {
@@ -182,9 +197,17 @@ implements Disposable
         }
     }
 
+    private QueryDispatch createQueryDispatch(Query query)
+    {
+        updateLastSubscriptionCollection();
+
+        return new QueryDispatch(query, myLastSubscriptionCollection.get());
+    }
+
     private EventDispatch createEventDispatch(Event event)
     {
         updateLastSubscriptionCollection();
+
         return new EventDispatch(event, myLastSubscriptionCollection.get());
     }
 
@@ -234,6 +257,11 @@ implements Disposable
         public void post(Event event)
         {
             nextWorker().post(event);
+        }
+
+        public Result query(Query query)
+        {
+            return nextWorker().query(query);
         }
 
         public void shutdown()
@@ -298,7 +326,7 @@ implements Disposable
             }
             else
             {
-                execute(dispatch);
+                dispatch(dispatch);
             }
         }
 
@@ -311,6 +339,21 @@ implements Disposable
                 myDispatchQueue.put(dispatch);
             }
             catch (InterruptedException ignored) {}
+        }
+
+        public Result query(Query query)
+        {
+            final QueryDispatch dispatch = createQueryDispatch(query);
+
+            try
+            {
+                myDispatchQueue.put(dispatch);
+                return dispatch.getResult();
+            }
+            catch (InterruptedException e)
+            {
+                throw new QueryException("Failed to dispatch query!", query, e);
+            }
         }
 
         public void shutdown()
@@ -333,7 +376,7 @@ implements Disposable
             {
                 try
                 {
-                    execute(myDispatchQueue.take());
+                    dispatch(myDispatchQueue.take());
                 }
                 catch (InterruptedException ignored) {}
                 catch (Exception e)
@@ -343,7 +386,7 @@ implements Disposable
             }
         }
 
-        private void execute(EventDispatch dispatch)
+        private void dispatch(EventDispatch dispatch)
         {
             final Event event = dispatch.getEvent();
             myExecutionStack.push(dispatch);
@@ -361,40 +404,10 @@ implements Disposable
                     );
                 }
 
-                for (Subscription subscription : dispatch.getSubscriptions())
-                {
-                    final EventFilter[] filters = subscription.getFilters();
-                    final EventDispatcher eventDispatcher = subscription.getEventDispatcher();
-                    boolean doDispatch = true;
-
-                    if (eventDispatcher.accepts(event.getType()))
-                    {
-                        for (EventFilter filter : filters)
-                        {
-                            if (!filter.accepts(myContext, event))
-                            {
-                                doDispatch = false;
-                                break;
-                            }
-                        }
-
-                        if (doDispatch)
-                        {
-                            try
-                            {
-                                eventDispatcher.dispatch(event, subscription.getSubscriber());
-                            }
-                            catch (Exception exception)
-                            {
-                                log.error("", new EventDispatchException("Failed to dispatch event!", event, exception));
-                            }
-                        }
-                    }
-                }
+                dispatch.execute();
             }
             finally
             {
-                dispatch.setDispatched();
                 myExecutionStack.pop();
             }
         }
@@ -402,20 +415,15 @@ implements Disposable
 
     private class EventDispatch
     {
-        private final Event myEvent;
-        private final Collection<Subscription> mySubscriptions;
-        private final CountDownLatch isDispatched;
+        protected final Event myEvent;
+        protected final Collection<Subscription> mySubscriptions;
+        protected final CountDownLatch isDispatched;
 
         private EventDispatch(Event event, Collection<Subscription> subscriptions)
         {
             myEvent = event;
             mySubscriptions = subscriptions;
             isDispatched = new CountDownLatch(1);
-        }
-
-        public void setDispatched()
-        {
-            isDispatched.countDown();
         }
 
         public boolean isDispatched()
@@ -440,6 +448,282 @@ implements Disposable
                 isDispatched.await();
             }
             catch (InterruptedException ignored) {}
+        }
+
+        public void execute()
+        {
+            try
+            {
+                for (Subscription subscription : mySubscriptions)
+                {
+                    final EventFilter[] filters = subscription.getFilters();
+                    final EventDispatcher eventDispatcher = subscription.getEventDispatcher();
+                    boolean doDispatch = true;
+
+                    if (eventDispatcher.accepts(myEvent.getType()))
+                    {
+                        for (EventFilter filter : filters)
+                        {
+                            if (!filter.accepts(myContext, myEvent))
+                            {
+                                doDispatch = false;
+                                break;
+                            }
+                        }
+
+                        if (doDispatch)
+                        {
+                            try
+                            {
+                                eventDispatcher.dispatch(myEvent, subscription.getSubscriber());
+                            }
+                            catch (Exception exception)
+                            {
+                                log.error("", new EventDispatchException("Failed to dispatch event!", myEvent, exception));
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                isDispatched.countDown();
+            }
+        }
+    }
+
+    private class QueryDispatch
+    extends EventDispatch
+    {
+        private final QueryWrapper myQuery;
+
+        public QueryDispatch(Query query, Collection<Subscription> subscriptions)
+        {
+            super(new QueryWrapper(query, new QueryResult(query)), subscriptions);
+            myQuery = (QueryWrapper) myEvent;
+        }
+
+        public Query getQuery()
+        {
+            return myQuery;
+        }
+
+        public Result getResult()
+        {
+            return myQuery.getResult();
+        }
+
+        @Override
+        public void execute()
+        {
+            final QueryResult result = myQuery.getResult();
+            result.signal(Running);
+
+            try
+            {
+                boolean queryFailed = false;
+
+                for (Subscription subscription : mySubscriptions)
+                {
+                    final EventFilter[] filters = subscription.getFilters();
+                    final EventDispatcher eventDispatcher = subscription.getEventDispatcher();
+                    boolean doDispatch = true;
+
+                    if (eventDispatcher.accepts(myQuery.getType()))
+                    {
+                        for (EventFilter filter : filters)
+                        {
+                            if (!filter.accepts(myContext, myQuery))
+                            {
+                                doDispatch = false;
+                                break;
+                            }
+                        }
+
+                        if (doDispatch)
+                        {
+                            try
+                            {
+                                eventDispatcher.dispatch(myQuery, subscription.getSubscriber());
+                            }
+                            catch (Exception exception)
+                            {
+                                log.error("", new EventDispatchException("Failed to dispatch event!", myQuery, exception));
+                                queryFailed = true;
+                            }
+                        }
+                    }
+                }
+
+                if (queryFailed)
+                {
+                    result.signal(Failed);
+                }
+                else
+                {
+                    result.signal(Success);
+                }
+            }
+            finally
+            {
+                isDispatched.countDown();
+            }
+        }
+    }
+
+    private static class QueryWrapper
+    implements Query
+    {
+        private final Query myQuery;
+        private final QueryResult myResult;
+
+        private QueryWrapper(Query query, QueryResult result)
+        {
+            myQuery = query;
+            myResult = result;
+        }
+
+        @Override
+        public <V> void result(String name, V value)
+        {
+            myResult.put(name, value);
+        }
+
+        @Override
+        public <V> void result(Key<V> key, V value)
+        {
+            myResult.put(key, value);
+        }
+
+        @Override
+        public Class<? extends EventType> getType()
+        {
+            return myQuery.getType();
+        }
+
+        @Override
+        public boolean matches(Class<? extends EventType> type)
+        {
+            return myQuery.matches(type);
+        }
+
+        @Override
+        public <V> V getParameter(String parameter)
+        {
+            return myQuery.getParameter(parameter);
+        }
+
+        @Override
+        public boolean hasParameter(String parameter)
+        {
+            return myQuery.hasParameter(parameter);
+        }
+
+        @Override
+        public ReadOnlyParameters getParameters()
+        {
+            return myQuery.getParameters();
+        }
+
+        @Override
+        public boolean isQuery()
+        {
+            return true;
+        }
+
+        public QueryResult getResult()
+        {
+            return myResult;
+        }
+    }
+
+    private static class QueryResult
+    implements Result
+    {
+        private final Query myQuery;
+
+        private final StateLatch<Status> myStateLatch;
+
+        private final Map<Object, Object> myResultMap;
+
+        private QueryResult(Query query)
+        {
+            myQuery = query;
+
+            myStateLatch = new StateLatch<>(Status.class);
+            myResultMap = new ConcurrentHashMap<>();
+        }
+
+        @Override
+        public Query getQuery()
+        {
+            return myQuery;
+        }
+
+        @Override
+        public Result await(Status status)
+        throws InterruptedException
+        {
+            myStateLatch.await(status);
+            return this;
+        }
+
+        @Override
+        public Result await(Status status, long time, TimeUnit unit)
+        throws InterruptedException
+        {
+            myStateLatch.await(status, time, unit);
+            return this;
+        }
+
+        @Override
+        public boolean hasStatus(Status status)
+        {
+            return myStateLatch.hasState(status);
+        }
+
+        @Override
+        public boolean hasResult()
+        {
+            return myStateLatch.hasState(Success);
+        }
+
+        public void put(Object key, Object value)
+        {
+            myResultMap.put(key, value);
+        }
+
+        @Override
+        public <V> V get(String name)
+        throws InterruptedException
+        {
+            await(Success);
+            return (V) myResultMap.get(name);
+        }
+
+        @Override
+        public <V> V get(Key<V> key)
+        throws InterruptedException
+        {
+            await(Success);
+            return (V) myResultMap.get(key);
+        }
+
+        @Override
+        public boolean has(String name)
+        {
+            return myResultMap.containsKey(name);
+        }
+
+        @Override
+        public boolean has(Key<?> key)
+        {
+            return myResultMap.containsKey(key);
+        }
+
+        public void signal(Status status)
+        {
+            myStateLatch.signal(status);
         }
     }
 }

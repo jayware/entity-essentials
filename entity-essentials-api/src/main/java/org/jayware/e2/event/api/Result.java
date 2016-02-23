@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,57 +19,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.util;
+package org.jayware.e2.event.api;
+
+import org.jayware.e2.util.Key;
+
+import java.util.concurrent.TimeUnit;
 
 
-import java.util.Objects;
-
-
-/**
- * A <code>Key</code>
- *
- * @param <V> the corresponding value type.
- *
- * @since 1.0
- */
-public class Key<V>
+public interface Result
 {
-    private final String myKey;
-
-    private Key(String key)
+    enum Status
     {
-        myKey = key;
+        Standby,
+        Running,
+        Success,
+        Failed
     }
 
-    public static <V> Key<V> createKey(String key)
-    {
-        return new Key(key);
-    }
+    Query getQuery();
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
-        final Key<?> key = (Key<?>) o;
-        return Objects.equals(myKey, key.myKey);
-    }
+    Result await(Status status) throws InterruptedException;
 
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(myKey);
-    }
+    Result await(Status status, long time, TimeUnit unit) throws InterruptedException;
 
-    @Override
-    public String toString()
-    {
-        return "Key{ " + myKey + " }";
-    }
+    boolean hasStatus(Status status);
+
+    boolean hasResult();
+
+    <V> V get(String name) throws InterruptedException;
+
+    <V> V get(Key<V> key) throws InterruptedException;
+
+    boolean has(String name);
+
+    boolean has(Key<?> key);
 }

@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -24,60 +24,71 @@ package org.jayware.e2.event.impl;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
+import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.ReadOnlyParameters;
+import org.jayware.e2.util.Key;
 
-import static org.jayware.e2.event.api.Parameters.Parameter;
 
-
-public class EventImpl
-implements Event
+public class QueryImpl
+implements Query
 {
-    private final Class<? extends EventType> myType;
-    private final Parameters myParameters;
+    private final Event myEvent;
 
-    public EventImpl(Class<? extends EventType> type, Parameters parameters)
+    public QueryImpl(Class<? extends EventType> type, Parameters parameters)
     {
-        myType = type;
-        myParameters = new Parameters(parameters);
+        myEvent = new EventImpl(type, parameters);
     }
 
-    public EventImpl(Class<? extends EventType> type, Parameter[] parameters)
+    public QueryImpl(Class<? extends EventType> type, Parameters.Parameter[] parameters)
     {
-        myType = type;
-        myParameters = new Parameters(parameters);
+        myEvent = new EventImpl(type, parameters);
+    }
+
+    @Override
+    public <V> void result(String name, V value)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <V> void result(Key<V> key, V value)
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Class<? extends EventType> getType()
     {
-        return myType;
+        return myEvent.getType();
     }
 
     @Override
     public boolean matches(Class<? extends EventType> type)
     {
-        return type.isAssignableFrom(myType);
+        return myEvent.matches(type);
     }
 
+    @Override
     public <V> V getParameter(String parameter)
     {
-        return (V) myParameters.get(parameter);
+        return myEvent.getParameter(parameter);
     }
 
     @Override
     public boolean hasParameter(String parameter)
     {
-        return myParameters.contains(parameter);
+        return myEvent.hasParameter(parameter);
     }
 
+    @Override
     public ReadOnlyParameters getParameters()
     {
-        return myParameters;
+        return myEvent.getParameters();
     }
 
     @Override
     public boolean isQuery()
     {
-        return false;
+        return true;
     }
 }

@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,57 +19,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.util;
+package org.jayware.e2.event.api;
 
 
-import java.util.Objects;
+import org.jayware.e2.util.Key;
 
 
 /**
- * A <code>Key</code>
  *
- * @param <V> the corresponding value type.
- *
- * @since 1.0
  */
-public class Key<V>
+public interface Query
+extends Event
 {
-    private final String myKey;
+    <V> void result(String name, V value);
 
-    private Key(String key)
-    {
-        myKey = key;
-    }
-
-    public static <V> Key<V> createKey(String key)
-    {
-        return new Key(key);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
-        final Key<?> key = (Key<?>) o;
-        return Objects.equals(myKey, key.myKey);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(myKey);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Key{ " + myKey + " }";
-    }
+    <V> void result(Key<V> key, V value);
 }

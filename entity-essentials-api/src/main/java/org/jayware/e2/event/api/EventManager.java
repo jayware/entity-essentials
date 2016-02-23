@@ -69,6 +69,8 @@ public interface EventManager
      */
     Event createEvent(Class<? extends RootEvent> type, Parameters parameters);
 
+    Query createQuery(Class<? extends RootEvent> type, Parameter... parameters);
+
     /**
      * Subscribes the specified {@link Object} for {@link Event Events} occurring in the specified {@link Context}.
      * <p>
@@ -260,4 +262,10 @@ public interface EventManager
      */
     void post(Event event) throws SanityCheckFailedException;
 
+    /**
+     *
+     * @param query
+     * @return
+     */
+    Result query(Query query) throws SanityCheckFailedException;
 }

@@ -28,8 +28,6 @@ package org.jayware.e2.event.api;
  * @see EventManager
  * @see EventFilter
  * @see Handle
- *
- * @since 1.0
  */
 public interface Event
 {
@@ -42,4 +40,6 @@ public interface Event
     boolean hasParameter(String parameter);
 
     ReadOnlyParameters getParameters();
+
+    boolean isQuery();
 }
