@@ -39,6 +39,7 @@ import static org.jayware.e2.entity.api.EntityPath.path;
 
 public class GroupTest
 {
+    private static final String GROUP_NAME = "fubar";
     private Group testee;
 
     private Context testContext;
@@ -53,8 +54,8 @@ public class GroupTest
     public void setUp()
     {
         testContext = ContextProvider.getInstance().createContext();
-        testEntityManager = testContext.getEntityManager();
-        testComponentManager = testContext.getComponentManager();
+        testEntityManager = testContext.getService(EntityManager.class);
+        testComponentManager = testContext.getService(ComponentManager.class);
 
         testeeRef = testEntityManager.createEntity(testContext, path("/testee"));
         testComponentManager.addComponent(testeeRef, GroupComponent.class);
@@ -63,6 +64,27 @@ public class GroupTest
         testEntityB = testEntityManager.createEntity(testContext, path("/b"));
 
         testee = new GroupImpl(testeeRef);
+    }
+
+    @Test
+    public void test_name()
+    {
+        testee.setName(GROUP_NAME);
+        assertThat(testee.getName()).isEqualTo(GROUP_NAME);
+    }
+
+    @Test(expectedExceptions = InvalidGroupException.class)
+    public void test_getName_ThrowsInvalidGroupExceptionIfGroupIsInvalid()
+    {
+        testEntityManager.deleteEntity(testeeRef);
+        testee.getName();
+    }
+
+    @Test(expectedExceptions = InvalidGroupException.class)
+    public void test_setName_ThrowsInvalidGroupExceptionIfGroupIsInvalid()
+    {
+        testEntityManager.deleteEntity(testeeRef);
+        testee.setName("fubar");
     }
 
     @Test(expectedExceptions = InvalidGroupException.class)

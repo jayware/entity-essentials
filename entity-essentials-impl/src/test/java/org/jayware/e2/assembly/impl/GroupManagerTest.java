@@ -116,6 +116,21 @@ public class GroupManagerTest
         testee.createGroup(testContext, "");
     }
 
+    @Test
+    public void test_deleteGroup()
+    {
+        final Group group = testee.createGroup(testContext);
+        assertThat(group.isValid()).isTrue();
+        testee.deleteGroup(group);
+        assertThat(group.isValid()).isFalse();
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_deleteGroup_ThrowsIllegalArgumentExceptionIfNUllIsPassed()
+    {
+        testee.deleteGroup(null);
+    }
+
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_addEntityToGroup_ThrowsIllegalArgumentExceptionWhenPassedEntityRefIsNull()
     {

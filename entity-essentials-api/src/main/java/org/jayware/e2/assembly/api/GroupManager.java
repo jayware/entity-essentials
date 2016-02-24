@@ -30,7 +30,7 @@ import java.util.List;
 
 
 /**
- * The <code>GroupManager</code> provides operations to manage sets of {@link Entity Entities}.
+ * The <code>GroupManager</code> provides operations to manage {@link Group}s of {@link Entity Entities}.
  * <p>
  * The <code>GroupManager</code> is context-unaware. By default every {@link Context} offers an
  * <code>GroupManager</code> instance but any instance can be used.
