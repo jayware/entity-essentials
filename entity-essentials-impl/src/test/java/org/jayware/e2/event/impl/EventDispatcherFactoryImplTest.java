@@ -52,7 +52,7 @@ public class EventDispatcherFactoryImplTest
     }
 
     @Test
-    public void testCreateEventDispatcher_HappyFlow()
+    public void test_createEventDispatcher_HappyFlow()
     {
         final EventDispatcher dispatcher = testee.createEventDispatcher(testSubscriber.getClass());
 
@@ -63,7 +63,7 @@ public class EventDispatcherFactoryImplTest
     }
 
     @Test
-    public void testCreateEventDispatcher_FailsIfSubscriberIsNotAccessible()
+    public void test_createEventDispatcher_FailsIfSubscriberIsNotAccessible()
     {
         try
         {
@@ -78,7 +78,7 @@ public class EventDispatcherFactoryImplTest
     }
 
     @Test
-    public void testCreateEventDispatcher_FailsIfNoEventParameterIsSpecified()
+    public void test_createEventDispatcher_FailsIfNoEventParameterIsSpecified()
     {
         try
         {
@@ -99,7 +99,7 @@ public class EventDispatcherFactoryImplTest
     }
 
     @Test(expectedExceptions = IllegalHandlerException.class)
-    public void testCreateSubscription_FailsIfAnUnknownParameterIsSpecified()
+    public void test_createEventDispatcher_FailsIfAnUnknownParameterIsSpecified()
     {
         testee.createEventDispatcher(new Subscriber()
         {
@@ -108,6 +108,12 @@ public class EventDispatcherFactoryImplTest
             {
             }
         }.getClass());
+    }
+
+    @Test
+    public void test_createEventDispatcher_ForHandlerWithPrimitiveParameter()
+    {
+        testee.createEventDispatcher(TestHandler_WithPrimitiveParameter.class);
     }
 
     public static class TestSubscriber
@@ -121,7 +127,7 @@ public class EventDispatcherFactoryImplTest
         }
 
         @Handle({TestEventTypeA.class, TestEventTypeB.class, TestEventTypeC.class})
-        public void handle2nd(@Param(value = "foo", presence = Presence.Optional)EntityRef ref)
+        public void handle2nd(@Param(value = "foo", presence = Presence.Optional) EntityRef ref)
         {
 
         }
@@ -131,6 +137,30 @@ public class EventDispatcherFactoryImplTest
         {
 
         }
+    }
+
+    public static class TestHandler_WithPrimitiveParameter
+    {
+        @Handle(TestEventTypeA.class)
+        public void handle(@Param("boolean-param") boolean param) {}
+
+        @Handle(TestEventTypeA.class)
+        public void handle(@Param("byte-param") byte param) {}
+
+        @Handle(TestEventTypeA.class)
+        public void handle(@Param("short-param") short param) {}
+
+        @Handle(TestEventTypeA.class)
+        public void handle(@Param("int-param") int param) {}
+
+//        @Handle(TestEventTypeA.class)
+//        public void handle(@Param("long-param") long param) {}
+
+        @Handle(TestEventTypeA.class)
+        public void handle(@Param("float-param") float param) {}
+
+//        @Handle(TestEventTypeA.class)
+//        public void handle(@Param("double-param") double param) {}
     }
 
     private static class TestSubscriber_Unaccessible

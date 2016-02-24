@@ -28,18 +28,64 @@ package org.jayware.e2.event.api;
  * @see EventManager
  * @see EventFilter
  * @see Handle
+ * @see Parameters
  */
 public interface Event
 {
+    /**
+     * Returns the {@link EventType} of this {@link Event}.
+     *
+     * @return this {@link Event}'s {@link EventType}.
+     */
     Class<? extends EventType> getType();
 
+    /**
+     * Returns whether this {@link Event} matches the specified {@link EventType}.
+     * <p>
+     * An {@link Event} matches a specific {@link EventType} if the {@link Event}'s {@link EventType} is assignable
+     * to the specific one. The {@link Class#isAssignableFrom(Class)} operation is used to determine if the specified
+     * {@link Class} is either the same as, or is a superclass/superinterface of the class of this {@link Event}'s
+     * {@link EventType}.
+     *
+     * @param type a {@link EventType}.
+     *
+     * @return <code>true</code> if this {@link Event} matches the specified {@link EventType},
+     *         otherwise <code>false</code>.
+     */
     boolean matches(Class<? extends EventType> type);
 
-    <V> V getParameter(String parameter);
+    /**
+     * Returns the value of the parameter with the specified name or <code>null</code>.
+     *
+     * @param name the name of the parameter.
+     * @param <V> the type of the parameter.
+     *
+     * @return the value of the parameter or <code>null</code> if the value is <code>null</code>
+     *         or this {@link Event} does not have a parameter with the specified name.
+     */
+    <V> V getParameter(String name);
 
-    boolean hasParameter(String parameter);
+    /**
+     * Returns whether this {@link Event} carries a parameter with the specified name.
+     *
+     * @param name the name of the paramter.
+     *
+     * @return <code>true</code> if this {@link Event} carries a parameter with the specified name,
+     *         otherwise <code>false</code>.
+     */
+    boolean hasParameter(String name);
 
+    /**
+     * Returns {@link ReadOnlyParameters}.
+     *
+     * @return {@link ReadOnlyParameters}
+     */
     ReadOnlyParameters getParameters();
 
+    /**
+     * Returns whether this {@link Event} is a {@link Query}.
+     *
+     * @return <code>true</code> if this {@link Event} is a {@link Query}, otherwise <code>false</code>.
+     */
     boolean isQuery();
 }

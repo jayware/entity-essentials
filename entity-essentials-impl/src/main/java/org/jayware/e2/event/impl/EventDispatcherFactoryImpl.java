@@ -213,12 +213,12 @@ implements EventDispatcherFactory
         final File classFile = new File(myOutputDirectory, classFileName);
 
         classWriter.visit(
-        V1_8,
-        ACC_PUBLIC + ACC_SUPER,
-        classInternalName,
-        null,
-        getInternalName(Object.class),
-        new String[]{getInternalName(EventDispatcher.class)}
+            V1_8,
+            ACC_PUBLIC + ACC_SUPER,
+            classInternalName,
+            null,
+            getInternalName(Object.class),
+            new String[]{getInternalName(EventDispatcher.class)}
         );
 
         {
@@ -304,6 +304,8 @@ implements EventDispatcherFactory
                     int index = startIndex;
                     for (HandlerDescriptor.ParameterDescriptor parameter : descriptor.getParameters())
                     {
+                        final Class parameterType = parameter.getParameterClass();
+
                         if (!parameter.isEventParameter())
                         {
                             final Label endInstanceOf = new Label();
@@ -336,15 +338,48 @@ implements EventDispatcherFactory
 
                             // Check the type of the parameter (only if it is not null)
                             // whether it matches the declared parameter type of the handler.
-                            final Label notInstanceOf = new Label();
                             mv.visitVarInsn(ALOAD, index);
-                            mv.visitTypeInsn(INSTANCEOF, parameter.getParameterInternalName());
-                            mv.visitJumpInsn(IFNE, notInstanceOf);
+
+                            Class appropriateType = parameterType;
+
+                            if (parameterType.isPrimitive())
+                            {
+                                if (boolean.class.equals(parameterType))
+                                {
+                                    appropriateType = Boolean.class;
+                                }
+                                else if (byte.class.equals(parameterType))
+                                {
+                                    appropriateType = Byte.class;
+                                }
+                                else if (short.class.equals(parameterType))
+                                {
+                                    appropriateType = Short.class;
+                                }
+                                else if (int.class.equals(parameterType))
+                                {
+                                    appropriateType = Integer.class;
+                                }
+                                else if (long.class.equals(parameterType))
+                                {
+                                    appropriateType = Long.class;
+                                }
+                                else if (float.class.equals(parameterType))
+                                {
+                                    appropriateType = Float.class;
+                                }
+                                else if (double.class.equals(parameterType))
+                                {
+                                    appropriateType = Double.class;
+                                }
+                            }
+
+                            mv.visitTypeInsn(INSTANCEOF, getInternalName(appropriateType));
+                            mv.visitJumpInsn(IFNE, endInstanceOf);
                             mv.visitFieldInsn(GETSTATIC, classInternalName, "log", getDescriptor(Logger.class));
-                            mv.visitLdcInsn("Could not dispatch '" + eventType.getName() + "' to " + descriptor.getMethod() + "', because the parameter '" + parameter.getName() + "' cannot be cast to the appropriate type '" + parameter.getParameterClass().getName() + "'!");
+                            mv.visitLdcInsn("Could not dispatch '" + eventType.getName() + "' to " + descriptor.getMethod() + "', because the parameter '" + parameter.getName() + "' cannot be cast to the appropriate type '" + parameterType.getName() + "'!");
                             mv.visitMethodInsn(INVOKEINTERFACE, getInternalName(Logger.class), "warn", "(Ljava/lang/String;)V", true);
                             mv.visitJumpInsn(GOTO, endHandler);
-                            mv.visitLabel(notInstanceOf);
                             mv.visitLabel(endInstanceOf);
 
                             ++index;
@@ -357,6 +392,8 @@ implements EventDispatcherFactory
                     index = startIndex;
                     for (HandlerDescriptor.ParameterDescriptor parameter : descriptor.getParameters())
                     {
+                        final Class parameterType = parameter.getParameterClass();
+
                         if (parameter.isEventParameter())
                         {
                             mv.visitVarInsn(ALOAD, 1);
@@ -364,7 +401,49 @@ implements EventDispatcherFactory
                         else
                         {
                             mv.visitVarInsn(ALOAD, index++);
-                            mv.visitTypeInsn(CHECKCAST, parameter.getParameterInternalName());
+
+                            if (parameterType.isPrimitive())
+                            {
+                                if (boolean.class.equals(parameterType))
+                                {
+                                    mv.visitTypeInsn(CHECKCAST, getInternalName(Boolean.class));
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Boolean.class), "booleanValue", "()Z", false);
+                                }
+                                else if (byte.class.equals(parameterType))
+                                {
+                                    mv.visitTypeInsn(CHECKCAST, getInternalName(Byte.class));
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Byte.class), "byteValue", "()B", false);
+                                }
+                                else if (short.class.equals(parameterType))
+                                {
+                                    mv.visitTypeInsn(CHECKCAST, getInternalName(Short.class));
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Short.class), "shortValue", "()S", false);
+                                }
+                                else if (int.class.equals(parameterType))
+                                {
+                                    mv.visitTypeInsn(CHECKCAST, getInternalName(Integer.class));
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Integer.class), "intValue", "()I", false);
+                                }
+                                else if (long.class.equals(parameterType))
+                                {
+                                    mv.visitTypeInsn(CHECKCAST, getInternalName(Long.class));
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Integer.class), "intValue", "()I", false);
+                                }
+                                else if (float.class.equals(parameterType))
+                                {
+                                    mv.visitTypeInsn(CHECKCAST, getInternalName(Float.class));
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Float.class), "floatValue", "()F", false);
+                                }
+                                else if (double.class.equals(parameterType))
+                                {
+                                    mv.visitTypeInsn(CHECKCAST, getInternalName(Double.class));
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Double.class), "doubleValue", "()D", false);
+                                }
+                            }
+                            else
+                            {
+                                mv.visitTypeInsn(CHECKCAST, parameter.getParameterInternalName());
+                            }
                         }
                     }
 
