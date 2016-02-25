@@ -28,6 +28,9 @@ import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
 
+import static org.jayware.e2.util.Preconditions.checkNotNull;
+import static org.jayware.e2.util.Preconditions.checkStringNotEmpty;
+
 
 public class EventBuilderImpl
 implements EventBuilder, EventBuilderTo
@@ -37,10 +40,17 @@ implements EventBuilder, EventBuilderTo
 
     private String myLastParameter;
 
-    public EventBuilderImpl(Class<? extends EventType> type)
+    private EventBuilderImpl(Class<? extends EventType> type)
     {
         myEventType = type;
         myEventParameters = new Parameters();
+    }
+
+    public static EventBuilder createEventBuilder(Class<? extends EventType> type)
+    {
+        checkNotNull(type);
+
+        return new EventBuilderImpl(type);
     }
 
     @Override
@@ -53,6 +63,7 @@ implements EventBuilder, EventBuilderTo
     @Override
     public EventBuilderTo set(String parameter)
     {
+        checkStringNotEmpty(parameter);
         myLastParameter = parameter;
         return this;
     }
@@ -60,6 +71,7 @@ implements EventBuilder, EventBuilderTo
     @Override
     public EventBuilder set(Parameter parameter)
     {
+        checkNotNull(parameter);
         myEventParameters.set(parameter);
         return this;
     }
@@ -67,6 +79,7 @@ implements EventBuilder, EventBuilderTo
     @Override
     public EventBuilder setAll(Parameters parameters)
     {
+        checkNotNull(parameters);
         myEventParameters.set(parameters);
         return this;
     }

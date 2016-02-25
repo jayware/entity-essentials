@@ -34,9 +34,8 @@ import java.lang.ref.WeakReference;
  * The <code>EventManager</code> is the heart of the framework's event-system.
  *
  * @see Event
+ * @see Query
  * @see Handle
- *
- * @since 1.0
  */
 public interface EventManager
 {
@@ -46,8 +45,10 @@ public interface EventManager
      * @param type the event's {@link EventType}.
      *
      * @return an {@link EventBuilder} to set additional {@link Parameters}.
+     *
+     * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    EventBuilder createEvent(Class<? extends RootEvent> type);
+    EventBuilder createEvent(Class<? extends RootEvent> type) throws IllegalArgumentException;
 
     /**
      * Creates an {@link Event} with the specified {@link EventType} and the passed {@link Parameter Parameters}.
@@ -56,8 +57,10 @@ public interface EventManager
      * @param parameters the {@link Parameter Parameters} to set to the {@link Event}
      *
      * @return the newly created {@link Event}.
+     *
+     * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    Event createEvent(Class<? extends RootEvent> type, Parameter... parameters);
+    Event createEvent(Class<? extends RootEvent> type, Parameter... parameters) throws IllegalArgumentException;
 
     /**
      * Creates an {@link Event} with the specified {@link EventType} and the passed {@link Parameters}.
@@ -66,10 +69,34 @@ public interface EventManager
      * @param parameters the {@link Parameters} to set to the {@link Event}
      *
      * @return the newly created {@link Event}.
+     *
+     * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    Event createEvent(Class<? extends RootEvent> type, Parameters parameters);
+    Event createEvent(Class<? extends RootEvent> type, Parameters parameters) throws IllegalArgumentException;
 
-    Query createQuery(Class<? extends RootEvent> type, Parameter... parameters);
+    /**
+     * Creates a {@link Query} with the specified {@link EventType} and the passed {@link Parameters}.
+     *
+     * @param type the event's {@link EventType}.
+     * @param parameters the {@link Parameters} to set to the {@link Event}
+     *
+     * @return the newly created {@link Event}.
+     *
+     * @throws IllegalArgumentException if the passed {@link EventType} is null.
+     */
+    Query createQuery(Class<? extends RootEvent> type, Parameter... parameters) throws IllegalArgumentException;
+
+    /**
+     * Creates a {@link Query} with the specified {@link EventType} and the passed {@link Parameters}.
+     *
+     * @param type the event's {@link EventType}.
+     * @param parameters the {@link Parameters} to set to the {@link Event}
+     *
+     * @return the newly created {@link Event}.
+     *
+     * @throws IllegalArgumentException if the passed {@link EventType} is null.
+     */
+    Query createQuery(Class<? extends RootEvent> type, Parameters parameters) throws IllegalArgumentException;
 
     /**
      * Subscribes the specified {@link Object} for {@link Event Events} occurring in the specified {@link Context}.

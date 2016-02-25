@@ -306,23 +306,23 @@ public class EntityPath
             return EMPTY_PATH;
         }
 
-        String basePath = "";
+        StringBuffer basePath = new StringBuffer();
         String[] baseSegments = new String[mySegments.size() - 1];
 
         for (int i = 0; i < baseSegments.length; ++i)
         {
             final String segment = mySegments.get(i);
 
-            basePath += segment;
+            basePath.append(segment);
             baseSegments[i] = mySegments.get(i);
 
             if (!segment.endsWith(SEPARATOR))
             {
-                basePath += SEPARATOR;
+                basePath.append(SEPARATOR);
             }
         }
 
-        return new EntityPath(basePath, baseSegments);
+        return new EntityPath(basePath.toString(), baseSegments);
     }
 
     public String asString()

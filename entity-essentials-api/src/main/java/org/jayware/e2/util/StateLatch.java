@@ -69,8 +69,7 @@ public class StateLatch<S extends Enum<S>>
         myLock.lock();
         try
         {
-            if (myCurrentState.compareTo(state) < 0)
-            {
+            while (myCurrentState.compareTo(state) < 0) {
                 myConditions.get(state).await();
             }
         }

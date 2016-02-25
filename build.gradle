@@ -29,6 +29,12 @@ allprojects {
     plugins.withType(JavaPlugin) {
         project.apply plugin: "maven"
         project.apply plugin: "maven-publish"
+        project.apply plugin: "findbugs"
+
+        findbugs {
+            toolVersion = "3.0.1"
+            sourceSets = [sourceSets.main]
+        }
 
         task coveralls(type:Exec, dependsOn: 'generatePom') {
             commandLine 'mvn', 'clean', 'install', 'test', 'jacoco:report', 'coveralls:report'

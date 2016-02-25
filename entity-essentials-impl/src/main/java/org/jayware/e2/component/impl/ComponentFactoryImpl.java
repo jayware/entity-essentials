@@ -95,7 +95,10 @@ implements ComponentFactory
 
             if (!myOutputDirectory.exists())
             {
-                myOutputDirectory.mkdirs();
+                if (!myOutputDirectory.mkdirs())
+                {
+                    throw new IOException("Failed to create output directory: " + myOutputDirectory.getAbsolutePath());
+                }
             }
 
             myCache = new ConcurrentHashMap<>();
@@ -340,7 +343,10 @@ implements ComponentFactory
 
             if (!parentFile.exists())
             {
-                parentFile.mkdirs();
+                if (!parentFile.mkdirs())
+                {
+                    throw new IOException("Failed to create output directory: " + parentFile.getAbsolutePath());
+                }
             }
 
             DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(classFile));

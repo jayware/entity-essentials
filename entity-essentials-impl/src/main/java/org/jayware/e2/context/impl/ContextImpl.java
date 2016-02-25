@@ -31,7 +31,6 @@ import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
-import org.omg.CORBA.COMM_FAILURE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -466,7 +465,7 @@ implements Context
         }
     }
 
-    private class DisposedContext
+    private static class DisposedContext
     implements Context
     {
         @Override

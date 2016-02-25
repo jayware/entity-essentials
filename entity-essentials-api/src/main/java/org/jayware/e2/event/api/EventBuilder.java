@@ -27,13 +27,13 @@ import org.jayware.e2.event.api.Parameters.Parameter;
 
 public interface EventBuilder
 {
-    EventBuilder reset();
-
     EventBuilderTo set(String parameter);
 
     EventBuilder set(Parameter parameter);
 
     EventBuilder setAll(Parameters parameters);
+
+    EventBuilder reset();
 
     Event build();
 

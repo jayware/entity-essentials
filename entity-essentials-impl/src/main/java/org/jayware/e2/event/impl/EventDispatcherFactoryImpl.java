@@ -48,6 +48,8 @@ import java.lang.reflect.Parameter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.nio.charset.Charset.forName;
 import static java.util.Arrays.asList;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import static org.jayware.e2.util.ConfigurationUtil.getPropertyOrDefault;
@@ -488,7 +491,10 @@ implements EventDispatcherFactory
 
             if (!parentFile.exists())
             {
-                parentFile.mkdirs();
+                if (!parentFile.mkdirs())
+                {
+                    throw new IOException("Failed to create output directory: " + parentFile.getAbsolutePath());
+                }
             }
 
             DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(classFile));
@@ -516,8 +522,11 @@ implements EventDispatcherFactory
 
     private String createDispatcherName(Class target)
     {
+        final Charset charset = forName("UTF-8");
+        final ByteBuffer encoded = charset.encode(target.getName());
+
         String name = EVENT_DISPATCHER_NAME_PREFIX + target.getSimpleName();
-        name += "_" + printHexBinary(myMessageDigest.digest(target.getName().getBytes())).substring(0, 8);
+        name += "_" + printHexBinary(myMessageDigest.digest(encoded.array())).substring(0, 8);
 
         return name;
     }
@@ -623,7 +632,7 @@ implements EventDispatcherFactory
             return parameters;
         }
 
-        private class ParameterDescriptor
+        private static class ParameterDescriptor
         {
             private final Parameter parameter;
             private final String name;

@@ -28,6 +28,7 @@ import org.jayware.e2.event.api.EventBuilder;
 import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.EventType;
+import org.jayware.e2.event.api.EventType.RootEvent;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Queue;
 
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
+import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.jayware.e2.util.ReferenceType.Weak;
 
@@ -52,9 +54,9 @@ import static org.jayware.e2.util.ReferenceType.Weak;
 public class EventManagerImpl
 implements EventManager
 {
-    private static final Key<EventBus> EVENT_BUS = Key.createKey("org.jayware.e2.EventBus");
-    private static final EventFilter[] EMPTY_FILTER_ARRAY = new EventFilter[0];
-    private static final ValueProvider<EventBus> EVENT_BUS_VALUE_PROVIDER = new ValueProvider<EventBus>()
+    static final Key<EventBus> EVENT_BUS = Key.createKey("org.jayware.e2.EventBus");
+    static final EventFilter[] EMPTY_FILTER_ARRAY = new EventFilter[0];
+    static final ValueProvider<EventBus> EVENT_BUS_VALUE_PROVIDER = new ValueProvider<EventBus>()
     {
         @Override
         public EventBus provide(Context context)
@@ -66,25 +68,37 @@ implements EventManager
     private static final Logger log = LoggerFactory.getLogger(EventManagerImpl.class);
 
     @Override
-    public EventBuilder createEvent(Class<? extends EventType.RootEvent> type)
+    public EventBuilder createEvent(Class<? extends RootEvent> type)
     {
-        return new EventBuilderImpl(type);
+        return createEventBuilder(type);
     }
 
     @Override
-    public Event createEvent(Class<? extends EventType.RootEvent> type, Parameter... parameters)
+    public Event createEvent(Class<? extends RootEvent> type, Parameter... parameters)
     {
+        checkNotNull(type);
+        checkNotNull(parameters);
         return new EventImpl(type, parameters);
     }
 
     @Override
-    public Event createEvent(Class<? extends EventType.RootEvent> type, Parameters parameters)
+    public Event createEvent(Class<? extends RootEvent> type, Parameters parameters)
     {
+        checkNotNull(type);
+        checkNotNull(parameters);
         return new EventImpl(type, parameters);
     }
 
     @Override
-    public Query createQuery(Class<? extends EventType.RootEvent> type, Parameter... parameters)
+    public Query createQuery(Class<? extends RootEvent> type, Parameter... parameters)
+    {
+        checkNotNull(type);
+        checkNotNull(parameters);
+        return new QueryImpl(type, parameters);
+    }
+
+    @Override
+    public Query createQuery(Class<? extends RootEvent> type, Parameters parameters)
     {
         return new QueryImpl(type, parameters);
     }
@@ -130,13 +144,13 @@ implements EventManager
     }
 
     @Override
-    public void send(Class<? extends EventType.RootEvent> type, Parameter... parameters)
+    public void send(Class<? extends RootEvent> type, Parameter... parameters)
     {
         send(createEvent(type, parameters));
     }
 
     @Override
-    public void send(Class<? extends EventType.RootEvent> type, Parameters parameters)
+    public void send(Class<? extends RootEvent> type, Parameters parameters)
     {
         send(createEvent(type, parameters));
     }
@@ -159,13 +173,13 @@ implements EventManager
     }
 
     @Override
-    public void post(Class<? extends EventType.RootEvent> type, Parameter... parameters)
+    public void post(Class<? extends RootEvent> type, Parameter... parameters)
     {
         post(createEvent(type, parameters));
     }
 
     @Override
-    public void post(Class<? extends EventType.RootEvent> type, Parameters parameters)
+    public void post(Class<? extends RootEvent> type, Parameters parameters)
     {
         post(createEvent(type, parameters));
     }
