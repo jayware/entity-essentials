@@ -99,7 +99,8 @@ implements Disposable
         myLastSubscriptionCollection = new AtomicReference<>();
         myLastSubscriptionsMapHash = new AtomicInteger();
 
-        updateLastSubscriptionCollection();
+        myLastSubscriptionCollection.set(new HashSet<>(mySubscriptionsMap.values()));
+        myLastSubscriptionsMapHash.set(mySubscriptionsMapHash.get());
 
         myWorkerPool = new EventBusWorkerPool(4, 64);
     }
@@ -661,19 +662,17 @@ implements Disposable
         }
 
         @Override
-        public Result await(Status status)
+        public boolean await(Status status)
         throws InterruptedException
         {
-            myStateLatch.await(status);
-            return this;
+            return myStateLatch.await(status);
         }
 
         @Override
-        public Result await(Status status, long time, TimeUnit unit)
+        public boolean await(Status status, long time, TimeUnit unit)
         throws InterruptedException
         {
-            myStateLatch.await(status, time, unit);
-            return this;
+            return myStateLatch.await(status, time, unit);
         }
 
         @Override
