@@ -37,19 +37,26 @@ import static org.jayware.e2.entity.api.EntityPath.path;
 public class EntityManagerImplTest
 {
     private Context context;
-    private EntityManager entityManager;
+    private EntityManager testee;
 
     @BeforeMethod
     public void setup()
     {
         context = ContextProvider.getInstance().createContext();
-        entityManager = context.getEntityManager();
+        testee = new EntityManagerImpl();
+    }
+
+    @Test
+    public void testCreateEntity()
+    {
+        EntityRef ref = testee.createEntity(context);
+        assertThat(ref.isValid()).isTrue();
     }
 
     @Test
     public void testCreateEntityAbsolute()
     {
-        EntityRef entityRef = entityManager.createEntity(context, path("/a/b"));
+        EntityRef entityRef = testee.createEntity(context, path("/a/b"));
 
         assertThat(entityRef.isValid()).isTrue();
         assertThat(entityRef.getPath().asString()).isEqualTo("/a/b/");
@@ -58,9 +65,9 @@ public class EntityManagerImplTest
     @Test
     public void testCreateEntityRelative()
     {
-        final EntityRef ref = entityManager.createEntity(context, path("/a"));
+        final EntityRef ref = testee.createEntity(context, path("/a"));
 
-        EntityRef entityRef = entityManager.createEntity(ref, path("b"));
+        EntityRef entityRef = testee.createEntity(ref, path("b"));
 
         assertThat(entityRef.isValid()).isTrue();
         assertThat(entityRef.getPath().asString()).isEqualTo("/a/b/");
@@ -69,74 +76,74 @@ public class EntityManagerImplTest
     @Test
     public void testFindEntity()
     {
-        entityManager.createEntity(context, path("/a/b"));
+        testee.createEntity(context, path("/a/b"));
 
-        assertThat(entityManager.findEntity(context, path("/"))).isNotNull();
-        assertThat(entityManager.findEntity(context, path("/a"))).isNotNull();
-        assertThat(entityManager.findEntity(context, path("/a/b"))).isNotNull();
-        assertThat(entityManager.findEntity(context, path("/a/b/c"))).isNull();
-        assertThat(entityManager.findEntity(context, path(""))).isNull();
+        assertThat(testee.findEntity(context, path("/"))).isNotNull();
+        assertThat(testee.findEntity(context, path("/a"))).isNotNull();
+        assertThat(testee.findEntity(context, path("/a/b"))).isNotNull();
+        assertThat(testee.findEntity(context, path("/a/b/c"))).isNull();
+        assertThat(testee.findEntity(context, path(""))).isNull();
     }
 
     @Test
     public void testDeleteEntity()
     {
-        EntityRef ref = entityManager.createEntity(context, path("/a/b"));
+        EntityRef ref = testee.createEntity(context, path("/a/b"));
 
         assertThat(ref).isNotNull();
-        entityManager.deleteEntity(ref);
+        testee.deleteEntity(ref);
 
-        assertThat(entityManager.findEntity(context, path("/a/b"))).isNull();
+        assertThat(testee.findEntity(context, path("/a/b"))).isNull();
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testDeleteRootEntity()
     {
-        EntityRef ref = entityManager.findEntity(context, path("/"));
+        EntityRef ref = testee.findEntity(context, path("/"));
         assertThat(ref).isNotNull();
 
         try
         {
-            entityManager.deleteEntity(ref);
+            testee.deleteEntity(ref);
         }
         finally
         {
             // Assert that when an exception is thrown by the
             // deleteEntity operation the entity does still exist.
-            assertThat(entityManager.findEntity(context, path("/"))).isNotNull();
+            assertThat(testee.findEntity(context, path("/"))).isNotNull();
         }
     }
 
     @Test
     public void testGetEntity()
     {
-        entityManager.createEntity(context, path("/a/b"));
+        testee.createEntity(context, path("/a/b"));
 
-        assertThat(entityManager.getEntity(context, path("/"))).isNotNull();
-        assertThat(entityManager.getEntity(context, path("/a"))).isNotNull();
-        assertThat(entityManager.getEntity(context, path("/a/b"))).isNotNull();
+        assertThat(testee.getEntity(context, path("/"))).isNotNull();
+        assertThat(testee.getEntity(context, path("/a"))).isNotNull();
+        assertThat(testee.getEntity(context, path("/a/b"))).isNotNull();
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testGetEntity_WithEmptyPath()
     {
-        entityManager.getEntity(context, path(""));
+        testee.getEntity(context, path(""));
     }
 
     @Test(expectedExceptions = EntityNotFoundException.class)
     public void testGetEntity_WithAbsentEntity()
     {
-        entityManager.getEntity(context, path("/a/b/c"));
+        testee.getEntity(context, path("/a/b/c"));
     }
 
     @Test
     public void testExistsEntity()
     {
-        entityManager.createEntity(context, path("/a/b"));
+        testee.createEntity(context, path("/a/b"));
 
-        assertThat(entityManager.existsEntity(context, path("/"))).isTrue();
-        assertThat(entityManager.existsEntity(context, path("/a"))).isTrue();
-        assertThat(entityManager.existsEntity(context, path("/a/b"))).isTrue();
-        assertThat(entityManager.existsEntity(context, path("/a/b/c"))).isFalse();
+        assertThat(testee.existsEntity(context, path("/"))).isTrue();
+        assertThat(testee.existsEntity(context, path("/a"))).isTrue();
+        assertThat(testee.existsEntity(context, path("/a/b"))).isTrue();
+        assertThat(testee.existsEntity(context, path("/a/b/c"))).isFalse();
     }
 }

@@ -45,6 +45,11 @@ extends RootEvent
          * The id ({@link String}) of the entity which is subject of the event.
          */
         String EntityIdParam = "org.jayware.e2.event.param.EntityId";
+
+        /**
+         * The {@link EntityRef} of the entity which was created due to this event.
+         */
+        String EntityRefParam = "org.jayware.e2.event.param.EntityRef";
     }
 
     interface EntityCreatedEvent extends EntityEvent {}
@@ -92,7 +97,8 @@ extends RootEvent
         @Override
         protected void setup(SanityCheckerRuleBuilder checker)
         {
-            checker.check(EntityEvent.class).param(EntityPathParam, "EntityPathParam").instanceOf(EntityPath.class).notNull().done();
+            // TODO: Create new checks according to the new query-api!
+//            checker.check(EntityEvent.class).param(EntityPathParam, "EntityPathParam").instanceOf(EntityPath.class).notNull().done();
             checker.check(EntityChangedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
             checker.check(ChildrenEntityEvent.class).param(ChildRefParam, "ChildRefParam").instanceOf(EntityRef.class).notNull().done();
         }

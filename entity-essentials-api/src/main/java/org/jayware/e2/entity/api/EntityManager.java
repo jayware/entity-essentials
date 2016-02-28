@@ -42,11 +42,11 @@ import java.util.List;
  * @see EntityPath
  * @see EntityRef
  * @see Aspect
- *
- * @since 1.0
  */
 public interface EntityManager
 {
+    EntityRef createEntity(Context context);
+
     /**
      * Creates an {@link Entity} denoted by the passed {@link EntityPath}
      * in the specified {@link Context}.
@@ -798,7 +798,7 @@ public interface EntityManager
      *
      * @param ref the {@link EntityRef} of the {@link Entity} from where to start the search.
      * @param traversal a {@link Traversal} to define the order in which the {@link Entity Entities} are processed.
-     * 
+     *
      * @return a {@link List} of {@link EntityRef EntityRefs} maybe empty, but never <code>null</code>.
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
@@ -823,7 +823,7 @@ public interface EntityManager
      * @param ref the {@link EntityRef} of the {@link Entity} from where to start the search.
      * @param aspect an {@link Aspect} to qualify the result.
      * @param filters a set of {@link Filter Filters} to reduce the result.
-     * 
+     *
      * @return a {@link List} of {@link EntityRef EntityRefs} maybe empty, but never <code>null</code>.
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
@@ -848,7 +848,7 @@ public interface EntityManager
      * @param ref the {@link EntityRef} of the {@link Entity} from where to start the search.
      * @param traversal a {@link Traversal} to define the order in which the {@link Entity Entities} are processed.
      * @param aspect an {@link Aspect} to qualify the result.
-     * 
+     *
      * @return a {@link List} of {@link EntityRef EntityRefs} maybe empty, but never <code>null</code>.
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
@@ -873,7 +873,7 @@ public interface EntityManager
      * @param ref the {@link EntityRef} of the {@link Entity} from where to start the search.
      * @param traversal a {@link Traversal} to define the order in which the {@link Entity Entities} are processed.
      * @param filters a set of {@link Filter Filters} to reduce the result.
-     * 
+     *
      * @return a {@link List} of {@link EntityRef EntityRefs} maybe empty, but never <code>null</code>.
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
@@ -892,7 +892,7 @@ public interface EntityManager
      * @param traversal a {@link Traversal} to define the order in which the {@link Entity Entities} are processed.
      * @param aspect an {@link Aspect} to qualify the result.
      * @param filters a set of {@link Filter Filters} to reduce the result.
-     * 
+     *
      * @return a {@link List} of {@link EntityRef EntityRefs} maybe empty, but never <code>null</code>.
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.

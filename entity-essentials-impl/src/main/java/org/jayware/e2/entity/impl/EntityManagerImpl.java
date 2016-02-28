@@ -33,6 +33,7 @@ import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventBuilder;
 import org.jayware.e2.event.api.EventManager;
+import org.jayware.e2.event.api.Result;
 import org.jayware.e2.util.Filter;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.Traversal;
@@ -40,12 +41,15 @@ import org.jayware.e2.util.Traversal;
 import java.util.List;
 
 import static org.jayware.e2.component.api.Aspect.ANY;
+import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
+import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
 import static org.jayware.e2.entity.api.EntityPath.EMPTY_PATH;
 import static org.jayware.e2.entity.api.EntityPath.ROOT_PATH;
 import static org.jayware.e2.entity.api.EntityPathFilter.ALL;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
+import static org.jayware.e2.event.api.Query.State.Success;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.jayware.e2.util.Traversal.Unordered;
 
@@ -61,10 +65,28 @@ implements EntityManager
         public EntityTree provide(Context context)
         {
             final EntityTree entityTree = new EntityTree(context);
-            context.getEventManager().subscribe(context, entityTree);
+            context.getService(EventManager.class).subscribe(context, entityTree);
             return entityTree;
         }
     };
+
+    @Override
+    public EntityRef createEntity(Context context)
+    {
+        checkContextNotNullAndNotDisposed(context);
+
+        getOrCreateEntityTree(context);
+
+        final EventManager eventManager = context.getService(EventManager.class);
+        final Result result = eventManager.query(CreateEntityEvent.class, param(ContextParam, context));
+
+        if (result.await(Success) && result.has(EntityRefParam))
+        {
+            return result.get(EntityRefParam);
+        }
+
+        throw new RuntimeException("Failed to create entity!"); // TODO: introduce a dedicated exception!
+    }
 
     @Override
     public EntityRef createEntity(Context context, EntityPath path)

@@ -38,9 +38,11 @@ import org.jayware.e2.entity.api.EntityEvent.EntityDeletingEvent;
 import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.entity.api.InvalidEntityRefException;
+import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
+import org.jayware.e2.event.api.Query;
 import org.jayware.e2.util.Filter;
 import org.jayware.e2.util.Traversal;
 
@@ -60,7 +62,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.hash;
 import static java.util.UUID.randomUUID;
-import static org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent.ChildRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent.ChildRemovedEntityEvent;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityRefParam;
@@ -68,6 +69,7 @@ import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
 import static org.jayware.e2.entity.api.EntityPath.EMPTY_PATH;
 import static org.jayware.e2.entity.api.EntityPath.ROOT_PATH;
 import static org.jayware.e2.entity.api.EntityPath.SEPARATOR;
+import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.api.Presence.Optional;
@@ -89,7 +91,7 @@ implements Disposable
     protected EntityTree(Context context)
     {
         myContext = context;
-        myEventManager = context.getEventManager();
+        myEventManager = context.getService(EventManager.class);
 
         myEntities = new HashMap<>();
         myRoot = new EntityImpl(new UUID(0, 0));
@@ -101,8 +103,9 @@ implements Disposable
     }
 
     @Handle(CreateEntityEvent.class)
-    public void createEntity(@Param(ContextParam) Context context,
-                             @Param(EntityPathParam) EntityPath entityPath,
+    public void createEntity(Event event,
+                             @Param(ContextParam) Context context,
+                             @Param(value = EntityPathParam, presence = Optional) EntityPath entityPath,
                              @Param(value = EntityIdParam, presence = Optional) String id)
     {
         if (!myContext.equals(context))
@@ -113,6 +116,11 @@ implements Disposable
         myWriteLock.lock();
         try
         {
+            if (entityPath == null)
+            {
+                entityPath = path("/" + UUID.randomUUID().toString());
+            }
+
             final EntityPath path = entityPath;
             final int depth = path.depth();
 
@@ -155,6 +163,11 @@ implements Disposable
 
                 lastEntity = currentEntity;
                 ++count;
+            }
+
+            if (event.isQuery())
+            {
+                ((Query) event).result(CreateEntityEvent.EntityRefParam, lastEntity.getRef());
             }
         }
         finally
