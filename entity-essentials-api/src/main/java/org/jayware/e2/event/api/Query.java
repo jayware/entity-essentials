@@ -26,11 +26,37 @@ import org.jayware.e2.util.Key;
 
 
 /**
+ * A <code>Query</code> is an {@link Event} which returns results.
  *
+ * @see EventManager
+ * @see Result
  */
 public interface Query
 extends Event
 {
+    enum State
+    {
+        /**
+         * The initial state of {@link Query} until it gets executed.
+         */
+        Standby,
+
+        /**
+         * The state of a {@link Query} during execution.
+         */
+        Running,
+
+        /**
+         * The state of a {@link Query} when execution finished successfully.
+         */
+        Success,
+
+        /**
+         * The state of a {@link Query} when execution finished unsuccessfully.
+         */
+        Failed
+    }
+
     <V> void result(String name, V value);
 
     <V> void result(Key<V> key, V value);

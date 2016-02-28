@@ -290,9 +290,31 @@ public interface EventManager
     void post(Event event) throws SanityCheckFailedException;
 
     /**
+     * Executes a {@link Query} with the specified {@link EventType} a the passed {@link Parameter Parameters}.
      *
-     * @param query
-     * @return
+     * @param type an {@link EventType}.
+     * @param parameters an array of {@link Parameter Parameters}.
+     *
+     * @return the {@link Result} of the {@link Query}.
+     */
+    Result query(Class<? extends RootEvent> type, Parameter... parameters);
+
+    /**
+     * Executes a {@link Query} with the specified {@link EventType} a the passed {@link Parameters}.
+     *
+     * @param type an {@link EventType}.
+     * @param parameters a {@link Parameters}.
+     *
+     * @return the {@link Result} of the {@link Query}.
+     */
+    Result query(Class<? extends RootEvent> type, Parameters parameters);
+
+    /**
+     * Executes the specified {@link Query}.
+     *
+     * @param query a {@link Query}.
+     *
+     * @return the {@link Result} of the {@link Query}.
      */
     Result query(Query query) throws SanityCheckFailedException;
 }

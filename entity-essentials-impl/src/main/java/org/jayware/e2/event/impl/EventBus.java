@@ -30,6 +30,7 @@ import org.jayware.e2.event.api.EventDispatcherFactory;
 import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Query;
+import org.jayware.e2.event.api.Query.State;
 import org.jayware.e2.event.api.QueryException;
 import org.jayware.e2.event.api.ReadOnlyParameters;
 import org.jayware.e2.event.api.Result;
@@ -61,9 +62,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntUnaryOperator;
 
 import static java.lang.Thread.currentThread;
-import static org.jayware.e2.event.api.Result.Status.Failed;
-import static org.jayware.e2.event.api.Result.Status.Running;
-import static org.jayware.e2.event.api.Result.Status.Success;
+import static org.jayware.e2.event.api.Query.State.Failed;
+import static org.jayware.e2.event.api.Query.State.Running;
+import static org.jayware.e2.event.api.Query.State.Success;
 
 
 public class EventBus
@@ -643,7 +644,7 @@ implements Disposable
     {
         private final Query myQuery;
 
-        private final StateLatch<Status> myStateLatch;
+        private final StateLatch<State> myStateLatch;
 
         private final Map<Object, Object> myResultMap;
 
@@ -651,7 +652,7 @@ implements Disposable
         {
             myQuery = query;
 
-            myStateLatch = new StateLatch<>(Status.class);
+            myStateLatch = new StateLatch<>(State.class);
             myResultMap = new ConcurrentHashMap<>();
         }
 
@@ -662,23 +663,21 @@ implements Disposable
         }
 
         @Override
-        public boolean await(Status status)
-        throws InterruptedException
+        public boolean await(State state)
         {
-            return myStateLatch.await(status);
+            return myStateLatch.await(state);
         }
 
         @Override
-        public boolean await(Status status, long time, TimeUnit unit)
-        throws InterruptedException
+        public boolean await(State state, long time, TimeUnit unit)
         {
-            return myStateLatch.await(status, time, unit);
+            return myStateLatch.await(state, time, unit);
         }
 
         @Override
-        public boolean hasStatus(Status status)
+        public boolean hasStatus(State state)
         {
-            return myStateLatch.hasState(status);
+            return myStateLatch.hasState(state);
         }
 
         @Override
@@ -694,7 +693,6 @@ implements Disposable
 
         @Override
         public <V> V get(String name)
-        throws InterruptedException
         {
             await(Success);
             return (V) myResultMap.get(name);
@@ -702,7 +700,6 @@ implements Disposable
 
         @Override
         public <V> V get(Key<V> key)
-        throws InterruptedException
         {
             await(Success);
             return (V) myResultMap.get(key);
@@ -720,9 +717,9 @@ implements Disposable
             return myResultMap.containsKey(key);
         }
 
-        public void signal(Status status)
+        public void signal(State state)
         {
-            myStateLatch.signal(status);
+            myStateLatch.signal(state);
         }
     }
 }

@@ -187,6 +187,7 @@ implements EventManager
     @Override
     public void post(EventBuilder builder)
     {
+        checkNotNull(builder);
         post(builder.build());
     }
 
@@ -199,6 +200,18 @@ implements EventManager
         final Context context = checkNotNull(event.getParameter(ContextParam));
         final EventBus eventBus = getOrCreateEventBus(context);
         eventBus.post(event);
+    }
+
+    @Override
+    public Result query(Class<? extends RootEvent> type, Parameter... parameters)
+    {
+        return query(createQuery(type, parameters));
+    }
+
+    @Override
+    public Result query(Class<? extends RootEvent> type, Parameters parameters)
+    {
+        return query(createQuery(type, parameters));
     }
 
     @Override

@@ -100,12 +100,8 @@ public class StateLatchTest
             @Override
             public void run()
             {
-                try
-                {
-                    testee.await(StateA);
-                    blockedFlag.set(false);
-                }
-                catch (InterruptedException ignored) {}
+                testee.await(StateA);
+                blockedFlag.set(false);
             }
         });
 
@@ -214,15 +210,8 @@ public class StateLatchTest
         @Override
         public void run()
         {
-            try
-            {
-                testee.await(myState);
-                myLatch.countDown();
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+            testee.await(myState);
+            myLatch.countDown();
         }
     }
 }

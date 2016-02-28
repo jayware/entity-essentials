@@ -61,17 +61,23 @@ public class StateLatch<S extends Enum<S>>
         }
     }
 
-    public void await(S state)
-    throws InterruptedException
+    public boolean await(S state)
     {
         checkNotNull(state);
 
         myLock.lock();
         try
         {
-            while (myCurrentState.compareTo(state) < 0) {
+            while (myCurrentState.compareTo(state) < 0)
+            {
                 myConditions.get(state).await();
             }
+
+            return myCurrentState == state;
+        }
+        catch (InterruptedException e)
+        {
+            return false;
         }
         finally
         {
@@ -80,14 +86,18 @@ public class StateLatch<S extends Enum<S>>
     }
 
     public boolean await(S state, long time, TimeUnit unit)
-    throws InterruptedException
     {
         checkNotNull(state);
 
         myLock.lock();
         try
         {
-            return myConditions.get(state).await(time, unit);
+            boolean elapsed = myConditions.get(state).await(time, unit);
+            return myCurrentState == state || elapsed;
+        }
+        catch (InterruptedException e)
+        {
+            return false;
         }
         finally
         {
