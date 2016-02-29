@@ -29,19 +29,19 @@ import org.jayware.e2.event.api.ReadOnlyParameters;
 import static org.jayware.e2.event.api.Parameters.Parameter;
 
 
-public class EventImpl
+class EventImpl
 implements Event
 {
     private final Class<? extends EventType> myType;
     private final Parameters myParameters;
 
-    public EventImpl(Class<? extends EventType> type, Parameters parameters)
+    EventImpl(Class<? extends EventType> type, Parameters parameters)
     {
         myType = type;
         myParameters = new Parameters(parameters);
     }
 
-    public EventImpl(Class<? extends EventType> type, Parameter[] parameters)
+    EventImpl(Class<? extends EventType> type, Parameter[] parameters)
     {
         myType = type;
         myParameters = new Parameters(parameters);

@@ -29,7 +29,7 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class SubscriptionImpl_WeakReference
+class SubscriptionImpl_WeakReference
 implements Subscription
 {
     private final WeakReference<Object> mySubscriber;
@@ -38,7 +38,7 @@ implements Subscription
 
     private final AtomicBoolean myIsValid;
 
-    public SubscriptionImpl_WeakReference(Object subscriber, EventDispatcher eventDispatcher, EventFilter[] filters)
+    SubscriptionImpl_WeakReference(Object subscriber, EventDispatcher eventDispatcher, EventFilter[] filters)
     {
         mySubscriber = new WeakReference<>(subscriber);
         myEventDispatcher = eventDispatcher;

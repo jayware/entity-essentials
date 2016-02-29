@@ -21,47 +21,50 @@
  */
 package org.jayware.e2.event.impl;
 
-import org.jayware.e2.event.api.Event;
-import org.jayware.e2.event.api.EventBuilder;
-import org.jayware.e2.event.api.EventBuilder.EventBuilderTo;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
+import org.jayware.e2.event.api.Query;
+import org.jayware.e2.event.api.Query.State;
+import org.jayware.e2.event.api.QueryBuilder;
+import org.jayware.e2.event.api.QueryBuilder.QueryBuilderTo;
+import org.jayware.e2.event.api.Result;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static org.jayware.e2.event.api.Query.State.Ready;
+import static org.jayware.e2.util.Preconditions.checkArgument;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.jayware.e2.util.Preconditions.checkStringNotEmpty;
 
 
-class EventBuilderImpl
-implements EventBuilder, EventBuilderTo
+class QueryBuilderImpl
+implements QueryBuilder, QueryBuilderTo
 {
     private final Class<? extends EventType> myEventType;
     private final Parameters myEventParameters;
+    private final Map<State, Consumer<Result>> myResultConsumers;
 
     private String myLastParameter;
 
-    private EventBuilderImpl(Class<? extends EventType> type)
+    private QueryBuilderImpl(Class<? extends EventType> type)
     {
         myEventType = type;
         myEventParameters = new Parameters();
+        myResultConsumers = new EnumMap<>(State.class);
     }
 
-    static EventBuilder createEventBuilder(Class<? extends EventType> type)
+    static QueryBuilder createQueryBuilder(Class<? extends EventType> type)
     {
         checkNotNull(type);
 
-        return new EventBuilderImpl(type);
+        return new QueryBuilderImpl(type);
     }
 
     @Override
-    public EventBuilder reset()
-    {
-        myEventParameters.clear();
-        return this;
-    }
-
-    @Override
-    public EventBuilderTo set(String parameter)
+    public QueryBuilderTo set(String parameter)
     {
         checkStringNotEmpty(parameter);
         myLastParameter = parameter;
@@ -69,7 +72,7 @@ implements EventBuilder, EventBuilderTo
     }
 
     @Override
-    public EventBuilder set(Parameter parameter)
+    public QueryBuilder set(Parameter parameter)
     {
         checkNotNull(parameter);
         myEventParameters.set(parameter);
@@ -77,7 +80,7 @@ implements EventBuilder, EventBuilderTo
     }
 
     @Override
-    public EventBuilder setAll(Parameters parameters)
+    public QueryBuilder setAll(Parameters parameters)
     {
         checkNotNull(parameters);
         myEventParameters.set(parameters);
@@ -85,15 +88,32 @@ implements EventBuilder, EventBuilderTo
     }
 
     @Override
-    public EventBuilder to(Object value)
+    public QueryBuilder on(State state, Consumer<Result> consumer)
+    {
+        checkNotNull(state);
+        checkArgument(() -> state != Ready);
+        myResultConsumers.put(state, consumer);
+        return this;
+    }
+
+    @Override
+    public QueryBuilder to(Object value)
     {
         myEventParameters.set(myLastParameter, value);
         return this;
     }
 
     @Override
-    public Event build()
+    public Query build()
     {
-        return new EventImpl(myEventType, myEventParameters);
+        return new QueryImpl(myEventType, myEventParameters, myResultConsumers);
+    }
+
+    @Override
+    public QueryBuilder reset()
+    {
+        myEventParameters.clear();
+        myResultConsumers.clear();
+        return this;
     }
 }

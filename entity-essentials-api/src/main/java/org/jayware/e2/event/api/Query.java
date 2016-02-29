@@ -39,7 +39,7 @@ extends Event
         /**
          * The initial state of {@link Query} until it gets executed.
          */
-        Standby,
+        Ready,
 
         /**
          * The state of a {@link Query} during execution.
@@ -57,7 +57,23 @@ extends Event
         Failed
     }
 
+    /**
+     * Adds an association of the specified name and value to the {@link Result} of this {@link Query}.
+     *
+     * @param name a {@link String}
+     * @param value a value.
+     *
+     * @param <V> the value's type
+     */
     <V> void result(String name, V value);
 
+    /**
+     * Adds an association of the specified name and value to the {@link Result} of this {@link Query}.
+     *
+     * @param key a {@link Key}
+     * @param value a value.
+     *
+     * @param <V> the value's type
+     */
     <V> void result(Key<V> key, V value);
 }

@@ -28,7 +28,7 @@ import org.jayware.e2.event.api.Subscription;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class SubscriptionImpl_StrongReference
+class SubscriptionImpl_StrongReference
 implements Subscription
 {
     private final Object mySubscriber;
@@ -37,7 +37,7 @@ implements Subscription
 
     private final AtomicBoolean myIsValid;
 
-    public SubscriptionImpl_StrongReference(Object subscriber, EventDispatcher eventDispatcher, EventFilter[] filters)
+    SubscriptionImpl_StrongReference(Object subscriber, EventDispatcher eventDispatcher, EventFilter[] filters)
     {
         mySubscriber = subscriber;
         myEventDispatcher = eventDispatcher;

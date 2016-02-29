@@ -32,6 +32,7 @@ import org.jayware.e2.event.api.EventType.RootEvent;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
+import org.jayware.e2.event.api.QueryBuilder;
 import org.jayware.e2.event.api.Result;
 import org.jayware.e2.event.api.SanityCheck;
 import org.jayware.e2.event.api.SanityCheckFailedException;
@@ -41,10 +42,12 @@ import org.jayware.e2.util.ReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import static java.util.Collections.emptyMap;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -90,17 +93,24 @@ implements EventManager
     }
 
     @Override
+    public QueryBuilder createQuery(Class<? extends RootEvent> type)
+    throws IllegalArgumentException
+    {
+        throw new UnsupportedOperationException("EventManagerImpl.createQuery");
+    }
+
+    @Override
     public Query createQuery(Class<? extends RootEvent> type, Parameter... parameters)
     {
         checkNotNull(type);
         checkNotNull(parameters);
-        return new QueryImpl(type, parameters);
+        return new QueryImpl(type, parameters, emptyMap());
     }
 
     @Override
     public Query createQuery(Class<? extends RootEvent> type, Parameters parameters)
     {
-        return new QueryImpl(type, parameters);
+        return new QueryImpl(type, parameters, emptyMap());
     }
 
     @Override
@@ -199,6 +209,7 @@ implements EventManager
 
         final Context context = checkNotNull(event.getParameter(ContextParam));
         final EventBus eventBus = getOrCreateEventBus(context);
+
         eventBus.post(event);
     }
 
@@ -212,6 +223,14 @@ implements EventManager
     public Result query(Class<? extends RootEvent> type, Parameters parameters)
     {
         return query(createQuery(type, parameters));
+    }
+
+    @Override
+    public Result query(QueryBuilder builder)
+    {
+        checkNotNull(builder);
+
+        return query(builder.build());
     }
 
     @Override

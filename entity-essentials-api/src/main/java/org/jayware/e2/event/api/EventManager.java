@@ -75,6 +75,17 @@ public interface EventManager
     Event createEvent(Class<? extends RootEvent> type, Parameters parameters) throws IllegalArgumentException;
 
     /**
+     * Creates an {@link Query} with the specified {@link EventType}.
+     *
+     * @param type the event's {@link EventType}.
+     *
+     * @return an {@link QueryBuilder} to set additional {@link Parameters}.
+     *
+     * @throws IllegalArgumentException if the passed {@link EventType} is null.
+     */
+    QueryBuilder createQuery(Class<? extends RootEvent> type) throws IllegalArgumentException;
+
+    /**
      * Creates a {@link Query} with the specified {@link EventType} and the passed {@link Parameters}.
      *
      * @param type the event's {@link EventType}.
@@ -268,8 +279,8 @@ public interface EventManager
     /**
      * Posts the {@link Event} created from the information provided by the specified {@link EventBuilder}.
      * <p>
-     * <b>Node:</b> The {@link Event} is delivered to all interested subscribers in a <u>synchronous</u> manner.
-     * Therefore the calling thread returns not until the event has been delivered to all interested subscribers.
+     * <b>Node:</b> The {@link Event} is delivered to all interested subscribers in a <u>asynchronous</u> manner.
+     * Therefore the calling thread will return before the event has been delivered to all interested subscribers.
      *
      * @param builder an {@link EventBuilder} to use.
      *
@@ -308,6 +319,15 @@ public interface EventManager
      * @return the {@link Result} of the {@link Query}.
      */
     Result query(Class<? extends RootEvent> type, Parameters parameters);
+
+    /**
+     * Executes a {@link Query} created from the information provided by the specified {@link QueryBuilder}.
+     *
+     * @param builder a {@link QueryBuilder}.
+     *
+     * @return the {@link Result} of the {@link Query}.
+     */
+    Result query(QueryBuilder builder) throws SanityCheckFailedException;
 
     /**
      * Executes the specified {@link Query}.

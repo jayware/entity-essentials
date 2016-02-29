@@ -59,6 +59,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Consumer;
 import java.util.function.IntUnaryOperator;
 
 import static java.lang.Thread.currentThread;
@@ -199,18 +200,18 @@ implements Disposable
         }
     }
 
-    private QueryDispatch createQueryDispatch(Query query)
-    {
-        updateLastSubscriptionCollection();
-
-        return new QueryDispatch(query, myLastSubscriptionCollection.get());
-    }
-
     private EventDispatch createEventDispatch(Event event)
     {
         updateLastSubscriptionCollection();
 
         return new EventDispatch(event, myLastSubscriptionCollection.get());
+    }
+
+    private QueryDispatch createQueryDispatch(Query query)
+    {
+        updateLastSubscriptionCollection();
+
+        return new QueryDispatch((QueryImpl) query, myLastSubscriptionCollection.get());
     }
 
     private class EventBusWorkerPool
@@ -499,7 +500,7 @@ implements Disposable
     {
         private final QueryWrapper myQuery;
 
-        public QueryDispatch(Query query, Collection<Subscription> subscriptions)
+        public QueryDispatch(QueryImpl query, Collection<Subscription> subscriptions)
         {
             super(new QueryWrapper(query, new QueryResult(query)), subscriptions);
             myQuery = (QueryWrapper) myEvent;
@@ -647,13 +648,15 @@ implements Disposable
         private final StateLatch<State> myStateLatch;
 
         private final Map<Object, Object> myResultMap;
+        private final Map<State, Consumer<Result>> myConsumers;
 
-        private QueryResult(Query query)
+        private QueryResult(QueryImpl query)
         {
             myQuery = query;
 
             myStateLatch = new StateLatch<>(State.class);
             myResultMap = new ConcurrentHashMap<>();
+            myConsumers = query.getConsumers();
         }
 
         @Override
@@ -720,6 +723,15 @@ implements Disposable
         public void signal(State state)
         {
             myStateLatch.signal(state);
+
+            try
+            {
+                myConsumers.get(state).accept(this);
+            }
+            catch (Exception e)
+            {
+                log.error("Failed to signal query state-change!", e);
+            }
         }
     }
 }
