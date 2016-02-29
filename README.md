@@ -49,8 +49,7 @@
 
 ## Description
 Entity Essentials is a Component-based Entity System written in Java. This framework provides operations and structures to work with entities and components.
-Apart from that, it provides a couple of useful extras (<a href="https://github.com/jayware/entity-essentials/wiki/Entity-Essentials">read more</a>).
-The current implementation isn't a typical <a href="https://en.wikipedia.org/wiki/Entity_component_system">Entity Component System (ECS)</a>
+Apart from that, it provides a couple of useful extras. The current implementation isn't a typical <a href="https://en.wikipedia.org/wiki/Entity_component_system">Entity Component System (ECS)</a>
 known from game development as a part of a game engine. Instead, this framework is designed as foundation for graphical modeling editors.
 
 ## Quickstart
