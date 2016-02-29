@@ -4,7 +4,7 @@ apply plugin: "osgi"
 dependencies {
 
     compile "com.google.guava:guava:19.0"
-    compile "org.slf4j:slf4j-api:1.7.16"
+    compile "org.slf4j:slf4j-api:1.7.18"
 
     testCompile "org.testng:testng:6.9.10"
     testCompile "org.assertj:assertj-core:3.3.0"
