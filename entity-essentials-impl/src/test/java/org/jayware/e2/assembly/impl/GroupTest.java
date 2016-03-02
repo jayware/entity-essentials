@@ -30,6 +30,7 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.entity.api.InvalidEntityRefException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -114,8 +115,8 @@ public class GroupTest
         testee.add(null);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void test_add_ThrowsIllegalStateExceptionIfPassedEntityIsInvalid()
+    @Test(expectedExceptions = InvalidEntityRefException.class)
+    public void test_add_ThrowsInvalidEntityRefExceptionIfPassedEntityIsInvalid()
     {
         testEntityManager.deleteEntity(testEntityA);
         testee.add(testEntityA);
@@ -148,8 +149,8 @@ public class GroupTest
         testee.remove(null);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void test_remove_ThrowsIllegalStateExceptionIfPassedEntityIsInvalid()
+    @Test(expectedExceptions = InvalidEntityRefException.class)
+    public void test_remove_ThrowsInvalidEntityRefExceptionIfPassedEntityIsInvalid()
     {
         testEntityManager.deleteEntity(testEntityA);
         testee.remove(testEntityA);

@@ -43,7 +43,7 @@ public class Preconditions
 
         if (ref.isInvalid())
         {
-            throw new IllegalStateException();
+            throw new InvalidEntityRefException(ref);
         }
 
         return ref;

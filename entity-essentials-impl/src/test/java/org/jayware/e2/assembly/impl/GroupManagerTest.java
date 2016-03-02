@@ -30,6 +30,7 @@ import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.entity.api.InvalidEntityRefException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -138,8 +139,8 @@ public class GroupManagerTest
         testee.addEntityToGroup(null, testGroup);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void test_addEntityToGroup_ThrowsIllegalStateExceptionWhenPassedEntityRefIsInvalid()
+    @Test(expectedExceptions = InvalidEntityRefException.class)
+    public void test_addEntityToGroup_ThrowsInvalidEntityRefExceptionWhenPassedEntityRefIsInvalid()
     {
         final Group testGroup = mock(Group.class);
         final EntityRef ref = mock(EntityRef.class);
@@ -187,8 +188,8 @@ public class GroupManagerTest
         testee.removeEntityFromGroup(null, testGroup);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void test_removeEntityFromGroup_ThrowsIllegalStateExceptionWhenPassedEntityRefIsInvalid()
+    @Test(expectedExceptions = InvalidEntityRefException.class)
+    public void test_removeEntityFromGroup_ThrowsInvalidEntityRefExceptionWhenPassedEntityRefIsInvalid()
     {
         final Group testGroup = mock(Group.class);
         final EntityRef ref = mock(EntityRef.class);
