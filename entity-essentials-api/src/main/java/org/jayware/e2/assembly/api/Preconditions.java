@@ -32,7 +32,7 @@ public class Preconditions
      * @return the {@link Group} that was validated.
      *
      * @throws IllegalArgumentException if {@link Group} is null.
-     * @throws IllegalStateException if {@link Group} is invalid.
+     * @throws InvalidGroupException if {@link Group} is invalid.
      */
     public static Group checkGroupNotNullAndValid(Group group)
     {
@@ -47,5 +47,43 @@ public class Preconditions
         }
 
         return group;
+    }
+
+    /**
+     * Ensures that a {@link Node} passed as a parameter to the calling method is not null and valid.
+     *
+     * @param node a {@link Node}.
+     * @param <N> the concrete type.
+     *
+     * @return the {@link Node} that was validated.
+     *
+     * @throws IllegalArgumentException if {@link Node} is null.
+     * @throws InvalidNodeException if {@link Node} is invalid.
+     * @throws InvalidNodeException if the {@link Node}'s pendant is invalid.
+     */
+    public static <N extends Node> N checkNodeNotNullAndValid(N node)
+    {
+        // TODO: Write better exception messages!
+        if (node == null)
+        {
+            throw new IllegalArgumentException();
+        }
+
+        if (node.isInvalid())
+        {
+            throw new InvalidNodeException("Pendant entity of node is invalid!", node);
+        }
+
+        if (node.getNodeRef() == null)
+        {
+            throw new InvalidNodeException("Entity of node is null!", node);
+        }
+
+        if (node.getNodeRef().isInvalid())
+        {
+            throw new InvalidNodeException("Entity of node is invalid!", node);
+        }
+
+        return node;
     }
 }

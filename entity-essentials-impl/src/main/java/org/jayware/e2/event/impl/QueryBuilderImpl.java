@@ -28,7 +28,7 @@ import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.Query.State;
 import org.jayware.e2.event.api.QueryBuilder;
 import org.jayware.e2.event.api.QueryBuilder.QueryBuilderTo;
-import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ implements QueryBuilder, QueryBuilderTo
 {
     private final Class<? extends EventType> myEventType;
     private final Parameters myEventParameters;
-    private final Map<State, Consumer<Result>> myResultConsumers;
+    private final Map<State, Consumer<ResultSet>> myResultConsumers;
 
     private String myLastParameter;
 
@@ -88,7 +88,7 @@ implements QueryBuilder, QueryBuilderTo
     }
 
     @Override
-    public QueryBuilder on(State state, Consumer<Result> consumer)
+    public QueryBuilder on(State state, Consumer<ResultSet> consumer)
     {
         checkNotNull(state);
         checkArgument(() -> state != Ready);

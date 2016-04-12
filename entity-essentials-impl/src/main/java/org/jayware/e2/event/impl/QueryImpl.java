@@ -26,11 +26,9 @@ import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.ReadOnlyParameters;
-import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Key;
 
-import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -41,15 +39,15 @@ class QueryImpl
 implements Query
 {
     private final Event myEvent;
-    private final Map<State, Consumer<Result>> myConsumers;
+    private final Map<State, Consumer<ResultSet>> myConsumers;
 
-    QueryImpl(Class<? extends EventType> type, Parameters parameters, Map<State, Consumer<Result>> consumers)
+    QueryImpl(Class<? extends EventType> type, Parameters parameters, Map<State, Consumer<ResultSet>> consumers)
     {
         myEvent = new EventImpl(type, parameters);
         myConsumers = unmodifiableMap(consumers);
     }
 
-    QueryImpl(Class<? extends EventType> type, Parameters.Parameter[] parameters, Map<State, Consumer<Result>> consumers)
+    QueryImpl(Class<? extends EventType> type, Parameters.Parameter[] parameters, Map<State, Consumer<ResultSet>> consumers)
     {
         myEvent = new EventImpl(type, parameters);
         myConsumers = unmodifiableMap(consumers);
@@ -103,7 +101,7 @@ implements Query
         return true;
     }
 
-    public Map<State, Consumer<Result>> getConsumers()
+    public Map<State, Consumer<ResultSet>> getConsumers()
     {
         return myConsumers;
     }

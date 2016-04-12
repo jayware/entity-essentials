@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,31 +19,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.event.api;
+package org.jayware.e2.assembly.api;
 
 
-import org.jayware.e2.event.api.Parameters.Parameter;
-import org.jayware.e2.event.api.Query.State;
-
-import java.util.function.Consumer;
-
-
-public interface QueryBuilder
+public class TreeManagerException
+extends RuntimeException
 {
-    QueryBuilderTo set(String parameter);
-
-    QueryBuilder set(Parameter parameter);
-
-    QueryBuilder setAll(Parameters parameters);
-
-    QueryBuilder on(State state, Consumer<ResultSet> consumer);
-
-    QueryBuilder reset();
-
-    Query build();
-
-    interface QueryBuilderTo
+    public TreeManagerException()
     {
-        QueryBuilder to(Object value);
+    }
+
+    public TreeManagerException(String message)
+    {
+        super(message);
+    }
+
+    public TreeManagerException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public TreeManagerException(Throwable cause)
+    {
+        super(cause);
     }
 }

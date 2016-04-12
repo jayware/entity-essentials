@@ -83,6 +83,7 @@ import static org.jayware.e2.util.GlobUtil.toRegex;
  *
  * @since 1.0
  */
+@Deprecated
 public class EntityPath
 {
     public static final String SEPARATOR = "/";

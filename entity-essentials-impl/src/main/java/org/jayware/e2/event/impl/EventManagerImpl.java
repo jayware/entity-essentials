@@ -33,7 +33,7 @@ import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.QueryBuilder;
-import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.event.api.SanityCheck;
 import org.jayware.e2.event.api.SanityCheckFailedException;
 import org.jayware.e2.event.api.SanityChecker;
@@ -42,7 +42,6 @@ import org.jayware.e2.util.ReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -214,19 +213,19 @@ implements EventManager
     }
 
     @Override
-    public Result query(Class<? extends RootEvent> type, Parameter... parameters)
+    public ResultSet query(Class<? extends RootEvent> type, Parameter... parameters)
     {
         return query(createQuery(type, parameters));
     }
 
     @Override
-    public Result query(Class<? extends RootEvent> type, Parameters parameters)
+    public ResultSet query(Class<? extends RootEvent> type, Parameters parameters)
     {
         return query(createQuery(type, parameters));
     }
 
     @Override
-    public Result query(QueryBuilder builder)
+    public ResultSet query(QueryBuilder builder)
     {
         checkNotNull(builder);
 
@@ -234,7 +233,7 @@ implements EventManager
     }
 
     @Override
-    public Result query(Query query)
+    public ResultSet query(Query query)
     {
         checkNotNull(query);
         sanityCheck(query);

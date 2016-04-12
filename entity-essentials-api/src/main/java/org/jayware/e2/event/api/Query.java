@@ -29,7 +29,7 @@ import org.jayware.e2.util.Key;
  * A <code>Query</code> is an {@link Event} which returns results.
  *
  * @see EventManager
- * @see Result
+ * @see ResultSet
  */
 public interface Query
 extends Event
@@ -58,7 +58,7 @@ extends Event
     }
 
     /**
-     * Adds an association of the specified name and value to the {@link Result} of this {@link Query}.
+     * Adds an association of the specified name and value to the {@link ResultSet} of this {@link Query}.
      *
      * @param name a {@link String}
      * @param value a value.
@@ -68,7 +68,7 @@ extends Event
     <V> void result(String name, V value);
 
     /**
-     * Adds an association of the specified name and value to the {@link Result} of this {@link Query}.
+     * Adds an association of the specified name and value to the {@link ResultSet} of this {@link Query}.
      *
      * @param key a {@link Key}
      * @param value a value.

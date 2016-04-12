@@ -19,9 +19,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.assembly.api.events;
+package org.jayware.e2.assembly.api;
 
-import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.entity.api.EntityRef;
 
 

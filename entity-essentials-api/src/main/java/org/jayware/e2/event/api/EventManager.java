@@ -306,9 +306,9 @@ public interface EventManager
      * @param type an {@link EventType}.
      * @param parameters an array of {@link Parameter Parameters}.
      *
-     * @return the {@link Result} of the {@link Query}.
+     * @return the {@link ResultSet} of the {@link Query}.
      */
-    Result query(Class<? extends RootEvent> type, Parameter... parameters);
+    ResultSet query(Class<? extends RootEvent> type, Parameter... parameters);
 
     /**
      * Executes a {@link Query} with the specified {@link EventType} a the passed {@link Parameters}.
@@ -316,25 +316,25 @@ public interface EventManager
      * @param type an {@link EventType}.
      * @param parameters a {@link Parameters}.
      *
-     * @return the {@link Result} of the {@link Query}.
+     * @return the {@link ResultSet} of the {@link Query}.
      */
-    Result query(Class<? extends RootEvent> type, Parameters parameters);
+    ResultSet query(Class<? extends RootEvent> type, Parameters parameters);
 
     /**
      * Executes a {@link Query} created from the information provided by the specified {@link QueryBuilder}.
      *
      * @param builder a {@link QueryBuilder}.
      *
-     * @return the {@link Result} of the {@link Query}.
+     * @return the {@link ResultSet} of the {@link Query}.
      */
-    Result query(QueryBuilder builder) throws SanityCheckFailedException;
+    ResultSet query(QueryBuilder builder) throws SanityCheckFailedException;
 
     /**
      * Executes the specified {@link Query}.
      *
      * @param query a {@link Query}.
      *
-     * @return the {@link Result} of the {@link Query}.
+     * @return the {@link ResultSet} of the {@link Query}.
      */
-    Result query(Query query) throws SanityCheckFailedException;
+    ResultSet query(Query query) throws SanityCheckFailedException;
 }

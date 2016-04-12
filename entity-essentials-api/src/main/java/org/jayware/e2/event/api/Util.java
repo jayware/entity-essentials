@@ -19,14 +19,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.assembly.api.events;
+package org.jayware.e2.event.api;
 
 
-import org.jayware.e2.event.api.EventType.RootEvent;
-
-
-public interface AssemblyEvent
-extends RootEvent
+class Util
 {
+    static String buildExceptionMessage(String message, Event event)
+    {
+        final StringBuilder messageBuilder = new StringBuilder();
 
+        messageBuilder.append(message).append('\n');
+        messageBuilder.append('\t').append(event.isQuery() ? "Query: " : "Event: ").append(event.getType().getName()).append('\n');
+        messageBuilder.append('\t').append("Parameters: ");
+        for (Parameters.Parameter parameter : event.getParameters())
+        {
+            messageBuilder.append('\n');
+            messageBuilder.append("\t\t").append("Name: ").append(parameter.getName()).append('\n');
+            messageBuilder.append("\t\t").append("Value: ").append(parameter.getValue()).append('\n');
+        }
+
+        return messageBuilder.toString();
+    }
 }

@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -22,28 +22,24 @@
 package org.jayware.e2.event.api;
 
 
-import org.jayware.e2.event.api.Parameters.Parameter;
-import org.jayware.e2.event.api.Query.State;
-
-import java.util.function.Consumer;
+import static org.jayware.e2.event.api.Util.buildExceptionMessage;
 
 
-public interface QueryBuilder
+public class MissingResultException
+extends RuntimeException
 {
-    QueryBuilderTo set(String parameter);
-
-    QueryBuilder set(Parameter parameter);
-
-    QueryBuilder setAll(Parameters parameters);
-
-    QueryBuilder on(State state, Consumer<ResultSet> consumer);
-
-    QueryBuilder reset();
-
-    Query build();
-
-    interface QueryBuilderTo
+    public MissingResultException(ResultSet resultSet)
     {
-        QueryBuilder to(Object value);
+        this(resultSet, "");
+    }
+
+    public MissingResultException(ResultSet resultSet, String message)
+    {
+        super(buildExceptionMessage(message, resultSet.getQuery()));
+    }
+
+    public MissingResultException(ResultSet resultSet, String message, Throwable cause)
+    {
+        super(buildExceptionMessage(message, resultSet.getQuery()), cause);
     }
 }

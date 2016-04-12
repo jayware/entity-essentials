@@ -29,7 +29,7 @@ import org.jayware.e2.event.api.EventType.RootEvent;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Query;
-import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
 
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
@@ -50,14 +50,14 @@ public class QueryExample
         eventManager.subscribe(context, handler);
 
         /* Send a query */
-        final Result result = eventManager.query(
+        final ResultSet resultSet = eventManager.query(
             ExampleQuery.class,
             param(ContextParam, context),
             param("a", 33),
             param("b", 9)
         );
 
-        System.out.println("\nSum: " + result.get("sum") + "\n");
+        System.out.println("\nSum: " + resultSet.get("sum") + "\n");
 
         /* Shutdown everything */
         context.dispose();

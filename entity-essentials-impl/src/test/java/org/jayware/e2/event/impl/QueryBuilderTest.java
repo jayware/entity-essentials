@@ -25,7 +25,7 @@ package org.jayware.e2.event.impl;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.QueryBuilder;
-import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -130,10 +130,10 @@ public class QueryBuilderTest
     }
 
     private static class TestConsumer
-    implements Consumer<Result>
+    implements Consumer<ResultSet>
     {
         @Override
-        public void accept(Result result)
+        public void accept(ResultSet resultSet)
         {
             throw new UnsupportedOperationException("TestConsumer.accept");
         }

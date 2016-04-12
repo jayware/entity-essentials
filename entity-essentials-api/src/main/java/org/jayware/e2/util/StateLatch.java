@@ -92,8 +92,13 @@ public class StateLatch<S extends Enum<S>>
         myLock.lock();
         try
         {
-            boolean elapsed = myConditions.get(state).await(time, unit);
-            return myCurrentState == state || elapsed;
+            if (myCurrentState.compareTo(state) < 0)
+            {
+                boolean elapsed = myConditions.get(state).await(time, unit);
+                return myCurrentState == state || elapsed;
+            }
+
+            return true;
         }
         catch (InterruptedException e)
         {

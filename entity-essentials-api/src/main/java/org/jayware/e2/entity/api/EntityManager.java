@@ -39,7 +39,6 @@ import java.util.List;
  *
  * @see Context
  * @see Entity
- * @see EntityPath
  * @see EntityRef
  * @see Aspect
  */
@@ -58,6 +57,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if the specified {@link EntityPath} is not absolute.
      */
+    @Deprecated
     EntityRef createEntity(Context context, EntityPath path) throws IllegalArgumentException;
 
     /**
@@ -72,6 +72,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if the specified {@link EntityPath} is not relative.
      */
+    @Deprecated
     EntityRef createEntity(EntityRef parentRef, EntityPath path) throws IllegalArgumentException;
 
     /**
@@ -100,6 +101,7 @@ public interface EntityManager
      *                                 are from different {@link Context Contexts}.
      *
      */
+    @Deprecated
     void moveEntity(EntityRef entity, EntityRef destination) throws IllegalContextException;
 
     /**
@@ -123,6 +125,7 @@ public interface EntityManager
      * @throws IllegalArgumentException if the specified {@link EntityPath} is empty.
      *                                  if the specified {@link EntityPath} is not absolute.
      */
+    @Deprecated
     EntityRef getEntity(Context context, EntityPath path) throws EntityNotFoundException, IllegalArgumentException;
 
     /**
@@ -141,6 +144,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if the specified {@link EntityPath} is not absolute.
      */
+    @Deprecated
     EntityRef findEntity(Context context, EntityPath path) throws IllegalArgumentException;
 
     /**
@@ -256,6 +260,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntities(Context context, Traversal traversal);
 
     /**
@@ -280,6 +285,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntities(Context context, Traversal traversal, Aspect aspect);
 
     /**
@@ -304,6 +310,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntities(Context context, Traversal traversal, Filter<EntityRef>... filters);
 
     /**
@@ -322,6 +329,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntities(Context context, Traversal traversal, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
@@ -371,6 +379,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(Context context, EntityPath path, Aspect aspect);
 
     /**
@@ -396,6 +405,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(Context context, EntityPath path, Filter<EntityRef>... filters);
 
     /**
@@ -415,6 +425,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(Context context, EntityPath path, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
@@ -438,6 +449,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(EntityRef ref);
 
     /**
@@ -462,6 +474,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(EntityRef ref, Aspect aspect);
 
     /**
@@ -486,6 +499,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(EntityRef ref, Filter<EntityRef>... filters);
 
     /**
@@ -504,6 +518,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(EntityRef ref, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
@@ -528,6 +543,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path);
 
     /**
@@ -553,6 +569,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path, Aspect aspect);
 
     /**
@@ -578,6 +595,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path, Filter<EntityRef>... filters);
 
     /**
@@ -603,6 +621,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal);
 
     /**
@@ -629,6 +648,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
@@ -655,6 +675,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal, Aspect aspect);
 
     /**
@@ -681,6 +702,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal, Filter<EntityRef>... filters);
 
     /**
@@ -708,6 +730,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
@@ -731,6 +754,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref);
 
     /**
@@ -755,6 +779,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref, Aspect aspect);
 
     /**
@@ -779,6 +804,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref, Filter<EntityRef>... filters);
 
     /**
@@ -803,6 +829,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal);
 
     /**
@@ -828,6 +855,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
@@ -853,6 +881,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal, Aspect aspect);
 
     /**
@@ -878,6 +907,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal, Filter<EntityRef>... filters);
 
     /**
@@ -897,6 +927,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
@@ -908,5 +939,6 @@ public interface EntityManager
      * @return <code>true</code> if an {@link Entity} with the specified {@link EntityPath} in the passed {@link Context}
      *         exists, otherwise <code>false</code>.
      */
+    @Deprecated
     boolean existsEntity(Context context, EntityPath path);
 }

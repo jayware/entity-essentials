@@ -28,7 +28,7 @@ import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
 
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
@@ -53,13 +53,13 @@ public class AsynchronousCreateEntityExample
         ref = entityManager.createEntity(context);
 
         /* But it is also possible to create an entity asynchronously by firing a query. */
-        Result result = eventManager.query(
+        ResultSet resultSet = eventManager.query(
             CreateEntityEvent.class,
             param(ContextParam, context)
         );
 
-        /* The result will contain the newly created entity. */
-        ref = result.get(EntityRefParam);
+        /* The resultSet will contain the newly created entity. */
+        ref = resultSet.get(EntityRefParam);
 
         System.out.println("\nEntity: " + ref + "\n");
 

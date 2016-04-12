@@ -33,7 +33,7 @@ import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventBuilder;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Filter;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.Traversal;
@@ -78,11 +78,11 @@ implements EntityManager
         getOrCreateEntityTree(context);
 
         final EventManager eventManager = context.getService(EventManager.class);
-        final Result result = eventManager.query(CreateEntityEvent.class, param(ContextParam, context));
+        final ResultSet resultSet = eventManager.query(CreateEntityEvent.class, param(ContextParam, context));
 
-        if (result.await(Success) && result.has(EntityRefParam))
+        if (resultSet.await(Success) && resultSet.has(EntityRefParam))
         {
-            return result.get(EntityRefParam);
+            return resultSet.get(EntityRefParam);
         }
 
         throw new RuntimeException("Failed to create entity!"); // TODO: introduce a dedicated exception!

@@ -24,26 +24,20 @@ package org.jayware.e2.examples;
 
 import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupManager;
-import org.jayware.e2.assembly.api.events.AssemblyEvent;
-import org.jayware.e2.assembly.api.events.GroupEvent;
-import org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.EntityFromGroupRemovedEvent;
-import org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.EntityToGroupAddedEvent;
-import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityFromGroupRemovedEvent;
+import org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityToGroupAddedEvent;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
-import org.jayware.e2.util.ReferenceType;
 
 import java.io.IOException;
 
-import static org.jayware.e2.assembly.api.events.GroupEvent.GroupMembershipEvent.EntityRefParam;
-import static org.jayware.e2.assembly.api.events.GroupEvent.GroupParam;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityRefParam;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
 import static org.jayware.e2.util.ReferenceType.Strong;
 
 

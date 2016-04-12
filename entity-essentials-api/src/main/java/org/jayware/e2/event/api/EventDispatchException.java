@@ -22,33 +22,19 @@
 package org.jayware.e2.event.api;
 
 
+import static org.jayware.e2.event.api.Util.buildExceptionMessage;
+
+
 public class EventDispatchException
 extends RuntimeException
 {
     public EventDispatchException(String message, Event event)
     {
-        super(buildMessage(message, event));
+        super(buildExceptionMessage(message, event));
     }
 
     public EventDispatchException(String message, Event event, Throwable cause)
     {
-        super(buildMessage(message, event), cause);
-    }
-
-    private static String buildMessage(String message, Event event)
-    {
-        final StringBuilder messageBuilder = new StringBuilder();
-
-        messageBuilder.append(message).append('\n');
-        messageBuilder.append('\t').append("Event: ").append(event.getType().getName()).append('\n');
-        messageBuilder.append('\t').append("Parameters: ");
-        for (Parameters.Parameter parameter : event.getParameters())
-        {
-            messageBuilder.append('\n');
-            messageBuilder.append("\t\t").append("Name: ").append(parameter.getName()).append('\n');
-            messageBuilder.append("\t\t").append("Value: ").append(parameter.getValue()).append('\n');
-        }
-
-        return messageBuilder.toString();
+        super(buildExceptionMessage(message, event), cause);
     }
 }

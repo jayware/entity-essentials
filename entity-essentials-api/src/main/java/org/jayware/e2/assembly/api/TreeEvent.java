@@ -19,21 +19,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.assembly.api.components;
+package org.jayware.e2.assembly.api;
 
 
-import org.jayware.e2.component.api.Component;
-import org.jayware.e2.entity.api.EntityRef;
-
-
-public interface GroupComponent
-extends Component
+public interface TreeEvent
+extends AssemblyEvent
 {
-    String getName();
+    String NodeParam = "org.jayware.e2.event.param.Node";
 
-    void setName(String name);
+    String ParentNodeParam = "org.jayware.e2.event.param.NodePendantParam";
 
-    EntityRef[] getMembers();
+    String NodePendantParam = "org.jayware.e2.event.param.NodePendantParam";
 
-    void setMembers(EntityRef[] members);
+    interface CreateTreeNodeEvent extends TreeEvent {}
+
+    interface TreeNodeCreatedEvent extends TreeEvent {}
+
+    interface DeleteTreeNodeEvent extends TreeEvent {}
+
+    interface DeletingTreeNodeEvent extends TreeEvent {}
+
+    interface TreeNodeDeletedEvent extends TreeEvent {}
+
+    interface AddChildNodeEvent extends TreeEvent {}
+
+    interface ChildNodeAddedEvent extends TreeEvent {}
+
+    interface RemoveChildNodeEvent extends TreeEvent {}
+
+    interface ChildNodeRemovedEvent extends TreeEvent {}
+
+    interface FindChildrenQuery
+    extends TreeEvent
+    {
+        String ChildrenParam = "org.jayware.e2.query.param.ChildrenParam";
+    }
 }

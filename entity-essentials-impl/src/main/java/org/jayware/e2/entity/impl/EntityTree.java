@@ -673,20 +673,14 @@ implements Disposable
         public String toString()
         {
             String toString =
-                "Ref {" +
-                    "id=" + myIdentifier + ", " +
-                    "path=";
+                "Ref { " + myIdentifier;
 
-            if (isValid())
+            if (isInvalid())
             {
-                toString += getPath();
-            }
-            else
-            {
-                toString += "<invalid>";
+                toString += " | <invalid>";
             }
 
-            return toString + "}";
+            return toString + " }";
         }
     }
 }

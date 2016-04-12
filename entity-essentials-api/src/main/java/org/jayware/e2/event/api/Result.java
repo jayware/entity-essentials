@@ -22,21 +22,15 @@
 package org.jayware.e2.event.api;
 
 import org.jayware.e2.event.api.Query.State;
-import org.jayware.e2.util.Key;
 import org.jayware.e2.util.StateLatch;
 
 import java.util.concurrent.TimeUnit;
 
 
-/**
- * A <code>Result</code> is the outcome of the execution of a {@link Query}.
- *
- * @see Query
- */
-public interface Result
+public interface Result<T>
 {
     /**
-     * Returns the preceded {@link Query} which leads this {@link Result}.
+     * Returns the preceded {@link Query} which leads to this {@link Result}.
      *
      * @return a {@link Query}.
      */
@@ -66,7 +60,7 @@ public interface Result
      * @param time the maximum time to wait.
      * @param unit the {@link TimeUnit} of the time argument
      *
-     * @return <code>true</code> if this {@link Result} entered the specified {@link State}, otherwise <code>false</code>.
+     * @return <code>true</code> if the {@link Query} entered the specified {@link State}, otherwise <code>false</code>.
      */
     boolean await(State state, long time, TimeUnit unit);
 
@@ -81,57 +75,38 @@ public interface Result
     boolean hasStatus(State state);
 
     /**
-     * Returns whether results of the preceded {@link Query} might be present.
-     * <p>
-     * It is assumed, that results are present when the {@link Query} enters the state {@link State#Success}.
-     * Therefore this operation is a shorthand for {@link #hasStatus hasStatus(Success)}
+     * Returns whether a result is present.
      *
-     * @return <code>true</code> if the preceded {@link Query} entered the state {@link State#Success}, otherwise
-     *         <code>false</code>.
+     * @return <code>true</code> if the preceded {@link Query} entered the state {@link State#Success} and produced
+     *         the expected result, otherwise <code>false</code>.
      */
     boolean hasResult();
 
     /**
-     * Returns the value of this {@link Result} which is associated to the specified key or <code>null</code>.
+     * Returns the value of this {@link Result}.
      * <p>
-     * <b>Note:</b> This operation blocks until the {@link Query} which preceded this {@link Result} enters
-     * the state {@link State#Success}.
-     *
-     * @param key a {@link String}
-     * @param <V> the type of the value.
-     *
-     * @return the value which is associated to the specified key or <code>null</code>.
-     */
-    <V> V get(String key);
-
-    /**
-     * Returns the value of this {@link Result} which is associated to the specified {@link Key} or <code>null</code>.
+     * In contrast to {@link Result#find()} this operation throws a {@link MissingResultException} if no value is present.
      * <p>
-     * <b>Note:</b> This operation blocks until the {@link Query} which preceded this {@link Result} enters
-     * the state {@link State#Success}.
+     * <b>Note:</b> This operation blocks until the {@link Query} which preceded this {@link Result} enters the state {@link State#Success}.
      *
-     * @param key a {@link Key}
-     * @param <V> the type of the value.
+     * @return the value, never <code>null</code>.
      *
-     * @return the value which is associated to the specified {@link Key} or <code>null</code>.
+     * @throws MissingResultException if the {@link Query} which preceded this {@link ResultSet} entered the state
+     *                                {@link State#Success} but did not produce the expected value.
      */
-    <V> V get(Key<V> key);
+    T get();
 
     /**
-     * Returns whether this {@link Result} contains a value associated to the specified name.
+     * Returns the value of this {@link Result}.
+     * <p>
+     * In contrast to {@link Result#get()} this operation returns <code>null</code> if no value is present.
+     * <p>
+     * <b>Note:</b> This operation blocks until the {@link Query} which preceded this {@link Result} enters the state {@link State#Success}.
      *
-     * @param name a {@link String}
+     * @return the value or <code>null</code>.
      *
-     * @return <code>true</code> if a value is associated to specified name, otherwise <code>false</code>.
+     * @throws MissingResultException if the {@link Query} which preceded this {@link ResultSet} entered the state
+     *                                {@link State#Success} but did not produce the expected value.
      */
-    boolean has(String name);
-
-    /**
-     * Returns whether this {@link Result} contains a value associated to the specified {@link Key}.
-     *
-     * @param key a {@link Key}
-     *
-     * @return <code>true</code> if a value is associated to specified {@link Key}, otherwise <code>false</code>.
-     */
-    boolean has(Key<?> key);
+    T find();
 }

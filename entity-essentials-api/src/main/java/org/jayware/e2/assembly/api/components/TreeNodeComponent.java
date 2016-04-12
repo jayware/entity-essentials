@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,31 +19,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.event.api;
+package org.jayware.e2.assembly.api.components;
 
 
-import org.jayware.e2.event.api.Parameters.Parameter;
-import org.jayware.e2.event.api.Query.State;
-
-import java.util.function.Consumer;
+import org.jayware.e2.component.api.Component;
+import org.jayware.e2.entity.api.EntityRef;
 
 
-public interface QueryBuilder
+public interface TreeNodeComponent
+extends Component
 {
-    QueryBuilderTo set(String parameter);
+    EntityRef getPendant();
 
-    QueryBuilder set(Parameter parameter);
+    void setPendant(EntityRef ref);
 
-    QueryBuilder setAll(Parameters parameters);
+    EntityRef getParent();
 
-    QueryBuilder on(State state, Consumer<ResultSet> consumer);
+    void setParent(EntityRef parent);
 
-    QueryBuilder reset();
+    EntityRef[] getChildren();
 
-    Query build();
-
-    interface QueryBuilderTo
-    {
-        QueryBuilder to(Object value);
-    }
+    void setChildren(EntityRef[] children);
 }

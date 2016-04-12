@@ -34,6 +34,8 @@ import org.jayware.e2.event.api.Query.State;
 import org.jayware.e2.event.api.QueryException;
 import org.jayware.e2.event.api.ReadOnlyParameters;
 import org.jayware.e2.event.api.Result;
+import org.jayware.e2.event.api.ResultSet;
+import org.jayware.e2.event.api.MissingResultException;
 import org.jayware.e2.event.api.Subscription;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.ReferenceType;
@@ -166,7 +168,7 @@ implements Disposable
         myWorkerPool.post(event);
     }
 
-    public Result query(Query query)
+    public ResultSet query(Query query)
     {
         return myWorkerPool.query(query);
     }
@@ -262,7 +264,7 @@ implements Disposable
             nextWorker().post(event);
         }
 
-        public Result query(Query query)
+        public ResultSet query(Query query)
         {
             return nextWorker().query(query);
         }
@@ -344,7 +346,7 @@ implements Disposable
             catch (InterruptedException ignored) {}
         }
 
-        public Result query(Query query)
+        public ResultSet query(Query query)
         {
             final QueryDispatch dispatch = createQueryDispatch(query);
 
@@ -502,7 +504,7 @@ implements Disposable
 
         public QueryDispatch(QueryImpl query, Collection<Subscription> subscriptions)
         {
-            super(new QueryWrapper(query, new QueryResult(query)), subscriptions);
+            super(new QueryWrapper(query, new QueryResultSet(query)), subscriptions);
             myQuery = (QueryWrapper) myEvent;
         }
 
@@ -511,7 +513,7 @@ implements Disposable
             return myQuery;
         }
 
-        public Result getResult()
+        public ResultSet getResult()
         {
             return myQuery.getResult();
         }
@@ -519,7 +521,7 @@ implements Disposable
         @Override
         public void execute()
         {
-            final QueryResult result = myQuery.getResult();
+            final QueryResultSet result = myQuery.getResult();
             result.signal(Running);
 
             try
@@ -578,9 +580,9 @@ implements Disposable
     implements Query
     {
         private final Query myQuery;
-        private final QueryResult myResult;
+        private final QueryResultSet myResult;
 
-        private QueryWrapper(Query query, QueryResult result)
+        private QueryWrapper(Query query, QueryResultSet result)
         {
             myQuery = query;
             myResult = result;
@@ -634,23 +636,23 @@ implements Disposable
             return true;
         }
 
-        public QueryResult getResult()
+        public QueryResultSet getResult()
         {
             return myResult;
         }
     }
 
-    private static class QueryResult
-    implements Result
+    private static class QueryResultSet
+    implements ResultSet
     {
         private final Query myQuery;
 
         private final StateLatch<State> myStateLatch;
 
         private final Map<Object, Object> myResultMap;
-        private final Map<State, Consumer<Result>> myConsumers;
+        private final Map<State, Consumer<ResultSet>> myConsumers;
 
-        private QueryResult(QueryImpl query)
+        private QueryResultSet(QueryImpl query)
         {
             myQuery = query;
 
@@ -697,12 +699,38 @@ implements Disposable
         @Override
         public <V> V get(String name)
         {
+            final V value = find(name);
+
+            if (value == null)
+            {
+                throw new MissingResultException(this, "ResultSet does not contain a value associated to to the name: '" + name + "'");
+            }
+
+            return value;
+        }
+
+        @Override
+        public <V> V get(Key<V> key)
+        {
+            final V value = find(key);
+
+            if (value == null)
+            {
+                throw new MissingResultException(this, "ResultSet does not contain a value associated to to the key: '" + key + "'");
+            }
+
+            return value;
+        }
+
+        @Override
+        public <V> V find(String name)
+        {
             await(Success);
             return (V) myResultMap.get(name);
         }
 
         @Override
-        public <V> V get(Key<V> key)
+        public <V> V find(Key<V> key)
         {
             await(Success);
             return (V) myResultMap.get(key);
@@ -720,13 +748,25 @@ implements Disposable
             return myResultMap.containsKey(key);
         }
 
+        @Override
+        public <T> Result<T> resultOf(Key<T> key)
+        {
+            return new KeyQueryResult<>(key);
+        }
+
+        @Override
+        public <T> Result<T> resultOf(String name)
+        {
+            return new NameQueryResult<>(name);
+        }
+
         public void signal(State state)
         {
             myStateLatch.signal(state);
 
             try
             {
-                final Consumer<Result> consumer = myConsumers.get(state);
+                final Consumer<ResultSet> consumer = myConsumers.get(state);
                 if (consumer != null)
                 {
                     consumer.accept(this);
@@ -735,6 +775,92 @@ implements Disposable
             catch (Exception e)
             {
                 log.error("Failed to signal query state-change!", e);
+            }
+        }
+
+        private abstract class AbstractQueryResult<T>
+        implements Result<T>
+        {
+            @Override
+            public Query getQuery()
+            {
+                return myQuery;
+            }
+
+            @Override
+            public boolean await(State state)
+            {
+                return QueryResultSet.this.await(state);
+            }
+
+            @Override
+            public boolean await(State state, long time, TimeUnit unit)
+            {
+                return QueryResultSet.this.await(state, time, unit);
+            }
+
+            @Override
+            public boolean hasStatus(State state)
+            {
+                return QueryResultSet.this.hasStatus(state);
+            }
+        }
+
+        private class KeyQueryResult<T>
+        extends AbstractQueryResult<T>
+        {
+            private final Key<T> myKey;
+
+            private KeyQueryResult(Key<T> key)
+            {
+                myKey = key;
+            }
+
+            @Override
+            public boolean hasResult()
+            {
+                return QueryResultSet.this.has(myKey);
+            }
+
+            @Override
+            public T get()
+            {
+                return QueryResultSet.this.get(myKey);
+            }
+
+            @Override
+            public T find()
+            {
+                return QueryResultSet.this.find(myKey);
+            }
+        }
+
+        private class NameQueryResult<T>
+        extends AbstractQueryResult<T>
+        {
+            private final String myName;
+
+            private NameQueryResult(String name)
+            {
+                myName = name;
+            }
+
+            @Override
+            public boolean hasResult()
+            {
+                return QueryResultSet.this.has(myName);
+            }
+
+            @Override
+            public T get()
+            {
+                return QueryResultSet.this.get(myName);
+            }
+
+            @Override
+            public T find()
+            {
+                return QueryResultSet.this.find(myName);
             }
         }
     }

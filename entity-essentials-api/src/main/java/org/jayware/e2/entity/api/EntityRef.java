@@ -52,6 +52,7 @@ extends Contextual
      *
      * @throws InvalidEntityRefException if the {@link EntityRef} is not valid
      */
+    @Deprecated
     EntityPath getPath() throws InvalidEntityRefException;
 
     /**
