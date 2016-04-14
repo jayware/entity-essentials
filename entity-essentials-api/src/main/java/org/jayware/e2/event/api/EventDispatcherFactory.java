@@ -35,12 +35,13 @@ public interface EventDispatcherFactory {
 	String PROPERTY_SILENT_EVENT_DISPATCHERS = "org.jayware.e2.event.api.EventDispatcherFactory.silent-event-dispatchers";
 
 	/**
-	 * Creates an {@link EventDispatcher} accoding to the specified target.
+	 * Creates an {@link EventDispatcher} according to the specified target.
 	 * <p>
 	 * An implementation may cache previous constructed {@link EventDispatcher EventDispatchers}
 	 * </p>
 	 *
-	 * @param target
+	 * @param target a target for which an {@link EventDispatcher} is created
+	 * @return an {@link EventDispatcher} for the specified target
 	 */
 	EventDispatcher createEventDispatcher(Class<?> target);
 }

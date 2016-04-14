@@ -177,7 +177,7 @@ public interface Context
      * {@link IllegalArgumentException} is thrown.
      *
      * @param key the {@link Key} whose associated value is to be returned
-     * @param defaultValue
+     * @param defaultValue a defaultValue which is returned if no mapping was found
      * @param <T> the <code>value's</code> type.
      *
      * @return the value to which the specified key is mapped, or defaultValue if this map contains no mapping for the key

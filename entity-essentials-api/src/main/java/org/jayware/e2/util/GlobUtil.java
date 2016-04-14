@@ -23,9 +23,8 @@ package org.jayware.e2.util;
 
 /**
  * The <code>GlobUtil</code> class provides functions to convert between standard POSIX
- * Shell globbing patterns and regular expressions used with the {@link java.util.regex}
- * API.
- *
+ * Shell globbing patterns and regular expressions used with the REGEX API.
+ * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/util/regex/package-summary.html">Java Regex API</a>
  * @since 1.0
  */
 public class GlobUtil

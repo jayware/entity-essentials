@@ -176,9 +176,9 @@ public class EntityPath
      *     <caption>Examples</caption>
      * </table>
      *
-     * @param other
-     * @return
-     * @throws IllegalArgumentException
+     * @param other an {@link EntityPath} to relativize the current {@link EntityPath}
+     * @return an {@link EntityPath} relative to an other {@link EntityPath}
+     * @throws IllegalArgumentException if the relativisation fails
      */
     public EntityPath relativize(EntityPath other)
     throws IllegalArgumentException
@@ -227,8 +227,8 @@ public class EntityPath
      *     <caption>Examples</caption>
      * </table>
      *
-     * @param other
-     * @return
+     * @param other an {@link EntityPath} to resolve to
+     * @return the resolved (combined) {@link EntityPath}
      */
     public EntityPath resolve(EntityPath other)
     {

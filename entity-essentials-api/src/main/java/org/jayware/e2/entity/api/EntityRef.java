@@ -36,12 +36,10 @@ public interface EntityRef
 extends Contextual
 {
     /**
-     *
-     * @return
-     *
-     * @throws InvalidEntityRefException
+     * Returns the ID of the {@link Entity} this {@link EntityRef} points to.
+     * @return the ID of an {@link Entity}
      */
-    String getId() throws InvalidEntityRefException;
+    String getId();
 
     /**
      * Returns the {@link EntityPath} of the {@link Entity} this {@link EntityRef} points to.
@@ -52,7 +50,7 @@ extends Contextual
      *
      * @return the referenced {@link Entity Entity's} {@link EntityPath}.
      *
-     * @throws InvalidEntityRefException
+     * @throws InvalidEntityRefException if the {@link EntityRef} is not valid
      */
     EntityPath getPath() throws InvalidEntityRefException;
 

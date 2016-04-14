@@ -272,7 +272,7 @@ public class Aspect
      *     <tr><th>A</th><td>x</td><td></td><td></td><td></td><td><b>A</b> doesn't satisfy <b>B</b> nor <b>C</b>, because <b>A</b> doesn't contain c2, c3 and c4.<br></td></tr>
      *     <tr><th>B</th><td>x</td><td>x</td><td>x</td><td></td><td><b>B</b> satisfies <b>A</b> and <b>C</b> because <b>B</b> contains c1 and c3.</td></tr>
      *     <tr><th>C</th><td>x</td><td></td><td>x</td><td></td><td><b>C</b> satisfies <b>A</b> but not <b>B</b>, because <b>C</b> contains c1 but not c2 and c4.</td></tr>
-     *     <caption></caption>
+     *     <caption>resulting table</caption>
      * </table>
      *
      * @param other an {@link Aspect}.

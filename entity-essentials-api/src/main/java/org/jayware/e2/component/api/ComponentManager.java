@@ -56,6 +56,7 @@ public interface ComponentManager
      *
      * @param context   a {@link Context}
      * @param component a {@link Class} representing the {@link Component Component's} type.
+     * @param <T> the type of the {@link Component}
      */
     <T extends Component> void prepareComponent(Context context, Class<T> component) throws ComponentFactoryException, MalformedComponentException;
 
@@ -87,6 +88,7 @@ public interface ComponentManager
      * @param ref an {@link EntityRef}
      *            the {@link Class} of the {@link Component}.
      * @param <T> the type of the {@link Component}.
+     * @param component a {@link Component} which will be removed
      */
     <T extends Component> void removeComponent(EntityRef ref, Class<T> component);
 
@@ -127,7 +129,6 @@ public interface ComponentManager
     /**
      * Returns the component of the specified type associated to the {@link Entity} referenced by the passed
      * {@link EntityRef}.
-     * <p>
      * <p>
      * <b>Note:</b> In contrast to {@link ComponentManager#getComponent(EntityRef, Class)} this operation returns
      * <code>null</code> if the {@link Entity} doesn't have a {@link Component} of the appropriate type.
@@ -221,6 +222,8 @@ public interface ComponentManager
     /**
      * Returns a {@link Set} of {@link Class Classes} of all {@link Component Components} known in the specified
      * {@link Context}.
+     *
+     * @param context the {@link Context} of the {@link Component Components}
      *
      * @return a {@link Set} containing the {@link Class Classes} of all all {@link Component Components} known
      *         in the specified {@link Context}.

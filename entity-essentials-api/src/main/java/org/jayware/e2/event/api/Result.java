@@ -84,7 +84,7 @@ public interface Result
      * Returns whether results of the preceded {@link Query} might be present.
      * <p>
      * It is assumed, that results are present when the {@link Query} enters the state {@link State#Success}.
-     * Therefore this operation is a shorthand for {@link Result#hasStatus(State) hasStatus(Success)}
+     * Therefore this operation is a shorthand for {@link #hasStatus hasStatus(Success)}
      *
      * @return <code>true</code> if the preceded {@link Query} entered the state {@link State#Success}, otherwise
      *         <code>false</code>.

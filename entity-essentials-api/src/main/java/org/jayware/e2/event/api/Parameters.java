@@ -56,6 +56,8 @@ implements ReadOnlyParameters
 
     /**
      * Constructs an instance with copies of the specified {@link Parameters}.
+     *
+     * @param other the parameters for the created instance
      */
     public Parameters(Parameters other)
     {
@@ -65,6 +67,8 @@ implements ReadOnlyParameters
 
     /**
      * Constructs an instance with the passed {@link Parameter Parameters}.
+     *
+     * @param parameters the parameters for the created instance
      */
     public Parameters(Parameter[] parameters)
     {

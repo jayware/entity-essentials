@@ -84,6 +84,7 @@ public class Preconditions
      *
      * @param contextual a {@link Contextual}
      * @param context a {@link Context}
+     * @param <C> the type of the {@link Contextual}
      *
      * @return the {@link Contextual} that was validated
      *
