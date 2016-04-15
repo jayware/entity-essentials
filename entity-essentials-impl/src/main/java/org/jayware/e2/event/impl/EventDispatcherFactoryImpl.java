@@ -430,7 +430,7 @@ implements EventDispatcherFactory
                                 else if (long.class.equals(parameterType))
                                 {
                                     mv.visitTypeInsn(CHECKCAST, getInternalName(Long.class));
-                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Integer.class), "intValue", "()I", false);
+                                    mv.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Long.class), "longValue", "()J", false);
                                 }
                                 else if (float.class.equals(parameterType))
                                 {

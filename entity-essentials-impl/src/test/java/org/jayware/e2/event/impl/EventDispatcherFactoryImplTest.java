@@ -153,14 +153,14 @@ public class EventDispatcherFactoryImplTest
         @Handle(TestEventTypeA.class)
         public void handle(@Param("int-param") int param) {}
 
-//        @Handle(TestEventTypeA.class)
-//        public void handle(@Param("long-param") long param) {}
+        @Handle(TestEventTypeA.class)
+        public void handle(@Param("long-param") long param) {}
 
         @Handle(TestEventTypeA.class)
         public void handle(@Param("float-param") float param) {}
 
-//        @Handle(TestEventTypeA.class)
-//        public void handle(@Param("double-param") double param) {}
+        @Handle(TestEventTypeA.class)
+        public void handle(@Param("double-param") double param) {}
     }
 
     private static class TestSubscriber_Unaccessible
