@@ -1,39 +1,47 @@
-apply plugin: "java"
-apply plugin: "osgi"
+plugins {
+    id 'me.champeau.gradle.jmh' version '0.3.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'osgi'
 
 dependencies {
 
-    compile project(":entity-essentials-api")
+    compile project(':entity-essentials-api')
 
-    compile "org.ow2.asm:asm-all:5.1"
+    compile 'org.ow2.asm:asm-all:5.1'
 
-    testCompile "org.testng:testng:6.9.10"
-    testCompile "org.assertj:assertj-core:3.4.1"
-    testCompile "org.mockito:mockito-core:1.10.19"
-    testCompile "ch.qos.logback:logback-classic:1.1.7"
+    testCompile 'org.testng:testng:6.9.10'
+    testCompile 'org.assertj:assertj-core:3.4.1'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'ch.qos.logback:logback-classic:1.1.7'
 }
 
 test {
     useTestNG() {}
 }
 
+jmh {
+    jmhVersion = '1.12'
+}
+
 jar {
     from (rootProject.projectDir) {
-        include "LICENSE.txt"
+        include 'LICENSE.txt'
     }
     from (projectDir) {
-        include "README.md"
+        include 'README.md'
     }
     manifest {
-        vendor "jayware.org"
-        name "Entity Essentials IMPL"
-        description "Default implementation of the Entity Essentials API"
-        symbolicName "org.jayware.e2.impl"
-        license "http://www.gnu.org/licenses/lgpl-3.0.txt"
-        instruction "Bundle-Category", "e2,entity-essentials,impl"
-        instruction "Bundle-RequiredExecutionEnvironment", "JavaSE-1.8"
-        instruction "Service-Component", "OSGI-INF/*.xml"
-        instruction "Export-Package", "!org.jayware.e2.*"
+        vendor 'jayware.org'
+        name 'Entity Essentials IMPL'
+        description 'Default implementation of the Entity Essentials API'
+        symbolicName 'org.jayware.e2.impl'
+        license 'http://www.gnu.org/licenses/lgpl-3.0.txt'
+        instruction 'Bundle-Category', 'e2,entity-essentials,impl'
+        instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.8'
+        instruction 'Service-Component', 'OSGI-INF/*.xml'
+        instruction 'Export-Package', '!org.jayware.e2.*'
     }
 }
 
@@ -94,5 +102,5 @@ publishing {
 }
 
 clean{
-    delete ".generated"
+    delete '.generated'
 }
