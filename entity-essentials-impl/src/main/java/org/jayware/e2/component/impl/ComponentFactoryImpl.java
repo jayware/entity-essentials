@@ -58,11 +58,17 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.util.Arrays.asList;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
@@ -174,16 +180,40 @@ implements ComponentFactory
     {
         final ComponentGenerationPlan componentGenerationPlan = myGenerationPlanFactory.createComponentGenerationPlan(componentClass);
         final Map<String, ComponentPropertyGenerationPlan> propertyDescriptorMap = new HashMap<>();
+        final Queue<Class> componentClasses = new LinkedList<>();
+        final Set<Method> methods = new HashSet<>();
 
-        for (Method method : componentClass.getDeclaredMethods())
+        componentClasses.add(componentClass);
+        while (!componentClasses.isEmpty())
+        {
+            final Class aClass = componentClasses.poll();
+            for (Class interfaceClass : aClass.getInterfaces())
+            {
+                if (!(interfaceClass.isInterface() && Component.class.isAssignableFrom(interfaceClass)))
+                {
+                    throw new MalformedComponentException("Invalid inheritance of a non component interface: " + interfaceClass.getName());
+                }
+
+                if (!interfaceClass.equals(Component.class))
+                {
+                    componentClasses.add(interfaceClass);
+                }
+            }
+
+            methods.addAll(asList(aClass.getDeclaredMethods()));
+        }
+
+        for (Method method : methods)
         {
             final String methodName = method.getName();
             final String methodNamePrefix = methodName.substring(0, 3);
+            final boolean isGetter = "get".equals(methodNamePrefix);
+            final boolean isSetter = "set".equals(methodNamePrefix);
 
             ComponentPropertyGenerationPlan propertyGenerationPlan;
             String propertyName;
 
-            if ("get".equals(methodNamePrefix) || "set".equals(methodNamePrefix))
+            if (isGetter || isSetter)
             {
                 propertyName = methodName.substring(3);
                 propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
@@ -197,7 +227,7 @@ implements ComponentFactory
                     propertyDescriptorMap.put(propertyName, propertyGenerationPlan);
                 }
 
-                if (methodName.startsWith("get"))
+                if (isGetter)
                 {
                     if (method.getParameterCount() != 0)
                     {
@@ -218,7 +248,7 @@ implements ComponentFactory
                     propertyGenerationPlan.setPropertyGetterMethod(method);
                     propertyGenerationPlan.setPropertyType(method.getReturnType());
                 }
-                else if (methodName.startsWith("set"))
+                else if (isSetter)
                 {
                     if (method.getParameterCount() != 1)
                     {

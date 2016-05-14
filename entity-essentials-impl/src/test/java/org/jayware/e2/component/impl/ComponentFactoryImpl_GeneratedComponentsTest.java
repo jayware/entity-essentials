@@ -23,13 +23,17 @@ package org.jayware.e2.component.impl;
 
 
 import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.component.api.MalformedComponentException;
+import org.jayware.e2.component.impl.TestComponents.MalformedCombinedTestComponent;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
+import org.jayware.e2.component.impl.TestComponents.TestComponentAB;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.component.impl.TestComponents.TestComponentB;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,15 +54,16 @@ public class ComponentFactoryImpl_GeneratedComponentsTest
         initMocks(this);
 
         componentFactory = new ComponentFactoryImpl();
-        componentFactory.prepareComponent(TestComponentA.class, TestComponentB.class);
 
-        when(context.getComponentManager()).thenReturn(componentManager);
+        when(context.getService(ComponentManager.class)).thenReturn(componentManager);
     }
 
     @Test
-    public void testPullFrom()
+    public void test_pullFrom()
     {
-        final TestComponentA component = componentFactory.createComponent(TestComponentA.class).newInstance(context);
+        final TestComponentA component;
+        componentFactory.prepareComponent(TestComponentA.class);
+        component = componentFactory.createComponent(TestComponentA.class).newInstance(context);
 
         component.pullFrom(refA);
 
@@ -66,12 +71,32 @@ public class ComponentFactoryImpl_GeneratedComponentsTest
     }
 
     @Test
-    public void testPushTo()
+    public void test_pushTo()
     {
-        final TestComponentA component = componentFactory.createComponent(TestComponentA.class).newInstance(context);
+        final TestComponentA component;
+        componentFactory.prepareComponent(TestComponentA.class);
+        component = componentFactory.createComponent(TestComponentA.class).newInstance(context);
 
         component.pushTo(refA);
 
         verify(componentManager).pushComponent(refA, component);
+    }
+
+    @Test
+    public void test_combined_component()
+    {
+        final TestComponentAB component;
+
+        componentFactory.prepareComponent(TestComponentAB.class);
+        component = componentFactory.createComponent(TestComponentAB.class).newInstance(context);
+
+        assertThat(TestComponentA.class.isAssignableFrom(component.getClass())).isTrue();
+        assertThat(TestComponentB.class.isAssignableFrom(component.getClass())).isTrue();
+    }
+
+    @Test(expectedExceptions = MalformedComponentException.class)
+    public void test_combined_component_Fails_if_the_component_extends_a_non_component_type()
+    {
+        componentFactory.prepareComponent(MalformedCombinedTestComponent.class);
     }
 }

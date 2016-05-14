@@ -37,7 +37,7 @@ implements Component
     public AbstractComponent(Context context)
     {
         myContext = context;
-        myComponentManager = context.getComponentManager();
+        myComponentManager = context.getService(ComponentManager.class);
     }
 
     public abstract List<String> properties();

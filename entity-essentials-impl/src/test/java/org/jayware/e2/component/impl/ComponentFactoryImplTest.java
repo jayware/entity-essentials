@@ -40,18 +40,12 @@ import static org.testng.Assert.fail;
 
 public class ComponentFactoryImplTest
 {
-    @Mock private Context context;
-    @Mock private ComponentManager componentManager;
-
     ComponentFactoryImpl testee;
 
     @BeforeMethod
     public void setup()
     {
-        MockitoAnnotations.initMocks(this);
         testee = new ComponentFactoryImpl();
-
-        when(context.getComponentManager()).thenReturn(componentManager);
     }
 
     @Test
@@ -61,7 +55,7 @@ public class ComponentFactoryImplTest
     }
 
     @Test
-    public void testCreate()
+    public void test_create()
     {
         testee.prepareComponent(TestComponentA.class);
         final ComponentInstancer<TestComponentA> component = testee.createComponent(TestComponentA.class);
@@ -69,36 +63,20 @@ public class ComponentFactoryImplTest
         assertThat(component).isNotNull();
     }
 
-    @Test
-    public void testCreateComponentFromClassWithNullClass()
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_createComponent_From_Class_Fails_if_null_is_passed()
     {
-        try
-        {
-            testee.createComponent((Class) null);
-            fail("IllegalArgumentException expected!");
-        }
-        catch (IllegalArgumentException e)
-        {
-
-        }
+        testee.createComponent((Class) null);
     }
 
-    @Test
-    public void testCreateComponentFromClassFailsIfComponentIsNotPrepared()
+    @Test(expectedExceptions = ComponentFactoryException.class)
+    public void test_createComponent_From_Class_Fails_if_component_is_not_prepared()
     {
-        try
-        {
-            testee.createComponent(TestComponentA.class);
-            fail("ComponentFactoryException expected!");
-        }
-        catch (ComponentFactoryException e)
-        {
-
-        }
+        testee.createComponent(TestComponentA.class);
     }
 
     @Test(expectedExceptions = MalformedComponentException.class)
-    public void testPrepareComponentShouldFailWhenParameterTypesDoNotMatch()
+    public void test_prepareComponent_Should_fail_when_parameter_types_do_not_match()
     {
         testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
     }

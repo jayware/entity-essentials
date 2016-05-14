@@ -32,6 +32,7 @@ public class TestComponents
         B,
         C
     }
+
     public interface TestComponentA
     extends Component
     {
@@ -50,6 +51,22 @@ public class TestComponents
         String getString();
 
         void setString(String value);
+    }
+
+    public interface TestComponentAB
+    extends TestComponentA, TestComponentB
+    {
+        int getValue();
+
+        void setValue(int value);
+    }
+
+    public interface MalformedCombinedTestComponent
+    extends TestComponentA, Comparable
+    {
+        int getValue();
+
+        void setValue(int value);
     }
 
     public interface TestComponentWithParameterTypeMismatch
