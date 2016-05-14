@@ -108,8 +108,8 @@ public class Quickstart {
 ### Maven coordinates
 | Group ID              | Artifact ID                                                                                                      | Version |
 | :-------------------: | :--------------------------------------------------------------------------------------------------------------: | :-----: |
-| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-api/">entity-essentials-api</a>     | 0.1.0   |
-| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-impl/">entity-essentials-impl</a>   | 0.1.0   |
+| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-api/">entity-essentials-api</a>     | 0.2.0   |
+| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-impl/">entity-essentials-impl</a>   | 0.2.0   |
 
 ### Gradle
 ###### Repository
@@ -121,8 +121,8 @@ repositories {
 ###### Dependencies
 ```groovy
 dependencies {
-    compile group: 'org.jayware', name: 'entity-essentials-api', version: '0.1.0'
-    runtime group: 'org.jayware', name: 'entity-essentials-impl', version: '0.1.0'
+    compile group: 'org.jayware', name: 'entity-essentials-api', version: '0.2.0'
+    runtime group: 'org.jayware', name: 'entity-essentials-impl', version: '0.2.0'
 }
 ```
 
@@ -140,12 +140,12 @@ dependencies {
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-api</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-impl</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <scope>runtime</scope>
 </dependency>
 ```
