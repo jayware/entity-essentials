@@ -296,7 +296,7 @@ implements EventDispatcherFactory
                                 mv.visitJumpInsn(IFNE, parameterNotPresent);
                                 mv.visitFieldInsn(GETSTATIC, classInternalName, "log", getDescriptor(Logger.class));
                                 mv.visitLdcInsn("Could not dispatch '" + eventType.getName() + "' to " + descriptor.getMethod() + "', because the event does not provide the " + parameter.getPresence().toString().toLowerCase() + " parameter '" + parameter.getName() + "'!");
-                                mv.visitMethodInsn(INVOKEINTERFACE, getInternalName(Logger.class), "warn", "(Ljava/lang/String;)V", true);
+                                mv.visitMethodInsn(INVOKEINTERFACE, getInternalName(Logger.class), "error", "(Ljava/lang/String;)V", true);
                                 mv.visitJumpInsn(GOTO, endHandler);
                                 mv.visitLabel(parameterNotPresent);
                             }
@@ -327,7 +327,7 @@ implements EventDispatcherFactory
                                 mv.visitJumpInsn(IFNONNULL, notNull);
                                 mv.visitFieldInsn(GETSTATIC, classInternalName, "log", getDescriptor(Logger.class));
                                 mv.visitLdcInsn("Could not dispatch '" + eventType.getName() + "' to " + descriptor.getMethod() + "', because the " + Presence.Required.toString().toLowerCase() + " parameter '" + parameter.getName() + "' was null!");
-                                mv.visitMethodInsn(INVOKEINTERFACE, getInternalName(Logger.class), "warn", "(Ljava/lang/String;)V", true);
+                                mv.visitMethodInsn(INVOKEINTERFACE, getInternalName(Logger.class), "error", "(Ljava/lang/String;)V", true);
                                 mv.visitJumpInsn(GOTO, endHandler);
                                 mv.visitLabel(notNull);
                             }
@@ -381,7 +381,7 @@ implements EventDispatcherFactory
                             mv.visitJumpInsn(IFNE, endInstanceOf);
                             mv.visitFieldInsn(GETSTATIC, classInternalName, "log", getDescriptor(Logger.class));
                             mv.visitLdcInsn("Could not dispatch '" + eventType.getName() + "' to " + descriptor.getMethod() + "', because the parameter '" + parameter.getName() + "' cannot be cast to the appropriate type '" + parameterType.getName() + "'!");
-                            mv.visitMethodInsn(INVOKEINTERFACE, getInternalName(Logger.class), "warn", "(Ljava/lang/String;)V", true);
+                            mv.visitMethodInsn(INVOKEINTERFACE, getInternalName(Logger.class), "error", "(Ljava/lang/String;)V", true);
                             mv.visitJumpInsn(GOTO, endHandler);
                             mv.visitLabel(endInstanceOf);
 
