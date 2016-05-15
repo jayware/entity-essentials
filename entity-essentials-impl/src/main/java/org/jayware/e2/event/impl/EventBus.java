@@ -726,7 +726,11 @@ implements Disposable
 
             try
             {
-                myConsumers.get(state).accept(this);
+                final Consumer<Result> consumer = myConsumers.get(state);
+                if (consumer != null)
+                {
+                    consumer.accept(this);
+                }
             }
             catch (Exception e)
             {
