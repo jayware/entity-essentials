@@ -22,60 +22,48 @@
 package org.jayware.e2.examples;
 
 
-import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
+import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.event.api.EventManager;
+import org.jayware.e2.event.api.Result;
+
+import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
+import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
+import static org.jayware.e2.event.api.Parameters.param;
 
 
-public class Quickstart
+public class AsynchronousCreateEntityExample
 {
     public static void main(String[] args) {
 
-        /* Create a context and obtain required managers */
+        // Create a context and obtain required managers
         Context context = ContextProvider.getInstance().createContext();
+        EventManager eventManager = context.getService(EventManager.class);
         EntityManager entityManager = context.getService(EntityManager.class);
-        ComponentManager componentManager = context.getService(ComponentManager.class);
 
-        /* Initially prepare custom components */
-        componentManager.prepareComponent(context, ExampleComponent.class);
+        EntityRef ref;
 
-        /* Create an entity */
-        entityManager.createEntity(context, EntityPath.path("/example"));
+        /*
+         * The usual way to crate an entity. The createEntity operation
+         * acts synchronously, so it blocks until the entity is created.
+         */
+        ref = entityManager.createEntity(context);
 
-        /* Lookup an entity */
-        EntityRef ref = entityManager.findEntity(context, EntityPath.path("/example"));
+        /* But it is also possible to create an entity asynchronously by firing a query. */
+        Result result = eventManager.query(
+            CreateEntityEvent.class,
+            param(ContextParam, context)
+        );
 
-        /* Add a component to the entity */
-        componentManager.addComponent(ref, ExampleComponent.class);
+        /* The result will contain the newly created entity. */
+        ref = result.get(EntityRefParam);
 
-        /* Lookup a component */
-        ExampleComponent cmp = componentManager.getComponent(ref, ExampleComponent.class);
-
-        /* Change the component's properties */
-        cmp.setText("Fubar!");
-        cmp.setTextSize(14);
-
-        /* Commit changes */
-        cmp.pushTo(ref);
+        System.out.println("\nEntity: " + ref + "\n");
 
         /* Shutdown everything */
         context.dispose();
-    }
-
-    /* Define a custom component by a java interface */
-    public interface ExampleComponent extends Component
-    {
-        /* Define properties by declaration of getters and setters  */
-        String getText();
-
-        void setText(String text);
-
-        int getTextSize();
-
-        void setTextSize(int size);
     }
 }

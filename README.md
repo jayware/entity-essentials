@@ -60,8 +60,8 @@ public class Quickstart {
         
         /* Create a context and obtain required managers */
         Context context = ContextProvider.getInstance().createContext();
-        EntityManager entityManager = context.getEntityManager();
-        ComponentManager componentManager = context.getComponentManager();
+        EntityManager entityManager = context.getService(EntityManager.class);
+        ComponentManager componentManager = context.getService(ComponentManager.class);
         
         /* Initially prepare custom components */
         componentManager.prepareComponent(context, ExampleComponent.class);
@@ -102,6 +102,7 @@ public class Quickstart {
     }
 }
 ```
+More examples can be found [here](examples/README.md).
 
 ## Usage
 

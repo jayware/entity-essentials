@@ -4,8 +4,11 @@ apply plugin: "idea"
 
 dependencies {
 
-    compile "org.jayware:entity-essentials-api:0.1.0"
-    runtime "org.jayware:entity-essentials-impl:0.1.0"
+    compile project(':entity-essentials-api')
+    runtime project(':entity-essentials-impl')
+
+//    compile "org.jayware:entity-essentials-api:0.2.0"
+//    runtime "org.jayware:entity-essentials-impl:0.2.0"
 
     runtime "ch.qos.logback:logback-classic:1.1.3"
 
