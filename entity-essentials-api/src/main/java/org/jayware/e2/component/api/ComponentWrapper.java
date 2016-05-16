@@ -79,7 +79,7 @@ public interface ComponentWrapper<W extends AbstractComponentWrapper, C extends 
      *
      * @return the {@link Component}'s type.
      */
-    Class<C> getComponentType();
+    Class<C> type();
 
     /**
      * Returns whether or not <code>this</code> {@link AbstractComponentWrapper} is valid and can operate as expected.
@@ -95,7 +95,7 @@ public interface ComponentWrapper<W extends AbstractComponentWrapper, C extends 
      */
     boolean isInvalid();
 
-    W update();
+    W pull();
 
-    W deliver();
+    W push();
 }

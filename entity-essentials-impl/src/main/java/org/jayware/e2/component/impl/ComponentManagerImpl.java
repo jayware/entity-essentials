@@ -120,7 +120,7 @@ implements ComponentManager
         checkNotNull(ref);
         checkNotNull(wrapper);
 
-        return wrapper.wrap(ref, getComponent(ref, wrapper.getComponentType()));
+        return wrapper.wrap(ref, getComponent(ref, wrapper.type()));
     }
 
     @Override

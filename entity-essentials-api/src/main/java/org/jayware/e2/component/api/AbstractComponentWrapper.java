@@ -78,7 +78,7 @@ implements ComponentWrapper<W, C>
     }
 
     @Override
-    public Class<C> getComponentType()
+    public Class<C> type()
     {
         Class<AbstractComponentWrapper<W, C>> wrapperClass = (Class<AbstractComponentWrapper<W, C>>) getClass();
 
@@ -105,21 +105,29 @@ implements ComponentWrapper<W, C>
     }
 
     @Override
-    public W update()
+    public W pull()
     {
-        myComponent.pullFrom(myEntity);
-        postUpdate();
-
+        pullFrom(myEntity);
         return (W) this;
     }
 
     @Override
-    public W deliver()
+    public W push()
     {
-        preDeliver();
-        myComponent.pushTo(myEntity);
-
+        pushTo(myEntity);
         return (W) this;
+    }
+
+    public void pullFrom(EntityRef ref)
+    {
+        myComponent.pullFrom(ref);
+        postPull();
+    }
+
+    public void pushTo(EntityRef ref)
+    {
+        prePush();
+        myComponent.pushTo(myEntity);
     }
 
     /**
@@ -142,7 +150,7 @@ implements ComponentWrapper<W, C>
      * <p>
      * <b>Note:</b> This operation is intended to be overwritten to react on the certain event.
      */
-    protected void postUpdate() {}
+    protected void postPull() {}
 
     /**
      * Every time called <u>before</u> <code>this</code> {@link AbstractComponentWrapper ComponentWrapper's} {@link Component}
@@ -150,5 +158,5 @@ implements ComponentWrapper<W, C>
      * <p>
      * <b>Note:</b> This operation is intended to be overwritten to react on the certain event.
      */
-    protected void preDeliver() {}
+    protected void prePush() {}
 }
