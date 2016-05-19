@@ -77,37 +77,10 @@ public class EventDispatcherFactoryImplTest
         }
     }
 
-    @Test
-    public void test_createEventDispatcher_FailsIfNoEventParameterIsSpecified()
-    {
-        try
-        {
-            testee.createEventDispatcher(new Subscriber()
-            {
-                @Handle(TestEventTypeA.class)
-                public void handle()
-                {
-                }
-            }.getClass());
-
-            fail("Exception expected!");
-        }
-        catch (IllegalHandlerException ignored)
-        {
-
-        }
-    }
-
     @Test(expectedExceptions = IllegalHandlerException.class)
     public void test_createEventDispatcher_FailsIfAnUnknownParameterIsSpecified()
     {
-        testee.createEventDispatcher(new Subscriber()
-        {
-            @Handle(TestEventTypeA.class)
-            public void handle(Object obj)
-            {
-            }
-        }.getClass());
+        testee.createEventDispatcher(TestSubscriber_UnknownParameter.class);
     }
 
     @Test
@@ -166,5 +139,13 @@ public class EventDispatcherFactoryImplTest
     private static class TestSubscriber_Unaccessible
     {
 
+    }
+
+    public static class TestSubscriber_UnknownParameter
+    {
+        @Handle(TestEventTypeA.class)
+        public void handle(Object object)
+        {
+        }
     }
 }
