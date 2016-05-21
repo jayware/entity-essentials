@@ -47,13 +47,16 @@ public class QueryIntegrationTest
     private EventManager testee;
 
     private Context testContext;
+    private TestHandler testHandler;
 
     @BeforeMethod
     public void setUp()
     {
         testContext = ContextProvider.getInstance().createContext();
+        testHandler = new TestHandler();
+
         testee = testContext.getService(EventManager.class);
-        testee.subscribe(testContext, new TestHandler(), Strong);
+        testee.subscribe(testContext, testHandler);
     }
 
     @AfterMethod
