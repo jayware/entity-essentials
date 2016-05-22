@@ -24,6 +24,7 @@ package org.jayware.e2.component.impl.generation.asm;
 
 import org.objectweb.asm.Type;
 
+import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.objectweb.asm.Opcodes.T_BOOLEAN;
 import static org.objectweb.asm.Opcodes.T_BYTE;
 import static org.objectweb.asm.Opcodes.T_CHAR;
@@ -39,6 +40,8 @@ public class TypeUtil
 {
     public static int resolveOpcodePrimitiveType(Class clazz)
     {
+        checkNotNull(clazz);
+
         switch (getType(clazz).getSort())
         {
             case Type.BOOLEAN: return T_BOOLEAN;
