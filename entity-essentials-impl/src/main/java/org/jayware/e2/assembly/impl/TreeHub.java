@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Arrays.asList;
@@ -76,16 +77,12 @@ implements Disposable
     private final ComponentManager myComponentManager;
     private final EventManager myEventManager;
 
-    private final Map<EntityRef, TreeNode> myLookupTable;
-
     TreeHub(Context context)
     {
         myContext = context;
         myEntityManager = myContext.getService(EntityManager.class);
         myComponentManager = myContext.getService(ComponentManager.class);
         myEventManager = myContext.getService(EventManager.class);
-
-        myLookupTable = new ConcurrentHashMap<>();
 
         myEventManager.subscribe(myContext, this);
     }
@@ -129,12 +126,11 @@ implements Disposable
             {
                 if (childRef != null)
                 {
-                    fireDeleteTreeNodeEvent(myLookupTable.get(childRef));
+                    fireDeleteTreeNodeEvent(new TreeNodeImpl(childRef));
                 }
             }
         }
 
-        myLookupTable.remove(nodeRef);
         myEntityManager.deleteEntity(nodeRef);
 
         fireTreeNodeDeletedEvent(node);
@@ -221,7 +217,7 @@ implements Disposable
 
         for (EntityRef entityRef : nodeComponent.getChildren())
         {
-            children.add(myLookupTable.get(entityRef));
+            children.add(new TreeNodeImpl(entityRef));
         }
 
         query.result(ChildrenParam, children);
@@ -311,7 +307,7 @@ implements Disposable
         );
     }
 
-    public class TreeNodeImpl
+    class TreeNodeImpl
     implements TreeNode
     {
         private final EntityRef myNodeRef;
@@ -324,15 +320,13 @@ implements Disposable
             myNodeRef = ref;
             myNodeComponent = myComponentManager.getComponent(myNodeRef, TreeNodeComponent.class);
             myPendantRef = myNodeComponent.getPendant();
-
-            myLookupTable.put(ref, this);
         }
 
         @Override
         public TreeNode getParent()
         {
             myComponentManager.pullComponent(myNodeRef, myNodeComponent);
-            return myLookupTable.get(myNodeComponent.getParent());
+            return new TreeNodeImpl(myNodeComponent.getParent());
         }
 
         @Override
@@ -364,7 +358,7 @@ implements Disposable
             {
                 for (EntityRef ref : myNodeComponent.getChildren())
                 {
-                    result.add(myLookupTable.get(ref));
+                    result.add(new TreeNodeImpl(ref));
                 }
             }
 
@@ -425,6 +419,27 @@ implements Disposable
         public boolean belongsTo(Contextual contextual)
         {
             return myPendantRef.belongsTo(contextual);
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (!(o instanceof TreeNodeImpl))
+            {
+                return false;
+            }
+            final TreeNodeImpl treeNode = (TreeNodeImpl) o;
+            return Objects.equals(myNodeRef, treeNode.myNodeRef);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(myNodeRef);
         }
     }
 }
