@@ -141,7 +141,7 @@ public class Aspect
      */
     public static Aspect aspect(Class<? extends Component>... components)
     {
-        return new Aspect(new HashSet<>(asList(components)));
+        return new Aspect(new HashSet<Class<? extends Component>>(asList(components)));
     }
 
     /**
@@ -153,12 +153,12 @@ public class Aspect
      */
     public static Aspect aspect(Set<Class<? extends Component>> components)
     {
-        return new Aspect(new HashSet<>(components));
+        return new Aspect(new HashSet<Class<? extends Component>>(components));
     }
 
     public static Aspect combine(Aspect a, Aspect b)
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<>();
+        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>();
         resultSet.addAll(a.myComponentSet);
         resultSet.addAll(b.myComponentSet);
 
@@ -167,7 +167,7 @@ public class Aspect
 
     public Aspect intersect(Aspect a, Aspect b)
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<>();
+        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>();
 
         for (Class<? extends Component> component : a.myComponentSet)
         {
@@ -199,7 +199,7 @@ public class Aspect
      */
     public Aspect add(Class<? extends Component> component)
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<>(myComponentSet);
+        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>(myComponentSet);
         resultSet.add(component);
 
         return new Aspect(resultSet);
@@ -207,7 +207,7 @@ public class Aspect
 
     public Aspect remove(Aspect aspect)
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<>(myComponentSet);
+        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>(myComponentSet);
         resultSet.removeAll(aspect.myComponentSet);
 
         if (resultSet.isEmpty())
@@ -229,7 +229,7 @@ public class Aspect
     {
         if (myComponentSet.contains(component))
         {
-            final Set<Class<? extends Component>> resultSet = new HashSet<>(myComponentSet);
+            final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>(myComponentSet);
             resultSet.remove(component);
 
             if (resultSet.isEmpty())

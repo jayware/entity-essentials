@@ -157,7 +157,7 @@ jar {
         symbolicName 'org.jayware.e2.impl'
         license 'http://www.gnu.org/licenses/lgpl-3.0.txt'
         instruction 'Bundle-Category', 'e2,entity-essentials,impl'
-        instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.8'
+        instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.6'
         instruction 'Service-Component', 'OSGI-INF/*.xml'
         instruction 'Export-Package', '!org.jayware.e2.*'
     }

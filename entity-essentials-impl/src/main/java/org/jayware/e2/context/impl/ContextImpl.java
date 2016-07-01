@@ -21,6 +21,7 @@
  */
 package org.jayware.e2.context.impl;
 
+import com.google.common.base.Objects;
 import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
@@ -35,7 +36,6 @@ import org.jayware.e2.util.Key;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -52,7 +52,7 @@ implements Context
 {
     private final UUID myContextId;
 
-    private final AtomicReference<Context> myContextState = new AtomicReference<>();
+    private final AtomicReference<Context> myContextState = new AtomicReference<Context>();
 
     public ContextImpl(ServiceProvider serviceProvider)
     {
@@ -187,13 +187,13 @@ implements Context
             return false;
         }
         final ContextImpl context = (ContextImpl) o;
-        return Objects.equals(myContextId, context.myContextId);
+        return Objects.equal(myContextId, context.myContextId);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(myContextId);
+        return Objects.hashCode(myContextId);
     }
 
     @Override
@@ -219,7 +219,7 @@ implements Context
         public DefaultContext(ServiceProvider serviceProvider)
         {
             myServiceProvider = serviceProvider;
-            myMap = new HashMap<>();
+            myMap = new HashMap<Key, Object>();
         }
 
         @Override
@@ -387,7 +387,8 @@ implements Context
             myReadLock.lock();
             try
             {
-                return (T) myMap.getOrDefault(key, defaultValue);
+                final T value = (T) myMap.get(key);
+                return value != null ? value : defaultValue;
             }
             finally
             {

@@ -22,7 +22,7 @@
 package org.jayware.e2.util;
 
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 
 /**
@@ -47,24 +47,25 @@ public class Key<V>
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(Object obj)
     {
-        if (this == o)
+        if (this == obj)
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (!(obj instanceof Key))
         {
             return false;
         }
-        final Key<?> key = (Key<?>) o;
-        return Objects.equals(myKey, key.myKey);
+
+        final Key<?> other = (Key<?>) obj;
+        return Objects.equal(myKey, other.myKey);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(myKey);
+        return Objects.hashCode(myKey);
     }
 
     @Override

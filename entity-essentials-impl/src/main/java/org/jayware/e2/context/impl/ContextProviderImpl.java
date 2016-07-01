@@ -63,7 +63,7 @@ extends ContextProvider
         catch (Exception e)
         {
             context.dispose();
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 }

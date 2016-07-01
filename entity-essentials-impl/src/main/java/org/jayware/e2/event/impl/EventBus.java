@@ -38,6 +38,7 @@ import org.jayware.e2.event.api.ReadOnlyParameters;
 import org.jayware.e2.event.api.Result;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.event.api.Subscription;
+import org.jayware.e2.util.Consumer;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.ReferenceType;
 import org.jayware.e2.util.StateLatch;
@@ -63,8 +64,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Consumer;
-import java.util.function.IntUnaryOperator;
 
 import static java.lang.Thread.currentThread;
 import static org.jayware.e2.event.api.Query.State.Failed;
@@ -100,12 +99,12 @@ implements Disposable
 
         myEventDispatcherFactory = new EventDispatcherFactoryImpl();
 
-        mySubscriptionsMap = new HashMap<>();
+        mySubscriptionsMap = new HashMap<Object, Subscription>();
         mySubscriptionsMapHash = new AtomicInteger(mySubscriptionsMap.hashCode());
-        myLastSubscriptionCollection = new AtomicReference<>();
+        myLastSubscriptionCollection = new AtomicReference<Collection<Subscription>>();
         myLastSubscriptionsMapHash = new AtomicInteger();
 
-        myLastSubscriptionCollection.set(new HashSet<>(mySubscriptionsMap.values()));
+        myLastSubscriptionCollection.set(new HashSet<Subscription>(mySubscriptionsMap.values()));
         myLastSubscriptionsMapHash.set(mySubscriptionsMapHash.get());
 
         myWorkerPool = new EventBusWorkerPool(4, 64);
@@ -194,7 +193,7 @@ implements Disposable
             myReadLock.lock();
             try
             {
-                myLastSubscriptionCollection.set(new HashSet<>(mySubscriptionsMap.values()));
+                myLastSubscriptionCollection.set(new HashSet<Subscription>(mySubscriptionsMap.values()));
                 myLastSubscriptionsMapHash.set(mySubscriptionsMapHash.get());
             }
             finally
@@ -227,7 +226,7 @@ implements Disposable
         private EventBusWorkerPool(int workers, int workersQueueSize)
         {
             myThreadGroup = new ThreadGroup("entity-essentials");
-            myWorkerList = new CopyOnWriteArrayList<>();
+            myWorkerList = new CopyOnWriteArrayList<EventBusWorker>();
             for (int i = 0; i < workers; ++i)
             {
                 final EventBusWorker worker = new EventBusWorker(myThreadGroup, myThreadGroup.getName() + "-worker-" + i, workersQueueSize);
@@ -290,14 +289,11 @@ implements Disposable
         {
             // Simple round robin. Get the worker at the given index and than increment the index.
             // If the index is greater then the number of workers reset the index to zero.
-            return myWorkerList.get(nextWorkerIndex.getAndUpdate(new IntUnaryOperator()
-            {
-                @Override
-                public int applyAsInt(int index)
-                {
-                    return index < myWorkerList.size() - 1 ? index + 1 : 0;
-                }
-            }));
+            int index = nextWorkerIndex.incrementAndGet();
+            index = index < myWorkerList.size() - 1 ? index : 0;
+
+            nextWorkerIndex.set(index);
+            return myWorkerList.get(index);
         }
     }
 
@@ -314,8 +310,8 @@ implements Disposable
 
         public EventBusWorker(ThreadGroup threadGroup, String threadName, int queueSize)
         {
-            myDispatchQueue = new ArrayBlockingQueue<>(queueSize);
-            myExecutionStack = new Stack<>();
+            myDispatchQueue = new ArrayBlockingQueue<EventDispatch>(queueSize);
+            myExecutionStack = new Stack<EventDispatch>();
 
             myThread = new Thread(threadGroup, this, threadName);
             myThread.start();
@@ -687,8 +683,8 @@ implements Disposable
         {
             myQuery = query;
 
-            myStateLatch = new StateLatch<>(State.class);
-            myResultMap = new ConcurrentHashMap<>();
+            myStateLatch = new StateLatch<State>(State.class);
+            myResultMap = new ConcurrentHashMap<Object, Object>();
             myConsumers = query.getConsumers();
         }
 
@@ -782,13 +778,13 @@ implements Disposable
         @Override
         public <T> Result<T> resultOf(Key<T> key)
         {
-            return new KeyQueryResult<>(key);
+            return new KeyQueryResult<T>(key);
         }
 
         @Override
         public <T> Result<T> resultOf(String name)
         {
-            return new NameQueryResult<>(name);
+            return new NameQueryResult<T>(name);
         }
 
         public void signal(State state)

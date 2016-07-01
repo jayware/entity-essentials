@@ -29,7 +29,7 @@ import java.util.List;
 public abstract class DeclarativeSanityChecker
 implements SanityChecker
 {
-    private final List<CheckRule> myRules = new ArrayList<>();
+    private final List<CheckRule> myRules = new ArrayList<CheckRule>();
 
     public DeclarativeSanityChecker()
     {

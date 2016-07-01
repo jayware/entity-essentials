@@ -55,7 +55,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -74,7 +73,7 @@ import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.objectweb.asm.Opcodes.ACC_SUPER;
-import static org.objectweb.asm.Opcodes.V1_8;
+import static org.objectweb.asm.Opcodes.V1_6;
 import static org.objectweb.asm.Type.getDescriptor;
 import static org.objectweb.asm.Type.getInternalName;
 
@@ -106,7 +105,7 @@ implements ComponentFactory
                 }
             }
 
-            myCache = new ConcurrentHashMap<>();
+            myCache = new ConcurrentHashMap<String, ComponentInstancer<?>>();
         }
         catch (Exception e)
         {
@@ -178,9 +177,9 @@ implements ComponentFactory
     private ComponentGenerationPlan analyseComponent(Class<? extends Component> componentClass)
     {
         final ComponentGenerationPlan componentGenerationPlan = myGenerationPlanFactory.createComponentGenerationPlan(componentClass);
-        final Map<String, ComponentPropertyGenerationPlan> propertyDescriptorMap = new HashMap<>();
-        final Queue<Class> componentClasses = new LinkedList<>();
-        final Set<Method> methods = new HashSet<>();
+        final Map<String, ComponentPropertyGenerationPlan> propertyDescriptorMap = new HashMap<String, ComponentPropertyGenerationPlan>();
+        final Queue<Class> componentClasses = new LinkedList<Class>();
+        final Set<Method> methods = new HashSet<Method>();
 
         componentClasses.add(componentClass);
         while (!componentClasses.isEmpty())
@@ -204,6 +203,7 @@ implements ComponentFactory
 
         for (Method method : methods)
         {
+            final int parameterCount = method.getParameterTypes().length;
             final String methodName = method.getName();
             final String methodNamePrefix = methodName.substring(0, 3);
             final boolean isGetter = "get".equals(methodNamePrefix);
@@ -228,7 +228,7 @@ implements ComponentFactory
 
                 if (isGetter)
                 {
-                    if (method.getParameterCount() != 0)
+                    if (parameterCount != 0)
                     {
                         throw new MalformedComponentException("Invalid getter for property '" + propertyGenerationPlan.getPropertyName() + "'! A getter mustn't have any parameter!");
                     }
@@ -249,7 +249,7 @@ implements ComponentFactory
                 }
                 else if (isSetter)
                 {
-                    if (method.getParameterCount() != 1)
+                    if (parameterCount != 1)
                     {
                         throw new MalformedComponentException("Invalid setter for property '" + propertyGenerationPlan.getPropertyName() + "'! A setter has to take exactly one parameter with the appropriate type!");
                     }
@@ -340,7 +340,7 @@ implements ComponentFactory
         final String classInternalName = componentGenerationPlan.getGeneratedClassInternalName();
 
         classWriter.visit(
-            V1_8,
+            V1_6,
             ACC_PUBLIC + ACC_SUPER,
             componentGenerationPlan.getGeneratedClassInternalName(),
             null,
@@ -414,9 +414,9 @@ implements ComponentFactory
         {
             final ClassLoader classLoader = new URLClassLoader(new URL[]{myOutputDirectory.toURI().toURL()}, componentClass.getClassLoader());
             final Class<? extends Component> loadedClass = (Class<? extends Component>) classLoader.loadClass(componentGenerationPlan.getGeneratedClassName());
-            myCache.put(componentClass.getName(), new ComponentInstancerImpl<>(componentGenerationPlan, loadedClass));
+            myCache.put(componentClass.getName(), new ComponentInstancerImpl<Component, Component>(componentGenerationPlan, loadedClass));
         }
-        catch (ClassNotFoundException | MalformedURLException e)
+        catch (Exception e)
         {
             throw new ComponentFactoryException("Failed to load class '" + classInternalName + "' from: " + myOutputDirectory.getAbsolutePath(), e);
         }

@@ -28,11 +28,11 @@ import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.ReadOnlyParameters;
 import org.jayware.e2.event.api.ResultSet;
+import org.jayware.e2.util.Consumer;
 import org.jayware.e2.util.Key;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
 

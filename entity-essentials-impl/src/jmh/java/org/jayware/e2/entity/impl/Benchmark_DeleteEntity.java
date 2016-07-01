@@ -54,7 +54,7 @@ public class Benchmark_DeleteEntity
     {
         myContext = ContextProvider.getInstance().createContext();
         myEntityManager = myContext.getService(EntityManager.class);
-        myQueue = new LinkedList<>();
+        myQueue = new LinkedList<EntityRef>();
 
         for(int i = 0; i < 200000; ++i)
         {

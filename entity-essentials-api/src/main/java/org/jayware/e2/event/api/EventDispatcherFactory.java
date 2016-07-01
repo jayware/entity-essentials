@@ -43,5 +43,5 @@ public interface EventDispatcherFactory {
 	 * @param target a target for which an {@link EventDispatcher} is created
 	 * @return an {@link EventDispatcher} for the specified target
 	 */
-	EventDispatcher createEventDispatcher(Class<?> target);
+	EventDispatcher createEventDispatcher(Class<?> target) throws EventDispatcherFactoryException;
 }

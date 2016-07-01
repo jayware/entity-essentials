@@ -37,11 +37,13 @@ import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.event.api.SanityCheck;
 import org.jayware.e2.event.api.SanityCheckFailedException;
 import org.jayware.e2.event.api.SanityChecker;
+import org.jayware.e2.util.Consumer;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.ReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -104,13 +106,13 @@ implements EventManager
     {
         checkNotNull(type);
         checkNotNull(parameters);
-        return new QueryImpl(randomUUID(), type, parameters, emptyMap());
+        return new QueryImpl(randomUUID(), type, parameters, Collections.<Query.State, Consumer<ResultSet>>emptyMap());
     }
 
     @Override
     public Query createQuery(Class<? extends RootEvent> type, Parameters parameters)
     {
-        return new QueryImpl(randomUUID(), type, parameters, emptyMap());
+        return new QueryImpl(randomUUID(), type, parameters, Collections.<Query.State, Consumer<ResultSet>>emptyMap());
     }
 
     @Override
@@ -177,7 +179,7 @@ implements EventManager
         checkNotNull(event);
         sanityCheck(event);
 
-        final Context context = checkNotNull(event.getParameter(ContextParam));
+        final Context context = (Context) checkNotNull(event.getParameter(ContextParam));
         final EventBus eventBus = getOrCreateEventBus(context);
         eventBus.send(event);
     }
@@ -207,7 +209,7 @@ implements EventManager
         checkNotNull(event);
         sanityCheck(event);
 
-        final Context context = checkNotNull(event.getParameter(ContextParam));
+        final Context context = (Context) checkNotNull(event.getParameter(ContextParam));
         final EventBus eventBus = getOrCreateEventBus(context);
 
         eventBus.post(event);
@@ -239,7 +241,7 @@ implements EventManager
         checkNotNull(query);
         sanityCheck(query);
 
-        final Context context = checkNotNull(query.getParameter(ContextParam));
+        final Context context = (Context) checkNotNull(query.getParameter(ContextParam));
         final EventBus eventBus = getOrCreateEventBus(context);
 
         return eventBus.query(query);
@@ -253,8 +255,8 @@ implements EventManager
 
     private static void sanityCheck(Event event)
     {
-        final Queue<Class<? extends EventType>> queue = new LinkedList<>();
-        final List<SanityChecker> checkerList = new LinkedList<>();
+        final Queue<Class<? extends EventType>> queue = new LinkedList<Class<? extends EventType>>();
+        final List<SanityChecker> checkerList = new LinkedList<SanityChecker>();
 
         queue.add(event.getType());
 

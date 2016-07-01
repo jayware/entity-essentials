@@ -24,7 +24,6 @@ package org.jayware.e2.assembly.impl;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
-import org.jayware.e2.assembly.api.Node;
 import org.jayware.e2.assembly.api.TreeEvent.TreeNodeCreatedEvent;
 import org.jayware.e2.assembly.api.TreeNode;
 import org.jayware.e2.assembly.api.components.TreeNodeComponent;
@@ -40,7 +39,6 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.assembly.api.TreeEvent.FindChildrenQuery.ChildrenParam;
@@ -150,10 +148,14 @@ public class TreeHubTest
         new Verifications() {{
             final String paramName;
             final List<TreeNode> paramValue;
-            final List<EntityRef> refs;
+            final List<EntityRef> refs = new ArrayList<EntityRef>();
 
             testQuery.result(paramName = withCapture(), paramValue = withCapture());
-            refs = paramValue.stream().map(Node::getNodeRef).collect(Collectors.toList());
+
+            for (TreeNode treeNode : paramValue)
+            {
+                refs.add(treeNode.getNodeRef());
+            }
 
             assertThat(paramName).isEqualTo(ChildrenParam);
             assertThat(refs).containsExactlyInAnyOrder(testRefA, testRefB, testRefC);
@@ -164,7 +166,7 @@ public class TreeHubTest
     public void test_handleFindChildrenQuery_Fills_a_passed_list_instead_of_instantiating_a_new_one()
     throws Exception
     {
-        List<TreeNode> resultList = new ArrayList<>();
+        final List<TreeNode> resultList = new ArrayList<TreeNode>();
 
         expectATreeNodeWithThreeChildren();
 

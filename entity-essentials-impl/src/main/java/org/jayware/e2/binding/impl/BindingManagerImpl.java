@@ -63,7 +63,7 @@ implements BindingManager
         checkNotNull(targetComponent, "The binding target component mustn't be null!");
         checkNotNull(rule, "The binding rule mustn't be null!");
 
-        return new ComponentBindingImpl<>(sourceRef, sourceComponent, targetRef, targetComponent, rule);
+        return new ComponentBindingImpl<S, T>(sourceRef, sourceComponent, targetRef, targetComponent, rule);
     }
 
     @Override
@@ -74,7 +74,7 @@ implements BindingManager
         checkNotNull(target, "The binding target mustn't be null!");
         checkNotNull(rule, "The binding rule mustn't be null!");
 
-        return new CustomComponentBindingImpl<>(sourceRef, sourceComponent, target, rule);
+        return new CustomComponentBindingImpl<S, T>(sourceRef, sourceComponent, target, rule);
     }
 
     @Override

@@ -61,12 +61,13 @@ public class TreeManagerTest
 
         testContext = ContextProvider.getInstance().createContext();
 
-        asList(testEntityRef, testNodeEntityRef).forEach(ref -> {
+        for (EntityRef ref : asList(testEntityRef, testNodeEntityRef))
+        {
             when(ref.isValid()).thenReturn(true);
             when(ref.isInvalid()).thenReturn(false);
             when(ref.getContext()).thenReturn(testContext);
             when(ref.belongsTo(testContext)).thenReturn(true);
-        });
+        }
 
         when(testNode.getNodeRef()).thenReturn(testNodeEntityRef);
         when(testNode.getContext()).thenReturn(testContext);

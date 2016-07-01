@@ -26,10 +26,10 @@ import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.QueryBuilder;
 import org.jayware.e2.event.api.ResultSet;
+import org.jayware.e2.util.Consumer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.Parameters.param;
@@ -71,8 +71,8 @@ public class QueryBuilderTest
         assertThat(query.getType()).isEqualTo(TestEventTypeA.class);
         assertThat((String) query.getParameter("foo")).isEqualTo("bar");
         assertThat((String) query.getParameter("muh")).isEqualTo("kuh");
-        assertThat((int) query.getParameter("number1")).isEqualTo(42);
-        assertThat((int) query.getParameter("number2")).isEqualTo(73);
+        assertThat((Integer) query.getParameter("number1")).isEqualTo(42);
+        assertThat((Integer) query.getParameter("number2")).isEqualTo(73);
         assertThat(((QueryImpl) query).getConsumers()).containsEntry(Running, testConsumer_Running);
         assertThat(((QueryImpl) query).getConsumers()).containsEntry(Success, testConsumer_Success);
         assertThat(((QueryImpl) query).getConsumers()).containsEntry(Failed, testConsumer_Failed);

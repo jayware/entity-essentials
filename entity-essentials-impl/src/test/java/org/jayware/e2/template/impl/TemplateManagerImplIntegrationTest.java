@@ -83,7 +83,7 @@ public class TemplateManagerImplIntegrationTest
 
         public TestComponentTemplateImpl()
         {
-            properties = new ArrayList<>();
+            properties = new ArrayList<PropertyTemplate>();
         }
 
         @Override

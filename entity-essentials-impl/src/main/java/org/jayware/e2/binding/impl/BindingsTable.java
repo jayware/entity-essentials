@@ -52,7 +52,7 @@ implements Disposable
         myContext = context;
         myEventManager = myContext.getEventManager();
 
-        myBindingsTable = new HashSet<>();
+        myBindingsTable = new HashSet<Binding>();
     }
 
     public boolean addBinding(ComponentBinding binding)

@@ -54,7 +54,7 @@ public class StateLatch<S extends Enum<S>>
         myStateType = type;
         myCurrentState = initial;
 
-        myConditions = new EnumMap<>(type);
+        myConditions = new EnumMap<S, Condition>(type);
         for (S constant : type.getEnumConstants())
         {
             myConditions.put(constant, myLock.newCondition());

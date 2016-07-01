@@ -30,7 +30,6 @@ package org.jayware.e2.util;
  */
 public class Preconditions
 {
-    @FunctionalInterface
     public interface Precondition
     {
         boolean check();
@@ -49,6 +48,22 @@ public class Preconditions
     public static void checkArgument(Precondition precondition)
     {
         if (!precondition.check())
+        {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Ensures that the specified precondition is met.
+     * <p>
+     *
+     * @param precondition the precondition
+     *
+     * @throws IllegalArgumentException if the specified precondition is false.
+     */
+    public static void checkArgument(boolean precondition)
+    {
+        if (!precondition)
         {
             throw new IllegalArgumentException();
         }

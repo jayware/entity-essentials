@@ -25,11 +25,13 @@ package org.jayware.e2.event.impl;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventDispatcher;
 import org.jayware.e2.event.api.EventDispatcherFactory;
+import org.jayware.e2.event.api.EventDispatcherFactoryException;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.IllegalHandlerException;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Presence;
+import org.jayware.e2.util.Parameter;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
@@ -44,8 +46,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
@@ -64,6 +64,7 @@ import static java.nio.charset.Charset.forName;
 import static java.util.Arrays.asList;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import static org.jayware.e2.util.ConfigurationUtil.getPropertyOrDefault;
+import static org.jayware.e2.util.Parameter.parametersFrom;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
@@ -87,7 +88,7 @@ import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.objectweb.asm.Opcodes.IRETURN;
 import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_8;
+import static org.objectweb.asm.Opcodes.V1_6;
 import static org.objectweb.asm.Type.getDescriptor;
 import static org.objectweb.asm.Type.getInternalName;
 import static org.objectweb.asm.Type.getType;
@@ -112,7 +113,7 @@ implements EventDispatcherFactory
     public EventDispatcherFactoryImpl(Dictionary<String, ?> properties)
     {
         myOutputDirectory = new File(getPropertyOrDefault(properties, PROPERTY_OUT_DIRECTORY, System.getProperty("user.dir") + "/.generated"));
-        myTargetDescriptionMap = new HashMap<>();
+        myTargetDescriptionMap = new HashMap<Class<?>, TargetDescriptor>();
 
         try
         {
@@ -136,7 +137,7 @@ implements EventDispatcherFactory
             {
                 targetDescriptor = createTargetDescription(target);
             }
-            catch (Exception e)
+            catch (RuntimeException e)
             {
                 log.error("Failed to create EventDispatcher:", e);
                 throw e;
@@ -178,7 +179,7 @@ implements EventDispatcherFactory
                     "declared 'private' and therefore not accessible by any event dispatcher!");
                 }
 
-                for (Parameter parameter : method.getParameters())
+                for (Parameter parameter : parametersFrom(method))
                 {
                     final Param paramAnnotation = parameter.getAnnotation(Param.class);
 
@@ -216,7 +217,7 @@ implements EventDispatcherFactory
         final File classFile = new File(myOutputDirectory, classFileName);
 
         classWriter.visit(
-            V1_8,
+            V1_6,
             ACC_PUBLIC + ACC_SUPER,
             classInternalName,
             null,
@@ -514,9 +515,9 @@ implements EventDispatcherFactory
 
             log.info("Created EventDispatcher for: '{}'. EventDispatcher class stored in: '{}' ", target, classFile.getAbsolutePath());
         }
-        catch (ClassNotFoundException | MalformedURLException | InstantiationException | IllegalAccessException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
+            throw new EventDispatcherFactoryException(e);
         }
     }
 
@@ -534,8 +535,8 @@ implements EventDispatcherFactory
     private static class TargetDescriptor
     {
         private final Class<?> target;
-        private final List<HandlerDescriptor> handlerDescriptors = new ArrayList<>();
-        private final Map<Class<? extends EventType>, List<HandlerDescriptor>> eventTypeHandlerDescriptorMap = new HashMap<>();
+        private final List<HandlerDescriptor> handlerDescriptors = new ArrayList<HandlerDescriptor>();
+        private final Map<Class<? extends EventType>, List<HandlerDescriptor>> eventTypeHandlerDescriptorMap = new HashMap<Class<? extends EventType>, List<HandlerDescriptor>>();
         private EventDispatcher eventDispatcher;
 
         private TargetDescriptor(Class<?> target)
@@ -550,7 +551,7 @@ implements EventDispatcherFactory
                 List<HandlerDescriptor> descriptorList = eventTypeHandlerDescriptorMap.get(type);
                 if (descriptorList == null)
                 {
-                    descriptorList = new ArrayList<>();
+                    descriptorList = new ArrayList<HandlerDescriptor>();
                     eventTypeHandlerDescriptorMap.put(type, descriptorList);
                 }
 
@@ -594,14 +595,14 @@ implements EventDispatcherFactory
         private final Method handlerMethod;
         private final Handle handleAnnotation;
         private final Set<Class<? extends EventType>> eventTypes;
-        private final List<ParameterDescriptor> parameters = new ArrayList<>();
+        private final List<ParameterDescriptor> parameters = new ArrayList<ParameterDescriptor>();
 
         public HandlerDescriptor(Method handlerMethod, Handle handleAnnotation)
         {
             this.handlerMethod = handlerMethod;
             this.handleAnnotation = handleAnnotation;
-            this.eventTypes = new HashSet<>(asList(handleAnnotation.value()));
-            for (Parameter parameter : handlerMethod.getParameters())
+            this.eventTypes = new HashSet<Class<? extends EventType>>(asList(handleAnnotation.value()));
+            for (Parameter parameter : parametersFrom(handlerMethod))
             {
                 parameters.add(new ParameterDescriptor(parameter));
             }

@@ -43,38 +43,38 @@ public class StateLatchTest
     @BeforeMethod
     public void setUp()
     {
-        testee = new StateLatch<>(TestStates.class);
+        testee = new StateLatch<TestStates>(TestStates.class);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_newStateLatch_ThrowsIllegalArgumentExceptionIfEnumTypeIsNull()
     {
-        new StateLatch<>(null);
+        new StateLatch<TestStates>(null);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_newStateLatch_ThrowsIllegalArgumentExceptionIfInitialValueIsNull()
     {
-        new StateLatch<>(TestStates.class, null);
+        new StateLatch<TestStates>(TestStates.class, null);
     }
 
     @Test
     public void test_newStateLatch()
     {
-        new StateLatch<>(TestStates.class);
-        new StateLatch<>(TestStates.class, StateA);
+        new StateLatch<TestStates>(TestStates.class);
+        new StateLatch<TestStates>(TestStates.class, StateA);
     }
 
     @Test
     public void test_newStateLatch_DefaultInitialValue()
     {
-        assertThat(new StateLatch<>(TestStates.class).getState()).isEqualTo(StateA);
+        assertThat(new StateLatch<TestStates>(TestStates.class).getState()).isEqualTo(StateA);
     }
 
     @Test
     public void test_newStateLatch_WithInitialValue()
     {
-        assertThat(new StateLatch<>(TestStates.class, StateC).getState()).isEqualTo(StateC);
+        assertThat(new StateLatch<TestStates>(TestStates.class, StateC).getState()).isEqualTo(StateC);
     }
 
     @Test

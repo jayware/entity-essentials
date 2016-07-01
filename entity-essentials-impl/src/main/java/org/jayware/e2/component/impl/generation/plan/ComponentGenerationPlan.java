@@ -48,7 +48,7 @@ public class ComponentGenerationPlan
         myComponentClass = component;
         myGeneratedClassPackageName = component.getPackage().getName();
         myGeneratedClassName = "_generated_" + component.getSimpleName();
-        myPropertyGenerationPlans = new HashMap<>();
+        myPropertyGenerationPlans = new HashMap<String, ComponentPropertyGenerationPlan>();
     }
 
     public Class<? extends Component> getComponentClass()

@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -21,28 +21,21 @@
  */
 package org.jayware.e2.event.api;
 
-
-import org.jayware.e2.event.api.Parameters.Parameter;
-import org.jayware.e2.event.api.Query.State;
-import org.jayware.e2.util.Consumer;
-
-
-public interface QueryBuilder
+public class EventDispatcherFactoryException
+extends RuntimeException
 {
-    QueryBuilderTo set(String parameter);
-
-    QueryBuilder set(Parameter parameter);
-
-    QueryBuilder setAll(Parameters parameters);
-
-    QueryBuilder on(State state, Consumer<ResultSet> consumer);
-
-    QueryBuilder reset();
-
-    Query build();
-
-    interface QueryBuilderTo
+    public EventDispatcherFactoryException(String message)
     {
-        QueryBuilder to(Object value);
+        super(message);
+    }
+
+    public EventDispatcherFactoryException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public EventDispatcherFactoryException(Throwable cause)
+    {
+        super(cause);
     }
 }

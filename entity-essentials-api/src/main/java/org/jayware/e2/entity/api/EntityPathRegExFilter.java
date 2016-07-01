@@ -64,7 +64,7 @@ implements EntityPathFilter
      */
     public static EntityPathRegExFilter regexFilter()
     {
-        return new EntityPathRegExFilter(new HashSet<>(), new HashSet<>());
+        return new EntityPathRegExFilter(new HashSet<Pattern>(), new HashSet<Pattern>());
     }
 
     /**

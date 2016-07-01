@@ -21,6 +21,8 @@
  */
 package org.jayware.e2.context.api;
 
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -56,14 +58,38 @@ public class PreconditionsTest
         when(testContextB.isDisposed()).thenReturn(false);
 
         when(firstTestContextual.getContext()).thenReturn(testContextA);
-        when(firstTestContextual.belongsTo(any(Context.class))).thenAnswer(invocation -> invocation.getArguments()[0].equals(testContextA));
+        when(firstTestContextual.belongsTo(any(Context.class))).thenAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation)
+            throws Throwable
+            {
+                return invocation.getArguments()[0].equals(testContextA);
+            }
+        });
         when(firstTestContextual.belongsTo(secondTestContextual)).thenReturn(true);
         when(secondTestContextual.getContext()).thenReturn(testContextA);
-        when(secondTestContextual.belongsTo(any(Context.class))).thenAnswer(invocation -> invocation.getArguments()[0].equals(testContextA));
+        when(secondTestContextual.belongsTo(any(Context.class))).thenAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation)
+            throws Throwable
+            {
+                return invocation.getArguments()[0].equals(testContextA);
+            }
+        });
         when(secondTestContextual.belongsTo(firstTestContextual)).thenReturn(true);
 
         when(otherTestContextual.getContext()).thenReturn(testContextB);
-        when(otherTestContextual.belongsTo(any(Context.class))).thenAnswer(invocation -> invocation.getArguments()[0].equals(testContextB));
+        when(otherTestContextual.belongsTo(any(Context.class))).thenAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation)
+            throws Throwable
+            {
+                return invocation.getArguments()[0].equals(testContextB);
+            }
+        });
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

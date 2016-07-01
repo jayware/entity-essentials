@@ -40,7 +40,7 @@ implements Subscription
 
     SubscriptionImpl_WeakReference(Object subscriber, EventDispatcher eventDispatcher, EventFilter[] filters)
     {
-        mySubscriber = new WeakReference<>(subscriber);
+        mySubscriber = new WeakReference<Object>(subscriber);
         myEventDispatcher = eventDispatcher;
         myFilters = filters != null ? filters : new EventFilter[0];
         myIsValid = new AtomicBoolean(true);

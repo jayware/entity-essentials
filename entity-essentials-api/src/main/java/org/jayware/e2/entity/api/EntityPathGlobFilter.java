@@ -64,7 +64,7 @@ implements EntityPathFilter
      */
     public static EntityPathGlobFilter globFilter()
     {
-        return new EntityPathGlobFilter(new HashSet<>(), new HashSet<>());
+        return new EntityPathGlobFilter(new HashSet<Pattern>(), new HashSet<Pattern>());
     }
 
     /**

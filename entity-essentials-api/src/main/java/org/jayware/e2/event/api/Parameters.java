@@ -53,7 +53,7 @@ implements ReadOnlyParameters
      */
     public Parameters()
     {
-        myParameters = new HashMap<>();
+        myParameters = new HashMap<String, Parameter>();
         myReadOnlyParameters = unmodifiableMap(myParameters);
     }
 

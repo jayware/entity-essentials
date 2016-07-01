@@ -29,13 +29,11 @@ import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.IllegalHandlerException;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Presence;
-import org.jayware.e2.event.api.Subscriber;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 
 public class EventDispatcherFactoryImplTest
@@ -62,19 +60,10 @@ public class EventDispatcherFactoryImplTest
         assertFalse(dispatcher.accepts(TestEventTypeD.class));
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalHandlerException.class)
     public void test_createEventDispatcher_FailsIfSubscriberIsNotAccessible()
     {
-        try
-        {
-            testee.createEventDispatcher(TestSubscriber_Unaccessible.class);
-
-            fail("Exception expected!");
-        }
-        catch (IllegalHandlerException e)
-        {
-
-        }
+        testee.createEventDispatcher(TestSubscriber_Unaccessible.class);
     }
 
     @Test(expectedExceptions = IllegalHandlerException.class)

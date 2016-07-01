@@ -22,6 +22,7 @@
 package org.jayware.e2.assembly.impl;
 
 
+import com.google.common.base.Objects;
 import org.jayware.e2.assembly.api.TreeEvent;
 import org.jayware.e2.assembly.api.TreeEvent.AddChildNodeEvent;
 import org.jayware.e2.assembly.api.TreeEvent.ChildNodeAddedEvent;
@@ -50,7 +51,6 @@ import org.jayware.e2.event.api.Query;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -147,7 +147,7 @@ implements Disposable
             childComponent.pullFrom(childNodeRef);
         }
 
-        final List<EntityRef> children = new ArrayList<>();
+        final List<EntityRef> children = new ArrayList<EntityRef>();
 
         if (parentComponent.getChildren() != null)
         {
@@ -202,7 +202,7 @@ implements Disposable
 
         if (children == null)
         {
-            children = new ArrayList<>();
+            children = new ArrayList<TreeNode>();
         }
         else
         {
@@ -347,7 +347,7 @@ implements Disposable
         @Override
         public List<TreeNode> children()
         {
-            final List<TreeNode> result = new ArrayList<>();
+            final List<TreeNode> result = new ArrayList<TreeNode>();
             myComponentManager.pullComponent(myNodeRef, myNodeComponent);
 
             if (myNodeComponent.getChildren() != null)
@@ -428,14 +428,15 @@ implements Disposable
             {
                 return false;
             }
-            final TreeNodeImpl treeNode = (TreeNodeImpl) o;
-            return Objects.equals(myNodeRef, treeNode.myNodeRef);
+
+            final TreeNodeImpl other = (TreeNodeImpl) o;
+            return Objects.equal(myNodeRef, other.myNodeRef);
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hash(myNodeRef);
+            return Objects.hashCode(myNodeRef);
         }
     }
 }

@@ -48,7 +48,7 @@ implements ComponentInstancer<C>
     {
         myComponentGenerationPlan = componentGenerationPlan;
         myComponentClass = (Class<T>) componentClass;
-        myRequiredAdaptersSet = new HashSet<>();
+        myRequiredAdaptersSet = new HashSet<Class<? extends ComponentPropertyAdapter>>();
 
         for (ComponentPropertyGenerationPlan propertyPlan : componentGenerationPlan.getComponentPropertyGenerationPlans())
         {
@@ -76,7 +76,7 @@ implements ComponentInstancer<C>
 
             return instance;
         }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e)
+        catch (Exception e)
         {
             throw new ComponentInstantiationException(e);
         }

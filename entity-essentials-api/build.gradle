@@ -149,7 +149,7 @@ jar {
         symbolicName 'org.jayware.e2.api'
         license 'http://www.gnu.org/licenses/lgpl-3.0.txt'
         instruction 'Bundle-Category', 'e2,entity-essentials,api'
-        instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.8'
+        instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.6'
     }
     into("META-INF/maven/$project.group/$project.name") {
         from generatePom

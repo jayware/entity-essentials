@@ -174,7 +174,7 @@ implements Disposable
         final EventManager eventManager = myContext.getEventManager();
 
         final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
-        final Set<EntityRef> members = new HashSet<>(asList(groupComponent.getMembers()));
+        final Set<EntityRef> members = new HashSet<EntityRef>(asList(groupComponent.getMembers()));
 
         members.remove(member);
         groupComponent.setMembers(members.toArray(new EntityRef[members.size()]));

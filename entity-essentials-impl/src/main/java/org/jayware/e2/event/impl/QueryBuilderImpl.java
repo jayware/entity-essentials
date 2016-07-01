@@ -29,10 +29,10 @@ import org.jayware.e2.event.api.Query.State;
 import org.jayware.e2.event.api.QueryBuilder;
 import org.jayware.e2.event.api.QueryBuilder.QueryBuilderTo;
 import org.jayware.e2.event.api.ResultSet;
+import org.jayware.e2.util.Consumer;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.event.api.Query.State.Ready;
@@ -54,7 +54,7 @@ implements QueryBuilder, QueryBuilderTo
     {
         myEventType = type;
         myEventParameters = new Parameters();
-        myResultConsumers = new EnumMap<>(State.class);
+        myResultConsumers = new EnumMap<State, Consumer<ResultSet>>(State.class);
     }
 
     static QueryBuilder createQueryBuilder(Class<? extends EventType> type)
@@ -92,7 +92,7 @@ implements QueryBuilder, QueryBuilderTo
     public QueryBuilder on(State state, Consumer<ResultSet> consumer)
     {
         checkNotNull(state);
-        checkArgument(() -> state != Ready);
+        checkArgument(state != Ready);
         myResultConsumers.put(state, consumer);
         return this;
     }

@@ -58,8 +58,8 @@ public class EventBuilderImplTest
         assertThat(event.getType()).isEqualTo(TestEventTypeA.class);
         assertThat((String) event.getParameter("foo")).isEqualTo("bar");
         assertThat((String) event.getParameter("muh")).isEqualTo("kuh");
-        assertThat((int) event.getParameter("number1")).isEqualTo(42);
-        assertThat((int) event.getParameter("number2")).isEqualTo(73);
+        assertThat((Integer) event.getParameter("number1")).isEqualTo(42);
+        assertThat((Integer) event.getParameter("number2")).isEqualTo(73);
 
         event = testee.reset().build();
 

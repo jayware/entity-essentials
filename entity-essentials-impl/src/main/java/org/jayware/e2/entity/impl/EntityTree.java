@@ -63,6 +63,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static com.google.common.base.Objects.equal;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
+import static java.util.UUID.fromString;
 import static org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent.ChildRemovedEntityEvent;
 import static org.jayware.e2.entity.api.EntityEvent.ChildrenEntityEvent.ChildRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
@@ -97,7 +98,7 @@ implements Disposable
         myEventManager = context.getService(EventManager.class);
         myEventManager.subscribe(context, this);
 
-        myEntities = new HashMap<>();
+        myEntities = new HashMap<UUID, EntityImpl>();
         myRoot = new EntityImpl(new UUID(0, 0));
         myEntities.put(myRoot.identifier(), myRoot);
 
@@ -298,7 +299,7 @@ implements Disposable
 
     public List<EntityRef> findAncestors(EntityRef ref, Aspect aspect, Filter<EntityRef>[] filters)
     {
-        final List<EntityRef> result = new ArrayList<>();
+        final List<EntityRef> result = new ArrayList<EntityRef>();
 
         if (ref != null)
         {
@@ -332,14 +333,14 @@ implements Disposable
         if (ref != null)
         {
             final EntityImpl root = myEntities.get(((EntityRefImpl) ref).myIdentifier);
-            final List<EntityImpl> startSet = new ArrayList<>(root.myChildren.values());
+            final List<EntityImpl> startSet = new ArrayList<EntityImpl>(root.myChildren.values());
             final List<EntityRef> results = find(startSet, traversal, aspect, filters);
 
             return results;
         }
         else
         {
-            return new ArrayList<>();
+            return new ArrayList<EntityRef>();
         }
     }
 
@@ -366,8 +367,8 @@ implements Disposable
 
     private List<EntityRef> findBreadthFirst(List<EntityImpl> startSet, Aspect aspect, Filter<EntityRef>[] filters)
     {
-        final List<EntityRef> result = new ArrayList<>();
-        final Queue<EntityImpl> queue = new LinkedList<>();
+        final List<EntityRef> result = new ArrayList<EntityRef>();
+        final Queue<EntityImpl> queue = new LinkedList<EntityImpl>();
         EntityImpl current;
 
         myReadLock.lock();
@@ -410,8 +411,8 @@ implements Disposable
 
     private List<EntityRef> findDepthFirstPreOrder(List<EntityImpl> startSet, Aspect aspect, Filter<EntityRef>[] filters)
     {
-        final List<EntityRef> result = new ArrayList<>();
-        final Stack<EntityImpl> stack = new Stack<>();
+        final List<EntityRef> result = new ArrayList<EntityRef>();
+        final Stack<EntityImpl> stack = new Stack<EntityImpl>();
         EntityImpl current;
 
         myReadLock.lock();
@@ -454,7 +455,7 @@ implements Disposable
 
     private List<EntityRef> findUnordered(Aspect aspect, Filter<EntityRef>[] filters)
     {
-        final List<EntityRef> result = new ArrayList<>();
+        final List<EntityRef> result = new ArrayList<EntityRef>();
 
         myReadLock.lock();
         try
@@ -726,8 +727,7 @@ implements Disposable
             {
                 return true;
             }
-
-            if (other == null || getClass() != other.getClass())
+            if (!(other instanceof EntityRefImpl))
             {
                 return false;
             }

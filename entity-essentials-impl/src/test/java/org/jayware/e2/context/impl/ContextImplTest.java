@@ -25,6 +25,7 @@ package org.jayware.e2.context.impl;
 import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ServiceProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
@@ -169,14 +170,14 @@ public class ContextImplTest
     {
         Key<String> key = createKey("fubar");
         ValueProvider<String> valueProvider = mock(ValueProvider.class);
-        when(valueProvider.provide(any())).thenReturn("test-value");
+        when(valueProvider.provide((Context) any())).thenReturn("test-value");
 
         assertThat(testee.contains(key)).isFalse();
         assertThat(testee.putIfAbsent(key, valueProvider)).isTrue();
         assertThat(testee.putIfAbsent(key, "")).isFalse();
         assertThat(testee.get(key)).isEqualTo("test-value");
 
-        verify(valueProvider, times(1)).provide(any());
+        verify(valueProvider, times(1)).provide((Context) any());
     }
 
     @Test

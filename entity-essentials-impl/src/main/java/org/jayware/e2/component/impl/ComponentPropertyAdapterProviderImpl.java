@@ -41,7 +41,7 @@ implements ComponentPropertyAdapterProvider
 
     public ComponentPropertyAdapterProviderImpl()
     {
-        myPropertyAdapterMap = new ConcurrentHashMap<>();
+        myPropertyAdapterMap = new ConcurrentHashMap<Class<?>, ComponentPropertyAdapter<?>>();
     }
 
     @Override
@@ -60,7 +60,7 @@ implements ComponentPropertyAdapterProvider
                 myPropertyAdapterMap.put(adaptedType, adapterInstance);
             }
         }
-        catch (InstantiationException | IllegalAccessException e)
+        catch (Exception e)
         {
             throw new ComponentPropertyAdapterInstantiationException(e);
         }

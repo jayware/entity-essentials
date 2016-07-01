@@ -94,8 +94,8 @@ implements Disposable
         myEventManager = myContext.getService(EventManager.class);
         myComponentFactory = myContext.getService(ComponentFactory.class);
 
-        myComponentClassMap = new HashMap<>();
-        myComponentDatabase = new HashMap<>();
+        myComponentClassMap = new HashMap<String, Class<? extends Component>>();
+        myComponentDatabase = new HashMap<Class<? extends Component>, Map<EntityRef, Component>>();
 
         myEventManager.subscribe(context, this);
     }
@@ -176,14 +176,14 @@ implements Disposable
         myReadLock.lock();
         try
         {
-            final Set<T> components = new HashSet<>();
+            final Set<T> components = new HashSet<T>();
 
             for (Map<EntityRef, Component> refComponentMap : myComponentDatabase.values())
             {
                 final AbstractComponent component = (AbstractComponent) refComponentMap.get(ref);
                 if (component != null)
                 {
-                    components.add(component.copy());
+                    components.add((T) component.copy());
                 }
             }
 
@@ -200,7 +200,7 @@ implements Disposable
         myReadLock.lock();
         try
         {
-            final Set<Class<? extends Component>> components = new HashSet<>();
+            final Set<Class<? extends Component>> components = new HashSet<Class<? extends Component>>();
 
             for (Map<EntityRef, Component> refComponentMap : myComponentDatabase.values())
             {
@@ -338,7 +338,7 @@ implements Disposable
         myReadLock.lock();
         try
         {
-            return new HashSet<>(myComponentClassMap.values());
+            return new HashSet<Class<? extends Component>>(myComponentClassMap.values());
         }
         finally
         {
@@ -431,7 +431,7 @@ implements Disposable
 
             if (row == null)
             {
-                row = new HashMap<>();
+                row = new HashMap<EntityRef, Component>();
                 myComponentDatabase.put(componentType, row);
             }
 
