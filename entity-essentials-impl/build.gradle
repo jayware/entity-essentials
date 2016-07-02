@@ -5,6 +5,40 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'osgi'
 
+ext.projectObjectModel = pom {
+    project {
+        groupId project.group
+        artifactId project.name
+        version project.version
+    }
+    withXml {
+        def root = asNode()
+        root.appendNode('name', "${project.group}:${project.name}")
+        root.appendNode('description', 'Default implementation of the Entity Essentials API')
+        root.appendNode('url', 'http://jayware.github.io/entity-essentials/')
+        root.appendNode('inceptionYear', '2015')
+        def scm = root.appendNode('scm')
+        scm.appendNode('url', 'https://github.com/jayware/entity-essentials')
+        scm.appendNode('connection', 'git@github.com:jayware/entity-essentials.git')
+        scm.appendNode('developerConnection', 'git@github.com:jayware/entity-essentials.git')
+        def developers = root.appendNode('developers')
+        def dev = developers.appendNode('developer')
+        dev.appendNode('name', 'Elmar Schug')
+        dev.appendNode('email', 'elmar.schug@jayware.org')
+        dev.appendNode('organization', 'JayWare')
+        dev.appendNode('organizationUrl', 'https://jayware.org')
+        dev = developers.appendNode('developer')
+        dev.appendNode('name', 'Markus Neubauer')
+        dev.appendNode('email', 'markus.neubauer@jayware.org')
+        dev.appendNode('organization', 'JayWare')
+        dev.appendNode('organizationUrl', 'https://jayware.org')
+        def license = root.appendNode('licenses').appendNode('license')
+        license.appendNode('name', 'GNU Lesser General Public License 3.0')
+        license.appendNode('url', 'http://www.gnu.org/licenses/')
+        license.appendNode('distribution', 'repo')
+    }
+}
+
 dependencies {
 
     compile project(':entity-essentials-api')
@@ -24,26 +58,6 @@ test {
 
 jmh {
     jmhVersion = '1.12'
-}
-
-jar {
-    from (rootProject.projectDir) {
-        include 'LICENSE.txt'
-    }
-    from (projectDir) {
-        include 'README.md'
-    }
-    manifest {
-        vendor 'jayware.org'
-        name 'Entity Essentials IMPL'
-        description 'Default implementation of the Entity Essentials API'
-        symbolicName 'org.jayware.e2.impl'
-        license 'http://www.gnu.org/licenses/lgpl-3.0.txt'
-        instruction 'Bundle-Category', 'e2,entity-essentials,impl'
-        instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.8'
-        instruction 'Service-Component', 'OSGI-INF/*.xml'
-        instruction 'Export-Package', '!org.jayware.e2.*'
-    }
 }
 
 bintray {
@@ -102,6 +116,38 @@ publishing {
     }
 }
 
-clean{
+task generatePom {
+    group = 'Publishing'
+    doLast {
+        projectObjectModel.writeTo("${buildDir}/tmp/jar/pom.xml")
+    }
+}
+
+jar {
+    dependsOn generatePom
+    from (rootProject.projectDir) {
+        include 'LICENSE.txt'
+    }
+    from (projectDir) {
+        include 'README.md'
+    }
+    manifest {
+        vendor 'jayware.org'
+        name 'Entity Essentials IMPL'
+        description 'Default implementation of the Entity Essentials API'
+        symbolicName 'org.jayware.e2.impl'
+        license 'http://www.gnu.org/licenses/lgpl-3.0.txt'
+        instruction 'Bundle-Category', 'e2,entity-essentials,impl'
+        instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.8'
+        instruction 'Service-Component', 'OSGI-INF/*.xml'
+        instruction 'Export-Package', '!org.jayware.e2.*'
+    }
+    into("META-INF/maven/$project.group/$project.name") {
+        from "${buildDir}/tmp/jar/pom.xml"
+        rename ".*", "pom.xml"
+    }
+}
+
+clean {
     delete '.generated'
 }
