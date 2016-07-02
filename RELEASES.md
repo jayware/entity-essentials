@@ -1,5 +1,33 @@
 # Releases
 
+# Version 0.3.0 (soon)
+
+## Features
+ - Combined components: This version introduces the ability to define components by extending existing ones.
+   [[ #3 ]](https://github.com/jayware/entity-essentials/issues/3)
+ - Entity Groups continued - Trees: The concept of the assembly module and its grouping-mechanism has been developed further to model trees of entities.
+   [[ #12 ]](https://github.com/jayware/entity-essentials/issues/12)
+
+## Enhancements
+ - A couple of JavaDoc warnings have been fixed.
+   [[ #16 ]](https://github.com/jayware/entity-essentials/issues/16)
+
+## Fixes
+ - A NullPointerException which occurred when state-change of a Query was signaled has been fixed .
+   [[ #21 ]](https://github.com/jayware/entity-essentials/issues/21)
+ - A NegativeArraySizeException which occurred when an EventDispatcher was generated for an EventHandler with long or double parameters has been fixed.
+   [[ #14 ]](https://github.com/jayware/entity-essentials/issues/14)
+
+## Dependencies
+
+| artifact                       | old version | new version |
+| :----------------------------- | ----------- | ----------- |
+| org.slf4j:slf4j-api            | 1.7.18      | 1.7.21      |
+| ch.qos.logback:logback-classic | 1.1.5       | 1.1.7       |
+| org.testng:testng              | 6.9.10      | 6.9.10      |
+| org.assertj:assertj-core       | 3.3.0       | 3.4.1       |
+| org.jmockit:jmockit            | -           | 1.25        |
+
 # Version 0.2.0 (2016-02-29)
 
 ## Features

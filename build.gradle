@@ -36,11 +36,11 @@ allprojects {
             sourceSets = [sourceSets.main]
         }
 
-        task coveralls(type:Exec, dependsOn: 'generatePom') {
+        task coveralls(type:Exec, dependsOn: 'generateCoverallsPom') {
             commandLine 'mvn', 'clean', 'install', 'test', 'jacoco:report', 'coveralls:report'
         }
 
-        task generatePom << {
+        task generateCoverallsPom << {
             pom {
                 project {
                     groupId project.group
