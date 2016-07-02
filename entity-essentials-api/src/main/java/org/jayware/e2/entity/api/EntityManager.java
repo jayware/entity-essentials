@@ -44,7 +44,18 @@ import java.util.List;
  */
 public interface EntityManager
 {
-    EntityRef createEntity(Context context);
+    /**
+     * Creates an {@link Entity} in the specifed {@link Context}.
+     *
+     * @param context
+     *
+     * @return an {@link EntityRef} to the newly created {@link Entity}
+     *
+     * @throws IllegalArgumentException if the passed {@link Context} is <code>null</code>.
+     *
+     * @throws IllegalStateException if the passed {@link Context} has been disposed.
+     */
+    EntityRef createEntity(Context context) throws IllegalArgumentException, IllegalStateException;
 
     /**
      * Creates an {@link Entity} denoted by the passed {@link EntityPath}
@@ -354,6 +365,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
+    @Deprecated
     List<EntityRef> findEntityAncestors(Context context, EntityPath path);
 
     /**
@@ -941,4 +953,17 @@ public interface EntityManager
      */
     @Deprecated
     boolean existsEntity(Context context, EntityPath path);
+
+    /**
+     * Returns an instance of an {@link ContextualEntityManager} which belongs to the specified {@link Context}.
+     *
+     * @param context a {@link Context}
+     *
+     * @return a {@link ContextualEntityManager}.
+     *
+     * @throws IllegalArgumentException if the passed {@link Context} is <code>null</code>.
+     *
+     * @throws IllegalStateException if the passed {@link Context} has been disposed.
+     */
+    ContextualEntityManager asContextual(Context context) throws IllegalArgumentException, IllegalStateException;
 }

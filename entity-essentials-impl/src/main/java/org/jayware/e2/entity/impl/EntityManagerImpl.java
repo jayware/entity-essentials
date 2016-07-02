@@ -25,6 +25,7 @@ package org.jayware.e2.entity.impl;
 import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.IllegalContextException;
+import org.jayware.e2.entity.api.ContextualEntityManager;
 import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
@@ -426,6 +427,13 @@ implements EntityManager
 
         final EntityTree entityTree = getOrCreateEntityTree(context);
         return entityTree != null && entityTree.existsEntity(path);
+    }
+
+    @Override
+    public ContextualEntityManager asContextual(Context context)
+    {
+        checkContextNotNullAndNotDisposed(context);
+        return new ContextualEntityManagerImpl(context, this);
     }
 
     private EntityTree getOrCreateEntityTree(Context context)

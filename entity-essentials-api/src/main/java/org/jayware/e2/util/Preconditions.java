@@ -61,12 +61,27 @@ public class Preconditions
      *
      * @param precondition a {@link Precondition}
      *
-     *
-     * @throws IllegalArgumentException if the specified {@link Precondition} returns false.
+     * @throws IllegalStateException if the specified {@link Precondition} returns false.
      */
     public static void checkState(Precondition precondition)
     {
         if (!precondition.check())
+        {
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Ensures that the specified precondition is met.
+     * <p>
+     *
+     * @param precondition a precondition.
+     *
+     * @throws IllegalStateException if the specified precondition is false.
+     */
+    public static void checkState(boolean precondition)
+    {
+        if (!precondition)
         {
             throw new IllegalStateException();
         }

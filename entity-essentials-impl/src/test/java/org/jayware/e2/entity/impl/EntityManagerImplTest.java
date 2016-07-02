@@ -22,6 +22,8 @@
 package org.jayware.e2.entity.impl;
 
 
+import mockit.Expectations;
+import mockit.Mocked;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
@@ -38,6 +40,8 @@ public class EntityManagerImplTest
 {
     private Context context;
     private EntityManager testee;
+
+    private @Mocked Context mockedContext;
 
     @BeforeMethod
     public void setup()
@@ -145,5 +149,23 @@ public class EntityManagerImplTest
         assertThat(testee.existsEntity(context, path("/a"))).isTrue();
         assertThat(testee.existsEntity(context, path("/a/b"))).isTrue();
         assertThat(testee.existsEntity(context, path("/a/b/c"))).isFalse();
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_asContextual_Throws_IllegalArgumentException_if_null_is_passed()
+    throws Exception
+    {
+        testee.asContextual(null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_asContextual_Throws_IllegalStateException_if_the_passed_Context_is_disposed()
+    throws Exception
+    {
+        new Expectations() {{
+            mockedContext.isDisposed(); result = true;
+        }};
+
+        testee.asContextual(mockedContext);
     }
 }
