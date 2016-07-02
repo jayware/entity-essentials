@@ -27,17 +27,10 @@ import java.util.ServiceLoader;
 
 public abstract class ContextProvider
 {
-    private static ContextProvider instance;
-
     public abstract Context createContext();
 
     public static synchronized ContextProvider getInstance()
     {
-        if (instance == null)
-        {
-            instance = ServiceLoader.load(ContextProvider.class).iterator().next();
-        }
-
-        return instance;
+        return ServiceLoader.load(ContextProvider.class).iterator().next();
     }
 }
