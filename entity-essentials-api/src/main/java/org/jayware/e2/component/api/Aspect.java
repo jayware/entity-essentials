@@ -21,6 +21,7 @@
  */
 package org.jayware.e2.component.api;
 
+import com.google.common.base.Objects;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityManager;
@@ -297,6 +298,31 @@ public class Aspect
     public boolean contains(Class<? extends Component> component)
     {
         return myComponentSet.contains(component);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+
+        if (!(obj instanceof Aspect))
+        {
+            return false;
+        }
+
+        final Aspect other = (Aspect) obj;
+
+        return myComponentSet.containsAll(other.myComponentSet) &&
+               other.myComponentSet.containsAll(myComponentSet);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(myComponentSet);
     }
 
     @Override
