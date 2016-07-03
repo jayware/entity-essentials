@@ -72,11 +72,8 @@ public interface ComponentManager
      * @param <T>       the type of the {@link Component}.
      *
      * @return the {@link Component}.
-     *
-     * @throws ComponentNotFoundException if the {@link Entity} referenced by the specified {@link EntityRef} doesn't
-     *                                    have a {@link Component} of the appropriate type.
      */
-    <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws ComponentNotFoundException, ComponentFactoryException, MalformedComponentException;
+    <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws ComponentFactoryException, MalformedComponentException;
 
     /**
      * Removes the {@link Component} with the specified type from the {@link Entity} referenced by the passed
@@ -112,7 +109,7 @@ public interface ComponentManager
      */
     <T extends Component> T getComponent(EntityRef ref, Class<T> component) throws ComponentNotFoundException;
 
-    public <T extends Component, W extends AbstractComponentWrapper<W, T>> W getComponent(EntityRef ref, W wrapper) throws ComponentNotFoundException;
+    <T extends Component, W extends AbstractComponentWrapper<W, T>> W getComponent(EntityRef ref, W wrapper) throws ComponentNotFoundException;
 
     /**
      * Returns a {@link Collection} containing all {@link Component Components} associated to the specified
@@ -262,4 +259,18 @@ public interface ComponentManager
      *         if there is no appropriate adapter.
      */
     <T> ComponentPropertyAdapter<T> getPropertyAdapter(Context context, Class<T> type);
+
+
+    /**
+     * Returns an instance of a {@link ContextualComponentManager} which belongs to the specified {@link Context}.
+     *
+     * @param context a {@link Context}
+     *
+     * @return a {@link ContextualComponentManager}.
+     *
+     * @throws IllegalArgumentException if the passed {@link Context} is <code>null</code>.
+     *
+     * @throws IllegalStateException if the passed {@link Context} has been disposed.
+     */
+    ContextualComponentManager asContextual(Context context) throws IllegalArgumentException, IllegalStateException;
 }

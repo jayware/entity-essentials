@@ -28,6 +28,7 @@ import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.component.api.ComponentPropertyAdapter;
 import org.jayware.e2.component.api.ComponentPropertyAdapterProvider;
+import org.jayware.e2.component.api.ContextualComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.util.Key;
@@ -35,6 +36,7 @@ import org.jayware.e2.util.Key;
 import java.util.Collection;
 import java.util.Set;
 
+import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.util.Key.createKey;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
@@ -238,6 +240,13 @@ implements ComponentManager
 
         final ComponentPropertyAdapterProvider adapterProvider = getOrCreatePropertyAdapterProvider(context);
         return adapterProvider.getAdapterFor(type);
+    }
+
+    @Override
+    public ContextualComponentManager asContextual(Context context)
+    {
+        checkContextNotNullAndNotDisposed(context);
+        return new ContextualComponentManagerImpl(context, this);
     }
 
     private ComponentStore getOrCreateComponentStore(Context context)
