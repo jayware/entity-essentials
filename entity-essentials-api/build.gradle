@@ -108,14 +108,15 @@ publishing {
 }
 
 task generatePom {
+    def pomFile = "${buildDir}/tmp/jar/pom.xml"
     group = 'Publishing'
+    outputs.file pomFile
     doLast {
-        projectObjectModel.writeTo("${buildDir}/tmp/jar/pom.xml")
+        projectObjectModel.writeTo(pomFile)
     }
 }
 
 jar {
-    dependsOn generatePom
     from (rootProject.projectDir) {
         include 'LICENSE.txt'
     }
@@ -132,7 +133,7 @@ jar {
         instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.8'
     }
     into("META-INF/maven/$project.group/$project.name") {
-        from "${buildDir}/tmp/jar/pom.xml"
+        from generatePom
         rename ".*", "pom.xml"
     }
 }
