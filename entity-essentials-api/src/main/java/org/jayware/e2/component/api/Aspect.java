@@ -78,7 +78,7 @@ public class Aspect
     {
         public boolean matches(EntityRef ref)
         {
-            final ComponentManager componentManager = ref.getContext().getComponentManager();
+            final ComponentManager componentManager = ref.getContext().getService(ComponentManager.class);
             return componentManager.numberOfComponents(ref) == 0;
         }
 
@@ -141,7 +141,6 @@ public class Aspect
     {
         return new Aspect(new HashSet<>(asList(components)));
     }
-
 
     /**
      * Creates an {@link Aspect} from the specified {@link Set} of {@link Component} types.
