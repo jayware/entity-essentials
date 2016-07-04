@@ -22,6 +22,7 @@
 package org.jayware.e2.template.api;
 
 
+@Deprecated
 public interface TemplateVisitor
 {
     void visitEntityTemplate(TemplateVisitorContext context, EntityTemplate entity);

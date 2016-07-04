@@ -22,6 +22,7 @@
 package org.jayware.e2.template.api;
 
 
+@Deprecated
 public interface PropertyTemplate
 {
     String getName();

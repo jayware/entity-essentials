@@ -25,6 +25,7 @@ package org.jayware.e2.template.api;
 import java.net.URI;
 
 
+@Deprecated
 public interface Template
 {
     URI uri();

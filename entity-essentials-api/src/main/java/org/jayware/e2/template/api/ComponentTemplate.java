@@ -25,6 +25,7 @@ package org.jayware.e2.template.api;
 import java.util.List;
 
 
+@Deprecated
 public interface ComponentTemplate
 {
     String getName();

@@ -37,6 +37,7 @@ import java.net.URI;
  *
  * @since 1.0
  */
+@Deprecated
 public interface TemplateManager
 {
     /**
