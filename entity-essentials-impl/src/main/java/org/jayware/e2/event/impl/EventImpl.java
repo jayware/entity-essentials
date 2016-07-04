@@ -80,4 +80,10 @@ implements Event
     {
         return false;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Event {" + myType.getName() + '}';
+    }
 }

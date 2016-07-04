@@ -105,4 +105,10 @@ implements Query
     {
         return myConsumers;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Query {" + myEvent.getType().getName() + '}';
+    }
 }
