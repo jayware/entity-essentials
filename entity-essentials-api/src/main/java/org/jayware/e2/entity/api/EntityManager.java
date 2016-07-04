@@ -47,7 +47,7 @@ public interface EntityManager
     /**
      * Creates an {@link Entity} in the specifed {@link Context}.
      *
-     * @param context
+     * @param context a {@link Context} to use.
      *
      * @return an {@link EntityRef} to the newly created {@link Entity}
      *
