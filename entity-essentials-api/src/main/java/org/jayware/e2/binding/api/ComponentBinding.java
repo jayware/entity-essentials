@@ -22,6 +22,7 @@
 package org.jayware.e2.binding.api;
 
 
+@Deprecated
 public interface ComponentBinding<S, T>
 extends Binding
 {

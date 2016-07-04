@@ -26,6 +26,7 @@ import org.jayware.e2.component.api.Component;
 import org.jayware.e2.entity.api.EntityRef;
 
 
+@Deprecated
 public interface ComponentBindingBuilder
 {
     <T extends Component> ComponentBindingBuilderTo<T> bind(EntityRef targetRef, Class<T> targetComponent);

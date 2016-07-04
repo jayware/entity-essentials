@@ -22,6 +22,7 @@
 package org.jayware.e2.binding.api;
 
 
+@Deprecated
 public interface BindingRule<S, T>
 {
     void apply(S source, T target);

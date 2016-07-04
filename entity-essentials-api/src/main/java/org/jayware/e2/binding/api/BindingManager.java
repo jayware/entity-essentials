@@ -35,6 +35,8 @@ import org.jayware.e2.entity.api.EntityRef;
  *
  * @since 1.0
  */
+
+@Deprecated
 public interface BindingManager
 {
     ComponentBindingBuilder createComponentBinding(Context context);

@@ -25,6 +25,7 @@ package org.jayware.e2.binding.api;
 import org.jayware.e2.entity.api.EntityRef;
 
 
+@Deprecated
 public interface EntityBindingBuilder
 {
     EntityBindingBuilderTarget bind(EntityRef ref);
