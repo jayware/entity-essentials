@@ -262,7 +262,7 @@ public interface ComponentManager
 
 
     /**
-     * Returns an instance of a {@link ContextualComponentManager} which belongs to the specified {@link Context}.
+     * Returns a new instance of a {@link ContextualComponentManager} which belongs to the specified {@link Context}.
      *
      * @param context a {@link Context}
      *

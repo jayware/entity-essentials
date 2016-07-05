@@ -22,15 +22,15 @@
 package org.jayware.e2.examples;
 
 
-import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.component.api.ContextualComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
+import org.jayware.e2.entity.api.ContextualEntityManager;
 import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.entity.api.EntityRef;
 
 
-public class Quickstart
+public class ContextualManagersExample
 {
     public static void main(String[] args) {
 
@@ -39,39 +39,19 @@ public class Quickstart
         EntityManager entityManager = context.getService(EntityManager.class);
         ComponentManager componentManager = context.getService(ComponentManager.class);
 
-        /* Initially prepare custom components */
-        componentManager.prepareComponent(context, ExampleComponent.class);
+        /* In many cases there is only one context. Therefore it is impractical to pass the context in, again and again. */
+        entityManager.createEntity(context);
+        componentManager.prepareComponent(context, Quickstart.ExampleComponent.class);
 
-        /* Create an entity */
-        final EntityRef ref = entityManager.createEntity(context);
+        /* To avoid such situations, it is possible to create XXXManager which are bound to a specific context.*/
+        ContextualEntityManager contextualEntityManager = entityManager.asContextual(context);
+        ContextualComponentManager contextualComponentManager = componentManager.asContextual(context);
 
-        /* Add a component to the entity */
-        componentManager.addComponent(ref, ExampleComponent.class);
-
-        /* Lookup a component */
-        ExampleComponent cmp = componentManager.getComponent(ref, ExampleComponent.class);
-
-        /* Change the component's properties */
-        cmp.setText("Fubar!");
-        cmp.setTextSize(14);
-
-        /* Commit changes */
-        cmp.pushTo(ref);
+        /* These managers offer an api which does not requires a context paramter. */
+        contextualEntityManager.createEntity();
+        contextualComponentManager.prepareComponent(Quickstart.ExampleComponent.class);
 
         /* Shutdown everything */
         context.dispose();
-    }
-
-    /* Define a custom component by a java interface */
-    public interface ExampleComponent extends Component
-    {
-        /* Define properties by declaration of getters and setters  */
-        String getText();
-
-        void setText(String text);
-
-        int getTextSize();
-
-        void setTextSize(int size);
     }
 }

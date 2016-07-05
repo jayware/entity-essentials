@@ -955,7 +955,7 @@ public interface EntityManager
     boolean existsEntity(Context context, EntityPath path);
 
     /**
-     * Returns an instance of a {@link ContextualEntityManager} which belongs to the specified {@link Context}.
+     * Returns a new instance of a {@link ContextualEntityManager} which belongs to the specified {@link Context}.
      *
      * @param context a {@link Context}
      *
