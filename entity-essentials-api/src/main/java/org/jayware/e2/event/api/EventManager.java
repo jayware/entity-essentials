@@ -204,7 +204,7 @@ public interface EventManager
      * Sends an {@link Event} of the specified {@link EventType} with the passed {@link Parameter Parameters}.
      * <p>
      * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>synchronous</u> manner.
-     * Therefore the calling thread returns not until the event has been delivered to all interested subscribers.
+     * Therefore the calling thread will <u>not</u> return until the event has been delivered to all interested subscribers.
      *
      * @param type the event's {@link EventType}.
      * @param parameters the {@link Parameter Parameters} to set to the {@link Event}.
@@ -217,7 +217,7 @@ public interface EventManager
      * Sends an {@link Event} of the specified {@link EventType} with the passed {@link Parameters}.
      * <p>
      * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>synchronous</u> manner.
-     * Therefore the calling thread returns not until the event has been delivered to all interested subscribers.
+     * Therefore the calling thread will <u>not</u> return until the event has been delivered to all interested subscribers.
      *
      * @param type the event's {@link EventType}.
      * @param parameters the {@link Parameters} to set to the {@link Event}.
@@ -230,7 +230,7 @@ public interface EventManager
      * Sends the {@link Event} created from the information provided by the specified {@link EventBuilder}.
      * <p>
      * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>synchronous</u> manner.
-     * Therefore the calling thread returns not until the event has been delivered to all interested subscribers.
+     * Therefore the calling thread will <u>not</u> return until the event has been delivered to all interested subscribers.
      *
      * @param builder an {@link EventBuilder} to use.
      *
@@ -242,7 +242,7 @@ public interface EventManager
      * Sends the specified {@link Event}.
      * <p>
      * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>synchronous</u> manner.
-     * Therefore the calling thread returns not until the event has been delivered to all interested subscribers.
+     * Therefore the calling thread will <u>not</u> return until the event has been delivered to all interested subscribers.
      *
      * @param event an {@link Event} to send.
      *
@@ -254,7 +254,7 @@ public interface EventManager
      * Posts an {@link Event} of the specified {@link EventType} with the passed {@link Parameter Parameters}.
      * <p>
      * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>asynchronous</u> manner.
-     * Therefore the calling thread will return before the event has been delivered to all interested subscribers.
+     * Therefore the calling thread will return <u>before</u> the event has been delivered to all interested subscribers.
      *
      * @param type the event's {@link EventType}.
      * @param parameters the {@link Parameter Parameters} to set to the {@link Event}.
@@ -267,7 +267,7 @@ public interface EventManager
      * Posts an {@link Event} of the specified {@link EventType} with the passed {@link Parameters}.
      * <p>
      * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>asynchronous</u> manner.
-     * Therefore the calling thread will return before the event has been delivered to all interested subscribers.
+     * Therefore the calling thread will return <u>before</u> the event has been delivered to all interested subscribers.
      *
      * @param type the event's {@link EventType}.
      * @param parameters the {@link Parameters} to set to the {@link Event}.
@@ -280,7 +280,7 @@ public interface EventManager
      * Posts the {@link Event} created from the information provided by the specified {@link EventBuilder}.
      * <p>
      * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>asynchronous</u> manner.
-     * Therefore the calling thread will return before the event has been delivered to all interested subscribers.
+     * Therefore the calling thread will return <u>before</u> the event has been delivered to all interested subscribers.
      *
      * @param builder an {@link EventBuilder} to use.
      *
@@ -291,8 +291,8 @@ public interface EventManager
     /**
      * Posts the specified {@link Event}.
      * <p>
-     * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>synchronous</u> manner.
-     * Therefore the calling thread returns not until the event has been delivered to all interested subscribers.
+     * <b>Note:</b> The {@link Event} is delivered to all interested subscribers in a <u>asynchronous</u> manner.
+     * Therefore the calling thread will return <u>before</u> the event has been delivered to all interested subscribers.
      *
      * @param event an {@link Event} to send.
      *
@@ -301,7 +301,7 @@ public interface EventManager
     void post(Event event) throws SanityCheckFailedException;
 
     /**
-     * Executes a {@link Query} with the specified {@link EventType} a the passed {@link Parameter Parameters}.
+     * Executes a {@link Query} with the specified {@link EventType} and the passed {@link Parameter Parameters}.
      *
      * @param type an {@link EventType}.
      * @param parameters an array of {@link Parameter Parameters}.
@@ -311,7 +311,7 @@ public interface EventManager
     ResultSet query(Class<? extends RootEvent> type, Parameter... parameters);
 
     /**
-     * Executes a {@link Query} with the specified {@link EventType} a the passed {@link Parameters}.
+     * Executes a {@link Query} with the specified {@link EventType} and the passed {@link Parameters}.
      *
      * @param type an {@link EventType}.
      * @param parameters a {@link Parameters}.
