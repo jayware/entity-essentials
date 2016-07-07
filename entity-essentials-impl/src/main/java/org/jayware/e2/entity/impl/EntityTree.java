@@ -633,7 +633,7 @@ implements Disposable
         @Override
         public boolean isValid()
         {
-            return myEntities.containsKey(myIdentifier);
+            return !myContext.isDisposed() && myEntities.containsKey(myIdentifier);
         }
 
         @Override
