@@ -19,27 +19,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.event.api;
+package org.jayware.e2.component.api;
 
-
-import static org.jayware.e2.event.api.Util.buildExceptionMessage;
-
-
-public class MissingResultException
+public class ComponentManagerException
 extends RuntimeException
 {
-    public MissingResultException(ResultSet resultSet)
+    public ComponentManagerException(String message, Exception cause)
     {
-        this("", resultSet);
-    }
-
-    public MissingResultException(String message, ResultSet resultSet)
-    {
-        super(buildExceptionMessage(message, resultSet.getQuery()));
-    }
-
-    public MissingResultException(String message, ResultSet resultSet, Throwable cause)
-    {
-        super(buildExceptionMessage(message, resultSet.getQuery()), cause);
+        super(message, cause);
     }
 }

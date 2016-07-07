@@ -82,6 +82,35 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_createComponent_With_Class_Throws_IllegalArgumentException_if_null_is_passed()
+    {
+        testee.createComponent(null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_createComponent_With_Class_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    {
+        new Expectations()
+        {{
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.createComponent(TestComponentA.class);
+    }
+
+
+    @Test
+    public void test_createComponent_Calls_its_delegate()
+    {
+        testee.createComponent(TestComponentA.class);
+
+        new Verifications()
+        {{
+            testComponentManager.createComponent(testContext, TestComponentA.class);
+        }};
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_addComponent_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
     {
         testee.addComponent(null, TestComponentA.class);
@@ -292,6 +321,7 @@ public class ContextualComponentManagerImplTest
 
         assertThat(testee.findComponent(testRefA, TestComponentA.class)).isEqualTo(testComponentA);
     }
+
     @Test
     public void test_getContext_Returns_the_correct_Context()
     {

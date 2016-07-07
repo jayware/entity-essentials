@@ -60,6 +60,15 @@ implements ContextualComponentManager
     }
 
     @Override
+    public <T extends Component> T createComponent(Class<T> component)
+    {
+        checkNotNull(component);
+        checkContextNotNullAndNotDisposed(myContext);
+
+        return myDelegate.createComponent(myContext, component);
+    }
+
+    @Override
     public <T extends Component> T addComponent(EntityRef ref, Class<T> component)
     throws IllegalArgumentException, IllegalStateException, ComponentNotFoundException, ComponentFactoryException, MalformedComponentException, IllegalContextException
     {

@@ -43,13 +43,6 @@ public interface ComponentManager
     /**
      * Prepares the passed {@link Component} type for use in the specified {@link Context}.
      * <p>
-     * Normally it is not necessary to prepare a {@link Component} before use, because the preparation occurs on the
-     * first time a {@link Component} is added to an {@link Entity}. This changes when the {@link ComponentManager} has
-     * to resolve a {@link Component} by its ({@link String}) name, because the {@link ComponentManager} can only
-     * {@link ComponentManager#resolveComponent(Context, String) resolve} {@link Component Components} which were
-     * prepared in the given {@link Context}.
-     * </p>
-     * <p>
      * <b>Note:</b> Multiple calls to this operation for the same {@link Component} and {@link Context} are silently
      * ignored. A {@link Component} is only prepared once.
      * </p>
@@ -59,6 +52,23 @@ public interface ComponentManager
      * @param <T> the type of the {@link Component}
      */
     <T extends Component> void prepareComponent(Context context, Class<T> component) throws ComponentFactoryException, MalformedComponentException;
+
+    /**
+     * Creates an instance of the {@link Component} specified type ({@link Class}) within the passed {@link Context}.
+     *
+     * @param context a {@link Context}.
+     * @param component a {@link Class} representing the {@link Component Component's} type.
+     * @param <T> the type of the {@link Component}
+     *
+     * @return a {@link Component} of the type <code>T</code>.
+     *
+     * @throws IllegalArgumentException if the passed {@link Context} or {@link Class} is <code>null</code>.
+     *
+     * @throws IllegalStateException if the specified {@link Context} has been disposed.
+     *
+     * @throws ComponentManagerException if something went wrong during the creation of the {@link Component}.
+     */
+    <T extends Component> T createComponent(Context context, Class<T> component) throws IllegalArgumentException, IllegalStateException, ComponentManagerException;
 
     /**
      * Adds the {@link Component} of the specified type to the {@link Entity} referenced by the passed {@link EntityRef}.
@@ -71,7 +81,7 @@ public interface ComponentManager
      * @param component the {@link Class} of the {@link Component}.
      * @param <T>       the type of the {@link Component}.
      *
-     * @return the {@link Component}.
+     * @return a {@link Component} of the type <code>T</code>.
      */
     <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws ComponentFactoryException, MalformedComponentException;
 

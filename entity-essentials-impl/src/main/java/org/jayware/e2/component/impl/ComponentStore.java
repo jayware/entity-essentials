@@ -28,10 +28,12 @@ import org.jayware.e2.component.api.AspectEvent.AspectLostEvent;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentEvent.AddComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentAddedEvent;
+import org.jayware.e2.component.api.ComponentEvent.ComponentCreatedEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentPreparedEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentPulledEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentPushedEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentRemovedEvent;
+import org.jayware.e2.component.api.ComponentEvent.CreateComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.PrepareComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.PullComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.PushComponentEvent;
@@ -41,21 +43,21 @@ import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
+import org.jayware.e2.event.api.Query;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static java.util.ServiceLoader.load;
 import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.component.api.AspectEvent.NewAspectParam;
 import static org.jayware.e2.component.api.AspectEvent.OldAspectParam;
@@ -87,9 +89,8 @@ implements Disposable
     public ComponentStore(Context context)
     {
         myContext = context;
-        myEventManager = myContext.getEventManager();
-
-        myComponentFactory = load(ComponentFactory.class).iterator().next();
+        myEventManager = myContext.getService(EventManager.class);
+        myComponentFactory = myContext.getService(ComponentFactory.class);
 
         myComponentClassMap = new HashMap<>();
         myComponentDatabase = new HashMap<>();
@@ -369,6 +370,19 @@ implements Disposable
         }
     }
 
+    @Handle(CreateComponentEvent.class)
+    public void handleCreateComponentEvent(Event event, @Param(ComponentTypeParam) Class<? extends Component> type)
+    {
+        if (event.isQuery())
+        {
+            final Component result = myComponentFactory.createComponent(type).newInstance(myContext);
+
+            fireComponentCreatedEvent(result);
+
+            ((Query) event).result(ComponentParam, result);
+        }
+    }
+
     @Handle(AddComponentEvent.class)
     public void handleAddComponentEvent(@Param(EntityRefParam) EntityRef ref,
                                         @Param(ComponentTypeParam) Class<? extends Component> componentType)
@@ -559,31 +573,40 @@ implements Disposable
         return null;
     }
 
-    private void fireComponentPreparedEvent(Class<? extends Component> componentType)
+    private void fireComponentPreparedEvent(Class<? extends Component> type)
     {
         myEventManager.post(ComponentPreparedEvent.class,
             param(ContextParam, myContext),
-            param(ComponentTypeParam, componentType)
+            param(ComponentTypeParam, type)
         );
     }
 
-    private void fireComponentAddedEvent(EntityRef ref, Class<? extends Component> componentType)
+    private void fireComponentCreatedEvent(Component component)
+    {
+        myEventManager.post(ComponentCreatedEvent.class,
+            param(ContextParam, myContext),
+            param(ComponentTypeParam, component.type()),
+            param(ComponentParam, component)
+        );
+    }
+
+    private void fireComponentAddedEvent(EntityRef ref, Class<? extends Component> type)
     {
         myEventManager.post(ComponentAddedEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
             param(EntityPathParam, ref.getPath()),
-            param(ComponentTypeParam, componentType)
+            param(ComponentTypeParam, type)
         );
     }
 
-    private void fireComponentRemovedEvent(EntityRef ref, Class<? extends Component> componentType)
+    private void fireComponentRemovedEvent(EntityRef ref, Class<? extends Component> type)
     {
         myEventManager.post(ComponentRemovedEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
             param(EntityPathParam, ref.getPath()),
-            param(ComponentTypeParam, componentType)
+            param(ComponentTypeParam, type)
         );
     }
 

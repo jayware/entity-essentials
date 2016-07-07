@@ -29,13 +29,13 @@ import org.jayware.e2.event.api.EventDispatcher;
 import org.jayware.e2.event.api.EventDispatcherFactory;
 import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.EventType;
+import org.jayware.e2.event.api.MissingResultException;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.Query.State;
 import org.jayware.e2.event.api.QueryException;
 import org.jayware.e2.event.api.ReadOnlyParameters;
 import org.jayware.e2.event.api.Result;
 import org.jayware.e2.event.api.ResultSet;
-import org.jayware.e2.event.api.MissingResultException;
 import org.jayware.e2.event.api.Subscription;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.ReferenceType;
@@ -703,7 +703,7 @@ implements Disposable
 
             if (value == null)
             {
-                throw new MissingResultException(this, "ResultSet does not contain a value associated to to the name: '" + name + "'");
+                throw new MissingResultException("ResultSet does not contain a value associated to to the name: '" + name + "'", this);
             }
 
             return value;
@@ -716,7 +716,7 @@ implements Disposable
 
             if (value == null)
             {
-                throw new MissingResultException(this, "ResultSet does not contain a value associated to to the key: '" + key + "'");
+                throw new MissingResultException("ResultSet does not contain a value associated to to the key: '" + key + "'", this);
             }
 
             return value;

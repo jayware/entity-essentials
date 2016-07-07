@@ -33,9 +33,18 @@ extends RootEvent
      */
     String ComponentTypeParam = "org.jayware.e2.event.param.ComponentType";
 
+    /**
+     * The {@link Component} which is subject of the event.
+     */
+    String ComponentParam = "org.jayware.e2.event.param.Component";
+
     interface PrepareComponentEvent extends ComponentEvent {}
 
     interface ComponentPreparedEvent extends ComponentEvent {}
+
+    interface CreateComponentEvent extends ComponentEvent {}
+
+    interface ComponentCreatedEvent extends ComponentEvent {}
 
     interface AddComponentEvent extends ComponentEvent, EntityChangedEvent {}
 
@@ -48,10 +57,7 @@ extends RootEvent
     interface ComponentChangeEvent
     extends ComponentEvent, EntityChangedEvent
     {
-        /**
-         * The {@link Component} which is subject of the event.
-         */
-        String ComponentParam = "org.jayware.e2.event.param.Component";
+
     }
 
     interface PullComponentEvent extends ComponentChangeEvent {}

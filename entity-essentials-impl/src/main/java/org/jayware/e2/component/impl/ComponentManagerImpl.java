@@ -24,19 +24,32 @@ package org.jayware.e2.component.impl;
 import org.jayware.e2.component.api.AbstractComponentWrapper;
 import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.component.api.Component;
+import org.jayware.e2.component.api.ComponentEvent.CreateComponentEvent;
+import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.component.api.ComponentManagerException;
 import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.component.api.ComponentPropertyAdapter;
 import org.jayware.e2.component.api.ComponentPropertyAdapterProvider;
 import org.jayware.e2.component.api.ContextualComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.event.api.EventManager;
+import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Key;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 
+import static java.util.ServiceLoader.load;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
+import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
+import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
+import static org.jayware.e2.event.api.Parameters.param;
+import static org.jayware.e2.event.api.Query.State.Success;
 import static org.jayware.e2.util.Key.createKey;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
@@ -44,15 +57,28 @@ import static org.jayware.e2.util.Preconditions.checkNotNull;
 public class ComponentManagerImpl
 implements ComponentManager
 {
+    private static final long COMMON_TIMEOUT_IN_MILLIS = 5000;
+
     private static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
+    private static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
+
     private static final Key<ComponentPropertyAdapterProvider> PROPERTY_ADAPTER_PROVIDER = createKey("org.jayware.e2.PropertyAdapterProvider");
 
-    private static final Context.ValueProvider<ComponentStore> COMPONENT_STORE_PROVIDER_VALUE_PROVIDER = new Context.ValueProvider<ComponentStore>()
+    private static final Context.ValueProvider<ComponentStore> COMPONENT_STORE_VALUE_PROVIDER = new Context.ValueProvider<ComponentStore>()
     {
         @Override
         public ComponentStore provide(Context context)
         {
             return new ComponentStore(context);
+        }
+    };
+
+    private static final Context.ValueProvider<ComponentFactory> COMPONENT_FACTORY_VALUE_PROVIDER = new Context.ValueProvider<ComponentFactory>()
+    {
+        @Override
+        public ComponentFactory provide(Context context)
+        {
+            return load(ComponentFactory.class).iterator().next();
         }
     };
 
@@ -64,6 +90,36 @@ implements ComponentManager
             return new ComponentPropertyAdapterProviderImpl();
         }
     };
+
+    @Override
+    public <T extends Component> T createComponent(Context context, Class<T> type)
+    {
+        checkNotNull(type);
+        checkContextNotNullAndNotDisposed(context);
+
+        getOrCreateComponentStore(context);
+
+        try
+        {
+            final EventManager eventManager = context.getService(EventManager.class);
+            final ResultSet resultSet = eventManager.query(
+                CreateComponentEvent.class,
+                param(ContextParam, context),
+                param(ComponentTypeParam, type)
+            );
+
+            if (!resultSet.await(Success, 10, SECONDS))
+            {
+                throw new TimeoutException("Failed to create Component '" + type.getName() + "' within " + COMMON_TIMEOUT_IN_MILLIS + " ms");
+            }
+
+            return resultSet.get(ComponentParam);
+        }
+        catch (Exception e)
+        {
+            throw new ComponentManagerException("Failed to create Component '" + type.getName() + "", e);
+        }
+    }
 
     @Override
     public <T extends Component> void prepareComponent(Context context, Class<T> component)
@@ -251,7 +307,8 @@ implements ComponentManager
 
     private ComponentStore getOrCreateComponentStore(Context context)
     {
-        context.putIfAbsent(COMPONENT_STORE, COMPONENT_STORE_PROVIDER_VALUE_PROVIDER);
+        context.putIfAbsent(COMPONENT_FACTORY, COMPONENT_FACTORY_VALUE_PROVIDER);
+        context.putIfAbsent(COMPONENT_STORE, COMPONENT_STORE_VALUE_PROVIDER);
         return context.get(COMPONENT_STORE);
     }
 

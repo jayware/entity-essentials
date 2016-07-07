@@ -35,13 +35,6 @@ extends Contextual
     /**
      * Prepares the passed {@link Component} type for use.
      * <p>
-     * Normally it is not necessary to prepare a {@link Component} before use, because the preparation occurs on the
-     * first time a {@link Component} is added to an {@link Entity}. This changes when the {@link ComponentManager} has
-     * to resolve a {@link Component} by its ({@link String}) name, because the {@link ComponentManager} can only
-     * {@link ComponentManager#resolveComponent(Context, String) resolve} {@link Component Components} which were
-     * prepared in the given {@link Context}.
-     * </p>
-     * <p>
      * <b>Note:</b> Multiple calls to this operation for the same {@link Component} are silently ignored.
      * A {@link Component} is only prepared once.
      * </p>
@@ -54,6 +47,24 @@ extends Contextual
      * @throws IllegalStateException If the {@link Context} to which this {@link ContextualComponentManager} belongs to has been disposed.
      */
     <T extends Component> void prepareComponent(Class<T> component) throws IllegalArgumentException, IllegalStateException, ComponentFactoryException, MalformedComponentException;
+
+    /**
+     * Creates an instance of the {@link Component} specified type ({@link Class}) within the {@link Context} of this
+     * {@link ContextualComponentManager}.
+     *
+     * @param type a {@link Class} representing the {@link Component Component's} type.
+     * @param <T> the type of the {@link Component}
+     *
+     * @return a {@link Component} of the type <code>T</code>.
+     *
+     * @throws IllegalArgumentException if the passed {@link Class} is <code>null</code>.
+     *
+     * @throws IllegalStateException if the {@link Context} to which this {@link ContextualComponentManager} belongs to
+     *                               has been disposed.
+     *
+     * @throws ComponentManagerException if something went wrong during the creation of the {@link Component}.
+     */
+    <T extends Component> T createComponent(Class<T> type) throws IllegalArgumentException, IllegalStateException, ComponentManagerException;
 
     /**
      * Adds the {@link Component} of the specified type to the {@link Entity} referenced by the passed {@link EntityRef}.
