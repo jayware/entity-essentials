@@ -27,10 +27,12 @@ import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableSet;
 
 
 /**
@@ -122,12 +124,12 @@ public class Aspect
 
     private Aspect()
     {
-        this(null);
+        this(Collections.<Class<? extends Component>>emptySet());
     }
 
     private Aspect(Set<Class<? extends Component>> set)
     {
-        myComponentSet = set;
+        myComponentSet = unmodifiableSet(set);
     }
 
     /**
@@ -297,6 +299,11 @@ public class Aspect
     public boolean contains(Class<? extends Component> component)
     {
         return myComponentSet.contains(component);
+    }
+
+    public Set<Class<? extends Component>> components()
+    {
+        return myComponentSet;
     }
 
     @Override
