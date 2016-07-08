@@ -24,6 +24,8 @@ package org.jayware.e2.component.impl;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
+import org.jayware.e2.component.api.AbstractComponent;
+import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.context.api.Context;
@@ -43,6 +45,7 @@ public class ContextualComponentManagerImplTest
     private @Mocked Contextual testContextual;
     private @Mocked EntityRef testRefA;
     private @Mocked TestComponentA testComponentA;
+    private @Mocked AbstractComponent testAbstractComponent;
 
     private ContextualComponentManagerImpl testee;
 
@@ -124,7 +127,7 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = true;
         }};
 
-        testee.addComponent(testRefA, null);
+        testee.addComponent(testRefA, (Class<Component>) null);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -162,6 +165,77 @@ public class ContextualComponentManagerImplTest
         new Verifications()
         {{
             testComponentManager.addComponent(testRefA, TestComponentA.class);
+        }};
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
+    {
+        testee.addComponent(null, testAbstractComponent);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_Component_is_null()
+    {
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true; minTimes = 0;
+        }};
+
+        testee.addComponent(testRefA, (Component) null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    {
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.addComponent(testRefA, testAbstractComponent);
+    }
+
+    @Test(expectedExceptions = IllegalContextException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
+    {
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = false; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+        }};
+
+        testee.addComponent(testRefA, testAbstractComponent);
+    }
+
+    @Test(expectedExceptions = IllegalContextException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalContextException_if_the_passed_Component_belongs_to_another_Context()
+    {
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = false; minTimes = 0;
+        }};
+
+        testee.addComponent(testRefA, testAbstractComponent);
+    }
+
+    @Test
+    public void test_addComponent_With_EntityRef_and_Component_Calls_its_delegate()
+    {
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+        }};
+
+        testee.addComponent(testRefA, testAbstractComponent);
+
+        new Verifications()
+        {{
+            testComponentManager.addComponent(testRefA, testAbstractComponent);
         }};
     }
 

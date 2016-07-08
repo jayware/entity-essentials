@@ -23,13 +23,14 @@ package org.jayware.e2.component.api;
 
 
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.entity.api.EntityRef;
 
 import java.util.List;
 
 
 public abstract class AbstractComponent
-implements Component
+implements Component, Contextual
 {
     protected final Context myContext;
     protected final ComponentManager myComponentManager;
@@ -62,5 +63,29 @@ implements Component
     public void pushTo(EntityRef ref)
     {
         myComponentManager.pushComponent(ref, this);
+    }
+
+    @Override
+    public void addTo(EntityRef ref)
+    {
+        myComponentManager.addComponent(ref, this);
+    }
+
+    @Override
+    public Context getContext()
+    {
+        return myContext;
+    }
+
+    @Override
+    public boolean belongsTo(Context context)
+    {
+        return context != null && myContext.equals(context);
+    }
+
+    @Override
+    public boolean belongsTo(Contextual contextual)
+    {
+        return contextual != null && myContext.equals(contextual.getContext());
     }
 }

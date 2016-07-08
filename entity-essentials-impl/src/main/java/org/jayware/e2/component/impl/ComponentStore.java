@@ -68,6 +68,7 @@ import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityRef
 import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
+import static org.jayware.e2.event.api.Presence.Optional;
 
 
 public class ComponentStore
@@ -246,13 +247,7 @@ implements Disposable
             throw new ComponentNotFoundException(ref, type);
         }
 
-        myEventManager.send(PushComponentEvent.class,
-            param(ContextParam, myContext),
-            param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
-            param(ComponentParam, component),
-            param(ComponentTypeParam, component.type())
-        );
+        firePushComponentEvent(ref, component);
     }
 
     public boolean hasComponent(EntityRef ref, Class<? extends Component> component)
@@ -385,13 +380,15 @@ implements Disposable
 
     @Handle(AddComponentEvent.class)
     public void handleAddComponentEvent(@Param(EntityRefParam) EntityRef ref,
-                                        @Param(ComponentTypeParam) Class<? extends Component> componentType)
+                                        @Param(ComponentTypeParam) Class<? extends Component> componentType,
+                                        @Param(value = ComponentParam, presence = Optional) Component component)
     {
         Map<EntityRef, Component> row;
         Component instance;
         Aspect oldAspect = null;
         Aspect newAspect = null;
         boolean fireEvents = false;
+        boolean firePushEvent = false;
 
         myWriteLock.lock();
         try
@@ -416,9 +413,19 @@ implements Disposable
                 oldAspect = getAspect(ref);
                 newAspect = oldAspect.add(componentType);
 
-                row.put(ref, myComponentFactory.createComponent(componentType).newInstance(myContext));
+                final AbstractComponent newComponent = (AbstractComponent) myComponentFactory.createComponent(componentType).newInstance(myContext);
 
+                if (component != null)
+                {
+                    newComponent.copy(component);
+                }
+
+                row.put(ref, newComponent);
                 fireEvents = true;
+            }
+            else
+            {
+                firePushEvent = component != null;
             }
         }
         finally
@@ -430,6 +437,10 @@ implements Disposable
         {
             fireComponentAddedEvent(ref, componentType);
             fireAspectGainedEvent(ref, newAspect, oldAspect);
+        }
+        else if (firePushEvent)
+        {
+            firePushComponentEvent(ref, component);
         }
     }
 
@@ -619,6 +630,17 @@ implements Disposable
             param(ComponentTypeParam, newComponent.type()),
             param(ComponentParam, newComponent),
             param(OldComponentParam, oldComponent)
+        );
+    }
+
+    private void firePushComponentEvent(EntityRef ref, Component component)
+    {
+        myEventManager.send(PushComponentEvent.class,
+            param(ContextParam, myContext),
+            param(EntityRefParam, ref),
+            param(EntityPathParam, ref.getPath()),
+            param(ComponentParam, component),
+            param(ComponentTypeParam, component.type())
         );
     }
 

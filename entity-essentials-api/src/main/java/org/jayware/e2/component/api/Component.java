@@ -26,7 +26,7 @@ import org.jayware.e2.entity.api.EntityRef;
 
 
 /**
- * Components are designed to store a piece data of an entity. This interface defines the default operations every
+ * Components are designed to store a piece of data. This interface defines the default operations every
  * component has to have.
  * <p>
  * To get a custom component, create a new interface and extend this one. Then define properties by writing appropriate
@@ -59,6 +59,18 @@ public interface Component
      * @see ComponentManager#pushComponent(EntityRef, Component)
      */
     void pushTo(EntityRef ref);
+
+    /**
+     *
+     * <p>
+     * <b>Note:</b> This operation behaves in the same way as
+     * {@link ComponentManager#addComponent(EntityRef, Component)} does.
+     *
+     * @param ref an {@link EntityRef}.
+     *
+     * @see ComponentManager#addComponent(EntityRef, Component)
+     */
+    void addTo(EntityRef ref);
 
     /**
      * Returns this component's type.

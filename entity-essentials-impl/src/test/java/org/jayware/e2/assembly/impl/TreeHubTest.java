@@ -25,7 +25,6 @@ import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
 import org.jayware.e2.assembly.api.Node;
-import org.jayware.e2.assembly.api.TreeEvent;
 import org.jayware.e2.assembly.api.TreeEvent.TreeNodeCreatedEvent;
 import org.jayware.e2.assembly.api.TreeNode;
 import org.jayware.e2.assembly.api.components.TreeNodeComponent;
@@ -34,8 +33,6 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.event.api.Param;
-import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
 import org.testng.annotations.BeforeMethod;
@@ -116,6 +113,7 @@ public class TreeHubTest
         testee.handleCreateTreeNodeEvent(testQuery, testRefA);
 
         new Verifications() {{
+            final TreeNode paramValue;
             final Parameter[] parameters;
 
             testEventManager.post(
@@ -123,7 +121,9 @@ public class TreeHubTest
                 parameters = withCapture()
             ); times = 1;
 
-            assertThat(parameters).containsExactlyInAnyOrder(param(ContextParam, testContext), param(NodeParam, any), param(NodePendantParam, testRefA));
+            testQuery.result(NodeParam, paramValue = withCapture());
+
+            assertThat(parameters).contains(param(ContextParam, testContext), param(NodeParam, paramValue), param(NodePendantParam, testRefA));
         }};
     }
 

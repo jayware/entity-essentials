@@ -92,6 +92,31 @@ extends Contextual
     <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws IllegalArgumentException, IllegalStateException, ComponentFactoryException, MalformedComponentException, IllegalContextException;
 
     /**
+     * Adds the specified {@link Component} to the {@link Entity} referenced by the passed {@link EntityRef}.
+     * <p>
+     * <b>Note:</b> If the {@link Entity} referenced by the passed {@link EntityRef} already has a {@link Component}
+     * of the same type, this operation behaves in exaclly the same way as {@link ComponentManager#pushComponent(EntityRef, Component)}
+     * and just updates the existing {@link Component}.
+     * </p>
+     *
+     * @param ref       an {@link EntityRef}.
+     * @param component the {@link Component} to add.
+     * @param <T>       the type of the {@link Component}.
+     *
+     * @return the passed {@link Component}.
+     *
+     * @throws IllegalArgumentException if the passed {@link EntityRef} or {@link Component} is <code>null</code>.
+     *
+     * @throws IllegalStateException If the {@link Context} to which this {@link ContextualComponentManager} belongs to has been disposed.
+     *
+     * @throws IllegalContextException if the specified {@link EntityRef} or the specified {@link Component} do not
+     *                                 belong to the same {@link Context} as this {@link ContextualComponentManager}.
+     *
+     * @throws ComponentManagerException if something went wrong during the creation of the {@link Component}.
+     */
+    <T extends Component> T addComponent(EntityRef ref, T component) throws IllegalArgumentException, IllegalStateException, IllegalContextException, ComponentManagerException;
+
+    /**
      * Removes the {@link Component} with the specified type from the {@link Entity} referenced by the passed
      * {@link EntityRef}.
      * <p>

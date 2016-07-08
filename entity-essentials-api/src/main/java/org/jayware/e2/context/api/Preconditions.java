@@ -64,17 +64,17 @@ public class Preconditions
     {
         if (a == null || b == null)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("One or both contextuals are null!");
         }
 
         if (!a.belongsTo(b))
         {
-            throw new IllegalContextException();
+            throw new IllegalContextException("The contextuals do not belong to the same context!");
         }
 
         if (a.getContext().isDisposed())
         {
-            throw new IllegalStateException();
+            throw new IllegalStateException("The context has been disposed!");
         }
     }
 
@@ -100,7 +100,7 @@ public class Preconditions
 
         if (!contextual.belongsTo(context))
         {
-            throw new IllegalContextException();
+            throw new IllegalContextException("The contextual does not belong to the context!");
         }
 
         return contextual;

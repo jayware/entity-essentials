@@ -21,9 +21,11 @@
  */
 package org.jayware.e2.component.impl;
 
+import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.AbstractComponentWrapper;
 import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.component.api.Component;
+import org.jayware.e2.component.api.ComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.CreateComponentEvent;
 import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentManager;
@@ -47,6 +49,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
+import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
+import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.api.Query.State.Success;
@@ -149,6 +153,25 @@ implements ComponentManager
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
         return componentStore.addComponent(ref, component);
+    }
+
+    @Override
+    public <T extends Component> T addComponent(EntityRef ref, T component)
+    {
+        checkNotNull(component);
+        checkContextualsNotNullAndSameContext(ref, (AbstractComponent) component);
+
+        final Context context = checkContextNotNullAndNotDisposed(ref.getContext());
+        final EventManager eventManager = context.getService(EventManager.class);
+        eventManager.send(
+            ComponentEvent.AddComponentEvent.class,
+            param(ContextParam, context),
+            param(EntityRefParam, ref),
+            param(ComponentTypeParam, component.type()),
+            param(ComponentParam, component)
+        );
+
+        return component;
     }
 
     @Override

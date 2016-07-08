@@ -47,6 +47,12 @@ public class ComponentCreationExample
         /* Create a detached component, which is initially not assigned to an entity. */
         component = componentManager.createComponent(context, ExampleComponent.class);
 
+        /*
+         * To attach a component to an entity the ComponentManager offers an addComponent operation
+         * which accepts an instance of a previous created component.
+         */
+        componentManager.addComponent(ref, component);
+
         /* Create a component which is automatically assigned to an entity. */
         component = componentManager.addComponent(ref, ExampleComponent.class);
 

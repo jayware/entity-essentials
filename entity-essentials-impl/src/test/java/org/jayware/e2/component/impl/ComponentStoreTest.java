@@ -31,10 +31,12 @@ import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
+import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Query;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
@@ -93,12 +95,21 @@ public class ComponentStoreTest
     @Test
     public void test_handleCreateComponentEvent_Fires_a_ComponentCreatedEvent_with_expected_parameters()
     {
+        new Expectations() {{
+            testComponentA.type(); result = TestComponentA.class;
+        }};
+
         testee.handleCreateComponentEvent(testQuery, TestComponentA.class);
 
         new Verifications()
         {{
+            final Parameters.Parameter[] parameters;
             testEventManager.post(
                 ComponentCreatedEvent.class,
+                parameters = withCapture()
+            );
+
+            assertThat(parameters).contains(
                 param(ContextParam, testContext),
                 param(ComponentTypeParam, TestComponentA.class),
                 param(ComponentParam, testComponentA)

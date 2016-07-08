@@ -25,4 +25,8 @@ package org.jayware.e2.context.api;
 public class IllegalContextException
 extends RuntimeException
 {
+    public IllegalContextException(String message)
+    {
+        super(message);
+    }
 }

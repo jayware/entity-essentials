@@ -21,9 +21,11 @@
  */
 package org.jayware.e2.component.impl;
 
+import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentManager;
+import org.jayware.e2.component.api.ComponentManagerException;
 import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.component.api.ContextualComponentManager;
 import org.jayware.e2.component.api.MalformedComponentException;
@@ -75,6 +77,18 @@ implements ContextualComponentManager
         checkContextNotNullAndNotDisposed(myContext);
         checkContextualNotNullAndBelongsToContext(ref, myContext);
         checkNotNull(component);
+
+        return myDelegate.addComponent(ref, component);
+    }
+
+    @Override
+    public <T extends Component> T addComponent(EntityRef ref, T component)
+    throws IllegalArgumentException, IllegalStateException, IllegalContextException, ComponentManagerException
+    {
+        checkNotNull(component);
+        checkContextNotNullAndNotDisposed(myContext);
+        checkContextualNotNullAndBelongsToContext(ref, myContext);
+        checkContextualNotNullAndBelongsToContext((AbstractComponent) component, myContext);
 
         return myDelegate.addComponent(ref, component);
     }

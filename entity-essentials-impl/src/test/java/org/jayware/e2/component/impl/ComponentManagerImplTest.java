@@ -23,8 +23,13 @@ package org.jayware.e2.component.impl;
 
 import mockit.Expectations;
 import mockit.Mocked;
+import mockit.Verifications;
+import org.jayware.e2.component.api.AbstractComponent;
+import org.jayware.e2.component.api.ComponentEvent.AddComponentEvent;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.IllegalContextException;
+import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters.Parameter;
@@ -38,15 +43,21 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
+import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
+import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
+import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
+import static org.jayware.e2.event.api.Parameters.param;
 
 
 public class ComponentManagerImplTest
 {
-    private @Mocked Context testContext;
+    private @Mocked Context testContext, anotherContext;
     private @Mocked EventManager testEventManager;
     private @Mocked ResultSet testResultSet;
 
+    private @Mocked EntityRef testRef;
     private @Mocked TestComponentA testComponentA;
+    private @Mocked  AbstractComponent testAbstractComponent;
 
     private ComponentManagerImpl testee;
 
@@ -97,5 +108,87 @@ public class ComponentManagerImplTest
         }};
 
         assertThat(testee.createComponent(testContext, TestComponentA.class)).isEqualTo(testComponentA);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
+    {
+        testee.addComponent(null, testAbstractComponent);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_Component_is_null()
+    {
+        testee.addComponent(testRef, (TestComponentA) null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalStateException_if_the_Context_to_which_the_EntityRef_and_the_Component_belong_to_has_been_disposed()
+    {
+        new Expectations()
+        {{
+            testRef.getContext(); result = testContext; minTimes = 0;
+            testRef.belongsTo(testContext); result = true; minTimes = 0;
+            testRef.belongsTo(testAbstractComponent); result = true; minTimes = 0;
+            testAbstractComponent.getContext(); result = testContext; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+            testAbstractComponent.belongsTo(testRef); result = true; minTimes = 0;
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.addComponent(testRef, testAbstractComponent);
+    }
+
+    @Test(expectedExceptions = IllegalContextException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalContextException_if_the__EntityRef_and_the_Component_do_not_belong_to_the_same_context()
+    {
+        new Expectations()
+        {{
+            testRef.getContext(); result = testContext; minTimes = 0;
+            testRef.belongsTo(testContext); result = true; minTimes = 0;
+            testRef.belongsTo(testAbstractComponent); result = false; minTimes = 0;
+            testAbstractComponent.getContext(); result = anotherContext; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = false; minTimes = 0;
+            testAbstractComponent.belongsTo(anotherContext); result = true; minTimes = 0;
+            testAbstractComponent.belongsTo(testRef); result = false; minTimes = 0;
+            testContext.isDisposed(); result = false; minTimes = 0;
+            anotherContext.isDisposed(); result = false; minTimes = 0;
+        }};
+
+        testee.addComponent(testRef, testAbstractComponent);
+    }
+
+    @Test
+    public void test_addComponent_With_EntityRef_and_Component_Fires_AddComponentEvent_with_expected_parameters()
+    {
+        new Expectations()
+        {{
+            testRef.getContext(); result = testContext; minTimes = 0;
+            testRef.belongsTo(testContext); result = true; minTimes = 0;
+            testRef.belongsTo(testAbstractComponent); result = true; minTimes = 0;
+            testAbstractComponent.getContext(); result = testContext; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+            testAbstractComponent.belongsTo(testRef); result = true; minTimes = 0;
+            testAbstractComponent.type(); result = TestComponentA.class;
+            testContext.isDisposed(); result = false; minTimes = 0;
+        }};
+
+        testee.addComponent(testRef, testAbstractComponent);
+
+        new Verifications()
+        {{
+            final Parameter[] parameters;
+            testEventManager.send(
+                AddComponentEvent.class,
+                parameters = withCapture()
+            );
+
+            assertThat(parameters).contains(
+                param(ContextParam, testContext),
+                param(EntityRefParam, testRef),
+                param(ComponentTypeParam, TestComponentA.class),
+                param(ComponentParam, testAbstractComponent)
+            );
+        }};
     }
 }

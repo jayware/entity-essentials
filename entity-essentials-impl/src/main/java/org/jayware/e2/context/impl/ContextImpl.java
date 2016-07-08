@@ -40,6 +40,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -318,6 +319,14 @@ implements Context
     public int hashCode()
     {
         return Objects.hash(myContextId);
+    }
+
+    @Override
+    public String toString()
+    {
+        return toStringHelper(this)
+        .add("id", myContextId)
+        .toString();
     }
 
     private class DefaultContext

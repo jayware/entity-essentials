@@ -22,11 +22,13 @@
 package org.jayware.e2.event.api;
 
 
+import com.google.common.base.Objects;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
 import static java.util.Collections.unmodifiableMap;
 
 
@@ -215,24 +217,36 @@ implements ReadOnlyParameters
         }
 
         @Override
-        public boolean equals(Object o)
+        public boolean equals(Object obj)
         {
-            if (this == o)
+            if (this == obj)
             {
                 return true;
             }
-            if (!(o instanceof Parameter))
+
+            if (!(obj instanceof Parameter))
             {
                 return false;
             }
-            final Parameter parameter = (Parameter) o;
-            return Objects.equals(name, parameter.name);
+
+            final Parameter parameter = (Parameter) obj;
+            return Objects.equal(name, parameter.name) &&
+                   Objects.equal(value, parameter.value);
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hash(name);
+            return Objects.hashCode(name);
+        }
+
+        @Override
+        public String toString()
+        {
+            return toStringHelper(this)
+            .add("name", name)
+            .add("value", value)
+            .toString();
         }
     }
 }
