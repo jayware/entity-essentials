@@ -22,23 +22,6 @@ test {
     useTestNG() {}
 }
 
-bintray {
-    pkg {
-        repo = 'maven'
-        name = 'entity-essentials-examples'
-        userOrg = 'jayware'
-        licenses = ['LGPL-3.0']
-        vcsUrl = 'https://github.com/jayware/entity-essentials'
-        version {
-            name = project.version
-            desc = 'Entity Essentials Example Project'
-            released  = new Date()
-            vcsTag = project.version
-        }
-    }
-    publications = ['e2Examples']
-}
-
 task createIdeaExample(type: Zip/*, dependsOn: tasks['idea']*/) {
     baseName "entity-essentials-idea-examples"
     from exampleFiles()
@@ -103,3 +86,22 @@ publishing {
         }
     }
 }
+
+//bintray {
+//    pkg {
+//        repo = 'maven'
+//        name = 'entity-essentials-examples'
+//        userOrg = 'jayware'
+//        licenses = ['LGPL-3.0']
+//        vcsUrl = 'https://github.com/jayware/entity-essentials'
+//        version {
+//            name = project.version
+//            desc = 'Entity Essentials Example Project'
+//            released  = new Date()
+//            vcsTag = project.version
+//        }
+//    }
+//    publications = ['e2Examples']
+//}
+
+artifactoryPublish.skip = true

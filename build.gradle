@@ -1,11 +1,21 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
+    }
+}
+
 plugins {
-    id "com.github.hierynomus.license" version "0.12.1"
-    id "com.jfrog.bintray" version "1.5"
+    id "com.github.hierynomus.license" version "0.13.1"
 }
 
 allprojects {
     apply plugin: 'license'
     apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'com.jfrog.artifactory'
 
     group = "org.jayware"
 
@@ -22,14 +32,34 @@ allprojects {
     }
 
     bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
+        user = System.getProperty('bintray.user')
+        key = System.getProperty('bintray.key')
+    }
+
+    artifactory {
+        contextUrl = 'https://oss.jfrog.org/artifactory/'
+        publish {
+            repository {
+                repoKey = 'oss-snapshot-local'   //The Artifactory repository key to publish to
+                username = System.getProperty('artifactory.user')
+                password = System.getProperty('artifactory.key')
+            }
+            publishBuildInfo = true
+            publishArtifacts = true
+            publishPom = true
+        }
+        resolve {
+            repository {
+                repoKey = 'jcenter'
+                maven = true
+            }
+        }
     }
 
     plugins.withType(JavaPlugin) {
-        project.apply plugin: "maven"
-        project.apply plugin: "maven-publish"
-        project.apply plugin: "findbugs"
+        project.apply plugin: 'maven'
+        project.apply plugin: 'maven-publish'
+        project.apply plugin: 'findbugs'
 
         findbugs {
             toolVersion = "3.0.1"
@@ -99,3 +129,5 @@ allprojects {
         }
     }
 }
+
+artifactoryPublish.skip = true

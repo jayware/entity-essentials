@@ -116,6 +116,11 @@ publishing {
     }
 }
 
+artifactoryPublish {
+    skip = false
+    publications ('e2Impl')
+}
+
 task generatePom {
     def pomFile = "${buildDir}/tmp/jar/pom.xml"
     group = 'Publishing'
