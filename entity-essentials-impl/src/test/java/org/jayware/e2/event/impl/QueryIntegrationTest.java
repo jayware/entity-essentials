@@ -29,14 +29,16 @@ import org.jayware.e2.event.api.EventType.RootEvent;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Query;
+import org.jayware.e2.event.api.ResultSet;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
-import static org.jayware.e2.util.ReferenceType.Strong;
+import static org.jayware.e2.event.api.Query.State.Success;
 
 
 public class QueryIntegrationTest
@@ -73,7 +75,10 @@ public class QueryIntegrationTest
                                                    param(ContextParam, testContext),
                                                    param(TEST_PARAM, TEST_VALUE));
 
-        assertThat((Integer) testee.query(testQuery).get(TEST_PARAM)).isEqualTo(TEST_VALUE * TEST_VALUE);
+        final ResultSet result = testee.query(testQuery);
+
+        assertThat(result.await(Success, 10, SECONDS)).isTrue();
+        assertThat((Integer) result.get(TEST_PARAM)).isEqualTo(TEST_VALUE * TEST_VALUE);
     }
 
     public interface TestQueryEvent
