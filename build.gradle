@@ -40,7 +40,7 @@ allprojects {
         contextUrl = 'https://oss.jfrog.org/artifactory/'
         publish {
             repository {
-                repoKey = 'oss-snapshot-local'   //The Artifactory repository key to publish to
+                repoKey = 'oss-snapshot-local'
                 username = System.getProperty('artifactory.user')
                 password = System.getProperty('artifactory.key')
             }
@@ -101,7 +101,7 @@ allprojects {
                     def javac = plugins.appendNode('plugin')
                     javac.appendNode('groupId', 'org.apache.maven.plugins')
                     javac.appendNode('artifactId', 'maven-compiler-plugin')
-                    javac.appendNode('version', '3.35.1')
+                    javac.appendNode('version', '3.5.1')
                     configuration = javac.appendNode('configuration')
                     configuration.appendNode('source', '1.8')
                     configuration.appendNode('target', '1.8')
