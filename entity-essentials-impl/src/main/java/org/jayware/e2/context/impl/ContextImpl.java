@@ -283,9 +283,9 @@ implements Context
             myWriteLock.lock();
             try
             {
-                checkDisposing();
                 if (!myMap.containsKey(key))
                 {
+                    checkDisposing();
                     myMap.put(key, value);
                     return true;
                 }
