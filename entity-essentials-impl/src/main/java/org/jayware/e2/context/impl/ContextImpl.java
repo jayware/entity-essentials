@@ -200,6 +200,7 @@ implements Context
         private final Lock myWriteLock = myLock.writeLock();
 
         private final Map<Key, Object> myMap;
+        private boolean isDisposing = false;
 
         public DefaultContext(ServiceProvider serviceProvider)
         {
@@ -210,20 +211,25 @@ implements Context
         @Override
         public void dispose()
         {
-            myContextState.set(new DisposedContext());
-
             myWriteLock.lock();
             try
             {
-                for (Object obj : myMap.values())
+                if (!isDisposing)
                 {
-                    if (obj instanceof Disposable)
-                    {
-                        ((Disposable) obj).dispose(ContextImpl.this);
-                    }
-                }
+                    isDisposing = true;
 
-                myMap.clear();
+                    for (Object obj : myMap.values())
+                    {
+                        if (obj instanceof Disposable)
+                        {
+                            ((Disposable) obj).dispose(ContextImpl.this);
+                        }
+                    }
+
+                    myMap.clear();
+
+                    myContextState.set(new DisposedContext());
+                }
             }
             finally
             {
@@ -244,11 +250,28 @@ implements Context
             myWriteLock.lock();
             try
             {
+                checkDisposing();
                 myMap.put(key, value);
             }
             finally
             {
                 myWriteLock.unlock();
+            }
+        }
+
+        private void checkDisposing()
+        {
+            myReadLock.lock();
+            try
+            {
+                if (isDisposing)
+                {
+                    throw new IllegalStateException("Context is goning to be disposed!");
+                }
+            }
+            finally
+            {
+                myReadLock.unlock();
             }
         }
 
@@ -260,6 +283,7 @@ implements Context
             myWriteLock.lock();
             try
             {
+                checkDisposing();
                 if (!myMap.containsKey(key))
                 {
                     myMap.put(key, value);
@@ -285,6 +309,7 @@ implements Context
             {
                 if (!myMap.containsKey(key))
                 {
+                    checkDisposing();
                     myMap.put(key, valueProvider.provide(ContextImpl.this));
                     return true;
                 }
@@ -304,6 +329,7 @@ implements Context
             myWriteLock.lock();
             try
             {
+                checkDisposing();
                 myMap.remove(key);
             }
             finally
