@@ -34,6 +34,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static java.util.UUID.randomUUID;
 import static org.jayware.e2.event.api.Query.State.Ready;
 import static org.jayware.e2.util.Preconditions.checkArgument;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -106,7 +107,7 @@ implements QueryBuilder, QueryBuilderTo
     @Override
     public Query build()
     {
-        return new QueryImpl(myEventType, myEventParameters, myResultConsumers);
+        return new QueryImpl(randomUUID(), myEventType, myEventParameters, myResultConsumers);
     }
 
     @Override

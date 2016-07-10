@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Queue;
 
 import static java.util.Collections.emptyMap;
+import static java.util.UUID.randomUUID;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -80,7 +81,7 @@ implements EventManager
     {
         checkNotNull(type);
         checkNotNull(parameters);
-        return new EventImpl(type, parameters);
+        return new EventImpl(randomUUID(), type, parameters);
     }
 
     @Override
@@ -88,7 +89,7 @@ implements EventManager
     {
         checkNotNull(type);
         checkNotNull(parameters);
-        return new EventImpl(type, parameters);
+        return new EventImpl(randomUUID(), type, parameters);
     }
 
     @Override
@@ -103,13 +104,13 @@ implements EventManager
     {
         checkNotNull(type);
         checkNotNull(parameters);
-        return new QueryImpl(type, parameters, emptyMap());
+        return new QueryImpl(randomUUID(), type, parameters, emptyMap());
     }
 
     @Override
     public Query createQuery(Class<? extends RootEvent> type, Parameters parameters)
     {
-        return new QueryImpl(type, parameters, emptyMap());
+        return new QueryImpl(randomUUID(), type, parameters, emptyMap());
     }
 
     @Override

@@ -24,12 +24,14 @@ package org.jayware.e2.event.impl;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
+import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.ReadOnlyParameters;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Key;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
@@ -41,16 +43,15 @@ implements Query
     private final Event myEvent;
     private final Map<State, Consumer<ResultSet>> myConsumers;
 
-    QueryImpl(Class<? extends EventType> type, Parameters parameters, Map<State, Consumer<ResultSet>> consumers)
+    QueryImpl(UUID id, Class<? extends EventType> type, Parameters parameters, Map<State, Consumer<ResultSet>> consumers)
     {
-        myEvent = new EventImpl(type, parameters);
+        myEvent = new EventImpl(id, type, parameters);
         myConsumers = unmodifiableMap(consumers);
     }
 
-    QueryImpl(Class<? extends EventType> type, Parameters.Parameter[] parameters, Map<State, Consumer<ResultSet>> consumers)
+    QueryImpl(UUID id, Class<? extends EventType> type, Parameter[] parameters, Map<State, Consumer<ResultSet>> consumers)
     {
-        myEvent = new EventImpl(type, parameters);
-        myConsumers = unmodifiableMap(consumers);
+        this(id, type, new Parameters(parameters), consumers);
     }
 
     @Override

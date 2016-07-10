@@ -28,6 +28,7 @@ import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
 
+import static java.util.UUID.randomUUID;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.jayware.e2.util.Preconditions.checkStringNotEmpty;
 
@@ -94,6 +95,6 @@ implements EventBuilder, EventBuilderTo
     @Override
     public Event build()
     {
-        return new EventImpl(myEventType, myEventParameters);
+        return new EventImpl(randomUUID(), myEventType, myEventParameters);
     }
 }

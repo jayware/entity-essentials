@@ -26,25 +26,28 @@ import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.ReadOnlyParameters;
 
+import java.util.UUID;
+
 import static org.jayware.e2.event.api.Parameters.Parameter;
 
 
 class EventImpl
 implements Event
 {
+    private final UUID myId;
     private final Class<? extends EventType> myType;
     private final Parameters myParameters;
 
-    EventImpl(Class<? extends EventType> type, Parameters parameters)
+    EventImpl(UUID id, Class<? extends EventType> type, Parameters parameters)
     {
+        myId = id;
         myType = type;
         myParameters = new Parameters(parameters);
     }
 
-    EventImpl(Class<? extends EventType> type, Parameter[] parameters)
+    EventImpl(UUID id,Class<? extends EventType> type, Parameter[] parameters)
     {
-        myType = type;
-        myParameters = new Parameters(parameters);
+        this(id, type, new Parameters(parameters));
     }
 
     @Override
