@@ -150,7 +150,9 @@ implements Disposable
 
                     myEventManager.post(EntityCreatedEvent.class,
                         param(ContextParam, myContext),
-                        param(EntityPathParam, currentPath)
+                        param(EntityPathParam, currentPath),
+                        param(EntityRefParam, currentEntity.getRef()),
+                        param(EntityIdParam, currentEntity.identifier())
                     );
 
                     myEventManager.post(ChildAddedEntityEvent.class,
