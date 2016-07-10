@@ -17,10 +17,10 @@ branches:
   - development
   - coverity
 
-script: gradle check --info
+script: gradle check
 
 after_success:
-  - gradle coveralls --info
+  - gradle coveralls
 
 addons:
   coverity_scan:
