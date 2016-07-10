@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -49,255 +50,115 @@ implements Context
 {
     private final UUID myContextId;
 
-    private Context myContextState;
-
-    private final ReadWriteLock myLock = new ReentrantReadWriteLock();
-    private final Lock myReadLock = myLock.readLock();
-    private final Lock myWriteLock = myLock.writeLock();
+    private final AtomicReference<Context> myContextState = new AtomicReference<>();
 
     public ContextImpl(ServiceProvider serviceProvider)
     {
         myContextId = UUID.randomUUID();
-        myContextState = new DefaultContext(serviceProvider);
+        myContextState.set(new DefaultContext(serviceProvider));
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
     }
 
     @Override
     public void dispose()
     {
-        myWriteLock.lock();
-        try
-        {
-            myContextState.dispose();
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
+        myContextState.get().dispose();
     }
 
     @Override
     public boolean isDisposed()
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.isDisposed();
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().isDisposed();
     }
 
     @Override
     public <T> void put(Key<T> key, T value)
     {
-        myWriteLock.lock();
-        try
-        {
-            myContextState.put(key, value);
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
+        myContextState.get().put(key, value);
     }
 
     @Override
     public <T> boolean putIfAbsent(Key<T> key, T value)
     {
-        myWriteLock.lock();
-        try
-        {
-            return myContextState.putIfAbsent(key, value);
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
+        return myContextState.get().putIfAbsent(key, value);
     }
 
     @Override
     public <T> boolean putIfAbsent(Key<T> key, ValueProvider<T> valueProvider)
     {
-        myWriteLock.lock();
-        try
-        {
-            return myContextState.putIfAbsent(key, valueProvider);
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
+        return myContextState.get().putIfAbsent(key, valueProvider);
     }
 
     @Override
     public <T> void remove(Key<T> key)
     {
-        myWriteLock.lock();
-        try
-        {
-            myContextState.remove(key);
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
+        myContextState.get().remove(key);
     }
 
     @Override
     public <T> T get(Key<T> key)
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.get(key);
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().get(key);
     }
 
     @Override
     public <T> T get(Key<T> key, T defaultValue)
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.get(key, defaultValue);
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().get(key, defaultValue);
     }
 
     @Override
     public boolean contains(Key key)
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.contains(key);
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().contains(key);
     }
 
     @Override
     public <S> S getService(Class<? extends S> service)
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.getService(service);
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().getService(service);
     }
 
     @Override
     public <S> S findService(Class<? extends S> service)
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.findService(service);
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().findService(service);
     }
 
     @Override
     public EntityManager getEntityManager()
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.getEntityManager();
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().getEntityManager();
     }
 
     @Override
     public ComponentManager getComponentManager()
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.getComponentManager();
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().getComponentManager();
     }
 
     @Override
     public BindingManager getBindingManager()
     throws IllegalStateException
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.getBindingManager();
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().getBindingManager();
     }
 
     @Override
     public TemplateManager getTemplateManager()
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.getTemplateManager();
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().getTemplateManager();
     }
 
     @Override
     public EventManager getEventManager()
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.getEventManager();
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().getEventManager();
     }
 
     public GroupManager getGroupManager()
     {
-        myReadLock.lock();
-        try
-        {
-            return myContextState.getGroupManager();
-        }
-        finally
-        {
-            myReadLock.unlock();
-        }
+        return myContextState.get().getGroupManager();
     }
 
     @Override
@@ -334,6 +195,10 @@ implements Context
     {
         private final ServiceProvider myServiceProvider;
 
+        private final ReadWriteLock myLock = new ReentrantReadWriteLock();
+        private final Lock myReadLock = myLock.readLock();
+        private final Lock myWriteLock = myLock.writeLock();
+
         private final Map<Key, Object> myMap;
 
         public DefaultContext(ServiceProvider serviceProvider)
@@ -345,16 +210,25 @@ implements Context
         @Override
         public void dispose()
         {
-            for (Object obj : myMap.values())
-            {
-                if (obj instanceof Disposable)
-                {
-                    ((Disposable) obj).dispose(ContextImpl.this);
-                }
-            }
+            myContextState.set(new DisposedContext());
 
-            myMap.clear();
-            myContextState = new DisposedContext();
+            myWriteLock.lock();
+            try
+            {
+                for (Object obj : myMap.values())
+                {
+                    if (obj instanceof Disposable)
+                    {
+                        ((Disposable) obj).dispose(ContextImpl.this);
+                    }
+                }
+
+                myMap.clear();
+            }
+            finally
+            {
+                myWriteLock.unlock();
+            }
         }
 
         @Override
@@ -367,7 +241,15 @@ implements Context
         public <T> void put(Key<T> key, T value)
         {
             checkNotNull(key, "Key mustn't be null!");
-            myMap.put(key, value);
+            myWriteLock.lock();
+            try
+            {
+                myMap.put(key, value);
+            }
+            finally
+            {
+                myWriteLock.unlock();
+            }
         }
 
         @Override
@@ -375,13 +257,21 @@ implements Context
         {
             checkNotNull(key, "Key mustn't be null!");
 
-            if (!myMap.containsKey(key))
+            myWriteLock.lock();
+            try
             {
-                myMap.put(key, value);
-                return true;
-            }
+                if (!myMap.containsKey(key))
+                {
+                    myMap.put(key, value);
+                    return true;
+                }
 
-            return false;
+                return false;
+            }
+            finally
+            {
+                myWriteLock.unlock();
+            }
         }
 
         @Override
@@ -390,40 +280,80 @@ implements Context
             checkNotNull(key, "Key mustn't be null!");
             checkNotNull(valueProvider, "ValueProvider mustn't be null!");
 
-            if (!myMap.containsKey(key))
+            myWriteLock.lock();
+            try
             {
-                myMap.put(key, valueProvider.provide(ContextImpl.this));
-                return true;
-            }
+                if (!myMap.containsKey(key))
+                {
+                    myMap.put(key, valueProvider.provide(ContextImpl.this));
+                    return true;
+                }
 
-            return false;
+                return false;
+            }
+            finally
+            {
+                myWriteLock.unlock();
+            }
         }
 
         @Override
         public <T> void remove(Key<T> key)
         {
             checkNotNull(key, "Key mustn't be null!");
-            myMap.remove(key);
+            myWriteLock.lock();
+            try
+            {
+                myMap.remove(key);
+            }
+            finally
+            {
+                myWriteLock.unlock();
+            }
         }
 
         @Override
         public <T> T get(Key<T> key)
         {
             checkNotNull(key, "Key mustn't be null!");
-            return (T) myMap.get(key);
+            myReadLock.lock();
+            try
+            {
+                return (T) myMap.get(key);
+            }
+            finally
+            {
+                myReadLock.unlock();
+            }
         }
 
         @Override
         public <T> T get(Key<T> key, T defaultValue)
         {
             checkNotNull(key, "Key mustn't be null!");
-            return (T) myMap.getOrDefault(key, defaultValue);
+            myReadLock.lock();
+            try
+            {
+                return (T) myMap.getOrDefault(key, defaultValue);
+            }
+            finally
+            {
+                myReadLock.unlock();
+            }
         }
 
         @Override
         public boolean contains(Key key)
         {
-            return myMap.containsKey(key);
+            myReadLock.lock();
+            try
+            {
+                return myMap.containsKey(key);
+            }
+            finally
+            {
+                myReadLock.unlock();
+            }
         }
 
         @Override
