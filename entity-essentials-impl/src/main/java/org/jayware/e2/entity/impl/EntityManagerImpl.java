@@ -41,8 +41,10 @@ import org.jayware.e2.util.Traversal;
 
 import java.util.List;
 
+import static java.util.UUID.randomUUID;
 import static org.jayware.e2.component.api.Aspect.ANY;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
+import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
 import static org.jayware.e2.entity.api.EntityPath.EMPTY_PATH;
@@ -79,7 +81,10 @@ implements EntityManager
         getOrCreateEntityTree(context);
 
         final EventManager eventManager = context.getService(EventManager.class);
-        final ResultSet resultSet = eventManager.query(CreateEntityEvent.class, param(ContextParam, context));
+        final ResultSet resultSet = eventManager.query(CreateEntityEvent.class,
+            param(ContextParam, context),
+            param(EntityIdParam, randomUUID())
+        );
 
         if (resultSet.await(Success) && resultSet.has(EntityRefParam))
         {
