@@ -27,6 +27,7 @@ import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.ComponentPropertyAdapter;
 import org.jayware.e2.component.api.ComponentUnmarshalException;
+import org.jayware.e2.component.impl.generation.asm.TypeUtil;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
 import org.jayware.e2.context.api.Context;
@@ -35,6 +36,22 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBooleanPrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBooleanPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isDoublePrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isDoublePrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isFloatPrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isFloatPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isIntegerPrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isIntegerPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isStringType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.resolveOpcodePrimitiveType;
 import static org.objectweb.asm.Opcodes.AALOAD;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
@@ -92,33 +109,33 @@ public class ComponentSetMethodWriter
             visitor.visitJumpInsn(IFEQ, endIfPropertyNameEqualsLabel);
             visitor.visitVarInsn(ALOAD, 0);
 
-            if (propertyType.isPrimitive() || propertyType.isArray() && propertyType.getComponentType().isPrimitive())
+            if (TypeUtil.isPrimitiveType(propertyType) || isPrimitiveArrayType(propertyType))
             {
                 if (!propertyType.isArray())
                 {
                     visitor.visitVarInsn(ALOAD, 2);
 
-                    if (boolean.class.equals(propertyType))
+                    if (isBooleanPrimitiveType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Boolean.class), "parseBoolean", "(Ljava/lang/String;)Z", false);
                     }
-                    else if (byte.class.equals(propertyType))
+                    else if (isBytePrimitiveType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Byte.class), "parseByte", "(Ljava/lang/String;)B", false);
                     }
-                    else if (short.class.equals(propertyType))
+                    else if (isShortPrimitiveType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Short.class), "parseShort", "(Ljava/lang/String;)S", false);
                     }
-                    else if (int.class.equals(propertyType))
+                    else if (isIntegerPrimitiveType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), "parseInt", "(Ljava/lang/String;)I", false);
                     }
-                    else if (float.class.equals(propertyType))
+                    else if (isFloatPrimitiveType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Float.class), "parseFloat", "(Ljava/lang/String;)F", false);
                     }
-                    else if (double.class.equals(propertyType))
+                    else if (isDoublePrimitiveType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Double.class), "parseDouble", "(Ljava/lang/String;)D", false);
                     }
@@ -156,27 +173,27 @@ public class ComponentSetMethodWriter
                     visitor.visitVarInsn(ILOAD, 5);
                     visitor.visitInsn(AALOAD);
 
-                    if (boolean.class.equals(propertyType.getComponentType()))
+                    if (isBooleanPrimitiveArrayType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Boolean.class), "parseBoolean", "(Ljava/lang/String;)Z", false);
                     }
-                    else if (byte.class.equals(propertyType.getComponentType()))
+                    else if (isBytePrimitiveArrayType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Byte.class), "parseByte", "(Ljava/lang/String;)B", false);
                     }
-                    else if (short.class.equals(propertyType.getComponentType()))
+                    else if (isShortPrimitiveArrayType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Short.class), "parseShort", "(Ljava/lang/String;)S", false);
                     }
-                    else if (int.class.equals(propertyType.getComponentType()))
+                    else if (isIntegerPrimitiveArrayType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), "parseInt", "(Ljava/lang/String;)I", false);
                     }
-                    else if (float.class.equals(propertyType.getComponentType()))
+                    else if (isFloatPrimitiveArrayType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Float.class), "parseFloat", "(Ljava/lang/String;)F", false);
                     }
-                    else if (double.class.equals(propertyType.getComponentType()))
+                    else if (isDoublePrimitiveArrayType(propertyType))
                     {
                         visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Double.class), "parseDouble", "(Ljava/lang/String;)D", false);
                     }
@@ -204,11 +221,11 @@ public class ComponentSetMethodWriter
                 visitor.visitTypeInsn(CHECKCAST, getInternalName(propertyType));
                 visitor.visitLabel(endIf);
             }
-            else if (String.class.equals(propertyType))
+            else if (isStringType(propertyType))
             {
                 visitor.visitVarInsn(ALOAD, 2);
             }
-            else if (!propertyType.isPrimitive() || propertyType.isArray() && !propertyType.getComponentType().isPrimitive())
+            else if (isObjectType(propertyType) || isObjectArrayType(propertyType))
             {
                 final Label endIfAdapterNull = new Label();
                 visitor.visitVarInsn(ALOAD, 0);

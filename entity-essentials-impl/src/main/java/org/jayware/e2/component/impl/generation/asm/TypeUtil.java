@@ -56,4 +56,89 @@ public class TypeUtil
 
         return 0;
     }
+
+    public static boolean isPrimitiveArrayType(Class<?> type)
+    {
+        return type.isArray() && type.getComponentType().isPrimitive();
+    }
+
+    public static boolean isObjectArrayType(Class<?> type)
+    {
+        return type.isArray() && !type.getComponentType().isPrimitive();
+    }
+
+    public static boolean isDoublePrimitiveArrayType(Class<?> type)
+    {
+        return double.class.equals(type.getComponentType());
+    }
+
+    public static boolean isFloatPrimitiveArrayType(Class<?> type)
+    {
+        return float.class.equals(type.getComponentType());
+    }
+
+    public static boolean isIntegerPrimitiveArrayType(Class<?> type)
+    {
+        return int.class.equals(type.getComponentType());
+    }
+
+    public static boolean isShortPrimitiveArrayType(Class<?> type)
+    {
+        return short.class.equals(type.getComponentType());
+    }
+
+    public static boolean isBytePrimitiveArrayType(Class<?> type)
+    {
+        return byte.class.equals(type.getComponentType());
+    }
+
+    public static boolean isBooleanPrimitiveArrayType(Class<?> type)
+    {
+        return boolean.class.equals(type.getComponentType());
+    }
+
+    public static boolean isObjectType(Class<?> type)
+    {
+        return !type.isPrimitive();
+    }
+
+    public static boolean isStringType(Class<?> type)
+    {
+        return String.class.equals(type);
+    }
+
+    public static boolean isDoublePrimitiveType(Class<?> type)
+    {
+        return double.class.equals(type);
+    }
+
+    public static boolean isFloatPrimitiveType(Class<?> type)
+    {
+        return float.class.equals(type);
+    }
+
+    public static boolean isIntegerPrimitiveType(Class<?> type)
+    {
+        return int.class.equals(type);
+    }
+
+    public static boolean isShortPrimitiveType(Class<?> type)
+    {
+        return short.class.equals(type);
+    }
+
+    public static boolean isBytePrimitiveType(Class<?> type)
+    {
+        return byte.class.equals(type);
+    }
+
+    public static boolean isBooleanPrimitiveType(Class<?> type)
+    {
+        return boolean.class.equals(type);
+    }
+
+    public static boolean isPrimitiveType(Class<?> type)
+    {
+        return type.isPrimitive();
+    }
 }

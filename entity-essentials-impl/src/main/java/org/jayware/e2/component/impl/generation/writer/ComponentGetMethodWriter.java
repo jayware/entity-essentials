@@ -37,6 +37,11 @@ import org.objectweb.asm.Type;
 
 import java.util.Arrays;
 
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isStringType;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
@@ -81,7 +86,7 @@ public class ComponentGetMethodWriter
             visitor.visitMethodInsn(INVOKEVIRTUAL, getInternalName(String.class), "equals", "(Ljava/lang/Object;)Z", false);
             visitor.visitJumpInsn(IFEQ, endIfPropertyNameEqualsLabel);
 
-            if (propertyType.isPrimitive() || propertyType.isArray() && propertyType.getComponentType().isPrimitive())
+            if (isPrimitiveType(propertyType) || isPrimitiveArrayType(propertyType))
             {
                 if (propertyType.isArray())
                 {
@@ -112,12 +117,12 @@ public class ComponentGetMethodWriter
                 visitor.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Enum.class), "name", "()Ljava/lang/String;",false);
                 visitor.visitLabel(endIf);
             }
-            else if (String.class.equals(propertyType))
+            else if (isStringType(propertyType))
             {
                 visitor.visitVarInsn(ALOAD, 0);
                 visitor.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
             }
-            else if (!propertyType.isPrimitive() || propertyType.isArray() && !propertyType.getComponentType().isPrimitive())
+            else if (isObjectType(propertyType) || isObjectArrayType(propertyType))
             {
                 final Label endIfAdapterNull = new Label();
                 visitor.visitVarInsn(ALOAD, 0);
