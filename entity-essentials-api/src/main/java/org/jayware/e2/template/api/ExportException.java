@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -21,21 +21,20 @@
  */
 package org.jayware.e2.template.api;
 
-
-import java.net.URI;
-
-
-@Deprecated
-public interface Template
+public class ExportException extends RuntimeException
 {
-    URI uri();
+    public ExportException(String message)
+    {
+        super(message);
+    }
 
-    void read();
+    public ExportException(Throwable cause)
+    {
+        super(cause);
+    }
 
-    void write();
-
-    void accept(TemplateVisitor visitor);
-
-    void accept(TemplateVisitor visitor, TemplateVisitorContext context);
-
+    public ExportException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 }

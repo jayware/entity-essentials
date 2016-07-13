@@ -22,24 +22,22 @@
 package org.jayware.e2.component.impl;
 
 
+import mockit.Mocked;
 import org.jayware.e2.component.api.ComponentFactoryException;
-import org.jayware.e2.component.api.ComponentInstancer;
-import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
+import org.jayware.e2.component.impl.TestComponents.TestComponentC;
 import org.jayware.e2.context.api.Context;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.fail;
 
 
 public class ComponentFactoryImplTest
 {
+    private @Mocked Context testContext;
+
     ComponentFactoryImpl testee;
 
     @BeforeMethod
@@ -57,8 +55,8 @@ public class ComponentFactoryImplTest
     @Test
     public void test_create()
     {
-        testee.prepareComponent(TestComponentA.class);
-        final ComponentInstancer<TestComponentA> component = testee.createComponent(TestComponentA.class);
+        testee.prepareComponent(TestComponentC.class);
+        final TestComponentC component = testee.createComponent(TestComponentC.class).newInstance(testContext);
 
         assertThat(component).isNotNull();
     }

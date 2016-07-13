@@ -22,15 +22,16 @@
 package org.jayware.e2.template.api;
 
 
+import org.jayware.e2.component.api.Component;
+
 import java.util.List;
 
 
-@Deprecated
-public interface ComponentTemplate
+public interface ComponentTemplate<C extends Component>
 {
-    String getName();
+    Class<C> getType();
 
-    void setName(String name);
+    void setType(Class<C> type);
 
-    List<? extends PropertyTemplate> properties();
+    List<PropertyTemplate> properties();
 }

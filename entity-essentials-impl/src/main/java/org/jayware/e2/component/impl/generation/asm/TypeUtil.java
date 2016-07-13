@@ -99,7 +99,7 @@ public class TypeUtil
 
     public static boolean isObjectType(Class<?> type)
     {
-        return !type.isPrimitive();
+        return !type.isPrimitive() && !type.isArray();
     }
 
     public static boolean isStringType(Class<?> type)
@@ -122,6 +122,11 @@ public class TypeUtil
         return int.class.equals(type);
     }
 
+    public static boolean isLongPrimitiveType(Class<?> type)
+    {
+        return long.class.equals(type);
+    }
+
     public static boolean isShortPrimitiveType(Class<?> type)
     {
         return short.class.equals(type);
@@ -140,5 +145,41 @@ public class TypeUtil
     public static boolean isPrimitiveType(Class<?> type)
     {
         return type.isPrimitive();
+    }
+
+    public static Class boxed(Class type)
+    {
+        if (isBooleanPrimitiveType(type))
+        {
+            return Boolean.class;
+        }
+        else if (isBytePrimitiveType(type))
+        {
+            return Byte.class;
+        }
+        else if (isShortPrimitiveType(type))
+        {
+            return Short.class;
+        }
+        else if (isIntegerPrimitiveType(type))
+        {
+            return Integer.class;
+        }
+        else if (isLongPrimitiveType(type))
+        {
+            return Long.class;
+        }
+        else if (isFloatPrimitiveType(type))
+        {
+            return Float.class;
+        }
+        else if (isDoublePrimitiveType(type))
+        {
+            return Double.class;
+        }
+        else
+        {
+            throw new RuntimeException();
+        }
     }
 }

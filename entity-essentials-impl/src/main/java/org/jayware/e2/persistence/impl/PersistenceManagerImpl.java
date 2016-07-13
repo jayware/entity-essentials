@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,19 +19,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.template.impl;
+package org.jayware.e2.persistence.impl;
 
-
-import org.testng.annotations.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-
-public class TemplateImplComponentXmlPropertyTemplateTest
+public interface PersistenceManagerImpl
 {
-    @Test
-    public void testEquals()
-    {
-        assertThat(new TemplateWrapper.XmlPropertyTemplate("foo", "bar")).isEqualTo(new TemplateWrapper.XmlPropertyTemplate("foo", "bar"));
-    }
+
 }

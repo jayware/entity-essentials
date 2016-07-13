@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -21,13 +21,20 @@
  */
 package org.jayware.e2.template.api;
 
-
-@Deprecated
-public interface TemplateVisitor
+public class ImportException extends RuntimeException
 {
-    void visitEntityTemplate(TemplateVisitorContext context, EntityTemplate entity);
+    public ImportException(String message)
+    {
+        super(message);
+    }
 
-    void visitComponentTemplate(TemplateVisitorContext context, EntityTemplate entity, ComponentTemplate component);
+    public ImportException(Throwable cause)
+    {
+        super(cause);
+    }
 
-    void visitPropertyTemplate(TemplateVisitorContext context, EntityTemplate entity, ComponentTemplate component, PropertyTemplate property);
+    public ImportException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 }

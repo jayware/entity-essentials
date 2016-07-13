@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,34 +19,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.template.api;
+package org.jayware.e2.persistence.api;
 
-
-@Deprecated
-public class TemplateInstantiationException
-extends RuntimeException
+public interface ContextualPersistenceManager
 {
-    public TemplateInstantiationException()
-    {
-    }
 
-    public TemplateInstantiationException(String message)
-    {
-        super(message);
-    }
-
-    public TemplateInstantiationException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-
-    public TemplateInstantiationException(Throwable cause)
-    {
-        super(cause);
-    }
-
-    public TemplateInstantiationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

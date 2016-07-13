@@ -22,14 +22,13 @@
 package org.jayware.e2.template.api;
 
 
-@Deprecated
-public interface PropertyTemplate
+public interface PropertyTemplate<V>
 {
     String getName();
 
     void setName(String name);
 
-    String getValue();
+    V getValue();
 
-    void setValue(String value);
+    void setValue(V value);
 }

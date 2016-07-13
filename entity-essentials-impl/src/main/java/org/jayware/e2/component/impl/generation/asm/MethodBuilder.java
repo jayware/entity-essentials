@@ -23,26 +23,48 @@ package org.jayware.e2.component.impl.generation.asm;
 
 
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBooleanPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isDoublePrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isFloatPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isIntegerPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isLongPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
+import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.objectweb.asm.Opcodes.ATHROW;
+import static org.objectweb.asm.Opcodes.CHECKCAST;
+import static org.objectweb.asm.Opcodes.DCONST_0;
 import static org.objectweb.asm.Opcodes.DUP;
+import static org.objectweb.asm.Opcodes.FCONST_0;
 import static org.objectweb.asm.Opcodes.GETFIELD;
 import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.GOTO;
+import static org.objectweb.asm.Opcodes.ICONST_0;
+import static org.objectweb.asm.Opcodes.ICONST_1;
+import static org.objectweb.asm.Opcodes.IFEQ;
+import static org.objectweb.asm.Opcodes.IFNE;
+import static org.objectweb.asm.Opcodes.IFNONNULL;
+import static org.objectweb.asm.Opcodes.IFNULL;
 import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.ISTORE;
+import static org.objectweb.asm.Opcodes.LCONST_0;
 import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.SWAP;
 import static org.objectweb.asm.Type.VOID_TYPE;
 import static org.objectweb.asm.Type.getDescriptor;
 import static org.objectweb.asm.Type.getInternalName;
@@ -73,14 +95,39 @@ public class MethodBuilder
         myVisitor.visitCode();
     }
 
+    public MethodVisitor custom()
+    {
+        return myVisitor;
+    }
+
+    public void push_0i()
+    {
+        myVisitor.visitInsn(ICONST_0);
+    }
+
+    public void push_1i()
+    {
+        myVisitor.visitInsn(ICONST_1);
+    }
+
     public void newInstanceOf(Class<?> type)
     {
         myVisitor.visitTypeInsn(NEW, getInternalName(type));
     }
 
+    public void pushNull()
+    {
+        myVisitor.visitInsn(ACONST_NULL);
+    }
+
     public void loadConstant(String constant)
     {
         myVisitor.visitLdcInsn(constant);
+    }
+
+    public void loadConstant(Class constant)
+    {
+        myVisitor.visitLdcInsn(getType(constant));
     }
 
     public void loadThis()
@@ -91,6 +138,11 @@ public class MethodBuilder
     public void loadVariable(int index, Class type)
     {
         myVisitor.visitVarInsn(Type.getType(type).getOpcode(ILOAD), index);
+    }
+
+    public void storeVariable(int index, Class type)
+    {
+        myVisitor.visitVarInsn(Type.getType(type).getOpcode(ISTORE), index);
     }
 
     public void loadReferenceVariable(int index)
@@ -209,6 +261,52 @@ public class MethodBuilder
         myVisitor.visitInsn(ATHROW);
     }
 
+    /**
+     * Jumps if the current stack element is 0.
+     */
+    public void jumpIfEquals(Label label)
+    {
+        myVisitor.visitJumpInsn(IFEQ, label);
+    }
+
+    /**
+     * Jumps if the current stack element not 0.
+     */
+    public void jumpIfNotEquals(Label label)
+    {
+        myVisitor.visitJumpInsn(IFNE, label);
+    }
+
+    public void jumpIfNull(Label label)
+    {
+        myVisitor.visitJumpInsn(IFNULL, label);
+    }
+
+    public void jumpIfNotNull(Label label)
+    {
+        myVisitor.visitJumpInsn(IFNONNULL, label);
+    }
+
+    public void jumpTo(Label label)
+    {
+        myVisitor.visitJumpInsn(GOTO, label);
+    }
+
+    public void label(Label label)
+    {
+        myVisitor.visitLabel(label);
+    }
+
+    public void castTo(Class<?> type)
+    {
+        myVisitor.visitTypeInsn(CHECKCAST, getInternalName(type));
+    }
+
+    public void swap()
+    {
+        myVisitor.visitInsn(SWAP);
+    }
+
     private static String getMethodDescriptor(Class<?> returnType, Class<?>... parameterTypes)
     {
         return Type.getMethodDescriptor(getType(returnType), convertClassesToTypes(parameterTypes));
@@ -233,5 +331,29 @@ public class MethodBuilder
         }
 
         return types;
+    }
+
+    public void push_0(Class<?> type)
+    {
+        if (isBooleanPrimitiveType(type) || isBytePrimitiveType(type) || isShortPrimitiveType(type) || isIntegerPrimitiveType(type))
+        {
+            myVisitor.visitInsn(ICONST_0);
+        }
+        else if (isLongPrimitiveType(type))
+        {
+            myVisitor.visitInsn(LCONST_0);
+        }
+        else if (isFloatPrimitiveType(type))
+        {
+            myVisitor.visitInsn(FCONST_0);
+        }
+        else if (isDoublePrimitiveType(type))
+        {
+            myVisitor.visitInsn(DCONST_0);
+        }
+        else
+        {
+            throw new RuntimeException();
+        }
     }
 }

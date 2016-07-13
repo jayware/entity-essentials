@@ -22,45 +22,31 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
-import org.jayware.e2.component.api.AbstractComponent;
-import org.jayware.e2.component.api.ComponentFactoryException;
-import org.jayware.e2.component.api.ComponentManager;
-import org.jayware.e2.component.api.ComponentMarshalException;
-import org.jayware.e2.component.api.ComponentPropertyAdapter;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
-import org.jayware.e2.context.api.Context;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import java.util.Arrays;
-
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectArrayType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveArrayType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBooleanPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isDoublePrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isFloatPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isIntegerPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isLongPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isStringType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.ASTORE;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.DUP;
 import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GOTO;
 import static org.objectweb.asm.Opcodes.IFEQ;
-import static org.objectweb.asm.Opcodes.IFNONNULL;
-import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Type.getDescriptor;
 import static org.objectweb.asm.Type.getInternalName;
-import static org.objectweb.asm.Type.getType;
 
 
 public class ComponentGetMethodWriter
@@ -69,7 +55,7 @@ public class ComponentGetMethodWriter
     {
         final String classInternalName = componentPlan.getGeneratedClassInternalName();
         final ClassWriter classWriter = componentPlan.getClassWriter();
-        final MethodVisitor visitor = classWriter.visitMethod(ACC_PUBLIC, "get", "(Ljava/lang/String;)Ljava/lang/String;", null, null);
+        final MethodVisitor visitor = classWriter.visitMethod(ACC_PUBLIC, "get", "(Ljava/lang/String;)Ljava/lang/Object;", null, null);
 
         visitor.visitCode();
 
@@ -86,70 +72,39 @@ public class ComponentGetMethodWriter
             visitor.visitMethodInsn(INVOKEVIRTUAL, getInternalName(String.class), "equals", "(Ljava/lang/Object;)Z", false);
             visitor.visitJumpInsn(IFEQ, endIfPropertyNameEqualsLabel);
 
-            if (isPrimitiveType(propertyType) || isPrimitiveArrayType(propertyType))
+            visitor.visitVarInsn(ALOAD, 0);
+            visitor.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
+
+            if (isPrimitiveType(propertyType))
             {
-                if (propertyType.isArray())
+                if (isBooleanPrimitiveType(propertyType))
                 {
-                    visitor.visitVarInsn(ALOAD, 0);
-                    visitor.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Arrays.class), "toString", "(" + propertyTypeDescriptor + ")" + getDescriptor(String.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Boolean.class), "valueOf", "(Z)" + getDescriptor(Boolean.class), false);
                 }
-                else
+                else if (isBytePrimitiveType(propertyType))
                 {
-                    visitor.visitVarInsn(ALOAD, 0);
-                    visitor.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
-                    visitor.visitMethodInsn(INVOKESTATIC, "java/lang/String", "valueOf", "(" + propertyTypeDescriptor + ")Ljava/lang/String;", false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Byte.class), "valueOf", "(B)" + getDescriptor(Byte.class), false);
                 }
-            }
-            else if (propertyType.isEnum())
-            {
-                final Label ifEnumValueNonNull = new Label();
-                final Label endIf = new Label();
-                visitor.visitVarInsn(ALOAD, 0);
-                visitor.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
-                visitor.visitVarInsn(ASTORE, 2);
-                visitor.visitVarInsn(ALOAD, 2);
-                visitor.visitJumpInsn(IFNONNULL, ifEnumValueNonNull);
-                visitor.visitInsn(ACONST_NULL);
-                visitor.visitJumpInsn(GOTO, endIf);
-                visitor.visitLabel(ifEnumValueNonNull);
-                visitor.visitVarInsn(ALOAD, 2);
-                visitor.visitMethodInsn(INVOKEVIRTUAL, getInternalName(Enum.class), "name", "()Ljava/lang/String;",false);
-                visitor.visitLabel(endIf);
-            }
-            else if (isStringType(propertyType))
-            {
-                visitor.visitVarInsn(ALOAD, 0);
-                visitor.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
-            }
-            else if (isObjectType(propertyType) || isObjectArrayType(propertyType))
-            {
-                final Label endIfAdapterNull = new Label();
-                visitor.visitVarInsn(ALOAD, 0);
-                visitor.visitFieldInsn(GETFIELD, getInternalName(AbstractComponent.class), "myComponentManager", getDescriptor(ComponentManager.class));
-                visitor.visitVarInsn(ALOAD, 0);
-                visitor.visitFieldInsn(GETFIELD, getInternalName(AbstractComponent.class), "myContext", getDescriptor(Context.class));
-                visitor.visitLdcInsn(getType(propertyType));
-                visitor.visitMethodInsn(INVOKEINTERFACE, getInternalName(ComponentManager.class), "getPropertyAdapter", "(" + getDescriptor(Context.class) + getDescriptor(Class.class) + ")" + getDescriptor(ComponentPropertyAdapter.class), true);
-                visitor.visitVarInsn(ASTORE, 2);
-                visitor.visitVarInsn(ALOAD, 2);
-                visitor.visitJumpInsn(IFNONNULL, endIfAdapterNull);
-                visitor.visitTypeInsn(NEW, getInternalName(ComponentMarshalException.class));
-                visitor.visitInsn(DUP);
-                visitor.visitLdcInsn("No property adapter found for property '" + propertyName + "' of type '" + propertyType.getName() + "'");
-                visitor.visitMethodInsn(INVOKESPECIAL, getInternalName(ComponentMarshalException.class), "<init>", "(" + getDescriptor(String.class) + ")V", false);
-                visitor.visitInsn(ATHROW);
-                visitor.visitLabel(endIfAdapterNull);
-                visitor.visitVarInsn(ALOAD, 2);
-                visitor.visitVarInsn(ALOAD, 0);
-                visitor.visitFieldInsn(GETFIELD, getInternalName(AbstractComponent.class), "myContext", getDescriptor(Context.class));
-                visitor.visitVarInsn(ALOAD, 0);
-                visitor.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
-                visitor.visitMethodInsn(INVOKEINTERFACE, getInternalName(ComponentPropertyAdapter.class), "marshal", "(" + getDescriptor(Context.class) + getDescriptor(Object.class) + ")" + getDescriptor(String.class), true);
-            }
-            else
-            {
-                throw new ComponentFactoryException();
+                else if (isShortPrimitiveType(propertyType))
+                {
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Short.class), "valueOf", "(S)" + getDescriptor(Short.class), false);
+                }
+                else if (isIntegerPrimitiveType(propertyType))
+                {
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), "valueOf", "(I)" + getDescriptor(Integer.class), false);
+                }
+                else if (isLongPrimitiveType(propertyType))
+                {
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Long.class), "valueOf", "(J)" + getDescriptor(Long.class), false);
+                }
+                else if (isFloatPrimitiveType(propertyType))
+                {
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Float.class), "valueOf", "(F)" + getDescriptor(Float.class), false);
+                }
+                else if (isDoublePrimitiveType(propertyType))
+                {
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Double.class), "valueOf", "(D)" + getDescriptor(Double.class), false);
+                }
             }
 
             visitor.visitInsn(ARETURN);

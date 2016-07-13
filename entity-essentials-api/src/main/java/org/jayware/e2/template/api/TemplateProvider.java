@@ -19,14 +19,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.template.impl;
+package org.jayware.e2.template.api;
 
 
-import org.jayware.e2.template.api.TemplateVisitorContext;
+import org.jayware.e2.component.api.Component;
 
 
-public class TemplateVisitorContextImpl
-implements TemplateVisitorContext
+public interface TemplateProvider
 {
+    EntityTemplate createEntityTemplate();
 
+    <C extends Component> ComponentTemplate<C> createComponentTemplate(Class<C> type);
+
+    <V> PropertyTemplate<V> createPropertyTemplate(Class<V> type);
 }

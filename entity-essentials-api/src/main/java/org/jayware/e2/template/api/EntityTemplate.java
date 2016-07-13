@@ -25,14 +25,11 @@ package org.jayware.e2.template.api;
 import java.util.List;
 
 
-@Deprecated
 public interface EntityTemplate
 {
-    String getName();
+    String getId();
 
-    void setName(String name);
+    void setId(String name);
 
-    List<? extends EntityTemplate> children();
-
-    List<? extends ComponentTemplate> components();
+    List<ComponentTemplate> components();
 }

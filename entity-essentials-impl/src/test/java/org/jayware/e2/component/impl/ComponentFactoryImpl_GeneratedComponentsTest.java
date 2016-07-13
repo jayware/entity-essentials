@@ -22,28 +22,28 @@
 package org.jayware.e2.component.impl;
 
 
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
+import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.MalformedCombinedTestComponent;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentAB;
+import org.jayware.e2.component.impl.TestComponents.TestComponentB;
+import org.jayware.e2.component.impl.TestComponents.TestComponentC;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
-import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jayware.e2.component.impl.TestComponents.TestComponentB;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 
 public class ComponentFactoryImpl_GeneratedComponentsTest
 {
-    @Mock private Context context;
-    @Mock private ComponentManager componentManager;
+    @Mocked private Context testContext;
+    @Mocked private ComponentManager componentManager;
 
     private ComponentFactoryImpl componentFactory;
     private EntityRef refA;
@@ -51,35 +51,71 @@ public class ComponentFactoryImpl_GeneratedComponentsTest
     @BeforeMethod
     public void setup()
     {
-        initMocks(this);
-
         componentFactory = new ComponentFactoryImpl();
 
-        when(context.getService(ComponentManager.class)).thenReturn(componentManager);
+        componentFactory.prepareComponent(TestComponentA.class);
+        componentFactory.prepareComponent(TestComponentC.class);
+        componentFactory.prepareComponent(TestComponentAB.class);
     }
 
     @Test
     public void test_pullFrom()
     {
         final TestComponentA component;
-        componentFactory.prepareComponent(TestComponentA.class);
-        component = componentFactory.createComponent(TestComponentA.class).newInstance(context);
+
+        new Expectations()
+        {{
+            testContext.getService(ComponentManager.class); result = componentManager;
+        }};
+
+        component = componentFactory.createComponent(TestComponentA.class).newInstance(testContext);
 
         component.pullFrom(refA);
 
-        verify(componentManager).pullComponent(refA, component);
+        new Verifications()
+        {{
+            componentManager.pullComponent(refA, component);
+        }};
     }
 
     @Test
     public void test_pushTo()
     {
         final TestComponentA component;
-        componentFactory.prepareComponent(TestComponentA.class);
-        component = componentFactory.createComponent(TestComponentA.class).newInstance(context);
+
+        new Expectations()
+        {{
+            testContext.getService(ComponentManager.class); result = componentManager;
+        }};
+
+        component = componentFactory.createComponent(TestComponentA.class).newInstance(testContext);
 
         component.pushTo(refA);
 
-        verify(componentManager).pushComponent(refA, component);
+        new Verifications()
+        {{
+            componentManager.pushComponent(refA, component);
+        }};
+    }
+
+    @Test
+    public void test_addTo()
+    {
+        final TestComponentA component;
+
+        new Expectations()
+        {{
+            testContext.getService(ComponentManager.class); result = componentManager;
+        }};
+
+        component = componentFactory.createComponent(TestComponentA.class).newInstance(testContext);
+
+        component.addTo(refA);
+
+        new Verifications()
+        {{
+            componentManager.addComponent(refA, component);
+        }};
     }
 
     @Test
@@ -87,8 +123,7 @@ public class ComponentFactoryImpl_GeneratedComponentsTest
     {
         final TestComponentAB component;
 
-        componentFactory.prepareComponent(TestComponentAB.class);
-        component = componentFactory.createComponent(TestComponentAB.class).newInstance(context);
+        component = componentFactory.createComponent(TestComponentAB.class).newInstance(testContext);
 
         assertThat(TestComponentA.class.isAssignableFrom(component.getClass())).isTrue();
         assertThat(TestComponentB.class.isAssignableFrom(component.getClass())).isTrue();
@@ -98,5 +133,42 @@ public class ComponentFactoryImpl_GeneratedComponentsTest
     public void test_combined_component_Fails_if_the_component_extends_a_non_component_type()
     {
         componentFactory.prepareComponent(MalformedCombinedTestComponent.class);
+    }
+
+    @Test
+    public void test_set_Does_Not_set_an_unknown_property_and_returns_false()
+    throws Exception
+    {
+        final AbstractComponent component = (AbstractComponent) componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
+
+        assertThat(component.set("xyz", "fubar")).isFalse();
+    }
+
+    @Test
+    public void test_set_Accepts_null_value_for_primitive_properties_and_returns_true()
+    {
+        final AbstractComponent component = (AbstractComponent) componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
+
+        assertThat(component.set("primitiveBoolean", null)).isTrue();
+        assertThat(component.set("primitiveByte", null)).isTrue();
+        assertThat(component.set("primitiveShort", null)).isTrue();
+        assertThat(component.set("primitiveInteger", null)).isTrue();
+        assertThat(component.set("primitiveLong", null)).isTrue();
+        assertThat(component.set("primitiveFloat", null)).isTrue();
+        assertThat(component.set("primitiveDouble", null)).isTrue();
+    }
+
+    @Test
+    public void test_set_Accepts_boxed_value_for_primitive_properties_and_returns_true()
+    {
+        final AbstractComponent component = (AbstractComponent) componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
+
+        assertThat(component.set("primitiveBoolean", new Boolean(true))).isTrue();
+        assertThat(component.set("primitiveByte", new Byte((byte) 42))).isTrue();
+        assertThat(component.set("primitiveShort", new Short((short) 73))).isTrue();
+        assertThat(component.set("primitiveInteger", new Integer(1337))).isTrue();
+        assertThat(component.set("primitiveLong", new Long(4711L))).isTrue();
+        assertThat(component.set("primitiveFloat", new Float(42.73))).isTrue();
+        assertThat(component.set("primitiveDouble", new Double(13.37))).isTrue();
     }
 }

@@ -48,6 +48,14 @@ public class TestComponents
     public interface TestComponentB
     extends Component
     {
+        int getInt();
+
+        void setInt(int value);
+
+        Integer getInteger();
+
+        void setInteger(Integer value);
+
         String getString();
 
         void setString(String value);
@@ -75,5 +83,69 @@ public class TestComponents
         String getString();
 
         void setString(int value);
+    }
+
+    public interface TestComponentC
+    extends Component
+    {
+        boolean getPrimitiveBoolean();
+
+        void setPrimitiveBoolean(boolean value);
+
+        byte getPrimitiveByte();
+
+        void setPrimitiveByte(byte value);
+
+        short getPrimitiveShort();
+
+        void setPrimitiveShort(short value);
+
+        int getPrimitiveInteger();
+
+        void setPrimitiveInteger(int value);
+
+        long getPrimitiveLong();
+
+        void setPrimitiveLong(long value);
+
+        float getPrimitiveFloat();
+
+        void setPrimitiveFloat(float value);
+
+        double getPrimitiveDouble();
+
+        void setPrimitiveDouble(double value);
+
+        Boolean getBooleanObject();
+
+        void setBooleanObject(Boolean value);
+
+        Byte getByteObject();
+
+        void setByteObject(Byte value);
+
+        Short getShortObject();
+
+        void setShortObject(Short value);
+
+        Integer getIntegerObject();
+
+        void setIntegerObject(Integer value);
+
+        Long getLongObject();
+
+        void setLongObject(Long value);
+
+        Float getFloatObject();
+
+        void setFloatObject(Float value);
+
+        Double getDoubleObject();
+
+        void setDoubleObject(Double value);
+
+        String getString();
+
+        void setString(String value);
     }
 }

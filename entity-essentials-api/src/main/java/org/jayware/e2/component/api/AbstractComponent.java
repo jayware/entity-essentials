@@ -43,9 +43,9 @@ implements Component, Contextual
 
     public abstract List<String> properties();
 
-    public abstract String get(String name);
+    public abstract Object get(String name);
 
-    public abstract boolean set(String name, String value);
+    public abstract boolean set(String name, Object value);
 
     public abstract boolean has(String name);
 
