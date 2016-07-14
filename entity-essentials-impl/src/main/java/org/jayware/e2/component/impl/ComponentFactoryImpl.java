@@ -37,8 +37,9 @@ import org.jayware.e2.component.impl.generation.writer.ComponentCopyOtherMethodW
 import org.jayware.e2.component.impl.generation.writer.ComponentCopyThisMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentDefaultConstructorWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentGetMethodWriter;
+import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyNamesMethodWriter;
+import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyTypeNamesMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentHasMethodWriter;
-import org.jayware.e2.component.impl.generation.writer.ComponentPropertiesMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyFieldWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyGetterMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertySetterMethodWriter;
@@ -48,7 +49,6 @@ import org.jayware.e2.component.impl.generation.writer.ComponentToStringMethodWr
 import org.jayware.e2.component.impl.generation.writer.ComponentTypeMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentWriterFactory;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -58,7 +58,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -304,7 +303,8 @@ implements ComponentFactory
         final ComponentPropertyGetterMethodWriter propertyGetterWriter = myWriterFactory.createComponentPropertyGetterWriter();
         final ComponentPropertySetterMethodWriter propertySetterWriter = myWriterFactory.createComponentPropertySetterWriter();
         final ComponentPropertyFieldWriter propertyFieldWriter = myWriterFactory.createComponentPropertyFieldWriter();
-        final ComponentPropertiesMethodWriter propertiesMethodWriter = myWriterFactory.createPropertiesMethodWriter();
+        final ComponentGetPropertyNamesMethodWriter getPropertyNamesMethodWriter = myWriterFactory.createGetPropertyNamesMethodWriter();
+        final ComponentGetPropertyTypeNamesMethodWriter getPropertyTypeNamesMethodWriter = myWriterFactory.createGetPropertyTypeNamesMethodWriter();
         final ComponentGetMethodWriter getMethodWriter = myWriterFactory.createComponentGetMethodWriter();
         final ComponentSetMethodWriter setMethodWriter = myWriterFactory.createComponentSetMethodWriter();
         final ComponentHasMethodWriter hasMethodWriter = myWriterFactory.createComponentHasMethodWriter();
@@ -331,7 +331,8 @@ implements ComponentFactory
         );
 
         {
-            final FieldVisitor fieldVisitor = classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourProperties", getDescriptor(List.class), null, null);
+            classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyNames", getDescriptor(List.class), null, null);
+            classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyTypeNames", getDescriptor(List.class), null, null);
         }
 
         for (ComponentPropertyGenerationPlan propertyPlan : componentGenerationPlan.getComponentPropertyGenerationPlans())
@@ -350,7 +351,9 @@ implements ComponentFactory
             propertySetterWriter.writePropertySetterFor(plan);
         }
 
-        propertiesMethodWriter.writePropertiesMethodFor(componentGenerationPlan);
+        getPropertyNamesMethodWriter.writeGetPropertyNamesMethodFor(componentGenerationPlan);
+
+        getPropertyTypeNamesMethodWriter.writeGetPropertyTypeNamesMethodFor(componentGenerationPlan);
 
         getMethodWriter.writeGetMethodFor(componentGenerationPlan);
 

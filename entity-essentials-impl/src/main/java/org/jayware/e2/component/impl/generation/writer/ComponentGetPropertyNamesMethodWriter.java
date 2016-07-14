@@ -32,15 +32,15 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Type.getDescriptor;
 
 
-public class ComponentPropertiesMethodWriter
+public class ComponentGetPropertyNamesMethodWriter
 {
-    public void writePropertiesMethodFor(ComponentGenerationPlan componentPlan)
+    public void writeGetPropertyNamesMethodFor(ComponentGenerationPlan componentPlan)
     {
         final ClassWriter classWriter = componentPlan.getClassWriter();
 
-        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "properties", "()" + getDescriptor(List.class));
+        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "getPropertyNames", "()" + getDescriptor(List.class));
         methodBuilder.beginMethod();
-        methodBuilder.loadStaticField(componentPlan.getGeneratedClassInternalName(), "ourProperties", List.class);
+        methodBuilder.loadStaticField(componentPlan.getGeneratedClassInternalName(), "ourPropertyNames", List.class);
         methodBuilder.returnReference();
         methodBuilder.endMethod();
     }

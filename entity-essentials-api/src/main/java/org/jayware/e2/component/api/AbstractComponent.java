@@ -41,7 +41,9 @@ implements Component, Contextual
         myComponentManager = context.getService(ComponentManager.class);
     }
 
-    public abstract List<String> properties();
+    public abstract List<String> getPropertyNames();
+
+    public abstract List<String> getPropertyTypeNames();
 
     public abstract Object get(String name);
 

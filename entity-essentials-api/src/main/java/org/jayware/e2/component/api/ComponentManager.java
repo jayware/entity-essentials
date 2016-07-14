@@ -290,7 +290,7 @@ public interface ComponentManager
      *
      * @param context a {@link Context}.
      * @param type a {@link Class} representing the type of the property.
-     * @param <T> the properties type.
+     * @param <T> the getPropertyNames type.
      *
      * @return a {@link ComponentPropertyAdapter} for the specified type or <code>null</code>
      *         if there is no appropriate adapter.

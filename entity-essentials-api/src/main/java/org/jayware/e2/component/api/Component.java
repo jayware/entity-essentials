@@ -29,7 +29,7 @@ import org.jayware.e2.entity.api.EntityRef;
  * Components are designed to store a piece of data. This interface defines the default operations every
  * component has to have.
  * <p>
- * To get a custom component, create a new interface and extend this one. Then define properties by writing appropriate
+ * To get a custom component, create a new interface and extend this one. Then define getPropertyNames by writing appropriate
  * getters and setters.
  *
  * @see ComponentManager

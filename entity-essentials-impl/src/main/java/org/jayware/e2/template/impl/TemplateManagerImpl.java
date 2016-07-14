@@ -57,7 +57,7 @@ implements TemplateManager
 
             result.setType(component.type());
 
-            for (String name : internal.properties())
+            for (String name : internal.getPropertyNames())
             {
                 PropertyTemplate propertyTemplate = provider.createPropertyTemplate(Object.class);
                 propertyTemplate.setName(name);

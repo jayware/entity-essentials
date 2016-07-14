@@ -42,22 +42,42 @@ public class ComponentStaticInitializerWriter
 
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_STATIC, "<clinit>", "()V");
         methodBuilder.beginMethod();
-        methodBuilder.newInstanceOf(ArrayList.class);
-        methodBuilder.duplicateTopStackElement();
-        methodBuilder.invokeConstructor(ArrayList.class);
-        methodBuilder.storeReferenceVariable(1);
+
+        final int namesList = 1, typesList = 2;
+        final String namesListField = "ourPropertyNames", typesListField = "ourPropertyTypeNames";
+
+        writeNewArrayListInstance(methodBuilder, namesList);
+        writeNewArrayListInstance(methodBuilder, typesList);
 
         for (ComponentPropertyGenerationPlan propertyPlan : componentPlan.getComponentPropertyGenerationPlans())
         {
-            methodBuilder.loadReferenceVariable(1);
+            methodBuilder.loadReferenceVariable(namesList);
             methodBuilder.loadConstant(propertyPlan.getPropertyName());
+            methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
+            methodBuilder.loadReferenceVariable(typesList);
+            methodBuilder.loadConstant(propertyPlan.getPropertyType().getTypeName());
             methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
         }
 
-        methodBuilder.loadReferenceVariable(1);
-        methodBuilder.invokeStaticMethod(Collections.class, "unmodifiableList", List.class, List.class);
-        methodBuilder.storeStaticField(componentPlan.getGeneratedClassInternalName(), "ourProperties", List.class);
+        writeStoreUnmodifiableArrayList(componentPlan.getGeneratedClassInternalName(), methodBuilder, namesList, namesListField);
+        writeStoreUnmodifiableArrayList(componentPlan.getGeneratedClassInternalName(), methodBuilder, typesList, typesListField);
+
         methodBuilder.returnVoid();
         methodBuilder.endMethod();
+    }
+
+    private void writeStoreUnmodifiableArrayList(String classInternalName, MethodBuilder methodBuilder, int index, String field)
+    {
+        methodBuilder.loadReferenceVariable(index);
+        methodBuilder.invokeStaticMethod(Collections.class, "unmodifiableList", List.class, List.class);
+        methodBuilder.storeStaticField(classInternalName, field, List.class);
+    }
+
+    private void writeNewArrayListInstance(MethodBuilder methodBuilder, int index)
+    {
+        methodBuilder.newInstanceOf(ArrayList.class);
+        methodBuilder.duplicateTopStackElement();
+        methodBuilder.invokeConstructor(ArrayList.class);
+        methodBuilder.storeReferenceVariable(index);
     }
 }

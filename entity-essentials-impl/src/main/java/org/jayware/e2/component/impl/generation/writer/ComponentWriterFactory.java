@@ -54,9 +54,14 @@ public class ComponentWriterFactory
         return new ComponentPropertySetterMethodWriter();
     }
 
-    public ComponentPropertiesMethodWriter createPropertiesMethodWriter()
+    public ComponentGetPropertyNamesMethodWriter createGetPropertyNamesMethodWriter()
     {
-        return new ComponentPropertiesMethodWriter();
+        return new ComponentGetPropertyNamesMethodWriter();
+    }
+
+    public ComponentGetPropertyTypeNamesMethodWriter createGetPropertyTypeNamesMethodWriter()
+    {
+        return new ComponentGetPropertyTypeNamesMethodWriter();
     }
 
     public ComponentGetMethodWriter createComponentGetMethodWriter()
