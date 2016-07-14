@@ -28,7 +28,6 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.Entity;
-import org.jayware.e2.entity.api.EntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
@@ -61,8 +60,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.hash;
+import static java.util.UUID.fromString;
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent.ChildRemovedEntityEvent;
+import static org.jayware.e2.entity.api.EntityEvent.ChildrenEntityEvent.ChildRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
@@ -138,7 +139,7 @@ implements Disposable
                 {
                     if (count == depth && id != null)
                     {
-                        currentEntity = new EntityImpl(UUID.fromString(id));
+                        currentEntity = new EntityImpl(fromString(id));
                     }
                     else
                     {
@@ -159,7 +160,7 @@ implements Disposable
                         param(ContextParam, myContext),
                         param(EntityPathParam, currentPath),
                         param(EntityRefParam, lastEntity.getRef()),
-                        param(EntityEvent.ChildrenEntityEvent.ChildRefParam, currentEntity.getRef())
+                        param(ChildRefParam, currentEntity.getRef())
                     );
                 }
 
@@ -180,14 +181,9 @@ implements Disposable
 
     @Handle(DeleteEntityEvent.class)
     public void deleteEntity(@Param(ContextParam) Context context,
-                             @Param(EntityPathParam) EntityPath entityPath)
+                             @Param(EntityIdParam) String id)
     {
         if (!myContext.equals(context))
-        {
-            return;
-        }
-
-        if (entityPath.equals(ROOT_PATH))
         {
             return;
         }
@@ -195,33 +191,31 @@ implements Disposable
         myWriteLock.lock();
         try
         {
-            EntityRefImpl ref = (EntityRefImpl) find(entityPath);
+            final EntityImpl entity = myEntities.get(fromString(id));
+            final EntityPath entityPath = entity.getPath();
+            final EntityImpl parent = entity.getParent();
 
-            if (ref != null)
-            {
-                myEventManager.send(EntityDeletingEvent.class,
-                    param(ContextParam, myContext),
-                    param(EntityPathParam, entityPath)
-                );
+            myEventManager.send(EntityDeletingEvent.class,
+                param(ContextParam, myContext),
+                param(EntityPathParam, entityPath),
+                param(EntityIdParam, id)
+            );
 
-                EntityImpl entity = myEntities.get(ref.identifier());
-                EntityImpl parent = entity.getParent();
+            parent.remove(entity.getName());
+            myEntities.remove(entity.identifier());
 
-                parent.remove(entity.getName());
-                myEntities.remove(entity.identifier());
+            myEventManager.post(ChildRemovedEntityEvent.class,
+                param(ContextParam, myContext),
+                param(EntityPathParam, parent.getPath()),
+                param(EntityRefParam, parent.getRef()),
+                param(ChildRefParam, entity.getRef())
+            );
 
-                myEventManager.post(ChildRemovedEntityEvent.class,
-                    param(ContextParam, myContext),
-                    param(EntityPathParam, entityPath),
-                    param(EntityRefParam, parent.getRef()),
-                    param(EntityEvent.ChildrenEntityEvent.ChildRefParam, entity.getRef())
-                );
-
-                myEventManager.post(EntityDeletedEvent.class,
-                    param(ContextParam, myContext),
-                    param(EntityPathParam, entityPath)
-                );
-            }
+            myEventManager.post(EntityDeletedEvent.class,
+                param(ContextParam, myContext),
+                param(EntityPathParam, entityPath),
+                param(EntityIdParam, id)
+            );
         }
         finally
         {

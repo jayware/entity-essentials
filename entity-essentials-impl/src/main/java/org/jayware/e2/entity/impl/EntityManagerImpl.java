@@ -154,7 +154,12 @@ implements EntityManager
         final Context context = ref.getContext();
         final EventManager eventManager = context.getEventManager();
 
-        eventManager.send(DeleteEntityEvent.class, param(ContextParam, context), param(EntityPathParam, ref.getPath()));
+        eventManager.send(DeleteEntityEvent.class,
+            param(ContextParam, context),
+            param(EntityRefParam, ref),
+            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId())
+        );
     }
 
     @Override

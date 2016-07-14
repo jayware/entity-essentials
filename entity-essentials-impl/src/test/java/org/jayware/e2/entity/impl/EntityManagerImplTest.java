@@ -24,16 +24,28 @@ package org.jayware.e2.entity.impl;
 
 import mockit.Expectations;
 import mockit.Mocked;
+import mockit.Verifications;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
+import org.jayware.e2.entity.api.EntityEvent;
+import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityNotFoundException;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.event.api.EventManager;
+import org.jayware.e2.event.api.Parameters;
+import org.jayware.e2.event.api.Parameters.Parameter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
+import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityPath.path;
+import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
+import static org.jayware.e2.event.api.Parameters.param;
 
 
 public class EntityManagerImplTest
@@ -41,13 +53,20 @@ public class EntityManagerImplTest
     private Context context;
     private EntityManager testee;
 
-    private @Mocked Context mockedContext;
+    private @Mocked Context testContext;
+    private @Mocked EventManager testEventManager;
+    private @Mocked EntityRef testRef;
 
     @BeforeMethod
     public void setup()
     {
         context = ContextProvider.getInstance().createContext();
         testee = new EntityManagerImpl();
+
+        new Expectations()
+        {{
+            testContext.getService(EventManager.class); result = testEventManager; minTimes = 0;
+        }};
     }
 
     @Test
@@ -98,6 +117,32 @@ public class EntityManagerImplTest
         testee.deleteEntity(ref);
 
         assertThat(testee.findEntity(context, path("/a/b"))).isNull();
+        assertThat(ref.isInvalid()).isTrue();
+    }
+
+    @Test
+    public void test_deleteEntity_Fires_DeleteEntityEvent_with_expected_parameters()
+    throws Exception
+    {
+        final String id = UUID.randomUUID().toString();
+
+        new Expectations()
+        {{
+            testRef.getId(); result = id;
+        }};
+
+        testee.deleteEntity(testRef);
+
+        new Verifications()
+        {{
+            final Parameter[] parameters;
+
+            testEventManager.send(DeleteEntityEvent.class, parameters = withCapture());
+
+            assertThat(parameters).contains(param(ContextParam, testContext));
+            assertThat(parameters).contains(param(EntityRefParam, testRef));
+            assertThat(parameters).contains(param(EntityIdParam, id));
+        }};
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
@@ -163,9 +208,9 @@ public class EntityManagerImplTest
     throws Exception
     {
         new Expectations() {{
-            mockedContext.isDisposed(); result = true;
+            testContext.isDisposed(); result = true;
         }};
 
-        testee.asContextual(mockedContext);
+        testee.asContextual(testContext);
     }
 }
