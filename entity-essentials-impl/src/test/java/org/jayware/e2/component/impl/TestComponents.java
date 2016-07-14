@@ -147,5 +147,37 @@ public class TestComponents
         String getString();
 
         void setString(String value);
+
+        boolean[] getPrimitiveBooleanArray();
+
+        void setPrimitiveBooleanArray(boolean[] value);
+
+        byte[] getPrimitiveByteArray();
+
+        void setPrimitiveByteArray(byte[] value);
+
+        short[] getPrimitiveShortArray();
+
+        void setPrimitiveShortArray(short[] value);
+
+        int[] getPrimitiveIntegerArray();
+
+        void setPrimitiveIntegerArray(int[] value);
+
+        long[] getPrimitiveLongArray();
+
+        void setPrimitiveLongArray(long[] value);
+
+        float[] getPrimitiveFloatArray();
+
+        void setPrimitiveFloatArray(float[] value);
+
+        double[] getPrimitiveDoubleArray();
+
+        void setPrimitiveDoubleArray(double[] value);
+
+        String[] getStringArray();
+
+        void setStringArray(String[] value);
     }
 }

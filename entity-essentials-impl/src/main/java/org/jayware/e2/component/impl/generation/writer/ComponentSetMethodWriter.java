@@ -28,9 +28,11 @@ import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
+import org.objectweb.asm.Type;
 
 import static org.jayware.e2.component.impl.generation.asm.MethodBuilder.createMethodBuilder;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.boxed;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.boxedArray;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBooleanPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isDoublePrimitiveType;
@@ -42,7 +44,9 @@ import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectType
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveArrayType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
+import static org.objectweb.asm.Opcodes.AALOAD;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.IASTORE;
 
 
 public class ComponentSetMethodWriter
@@ -67,7 +71,7 @@ public class ComponentSetMethodWriter
             builder.invokeVirtualMethod(String.class, "equals", boolean.class, Object.class);
             builder.jumpIfEquals(fail);
 
-            if (isObjectType(propertyType))
+            if (isObjectType(propertyType) || isObjectArrayType(propertyType))
             {
                 final Label endIfNull = new Label();
                 final Label store = new Label();
@@ -152,75 +156,128 @@ public class ComponentSetMethodWriter
                 builder.push_1i();
                 builder.returnValue(boolean.class);
             }
-            else if (isObjectArrayType(propertyType))
-            {
-//                visitor.visitVarInsn(ALOAD, 2);
-//                visitor.visitInsn(ICONST_1);
-//                visitor.visitVarInsn(ALOAD, 2);
-//                visitor.visitMethodInsn(INVOKEVIRTUAL, getInternalName(String.class), "length", "()I", false);
-//                visitor.visitInsn(ICONST_1);
-//                visitor.visitInsn(ISUB);
-//                visitor.visitMethodInsn(INVOKEVIRTUAL, getInternalName(String.class), "substring", "(II)" + getDescriptor(String.class), false);
-//                visitor.visitVarInsn(ASTORE, 2);
-//                visitor.visitVarInsn(ALOAD, 2);
-//                visitor.visitLdcInsn(", ");
-//                visitor.visitMethodInsn(INVOKEVIRTUAL, getInternalName(String.class), "split", "(" + getDescriptor(String.class) + ")[" + getDescriptor(String.class), false);
-//                visitor.visitVarInsn(ASTORE, 3);
-//                visitor.visitVarInsn(ALOAD, 3);
-//                visitor.visitInsn(ARRAYLENGTH);
-//                visitor.visitIntInsn(NEWARRAY, resolveOpcodePrimitiveType(propertyType.getComponentType()));
-//                visitor.visitVarInsn(ASTORE, 4);
-//                final Label endForLoop = new Label();
-//                final Label headForLoop = new Label();
-//                visitor.visitInsn(ICONST_0);
-//                visitor.visitVarInsn(ISTORE, 5);
-//                visitor.visitLabel(headForLoop);
-//                visitor.visitVarInsn(ILOAD, 5);
-//                visitor.visitVarInsn(ALOAD, 3);
-//                visitor.visitInsn(ARRAYLENGTH);
-//                visitor.visitJumpInsn(IF_ICMPGE, endForLoop);
-//                visitor.visitVarInsn(ALOAD, 4);
-//                visitor.visitVarInsn(ILOAD, 5);
-//                visitor.visitVarInsn(ALOAD, 3);
-//                visitor.visitVarInsn(ILOAD, 5);
-//                visitor.visitInsn(AALOAD);
-//
-//                if (isBooleanPrimitiveArrayType(propertyType))
-//                {
-//                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Boolean.class), "parseBoolean", "(Ljava/lang/String;)Z", false);
-//                }
-//                else if (isBytePrimitiveArrayType(propertyType))
-//                {
-//                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Byte.class), "parseByte", "(Ljava/lang/String;)B", false);
-//                }
-//                else if (isShortPrimitiveArrayType(propertyType))
-//                {
-//                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Short.class), "parseShort", "(Ljava/lang/String;)S", false);
-//                }
-//                else if (isIntegerPrimitiveArrayType(propertyType))
-//                {
-//                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), "parseInt", "(Ljava/lang/String;)I", false);
-//                }
-//                else if (isFloatPrimitiveArrayType(propertyType))
-//                {
-//                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Float.class), "parseFloat", "(Ljava/lang/String;)F", false);
-//                }
-//                else if (isDoublePrimitiveArrayType(propertyType))
-//                {
-//                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Double.class), "parseDouble", "(Ljava/lang/String;)D", false);
-//                }
-//
-//                visitor.visitInsn(getType(propertyType.getComponentType()).getOpcode(IASTORE));
-//
-//                visitor.visitIincInsn(5, 1);
-//                visitor.visitJumpInsn(GOTO, headForLoop);
-//                visitor.visitLabel(endForLoop);
-//                visitor.visitVarInsn(ALOAD, 4);
-//                throw new ComponentFactoryException();
-            }
             else if (isPrimitiveArrayType(propertyType))
             {
-//                throw new ComponentFactoryException();
+                final Label endifNull = new Label();
+                final Label endIfTypeNotMatch = new Label();
+                final Class<?> arrayComponentType = propertyType.getComponentType();
+
+                builder.loadVariable(2, Object.class);
+                builder.jumpIfNull(endifNull);
+
+                builder.loadVariable(2, Object.class);
+                builder.invokeVirtualMethod(Object.class, "getClass", Class.class);
+                builder.storeVariable(3, Class.class);
+                builder.loadVariable(3, Class.class);
+                builder.invokeVirtualMethod(Class.class, "isArray", boolean.class);
+                builder.jumpIfEquals(endIfTypeNotMatch);
+
+                builder.loadConstant(boxed(arrayComponentType));
+                builder.loadVariable(3, Class.class);
+                builder.invokeVirtualMethod(Class.class, "getComponentType", Class.class);
+                builder.invokeVirtualMethod(Class.class, "equals", boolean.class, Object.class);
+                builder.jumpIfEquals(endIfTypeNotMatch);
+
+                builder.loadVariable(2, Object.class);
+                builder.castTo(boxedArray(propertyType));
+                builder.storeVariable(4, boxedArray(propertyType));
+                builder.loadVariable(4, boxedArray(propertyType));
+                builder.arrayLength();
+                builder.newPrimitiveArray(propertyType.getComponentType());
+                builder.storeVariable(5, propertyType);
+                builder.push_0i();
+                builder.storeVariable(6, int.class);
+
+                final Label headForLoop = new Label();
+                final Label endForLoop = new Label();
+                builder.label(headForLoop);
+                builder.loadVariable(6, int.class);
+                builder.loadVariable(4, boxedArray(propertyType));
+                builder.arrayLength();
+                builder.jumpIfIntIsEqualsOrGreater(endForLoop);
+
+                builder.loadVariable(4, boxedArray(propertyType));
+                builder.loadVariable(6, int.class);
+                builder.custom().visitInsn(AALOAD);
+
+                final Label ifNotNull = new Label();
+                final Label endIf = new Label();
+                builder.jumpIfNotNull(ifNotNull);
+
+                builder.loadVariable(5, propertyType);
+                builder.loadVariable(6, int.class);
+                builder.push_0(arrayComponentType);
+                builder.custom().visitInsn(Type.getType(arrayComponentType).getOpcode(IASTORE));
+
+                builder.jumpTo(endIf);
+                builder.label(ifNotNull);
+
+                builder.loadVariable(5, propertyType);
+                builder.loadVariable(6, int.class);
+
+                builder.loadVariable(4, boxedArray(propertyType));
+                builder.loadVariable(6, int.class);
+                builder.custom().visitInsn(AALOAD);
+
+                builder.castTo(boxed(arrayComponentType));
+
+                if (isBooleanPrimitiveType(arrayComponentType))
+                {
+                    builder.invokeVirtualMethod(Boolean.class, "booleanValue", boolean.class);
+                }
+                else if (isBytePrimitiveType(arrayComponentType))
+                {
+                    builder.invokeVirtualMethod(Byte.class, "byteValue", byte.class);
+                }
+                else if (isShortPrimitiveType(arrayComponentType))
+                {
+                    builder.invokeVirtualMethod(Short.class, "shortValue", short.class);
+                }
+                else if (isIntegerPrimitiveType(arrayComponentType))
+                {
+                    builder.invokeVirtualMethod(Integer.class, "intValue", int.class);
+                }
+                else if (isLongPrimitiveType(arrayComponentType))
+                {
+                    builder.invokeVirtualMethod(Long.class, "longValue", long.class);
+                }
+                else if (isFloatPrimitiveType(arrayComponentType))
+                {
+                    builder.invokeVirtualMethod(Float.class, "floatValue", float.class);
+                }
+                else if (isDoublePrimitiveType(arrayComponentType))
+                {
+                    builder.invokeVirtualMethod(Double.class, "doubleValue", double.class);
+                }
+                else
+                {
+                    throw new ComponentFactoryException();
+                }
+
+                builder.custom().visitInsn(Type.getType(arrayComponentType).getOpcode(IASTORE));
+
+                builder.label(endIf);
+
+                builder.incrementInt(6, 1);
+                builder.jumpTo(headForLoop);
+                builder.label(endForLoop);
+
+                builder.loadThis();
+                builder.loadVariable(5, propertyType);
+                builder.storeField(classInternalName, propertyName, propertyType);
+                builder.push_1i();
+                builder.returnValue(boolean.class);
+
+                builder.label(endIfTypeNotMatch);
+                builder.push_0i();
+                builder.returnValue(boolean.class);
+
+                builder.label(endifNull);
+                builder.loadThis();
+                builder.pushNull();
+                builder.storeField(classInternalName, propertyName, propertyType);
+                builder.push_1i();
+                builder.returnValue(boolean.class);
             }
             else
             {

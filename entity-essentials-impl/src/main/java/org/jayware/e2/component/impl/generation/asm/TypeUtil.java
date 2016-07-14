@@ -64,37 +64,42 @@ public class TypeUtil
 
     public static boolean isObjectArrayType(Class<?> type)
     {
-        return type.isArray() && !type.getComponentType().isPrimitive();
+        return type.isArray() && isObjectType(type.getComponentType());
     }
 
     public static boolean isDoublePrimitiveArrayType(Class<?> type)
     {
-        return double.class.equals(type.getComponentType());
+        return type.isArray() && double.class.equals(type.getComponentType());
     }
 
     public static boolean isFloatPrimitiveArrayType(Class<?> type)
     {
-        return float.class.equals(type.getComponentType());
+        return type.isArray() && float.class.equals(type.getComponentType());
+    }
+
+    public static boolean isLongPrimitiveArrayType(Class<?> type)
+    {
+        return type.isArray() && long.class.equals(type.getComponentType());
     }
 
     public static boolean isIntegerPrimitiveArrayType(Class<?> type)
     {
-        return int.class.equals(type.getComponentType());
+        return type.isArray() && int.class.equals(type.getComponentType());
     }
 
     public static boolean isShortPrimitiveArrayType(Class<?> type)
     {
-        return short.class.equals(type.getComponentType());
+        return type.isArray() && short.class.equals(type.getComponentType());
     }
 
     public static boolean isBytePrimitiveArrayType(Class<?> type)
     {
-        return byte.class.equals(type.getComponentType());
+        return type.isArray() && byte.class.equals(type.getComponentType());
     }
 
     public static boolean isBooleanPrimitiveArrayType(Class<?> type)
     {
-        return boolean.class.equals(type.getComponentType());
+        return type.isArray() && boolean.class.equals(type.getComponentType());
     }
 
     public static boolean isObjectType(Class<?> type)
@@ -176,6 +181,42 @@ public class TypeUtil
         else if (isDoublePrimitiveType(type))
         {
             return Double.class;
+        }
+        else
+        {
+            throw new RuntimeException();
+        }
+    }
+
+    public static Class boxedArray(Class type)
+    {
+        if (isBooleanPrimitiveArrayType(type))
+        {
+            return Boolean[].class;
+        }
+        else if (isBytePrimitiveArrayType(type))
+        {
+            return Byte[].class;
+        }
+        else if (isShortPrimitiveArrayType(type))
+        {
+            return Short[].class;
+        }
+        else if (isIntegerPrimitiveArrayType(type))
+        {
+            return Integer[].class;
+        }
+        else if (isLongPrimitiveArrayType(type))
+        {
+            return Long[].class;
+        }
+        else if (isFloatPrimitiveArrayType(type))
+        {
+            return Float[].class;
+        }
+        else if (isDoublePrimitiveArrayType(type))
+        {
+            return Double[].class;
         }
         else
         {

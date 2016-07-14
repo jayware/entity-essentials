@@ -34,9 +34,11 @@ import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isFloatPrimi
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isIntegerPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isLongPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.resolveOpcodePrimitiveType;
 import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.ARRAYLENGTH;
 import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.objectweb.asm.Opcodes.ATHROW;
 import static org.objectweb.asm.Opcodes.CHECKCAST;
@@ -52,6 +54,7 @@ import static org.objectweb.asm.Opcodes.IFEQ;
 import static org.objectweb.asm.Opcodes.IFNE;
 import static org.objectweb.asm.Opcodes.IFNONNULL;
 import static org.objectweb.asm.Opcodes.IFNULL;
+import static org.objectweb.asm.Opcodes.IF_ICMPGE;
 import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
@@ -61,6 +64,7 @@ import static org.objectweb.asm.Opcodes.IRETURN;
 import static org.objectweb.asm.Opcodes.ISTORE;
 import static org.objectweb.asm.Opcodes.LCONST_0;
 import static org.objectweb.asm.Opcodes.NEW;
+import static org.objectweb.asm.Opcodes.NEWARRAY;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
@@ -292,6 +296,11 @@ public class MethodBuilder
         myVisitor.visitJumpInsn(GOTO, label);
     }
 
+    public void jumpIfIntIsEqualsOrGreater(Label label)
+    {
+        myVisitor.visitJumpInsn(IF_ICMPGE, label);
+    }
+
     public void label(Label label)
     {
         myVisitor.visitLabel(label);
@@ -305,6 +314,21 @@ public class MethodBuilder
     public void swap()
     {
         myVisitor.visitInsn(SWAP);
+    }
+
+    public void incrementInt(int index, int increment)
+    {
+        myVisitor.visitIincInsn(index, increment);
+    }
+
+    public void arrayLength()
+    {
+        myVisitor.visitInsn(ARRAYLENGTH);
+    }
+
+    public void newPrimitiveArray(Class<?> type)
+    {
+        myVisitor.visitIntInsn(NEWARRAY, resolveOpcodePrimitiveType(type));
     }
 
     private static String getMethodDescriptor(Class<?> returnType, Class<?>... parameterTypes)

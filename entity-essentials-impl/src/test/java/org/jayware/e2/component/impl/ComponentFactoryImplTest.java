@@ -78,4 +78,19 @@ public class ComponentFactoryImplTest
     {
         testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
     }
+
+    private static class Fubar
+    {
+        private String[] values;
+
+        public void bar()
+        {
+            fubar(new Integer[] {1, 2});
+        }
+
+        public void fubar(Object value)
+        {
+            values = (String[]) value;
+        }
+    }
 }
