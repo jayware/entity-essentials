@@ -27,6 +27,7 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.ContextualEntityManager;
 import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
+import org.jayware.e2.entity.api.EntityEvent.DeleteAllEntitiesEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityNotFoundException;
@@ -152,7 +153,7 @@ implements EntityManager
         }
 
         final Context context = ref.getContext();
-        final EventManager eventManager = context.getEventManager();
+        final EventManager eventManager = context.getService(EventManager.class);
 
         eventManager.send(DeleteEntityEvent.class,
             param(ContextParam, context),
@@ -160,6 +161,15 @@ implements EntityManager
             param(EntityPathParam, ref.getPath()),
             param(EntityIdParam, ref.getId())
         );
+    }
+
+    @Override
+    public void deleteEntities(Context context)
+    {
+        checkContextNotNullAndNotDisposed(context);
+
+        final EventManager eventManager = context.getService(EventManager.class);
+        eventManager.send(DeleteAllEntitiesEvent.class, param(ContextParam, context));
     }
 
     @Override

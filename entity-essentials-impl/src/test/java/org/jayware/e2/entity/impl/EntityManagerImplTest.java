@@ -27,13 +27,12 @@ import mockit.Mocked;
 import mockit.Verifications;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
-import org.jayware.e2.entity.api.EntityEvent;
+import org.jayware.e2.entity.api.EntityEvent.DeleteAllEntitiesEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityNotFoundException;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -142,6 +141,41 @@ public class EntityManagerImplTest
             assertThat(parameters).contains(param(ContextParam, testContext));
             assertThat(parameters).contains(param(EntityRefParam, testRef));
             assertThat(parameters).contains(param(EntityIdParam, id));
+        }};
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_deleteEntities_Throws_IllegalArgumentException_if_passed_context_is_null()
+    throws Exception
+    {
+        testee.deleteEntities(null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_deleteEntities_Throws_IllegalStateException_if_passed_context_has_been_disposed()
+    throws Exception
+    {
+        new Expectations()
+        {{
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.deleteEntities(testContext);
+    }
+
+    @Test
+    public void test_deleteEntities_Fires_DeleteAllEntitiesEvent_with_expected_parameters()
+    throws Exception
+    {
+        testee.deleteEntities(testContext);
+
+        new Verifications()
+        {{
+            final Parameter[] parameters;
+
+            testEventManager.send(DeleteAllEntitiesEvent.class, parameters = withCapture());
+
+            assertThat(parameters).contains(param(ContextParam, testContext));
         }};
     }
 

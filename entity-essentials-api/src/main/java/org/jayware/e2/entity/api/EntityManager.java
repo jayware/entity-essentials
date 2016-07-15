@@ -94,6 +94,17 @@ public interface EntityManager
     void deleteEntity(EntityRef ref);
 
     /**
+     * Deletes all {@link Entity Entities} from the specified {@link Context}.
+     *
+     * @param context a {@link Context} to use.
+     *
+     * @throws IllegalArgumentException if the passed {@link Context} is <code>null</code>.
+     *
+     * @throws IllegalStateException if the passed {@link Context} has been disposed.
+     */
+    void deleteEntities(Context context) throws IllegalArgumentException, IllegalStateException;
+
+    /**
      * Moves an {@link Entity} from its current parent to an other one.
      * <p>
      * <b>Note:</b> It is not possible to move an {@link Entity} into an other

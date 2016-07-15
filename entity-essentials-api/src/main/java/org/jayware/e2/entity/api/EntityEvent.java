@@ -58,6 +58,8 @@ extends RootEvent
 
     interface DeleteEntityEvent extends EntityEvent {}
 
+    interface DeleteAllEntitiesEvent extends EntityEvent {}
+
     interface EntityDeletingEvent extends EntityEvent {}
 
     @SanityCheck(EntityChangedEvent.EntityChangedEventSanityChecker.class)

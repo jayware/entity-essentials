@@ -31,6 +31,7 @@ import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
+import org.jayware.e2.entity.api.EntityEvent.DeleteAllEntitiesEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.EntityCreatedEvent;
 import org.jayware.e2.entity.api.EntityEvent.EntityDeletedEvent;
@@ -195,11 +196,7 @@ implements Disposable
             final EntityPath entityPath = entity.getPath();
             final EntityImpl parent = entity.getParent();
 
-            myEventManager.send(EntityDeletingEvent.class,
-                param(ContextParam, myContext),
-                param(EntityPathParam, entityPath),
-                param(EntityIdParam, id)
-            );
+            fireEntityDeletingEvent(entity.getRef());
 
             parent.remove(entity.getName());
             myEntities.remove(entity.identifier());
@@ -217,6 +214,33 @@ implements Disposable
                 param(EntityRefParam, parent.getRef()),
                 param(EntityIdParam, id)
             );
+        }
+        finally
+        {
+            myWriteLock.unlock();
+        }
+    }
+
+    @Handle(DeleteAllEntitiesEvent.class)
+    public void deleteAllEntities(@Param(ContextParam) Context context)
+    {
+        if (!myContext.equals(context))
+        {
+            return;
+        }
+
+        myWriteLock.lock();
+        try
+        {
+            for (EntityImpl entity : myEntities.values())
+            {
+                if (!entity.getPath().equals(EntityPath.ROOT_PATH))
+                {
+                    fireEntityDeletingEvent(entity.getRef());
+                    myEntities.remove(entity.identifier());
+                    fireEntityDeletedEvent(entity.getRef());
+                }
+            }
         }
         finally
         {
@@ -478,6 +502,26 @@ implements Disposable
         {
             myWriteLock.unlock();
         }
+    }
+
+    private void fireEntityDeletingEvent(EntityRef ref)
+    {
+        myEventManager.send(EntityDeletingEvent.class,
+        param(ContextParam, myContext),
+        param(EntityPathParam, ref.getPath()),
+        param(EntityRefParam, ref),
+        param(EntityIdParam, ref.getId())
+        );
+    }
+
+    private void fireEntityDeletedEvent(EntityRef ref)
+    {
+        myEventManager.send(EntityDeletedEvent.class,
+        param(ContextParam, myContext),
+        param(EntityPathParam, ref.getPath()),
+        param(EntityRefParam, ref),
+        param(EntityIdParam, ref.getId())
+        );
     }
 
     private class EntityImpl
