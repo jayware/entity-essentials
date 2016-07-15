@@ -42,6 +42,7 @@ import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Disposable;
+import org.jayware.e2.entity.api.EntityEvent.EntityDeletedEvent;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
@@ -337,6 +338,33 @@ implements Disposable
         finally
         {
             myReadLock.unlock();
+        }
+    }
+
+    @Handle(EntityDeletedEvent.class)
+    public void handleEntityDeletedEvent(@Param(EntityRefParam) EntityRef ref)
+    {
+        myWriteLock.lock();
+        try
+        {
+            for (Component component : getComponents(ref))
+            {
+                Map<EntityRef, Component> row = myComponentDatabase.get(component.type());
+
+                if (row != null)
+                {
+                    final Component instance = row.get(ref);
+
+                    if (instance != null)
+                    {
+                        row.remove(ref);
+                    }
+                }
+            }
+        }
+        finally
+        {
+            myWriteLock.unlock();
         }
     }
 
