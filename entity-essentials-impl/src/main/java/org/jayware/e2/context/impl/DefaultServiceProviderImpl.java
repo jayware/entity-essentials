@@ -33,9 +33,9 @@ public class DefaultServiceProviderImpl
 implements ServiceProvider
 {
     @Override
-    public <S> S getService(Class<? extends S> service)
+    public <S> S getService(Class<? extends S> service,ClassLoader loader)
     {
-        final S result = findService(service);
+        final S result = findService(service, loader);
 
         if (result == null)
         {
@@ -46,9 +46,9 @@ implements ServiceProvider
     }
 
     @Override
-    public <S> S findService(Class<? extends S> service)
+    public <S> S findService(Class<? extends S> service, ClassLoader loader)
     {
-        final Iterator<? extends S> iterator = ServiceLoader.load(service).iterator();
+        final Iterator<? extends S> iterator = ServiceLoader.load(service, loader).iterator();
 
         if (iterator.hasNext())
         {

@@ -39,93 +39,96 @@ public class DefaultServiceProviderImplTest
 {
     private ServiceProvider testee;
 
+    private ClassLoader testClassLoader;
+
     @BeforeMethod
     public void setUp()
     {
         testee = new DefaultServiceProviderImpl();
+        testClassLoader = getClass().getClassLoader();
     }
 
     @Test(expectedExceptions = ServiceUnavailableException.class)
     public void test_getService_ThrowsServiceUnavailableExceptionIfASuitableServiceCouldNotBeFound()
     {
-        testee.getService(UnavailableTestService.class);
+        testee.getService(UnavailableTestService.class, testClassLoader);
     }
 
     @Test
     public void test_getService_CanLoadEntityManager()
     {
-        assertThat(testee.getService(EntityManager.class)).isNotNull();
+        assertThat(testee.getService(EntityManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_getService_CanLoadComponentManager()
     {
-        assertThat(testee.getService(ComponentManager.class)).isNotNull();
+        assertThat(testee.getService(ComponentManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_getService_CanLoadEventManager()
     {
-        assertThat(testee.getService(EventManager.class)).isNotNull();
+        assertThat(testee.getService(EventManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_getService_CanLoadBindingManager()
     {
-        assertThat(testee.getService(BindingManager.class)).isNotNull();
+        assertThat(testee.getService(BindingManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_getService_CanLoadTemplateManager()
     {
-        assertThat(testee.getService(TemplateManager.class)).isNotNull();
+        assertThat(testee.getService(TemplateManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_getService_CanLoadGroupManager()
     {
-        assertThat(testee.getService(GroupManager.class)).isNotNull();
+        assertThat(testee.getService(GroupManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_findService_ReturnsNullIfASuitableServiceCouldNotBeFound()
     {
-        assertThat(testee.findService(UnavailableTestService.class)).isNull();
+        assertThat(testee.findService(UnavailableTestService.class, testClassLoader)).isNull();
     }
 
     @Test
     public void test_findService_CanLoadEntityManager()
     {
-        assertThat(testee.findService(EntityManager.class)).isNotNull();
+        assertThat(testee.findService(EntityManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_findService_CanLoadComponentManager()
     {
-        assertThat(testee.findService(ComponentManager.class)).isNotNull();
+        assertThat(testee.findService(ComponentManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_findService_CanLoadEventManager()
     {
-        assertThat(testee.findService(EventManager.class)).isNotNull();
+        assertThat(testee.findService(EventManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_findService_CanLoadBindingManager()
     {
-        assertThat(testee.findService(BindingManager.class)).isNotNull();
+        assertThat(testee.findService(BindingManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_findService_CanLoadTemplateManager()
     {
-        assertThat(testee.findService(TemplateManager.class)).isNotNull();
+        assertThat(testee.findService(TemplateManager.class, testClassLoader)).isNotNull();
     }
 
     @Test
     public void test_findService_CanLoadGroupManager()
     {
-        assertThat(testee.findService(GroupManager.class)).isNotNull();
+        assertThat(testee.findService(GroupManager.class, testClassLoader)).isNotNull();
     }
 }

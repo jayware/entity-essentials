@@ -35,7 +35,9 @@ public interface TemplateManager
 {
 //    <T extends EntityTemplate> T exportEntity(EntityRef ref, T template) throws IllegalArgumentException, IllegalStateException, ExportException;
 
-//    EntityRef importEntity(Context context, EntityTemplate template) throws IllegalArgumentException, IllegalStateException, ImportException;
+//    <T extends EntityTemplate> EntityRef importEntity(Context context, T template) throws IllegalArgumentException, IllegalStateException, ImportException;
+
+//    <T extends EntityTemplate> EntityRef importEntity(EntityRef ref, T template) throws IllegalArgumentException, IllegalStateException, ImportException;
 
     <T extends ComponentTemplate> T exportComponent(Component component, TemplateProvider provider) throws IllegalArgumentException, IllegalStateException, ExportException;
 

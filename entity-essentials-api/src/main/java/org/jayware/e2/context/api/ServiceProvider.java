@@ -34,13 +34,14 @@ public interface ServiceProvider
      * a {@link ServiceUnavailableException} if a suitable service could not be found.
      *
      * @param service a {@link Class} representing the service's interface.
+     * @param loader a {@link ClassLoader} used to load the {@link Class}.
      * @param <S> the type of the service.
      *
      * @return a service instance, never <code>null</code>.
      *
      * @throws ServiceUnavailableException if no suitable service could be found.
      */
-    <S> S getService(Class<? extends S> service) throws ServiceUnavailableException;
+    <S> S getService(Class<? extends S> service, ClassLoader loader) throws ServiceUnavailableException;
 
     /**
      * Returns the service which offers the interface denoted by the specified {@link Class}.
@@ -49,9 +50,10 @@ public interface ServiceProvider
      * <code>null</code> if a suitable service could not be found.
      *
      * @param service a {@link Class} representing the service's interface.
+     * @param loader a {@link ClassLoader} used to load the {@link Class}.
      * @param <S> the type of the service.
      *
      * @return a service instance or <code>null</code> if a suitable could not be found.
      */
-    <S> S findService(Class<? extends S> service);
+    <S> S findService(Class<? extends S> service, ClassLoader loader);
 }

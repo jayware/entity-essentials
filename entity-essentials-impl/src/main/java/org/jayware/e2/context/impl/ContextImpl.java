@@ -385,13 +385,13 @@ implements Context
         @Override
         public <S> S getService(Class<? extends S> service)
         {
-            return myServiceProvider.getService(service);
+            return myServiceProvider.getService(service, getClass().getClassLoader());
         }
 
         @Override
         public <S> S findService(Class<? extends S> service)
         {
-            return myServiceProvider.findService(service);
+            return myServiceProvider.findService(service, getClass().getClassLoader());
         }
 
         @Override

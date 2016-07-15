@@ -62,17 +62,21 @@ public class ContextImplTest
     final Key<Object> keyA = createKey("foo");
     final Key<Object> keyB = createKey("bar");
 
+    private ClassLoader testClassLoader;
+
     @BeforeMethod
     public void setup()
     {
         initMocks(this);
 
-        when(serviceProvider.getService(EntityManager.class)).thenReturn(entityManager);
-        when(serviceProvider.getService(ComponentManager.class)).thenReturn(componentManager);
-        when(serviceProvider.getService(BindingManager.class)).thenReturn(bindingManager);
-        when(serviceProvider.getService(TemplateManager.class)).thenReturn(templateManager);
-        when(serviceProvider.getService(EventManager.class)).thenReturn(eventManager);
-        when(serviceProvider.getService(GroupManager.class)).thenReturn(myGroupManager);
+        testClassLoader = getClass().getClassLoader();
+
+        when(serviceProvider.getService(EntityManager.class, testClassLoader)).thenReturn(entityManager);
+        when(serviceProvider.getService(ComponentManager.class, testClassLoader)).thenReturn(componentManager);
+        when(serviceProvider.getService(BindingManager.class, testClassLoader)).thenReturn(bindingManager);
+        when(serviceProvider.getService(TemplateManager.class, testClassLoader)).thenReturn(templateManager);
+        when(serviceProvider.getService(EventManager.class, testClassLoader)).thenReturn(eventManager);
+        when(serviceProvider.getService(GroupManager.class, testClassLoader)).thenReturn(myGroupManager);
 
         testee = new ContextImpl(serviceProvider);
     }
