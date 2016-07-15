@@ -21,6 +21,7 @@
  */
 package org.jayware.e2.entity.impl;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.jayware.e2.component.api.Aspect;
@@ -50,7 +51,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.UUID;
@@ -58,8 +58,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static com.google.common.base.Objects.equal;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.hash;
 import static java.util.UUID.fromString;
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent.ChildRemovedEntityEvent;
@@ -214,6 +214,7 @@ implements Disposable
             myEventManager.post(EntityDeletedEvent.class,
                 param(ContextParam, myContext),
                 param(EntityPathParam, entityPath),
+                param(EntityRefParam, parent.getRef()),
                 param(EntityIdParam, id)
             );
         }
@@ -656,13 +657,14 @@ implements Disposable
                 return false;
             }
 
-            return Objects.equals(myIdentifier, ((EntityRefImpl) other).myIdentifier);
+            return equal(myIdentifier, ((EntityRefImpl) other).myIdentifier) &&
+                   equal(getContext(), ((EntityRefImpl) other).getContext());
         }
 
         @Override
         public int hashCode()
         {
-            return hash(myIdentifier);
+            return Objects.hashCode(myIdentifier, getContext());
         }
 
         @Override
