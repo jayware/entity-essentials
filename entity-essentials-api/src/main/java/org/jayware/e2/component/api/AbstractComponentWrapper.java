@@ -27,6 +27,8 @@ import org.jayware.e2.entity.api.EntityRef;
 
 import java.lang.reflect.ParameterizedType;
 
+import static org.jayware.e2.util.TypeUtil.getTypeName;
+
 
 /**
  * The <code>AbstractComponentWrapper</code> class forms a base for component wrappers and provides a couple of
@@ -84,7 +86,7 @@ implements ComponentWrapper<W, C>
 
         ParameterizedType parameterizedType = (ParameterizedType) wrapperClass.getGenericSuperclass();
 
-        if (parameterizedType.getRawType().getTypeName().equals(AbstractComponentWrapper.class.getTypeName()))
+        if (getTypeName(parameterizedType.getRawType()).equals(getTypeName(AbstractComponentWrapper.class)))
         {
             return (Class) parameterizedType.getActualTypeArguments()[1];
         }

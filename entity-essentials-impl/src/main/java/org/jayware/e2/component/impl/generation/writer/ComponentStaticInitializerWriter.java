@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jayware.e2.util.TypeUtil.getTypeName;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 
@@ -55,7 +56,7 @@ public class ComponentStaticInitializerWriter
             methodBuilder.loadConstant(propertyPlan.getPropertyName());
             methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
             methodBuilder.loadReferenceVariable(typesList);
-            methodBuilder.loadConstant(propertyPlan.getPropertyType().getTypeName());
+            methodBuilder.loadConstant(getTypeName(propertyPlan.getPropertyType()));
             methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
         }
 

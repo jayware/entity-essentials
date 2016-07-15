@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.jayware.e2.util.Preconditions.checkNotNull;
+import static org.jayware.e2.util.TypeUtil.getTypeName;
 
 
 public class ComponentPropertyAdapterProviderImpl
@@ -86,7 +87,7 @@ implements ComponentPropertyAdapterProvider
             {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
 
-                if (parameterizedType.getRawType().getTypeName().equals(ComponentPropertyAdapter.class.getTypeName()))
+                if (getTypeName(parameterizedType.getRawType()).equals(getTypeName(ComponentPropertyAdapter.class)))
                 {
                     return (Class) parameterizedType.getActualTypeArguments()[0];
                 }
