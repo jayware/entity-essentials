@@ -5,6 +5,15 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'osgi'
 
+def versionPropsFile = file('build.properties')
+def Properties versionProps = new Properties()
+versionProps.load(new FileInputStream(versionPropsFile))
+def buildNumber = versionProps['buildNumber'].toInteger() + 1
+versionProps['buildNumber'] = buildNumber.toString()
+versionProps.store(versionPropsFile.newWriter(), null)
+
+version="${currentVersion}-${buildNumber}"
+
 ext.projectObjectModel = pom {
     project {
         groupId project.group
@@ -154,8 +163,10 @@ jar {
     }
 }
 
-task dist(type: Copy, dependsOn: jar) {
+task dist(type: Copy) {
     from jar
+    from sourcesJar
+    from javadocJar
     from generatePom
     into file("${rootProject.buildDir}/distribution")
 }
