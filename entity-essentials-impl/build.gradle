@@ -122,7 +122,7 @@ artifactoryPublish {
 }
 
 task generatePom {
-    def pomFile = "${buildDir}/tmp/jar/pom.xml"
+    def pomFile = "${buildDir}/tmp/jar/${project.name}-${version}.pom"
     group = 'Publishing'
     outputs.file pomFile
     doLast {
@@ -152,6 +152,12 @@ jar {
         from generatePom
         rename ".*", "pom.xml"
     }
+}
+
+task dist(type: Copy, dependsOn: jar) {
+    from jar
+    from generatePom
+    into file("${rootProject.buildDir}/distribution")
 }
 
 clean {
