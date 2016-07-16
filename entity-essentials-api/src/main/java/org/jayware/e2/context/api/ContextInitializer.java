@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -21,18 +21,7 @@
  */
 package org.jayware.e2.context.api;
 
-
-import java.util.ServiceLoader;
-
-
-public abstract class ContextProvider
+public interface ContextInitializer
 {
-    public abstract Context createContext();
-
-    public abstract Context createContext(ClassLoader classLoader);
-
-    public static synchronized ContextProvider getInstance()
-    {
-        return ServiceLoader.load(ContextProvider.class).iterator().next();
-    }
+    void initialize(Context context);
 }

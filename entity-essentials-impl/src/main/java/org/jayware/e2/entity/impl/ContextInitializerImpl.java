@@ -19,49 +19,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.context.impl;
+package org.jayware.e2.entity.impl;
+
+import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.ContextInitializer;
+
+import static org.jayware.e2.entity.impl.EntityManagerImpl.ENTITY_TREE;
 
 
-import org.jayware.e2.context.api.ServiceProvider;
-import org.jayware.e2.context.api.ServiceUnavailableException;
-
-import java.util.Iterator;
-import java.util.ServiceLoader;
-
-
-public class DefaultServiceProviderImpl
-implements ServiceProvider
+public class ContextInitializerImpl
+implements ContextInitializer
 {
-    private final ClassLoader myClassLoader;
-
-    public DefaultServiceProviderImpl(ClassLoader classLoader)
-    {
-        myClassLoader = classLoader;
-    }
-
     @Override
-    public <S> S getService(Class<? extends S> service)
+    public void initialize(Context context)
     {
-        final S result = findService(service);
-
-        if (result == null)
-        {
-            throw new ServiceUnavailableException(service);
-        }
-
-        return result;
-    }
-
-    @Override
-    public <S> S findService(Class<? extends S> service)
-    {
-        final Iterator<? extends S> iterator = ServiceLoader.load(service, myClassLoader).iterator();
-
-        if (iterator.hasNext())
-        {
-            return iterator.next();
-        }
-
-        return null;
+        context.put(ENTITY_TREE, new EntityTree(context));
     }
 }

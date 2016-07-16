@@ -89,6 +89,8 @@ public interface Context
      */
     <T> void put(Key<T> key, T value) throws IllegalArgumentException, IllegalStateException;
 
+    <T, I extends T> void put(Class<T> type, I value) throws IllegalArgumentException, IllegalStateException;
+
     /**
      * Associates the specified <code>value</code> with the specified {@link Key} in this <code>Context</code>.
      * <p>

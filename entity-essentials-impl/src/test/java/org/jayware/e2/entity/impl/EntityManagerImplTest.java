@@ -34,6 +34,7 @@ import org.jayware.e2.entity.api.EntityNotFoundException;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Parameters.Parameter;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -65,7 +66,14 @@ public class EntityManagerImplTest
         new Expectations()
         {{
             testContext.getService(EventManager.class); result = testEventManager; minTimes = 0;
+
         }};
+    }
+
+    @AfterMethod
+    public void tearDown()
+    {
+        context.dispose();
     }
 
     @Test

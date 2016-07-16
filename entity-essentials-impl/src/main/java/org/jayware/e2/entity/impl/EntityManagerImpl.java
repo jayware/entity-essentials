@@ -61,25 +61,12 @@ import static org.jayware.e2.util.Traversal.Unordered;
 public class EntityManagerImpl
 implements EntityManager
 {
-    private static final Key<EntityTree> ENTITY_TREE = Key.createKey("org.jayware.e2.EntityTree");
-
-    private static final Context.ValueProvider<EntityTree> ENTITY_TREE_VALUE_PROVIDER = new Context.ValueProvider<EntityTree>()
-    {
-        @Override
-        public EntityTree provide(Context context)
-        {
-            final EntityTree entityTree = new EntityTree(context);
-            context.getService(EventManager.class).subscribe(context, entityTree);
-            return entityTree;
-        }
-    };
+    static final Key<EntityTree> ENTITY_TREE = Key.createKey("org.jayware.e2.EntityTree");
 
     @Override
     public EntityRef createEntity(Context context)
     {
         checkContextNotNullAndNotDisposed(context);
-
-        getOrCreateEntityTree(context);
 
         final EventManager eventManager = context.getService(EventManager.class);
         final ResultSet resultSet = eventManager.query(CreateEntityEvent.class,
@@ -108,8 +95,6 @@ implements EntityManager
         }
 
         final EventManager eventManager = context.getEventManager();
-        getOrCreateEntityTree(context);
-
         final EventBuilder eventBuilder = eventManager.createEvent(CreateEntityEvent.class);
         eventBuilder.set(param(ContextParam, context));
 
@@ -458,7 +443,6 @@ implements EntityManager
 
     private EntityTree getOrCreateEntityTree(Context context)
     {
-        context.putIfAbsent(ENTITY_TREE, ENTITY_TREE_VALUE_PROVIDER);
         return context.get(ENTITY_TREE);
     }
 }

@@ -94,6 +94,7 @@ implements Disposable
     {
         myContext = context;
         myEventManager = context.getService(EventManager.class);
+        myEventManager.subscribe(context, this);
 
         myEntities = new HashMap<>();
         myRoot = new EntityImpl(new UUID(0, 0));

@@ -27,6 +27,7 @@ import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.context.api.ServiceProvider;
+import org.jayware.e2.context.api.ServiceUnavailableException;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
@@ -42,6 +43,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
+import static org.jayware.e2.util.Key.createKey;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -75,6 +77,12 @@ implements Context
     public <T> void put(Key<T> key, T value)
     {
         myContextState.get().put(key, value);
+    }
+
+    @Override
+    public <T, I extends T> void put(Class<T> type, I value)
+    {
+        myContextState.get().put(type, value);
     }
 
     @Override
@@ -259,6 +267,13 @@ implements Context
             }
         }
 
+        @Override
+        public <T, I extends T> void put(Class<T> type, I value)
+        {
+            checkNotNull(type, "Key mustn't be null!");
+            put(createKey(type.getName()), value);
+        }
+
         private void checkDisposing()
         {
             myReadLock.lock();
@@ -385,13 +400,27 @@ implements Context
         @Override
         public <S> S getService(Class<? extends S> service)
         {
-            return myServiceProvider.getService(service, getClass().getClassLoader());
+            final S instance = findService(service);
+
+            if (instance == null)
+            {
+                throw new ServiceUnavailableException(service);
+            }
+
+            return instance;
         }
 
         @Override
         public <S> S findService(Class<? extends S> service)
         {
-            return myServiceProvider.findService(service, getClass().getClassLoader());
+            Object instance = myMap.get(createKey(service.getName()));
+
+            if (instance == null || !service.isAssignableFrom(instance.getClass()))
+            {
+                instance = myServiceProvider.findService(service);
+            }
+
+            return (S) instance;
         }
 
         @Override
@@ -446,6 +475,12 @@ implements Context
 
         @Override
         public <T> void put(Key<T> key, T value)
+        {
+            throw new IllegalStateException("Context is disposed!");
+        }
+
+        @Override
+        public <T, I extends T> void put(Class<T> type, I value)
         {
             throw new IllegalStateException("Context is disposed!");
         }

@@ -23,7 +23,11 @@ package org.jayware.e2.context.impl;
 
 
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.ContextInitializer;
 import org.jayware.e2.context.api.ContextProvider;
+
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 
 public class ContextProviderImpl
@@ -32,6 +36,34 @@ extends ContextProvider
     @Override
     public Context createContext()
     {
-        return new ContextImpl(new DefaultServiceProviderImpl());
+        return createContext(getClass().getClassLoader());
+    }
+
+    @Override
+    public Context createContext(ClassLoader classLoader)
+    {
+        final Context context = new ContextImpl(new DefaultServiceProviderImpl(classLoader));
+
+        initialize(context, classLoader);
+
+        return context;
+    }
+
+    private static void initialize(Context context, ClassLoader classLoader)
+    {
+        final Iterator<ContextInitializer> services = ServiceLoader.load(ContextInitializer.class, classLoader).iterator();
+        try
+        {
+            while (services.hasNext())
+            {
+                final ContextInitializer initializer = services.next();
+                initializer.initialize(context);
+            }
+        }
+        catch (Exception e)
+        {
+            context.dispose();
+            throw e;
+        }
     }
 }

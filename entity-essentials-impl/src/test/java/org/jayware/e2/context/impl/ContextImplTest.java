@@ -62,21 +62,23 @@ public class ContextImplTest
     final Key<Object> keyA = createKey("foo");
     final Key<Object> keyB = createKey("bar");
 
-    private ClassLoader testClassLoader;
-
     @BeforeMethod
     public void setup()
     {
         initMocks(this);
 
-        testClassLoader = getClass().getClassLoader();
-
-        when(serviceProvider.getService(EntityManager.class, testClassLoader)).thenReturn(entityManager);
-        when(serviceProvider.getService(ComponentManager.class, testClassLoader)).thenReturn(componentManager);
-        when(serviceProvider.getService(BindingManager.class, testClassLoader)).thenReturn(bindingManager);
-        when(serviceProvider.getService(TemplateManager.class, testClassLoader)).thenReturn(templateManager);
-        when(serviceProvider.getService(EventManager.class, testClassLoader)).thenReturn(eventManager);
-        when(serviceProvider.getService(GroupManager.class, testClassLoader)).thenReturn(myGroupManager);
+        when(serviceProvider.getService(EntityManager.class)).thenReturn(entityManager);
+        when(serviceProvider.findService(EntityManager.class)).thenReturn(entityManager);
+        when(serviceProvider.getService(ComponentManager.class)).thenReturn(componentManager);
+        when(serviceProvider.findService(ComponentManager.class)).thenReturn(componentManager);
+        when(serviceProvider.getService(BindingManager.class)).thenReturn(bindingManager);
+        when(serviceProvider.findService(BindingManager.class)).thenReturn(bindingManager);
+        when(serviceProvider.getService(TemplateManager.class)).thenReturn(templateManager);
+        when(serviceProvider.findService(TemplateManager.class)).thenReturn(templateManager);
+        when(serviceProvider.getService(EventManager.class)).thenReturn(eventManager);
+        when(serviceProvider.findService(EventManager.class)).thenReturn(eventManager);
+        when(serviceProvider.getService(GroupManager.class)).thenReturn(myGroupManager);
+        when(serviceProvider.findService(GroupManager.class)).thenReturn(myGroupManager);
 
         testee = new ContextImpl(serviceProvider);
     }
@@ -94,7 +96,7 @@ public class ContextImplTest
     {
         try
         {
-            testee.put(null, "");
+            testee.put((Key) null, "");
             fail("IllegalArgumentException expected!");
         }
         catch (IllegalArgumentException e)

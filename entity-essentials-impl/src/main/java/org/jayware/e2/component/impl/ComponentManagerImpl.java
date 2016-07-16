@@ -44,7 +44,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
-import static java.util.ServiceLoader.load;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
@@ -63,37 +62,9 @@ implements ComponentManager
 {
     private static final long COMMON_TIMEOUT_IN_MILLIS = 5000;
 
-    private static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
-    private static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
-
-    private static final Key<ComponentPropertyAdapterProvider> PROPERTY_ADAPTER_PROVIDER = createKey("org.jayware.e2.PropertyAdapterProvider");
-
-    private static final Context.ValueProvider<ComponentStore> COMPONENT_STORE_VALUE_PROVIDER = new Context.ValueProvider<ComponentStore>()
-    {
-        @Override
-        public ComponentStore provide(Context context)
-        {
-            return new ComponentStore(context);
-        }
-    };
-
-    private static final Context.ValueProvider<ComponentFactory> COMPONENT_FACTORY_VALUE_PROVIDER = new Context.ValueProvider<ComponentFactory>()
-    {
-        @Override
-        public ComponentFactory provide(Context context)
-        {
-            return load(ComponentFactory.class).iterator().next();
-        }
-    };
-
-    private static final Context.ValueProvider<ComponentPropertyAdapterProvider> PROPERTY_ADAPTER_PROVIDER_VALUE_PROVIDER = new Context.ValueProvider<ComponentPropertyAdapterProvider>()
-    {
-        @Override
-        public ComponentPropertyAdapterProvider provide(Context context)
-        {
-            return new ComponentPropertyAdapterProviderImpl();
-        }
-    };
+    static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
+    static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
+    static final Key<ComponentPropertyAdapterProvider> PROPERTY_ADAPTER_PROVIDER = createKey("org.jayware.e2.PropertyAdapterProvider");
 
     @Override
     public <T extends Component> T createComponent(Context context, Class<T> type)
@@ -330,8 +301,6 @@ implements ComponentManager
 
     private ComponentStore getOrCreateComponentStore(Context context)
     {
-        context.putIfAbsent(COMPONENT_FACTORY, COMPONENT_FACTORY_VALUE_PROVIDER);
-        context.putIfAbsent(COMPONENT_STORE, COMPONENT_STORE_VALUE_PROVIDER);
         return context.get(COMPONENT_STORE);
     }
 
@@ -342,7 +311,6 @@ implements ComponentManager
 
     private ComponentPropertyAdapterProvider getOrCreatePropertyAdapterProvider(Context context)
     {
-        context.putIfAbsent(PROPERTY_ADAPTER_PROVIDER, PROPERTY_ADAPTER_PROVIDER_VALUE_PROVIDER);
         return context.get(PROPERTY_ADAPTER_PROVIDER);
     }
 }
