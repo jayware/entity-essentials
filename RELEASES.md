@@ -11,12 +11,24 @@
 ## Enhancements
  - A couple of JavaDoc warnings have been fixed.
    [[ #16 ]](https://github.com/jayware/entity-essentials/issues/16)
+ - The ComponentManager does now offer an operation to obtain an instance of a component without the need to add the component to an entity.
+   [[ #25 ]](https://github.com/jayware/entity-essentials/issues/25)
+ - An Anspect does now offer an operation to get the internal set of component-types.
+   [[ #26 ]](https://github.com/jayware/entity-essentials/issues/26)
+ - The EntityManager does now offer an operation to delete all entities at once.
+   [[ #32 ]](https://github.com/jayware/entity-essentials/issues/32)
 
 ## Fixes
- - A NullPointerException which occurred when state-change of a Query was signaled has been fixed .
-   [[ #21 ]](https://github.com/jayware/entity-essentials/issues/21)
- - A NegativeArraySizeException which occurred when an EventDispatcher was generated for an EventHandler with long or double parameters has been fixed.
+ - A NegativeArraySizeException has been fixed which occurred when an EventDispatcher was generated for an EventHandler with long or double parameters.
    [[ #14 ]](https://github.com/jayware/entity-essentials/issues/14)
+ - A NullPointerException has been fixed which occurred when state-change of a Query was signaled.
+   [[ #21 ]](https://github.com/jayware/entity-essentials/issues/21)
+ - Framework-components are now instantiated eagerly to avoid problems when entities/components get created in an event-driven fashion.
+   [[ #29 ]](https://github.com/jayware/entity-essentials/issues/29)
+ - A Bug has been fixed where two EntityRefs of two different contexts are equal if they reference an entity with the same UUID.
+   [[ #30 ]](https://github.com/jayware/entity-essentials/issues/30)
+ - A Bug has been fixed which prevents the deletion of entities, because events which are related to the deletion use deprecated EntityPath instead of UUID.
+   [[ #31 ]](https://github.com/jayware/entity-essentials/issues/31)
 
 ## Dependencies
 
