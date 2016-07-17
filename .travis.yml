@@ -17,7 +17,7 @@ branches:
   - development
   - coverity
 
-script: gradle check
+script: gradle check --info
 
 after_success:
   - gradle coveralls
