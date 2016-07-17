@@ -53,6 +53,7 @@ dependencies {
     compile project(':entity-essentials-api')
 
     compile 'org.ow2.asm:asm-all:5.1'
+    compile "com.googlecode.concurrent-locks:concurrent-locks:1.0.0"
 
     testCompile 'org.testng:testng:6.9.12'
     testCompile 'org.assertj:assertj-core:3.5.2'

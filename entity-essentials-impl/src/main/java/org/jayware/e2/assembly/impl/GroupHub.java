@@ -40,19 +40,18 @@ import java.util.Set;
 import static com.google.common.collect.ObjectArrays.concat;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.AddEntityToGroupEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.CreateGroupEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.CreateGroupEvent.GroupNameParam;
 import static org.jayware.e2.assembly.api.GroupEvent.DeleteGroupEvent;
-import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityFromGroupRemovedEvent;
-import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityToGroupAddedEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupCreatedEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupDeletedEvent;
-import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.AddEntityToGroupEvent;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityFromGroupRemovedEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityRefParam;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityToGroupAddedEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.RemoveEntityFromGroupEvent;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
 import static org.jayware.e2.component.api.Aspect.aspect;
-import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 
@@ -65,17 +64,17 @@ implements Disposable
     GroupHub(Context context)
     {
         myContext = context;
-        myContext.getEventManager().subscribe(context, this);
+        myContext.getService(EventManager.class).subscribe(context, this);
     }
 
     @Handle(CreateGroupEvent.class)
     public void handleCreateGroupEvent(@Param(GroupNameParam) String name)
     {
-        final EntityManager entityManager = myContext.getEntityManager();
-        final ComponentManager componentManager = myContext.getComponentManager();
-        final EventManager eventManager = myContext.getEventManager();
+        final EntityManager entityManager = myContext.getService(EntityManager.class);
+        final ComponentManager componentManager = myContext.getService(ComponentManager.class);
+        final EventManager eventManager = myContext.getService(EventManager.class);
 
-        final EntityRef ref = entityManager.createEntity(myContext, path("/" + name));
+        final EntityRef ref = entityManager.createEntity(myContext);
         final GroupComponent component = componentManager.addComponent(ref, GroupComponent.class);
 
         component.setName(name);
@@ -92,9 +91,9 @@ implements Disposable
     @Handle(DeleteGroupEvent.class)
     public void handleDeleteGroupEvent(@Param(GroupNameParam) String name)
     {
-        final EntityManager entityManager = myContext.getEntityManager();
-        final ComponentManager componentManager = myContext.getComponentManager();
-        final EventManager eventManager = myContext.getEventManager();
+        final EntityManager entityManager = myContext.getService(EntityManager.class);
+        final ComponentManager componentManager = myContext.getService(ComponentManager.class);
+        final EventManager eventManager = myContext.getService(EventManager.class);
 
         final List<EntityRef> groups = entityManager.findEntities(myContext, aspect(GroupComponent.class));
 
@@ -120,8 +119,8 @@ implements Disposable
 
     public Group findGroup(String name)
     {
-        final EntityManager entityManager = myContext.getEntityManager();
-        final ComponentManager componentManager = myContext.getComponentManager();
+        final EntityManager entityManager = myContext.getService(EntityManager.class);
+        final ComponentManager componentManager = myContext.getService(ComponentManager.class);
 
         final List<EntityRef> groups = entityManager.findEntities(myContext, aspect(GroupComponent.class));
 
@@ -142,8 +141,8 @@ implements Disposable
     public void handleAddEntityToGroupEvent(@Param(GroupParam) Group group,
                                             @Param(EntityRefParam) EntityRef member)
     {
-        final ComponentManager componentManager = myContext.getComponentManager();
-        final EventManager eventManager = myContext.getEventManager();
+        final ComponentManager componentManager = myContext.getService(ComponentManager.class);
+        final EventManager eventManager = myContext.getService(EventManager.class);
 
         final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
         EntityRef[] members = groupComponent.getMembers();
@@ -170,8 +169,8 @@ implements Disposable
     public void handleRemoveEntityFromGroupEvent(@Param(GroupParam) Group group,
                                                  @Param(EntityRefParam) EntityRef member)
     {
-        final ComponentManager componentManager = myContext.getComponentManager();
-        final EventManager eventManager = myContext.getEventManager();
+        final ComponentManager componentManager = myContext.getService(ComponentManager.class);
+        final EventManager eventManager = myContext.getService(EventManager.class);
 
         final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
         final Set<EntityRef> members = new HashSet<EntityRef>(asList(groupComponent.getMembers()));
@@ -190,7 +189,7 @@ implements Disposable
 
     public List<EntityRef> getEntitiesOfGroup(Group group)
     {
-        final ComponentManager componentManager = myContext.getComponentManager();
+        final ComponentManager componentManager = myContext.getService(ComponentManager.class);
         final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
         final EntityRef[] members = groupComponent.getMembers();
 
@@ -204,7 +203,7 @@ implements Disposable
 
     public boolean isEntityMemberOfGroup(EntityRef ref, Group group)
     {
-        final ComponentManager componentManager = myContext.getComponentManager();
+        final ComponentManager componentManager = myContext.getService(ComponentManager.class);
         final GroupComponent groupComponent = componentManager.getComponent(group, GroupComponent.class);
         final EntityRef[] members = groupComponent.getMembers();
 
@@ -214,6 +213,6 @@ implements Disposable
     @Override
     public void dispose(Context context)
     {
-        context.getEventManager().unsubscribe(context, this);
+        context.getService(EventManager.class).unsubscribe(context, this);
     }
 }

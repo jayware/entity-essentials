@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,14 +19,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.entity.api;
+package org.jayware.e2.storage.api;
 
-
-public class EntityNotFoundException
-extends RuntimeException
+public interface Storage
 {
-    public EntityNotFoundException(EntityPath path)
-    {
-        super(path.asString());
-    }
 }

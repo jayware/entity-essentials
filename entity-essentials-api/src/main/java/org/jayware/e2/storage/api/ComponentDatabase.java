@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,17 +19,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.component.api;
+package org.jayware.e2.storage.api;
 
-
+import org.jayware.e2.component.api.Component;
 import org.jayware.e2.entity.api.EntityRef;
 
+import java.util.Collection;
 
-public class ComponentNotFoundException
-extends RuntimeException
+
+public interface ComponentDatabase
 {
-    public ComponentNotFoundException(EntityRef ref, Class<? extends Component> component)
-    {
-        super(ref + " : " + component.getName());
-    }
+    void put(EntityRef ref, Component component);
+
+    void remove(EntityRef ref, Component component);
+
+    Component get(EntityRef ref, Class<? extends Component> type);
+
+    Collection<Component> get(EntityRef ref);
+
+    void clear(EntityRef ref);
 }

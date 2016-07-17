@@ -66,7 +66,7 @@ import static org.jayware.e2.component.api.ComponentEvent.ComponentChangeEvent.C
 import static org.jayware.e2.component.api.ComponentEvent.ComponentPulledEvent.OldComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityRefParam;
-import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
+import static org.jayware.e2.entity.api.EntityEvent.EntityIdParam;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.api.Presence.Optional;
@@ -133,7 +133,7 @@ implements Disposable
             myEventManager.send(AddComponentEvent.class,
                 param(ContextParam, myContext),
                 param(EntityRefParam, ref),
-                param(EntityPathParam, ref.getPath()),
+                param(EntityIdParam, ref.getId()),
                 param(ComponentTypeParam, component)
             );
         }
@@ -146,7 +146,7 @@ implements Disposable
         myEventManager.send(RemoveComponentEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(ComponentTypeParam, component)
         );
     }
@@ -251,7 +251,7 @@ implements Disposable
         myEventManager.send(PullComponentEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(ComponentParam, component),
             param(ComponentTypeParam, component.type())
         );
@@ -647,7 +647,7 @@ implements Disposable
         myEventManager.post(ComponentAddedEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(ComponentParam, component),
             param(ComponentTypeParam, component.type())
         );
@@ -658,7 +658,7 @@ implements Disposable
         myEventManager.post(ComponentRemovedEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(ComponentParam, component),
             param(ComponentTypeParam, component.type())
         );
@@ -669,7 +669,7 @@ implements Disposable
         myEventManager.post(ComponentPulledEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(ComponentTypeParam, newComponent.type()),
             param(ComponentParam, newComponent),
             param(OldComponentParam, oldComponent)
@@ -681,7 +681,7 @@ implements Disposable
         myEventManager.send(PushComponentEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(ComponentParam, component),
             param(ComponentTypeParam, component.type())
         );
@@ -691,7 +691,8 @@ implements Disposable
     {
         myEventManager.post(ComponentPushedEvent.class,
             param(ContextParam, myContext),
-            param(EntityRefParam, ref), param(EntityPathParam, ref.getPath()),
+            param(EntityRefParam, ref),
+            param(EntityIdParam, ref.getId()),
             param(ComponentTypeParam, newComponent.type()),
             param(ComponentParam, newComponent),
             param(OldComponentParam, oldComponent)
@@ -702,7 +703,7 @@ implements Disposable
     {
         myEventManager.post(AspectGainedEvent.class,
             param(ContextParam, myContext),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(EntityRefParam, ref),
             param(NewAspectParam, newAspect),
             param(OldAspectParam, oldAspect)
@@ -713,7 +714,7 @@ implements Disposable
     {
         myEventManager.post(AspectLostEvent.class,
             param(ContextParam, myContext),
-            param(EntityPathParam, ref.getPath()),
+            param(EntityIdParam, ref.getId()),
             param(EntityRefParam, ref),
             param(NewAspectParam, newAspect),
             param(OldAspectParam, oldAspect)

@@ -24,6 +24,7 @@ package org.jayware.e2.event.api;
 import org.jayware.e2.event.api.Query.State;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.StateLatch;
+import org.jayware.e2.util.TimeoutException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -69,6 +70,14 @@ public interface ResultSet
      * @return <code>true</code> if the {@link Query} entered the specified {@link State}, otherwise <code>false</code>.
      */
     boolean await(State state, long time, TimeUnit unit);
+
+    void timeout(State state, long timeInMilliseconds) throws TimeoutException;
+
+    void timeout(State state, long time, TimeUnit unit) throws TimeoutException;
+
+    void timeout(State state, long timeInMilliseconds, String message, Object... args) throws TimeoutException;
+
+    void timeout(State state, long time, TimeUnit unit, String message, Object... args) throws TimeoutException;
 
     /**
      * Returns whether the {@link Query} which preceded this {@link ResultSet} is currently in the specified {@link State}.

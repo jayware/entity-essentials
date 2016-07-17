@@ -24,450 +24,233 @@ package org.jayware.e2.entity.impl;
 
 import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.context.api.Context;
-import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.ContextualEntityManager;
 import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
-import org.jayware.e2.entity.api.EntityEvent.DeleteAllEntitiesEvent;
+import org.jayware.e2.entity.api.EntityEvent.DeleteEntitiesEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
+import org.jayware.e2.entity.api.EntityEvent.FindEntitiesEvent;
+import org.jayware.e2.entity.api.EntityEvent.ResolveEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityManagerException;
-import org.jayware.e2.entity.api.EntityNotFoundException;
-import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
-import org.jayware.e2.event.api.EventBuilder;
 import org.jayware.e2.event.api.EventManager;
+import org.jayware.e2.event.api.QueryBuilder;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Filter;
-import org.jayware.e2.util.Key;
-import org.jayware.e2.util.Traversal;
+import org.jayware.e2.util.TimeoutException;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.util.UUID.randomUUID;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jayware.e2.component.api.Aspect.ANY;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
+import static org.jayware.e2.entity.api.EntityEvent.AspectParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
-import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityRefListParam;
-import static org.jayware.e2.entity.api.EntityPath.EMPTY_PATH;
-import static org.jayware.e2.entity.api.EntityPath.ROOT_PATH;
-import static org.jayware.e2.entity.api.EntityPathFilter.ALL;
+import static org.jayware.e2.entity.api.EntityEvent.FilterListParam;
+import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.api.Query.State.Success;
+import static org.jayware.e2.util.Filter.ALL;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
-import static org.jayware.e2.util.Traversal.Unordered;
 
 
 public class EntityManagerImpl
 implements EntityManager
 {
-    static final Key<EntityTree> ENTITY_TREE = Key.createKey("org.jayware.e2.EntityTree");
+    private static final long TIMEOUT_IN_MILLISECONDS = 5000;
 
     @Override
     public EntityRef createEntity(Context context)
     {
+        return createEntity(context, randomUUID());
+    }
+
+    @Override
+    public EntityRef createEntity(Context context, UUID id)
+    {
+        final EventManager eventManager;
+        final ResultSet resultSet;
+
         checkContextNotNullAndNotDisposed(context);
+        checkNotNull(id, "UUID mustn't be null!");
 
-        final EventManager eventManager = context.getService(EventManager.class);
-        final ResultSet resultSet = eventManager.query(CreateEntityEvent.class,
-            param(ContextParam, context),
-            param(EntityIdParam, randomUUID())
-        );
-
-        if (resultSet.await(Success) && resultSet.has(EntityRefParam))
+        try
         {
+            eventManager = context.getService(EventManager.class);
+            resultSet = eventManager.query(CreateEntityEvent.class,
+                param(ContextParam, context),
+                param(EntityIdParam, id)
+            );
+
+            resultSet.timeout(Success, TIMEOUT_IN_MILLISECONDS, "Failed to create entity '%s' within %sms", id, TIMEOUT_IN_MILLISECONDS);
+
             return resultSet.get(EntityRefParam);
         }
-
-        throw new RuntimeException("Failed to create entity!"); // TODO: introduce a dedicated exception!
-    }
-
-    @Override
-    public EntityRef createEntity(Context context, EntityPath path)
-    throws IllegalArgumentException
-    {
-        checkNotNull(context);
-        checkNotNull(path);
-
-        if (path.isRelative())
+        catch (TimeoutException e)
         {
-            throw new IllegalArgumentException();
+            throw e;
         }
-
-        final EventManager eventManager = context.getEventManager();
-        final EventBuilder eventBuilder = eventManager.createEvent(CreateEntityEvent.class);
-        eventBuilder.set(param(ContextParam, context));
-
-        EntityPath segmentedPath = ROOT_PATH;
-        for (String segment : path.segments())
+        catch (Exception e)
         {
-            segmentedPath = segmentedPath.append(segment);
-            if (!existsEntity(context, segmentedPath))
-            {
-                eventBuilder.set(param(EntityPathParam, segmentedPath));
-                eventManager.send(eventBuilder);
-            }
+            throw new EntityManagerException(e, "Failed to create entity with id: %s", id);
         }
-
-        return getEntity(context, path);
-    }
-
-    @Override
-    public EntityRef createEntity(EntityRef parentRef, EntityPath path)
-    throws IllegalArgumentException
-    {
-        checkNotNull(parentRef);
-        checkNotNull(path);
-
-        return createEntity(parentRef.getContext(), parentRef.getPath().resolve(path));
     }
 
     @Override
     public void deleteEntity(EntityRef ref)
     {
-        checkNotNull(ref);
+        final Context context;
+        final EventManager eventManager;
+        final ResultSet resultSet;
 
-        if (ref.isInvalid())
+        checkRefNotNullAndValid(ref);
+
+        try
         {
-            return;
-        }
+            context = ref.getContext();
+            eventManager = context.getService(EventManager.class);
 
-        if (ref.getPath().equals(ROOT_PATH))
+            resultSet = eventManager.query(DeleteEntityEvent.class,
+                param(ContextParam, context),
+                param(EntityRefParam, ref),
+                param(EntityIdParam, ref.getId())
+            );
+
+            resultSet.timeout(Success, TIMEOUT_IN_MILLISECONDS, "Failed to delete entity '%s' within %sms", ref.getId(), TIMEOUT_IN_MILLISECONDS);
+        }
+        catch (TimeoutException e)
         {
-            throw new IllegalArgumentException("It is prohibited to delete the root entity!");
+            throw e;
         }
-
-        final Context context = ref.getContext();
-        final EventManager eventManager = context.getService(EventManager.class);
-
-        eventManager.send(DeleteEntityEvent.class,
-            param(ContextParam, context),
-            param(EntityRefParam, ref),
-            param(EntityPathParam, ref.getPath()),
-            param(EntityIdParam, ref.getId())
-        );
+        catch (Exception e)
+        {
+            throw new EntityManagerException(e, "Failed to delete entity with id: %s", ref.getId());
+        }
     }
 
     @Override
     public List<EntityRef> deleteEntities(Context context)
     {
+        final EventManager eventManager;
+        final ResultSet resultSet;
+
         checkContextNotNullAndNotDisposed(context);
 
         try
         {
-            final EventManager eventManager = context.getService(EventManager.class);
-            final ResultSet resultSet = eventManager.query(DeleteAllEntitiesEvent.class, param(ContextParam, context));
+            eventManager = context.getService(EventManager.class);
+            resultSet = eventManager.query(DeleteEntitiesEvent.class, param(ContextParam, context));
 
-            if (!resultSet.await(Success, 5000, MILLISECONDS))
-            {
-                throw new TimeoutException("Failed to delete all entities within 5000ms!");
-            }
+            resultSet.timeout(Success, TIMEOUT_IN_MILLISECONDS, "Failed to delete all entities within %sms", TIMEOUT_IN_MILLISECONDS);
 
-            final List<EntityRef> result = resultSet.get(EntityRefListParam);
-
-            if (result == null)
-            {
-                throw new EntityManagerException("The ResultSet of DeleteAllEntitiesEvent does not contain the expected list of deleted entities!");
-            }
-
-            return result;
+            return resultSet.get(EntityRefListParam);
+        }
+        catch (TimeoutException e)
+        {
+            throw e;
         }
         catch (Exception e)
         {
-            throw new EntityManagerException(e);
+            throw new EntityManagerException(e, "Failed to delete all entities!");
         }
-    }
-
-    @Override
-    public void moveEntity(EntityRef entity, EntityRef destination)
-    throws IllegalContextException
-    {
-        // TODO: Implementation: EntityManagerImpl.moveEntityTo()
-        throw new UnsupportedOperationException("EntityManagerImpl.moveEntity()");
-    }
-
-    @Override
-    public EntityRef getEntity(Context context, EntityPath path)
-    throws EntityNotFoundException, IllegalArgumentException
-    {
-        checkNotNull(context);
-        checkNotNull(path);
-
-        if (path.equals(EMPTY_PATH))
-        {
-            throw new IllegalArgumentException("EntityPath mustn't be empty!");
-        }
-
-        final EntityRef result = findEntity(context, path);
-
-        if (result == null)
-        {
-            throw new EntityNotFoundException(path);
-        }
-
-        return result;
-    }
-
-    @Override
-    public EntityRef findEntity(Context context, EntityPath path)
-    throws IllegalArgumentException
-    {
-        checkNotNull(context);
-        checkNotNull(path);
-
-        final EntityTree entityTree = getOrCreateEntityTree(context);
-        return entityTree != null ? entityTree.find(path) : null;
     }
 
     @Override
     public List<EntityRef> findEntities(Context context)
     {
-        return findEntities(context, Unordered, ANY, ALL);
+        return findEntities(context, ANY);
     }
 
     @Override
     public List<EntityRef> findEntities(Context context, Aspect aspect)
     {
-        return findEntities(context, Unordered, aspect, ALL);
+        return findEntities(context, aspect, (Filter<EntityRef>) ALL);
     }
 
     @Override
     public List<EntityRef> findEntities(Context context, Filter<EntityRef>... filters)
     {
-        return findEntities(context, Unordered, ANY, filters);
+        return findEntities(context, ANY, filters);
     }
 
     @Override
     public List<EntityRef> findEntities(Context context, Aspect aspect, Filter<EntityRef>... filters)
     {
-        return findEntities(context, Unordered, aspect, filters);
-    }
+        final EventManager eventManager;
+        final ResultSet resultSet;
+        final QueryBuilder builder;
 
-    @Override
-    public List<EntityRef> findEntities(Context context, Traversal traversal)
-    {
-        return findEntities(context, traversal, ANY, ALL);
-    }
+        checkContextNotNullAndNotDisposed(context);
+        checkNotNull(aspect, "Aspect mustn' t be null");
 
-    @Override
-    public List<EntityRef> findEntities(Context context, Traversal traversal, Aspect aspect)
-    {
-        return findEntities(context, traversal, aspect, ALL);
-    }
+        try
+        {
+            eventManager = context.getService(EventManager.class);
+            builder = eventManager.createQuery(FindEntitiesEvent.class);
+            builder.set(ContextParam).to(context)
+                   .set(AspectParam).to(aspect);
 
-    @Override
-    public List<EntityRef> findEntities(Context context, Traversal traversal, Filter<EntityRef>... filters)
-    {
-        return findEntities(context, traversal, ANY, filters);
-    }
+            if (filters != null)
+            {
+                final List<Filter<EntityRef>> filterList = new CopyOnWriteArrayList<Filter<EntityRef>>();
+                for (Filter<EntityRef> filter : filters)
+                {
+                    filterList.add(filter);
+                }
 
-    @Override
-    public List<EntityRef> findEntities(Context context, Traversal traversal, Aspect aspect, Filter<EntityRef>... filters)
-    {
-        checkNotNull(context);
-        checkNotNull(traversal);
-        checkNotNull(aspect);
+                builder.set(FilterListParam).to(filterList);
+            }
 
-        filters = filters != null ? filters : new Filter[0];
+            resultSet = eventManager.query(builder);
 
-        final EntityTree entityTree = getOrCreateEntityTree(context);
-        return entityTree.find(traversal, aspect, filters);
-    }
+            resultSet.timeout(Success, TIMEOUT_IN_MILLISECONDS, "Failed to find entities within %sms", TIMEOUT_IN_MILLISECONDS);
 
-    @Override
-    public List<EntityRef> findEntityAncestors(Context context, EntityPath path)
-    {
-        return findEntityAncestors(context, path, ANY, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityAncestors(Context context, EntityPath path, Aspect aspect)
-    {
-        return findEntityAncestors(context, path, aspect, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityAncestors(Context context, EntityPath path, Filter<EntityRef>... filters)
-    {
-        return findEntityAncestors(context, path, ANY, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityAncestors(Context context, EntityPath path, Aspect aspect, Filter<EntityRef>... filters)
-    {
-        checkNotNull(context);
-        checkNotNull(path);
-        checkNotNull(aspect);
-
-        filters = filters != null ? filters : new Filter[0];
-
-        final EntityTree entityTree = getOrCreateEntityTree(context);
-        return entityTree.findAncestors(entityTree.find(path), aspect, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityAncestors(EntityRef ref)
-    {
-        return findEntityAncestors(ref, ANY, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityAncestors(EntityRef ref, Aspect aspect)
-    {
-        return findEntityAncestors(ref, aspect, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityAncestors(EntityRef ref, Filter<EntityRef>... filters)
-    {
-        return findEntityAncestors(ref, ANY, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityAncestors(EntityRef ref, Aspect aspect, Filter<EntityRef>... filters)
-    {
-        checkNotNull(ref);
-        checkNotNull(aspect);
-
-        filters = filters != null ? filters : new Filter[0];
-
-        final EntityTree entityTree = getOrCreateEntityTree(ref.getContext());
-        return entityTree.findAncestors(ref, aspect, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path)
-    {
-        return findEntityDescendants(context, path, Unordered, ANY, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path, Aspect aspect)
-    {
-        return findEntityDescendants(context, path, Unordered, aspect, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal)
-    {
-        return findEntityDescendants(context, path, traversal, ANY, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path, Filter<EntityRef>... filters)
-    {
-        return findEntityDescendants(context, path, Unordered, ANY, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path, Aspect aspect, Filter<EntityRef>... filters)
-    {
-        return findEntityDescendants(context, path, Unordered, aspect, filters);
-    }
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal, Aspect aspect)
-    {
-        return findEntityDescendants(context, path, traversal, aspect, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal, Filter<EntityRef>... filters)
-    {
-        return findEntityDescendants(context, path, traversal, ANY, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(Context context, EntityPath path, Traversal traversal, Aspect aspect, Filter<EntityRef>... filters)
-    {
-        checkNotNull(context);
-        checkNotNull(path);
-        checkNotNull(traversal);
-        checkNotNull(aspect);
-
-        filters = filters != null ? filters : new Filter[0];
-
-        final EntityTree entityTree = getOrCreateEntityTree(context);
-        return entityTree.findDescendants(entityTree.find(path), traversal, aspect, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref)
-    {
-        return findEntityDescendants(ref, Unordered, ANY, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref, Aspect aspect)
-    {
-        return findEntityDescendants(ref, Unordered, aspect, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal)
-    {
-        return findEntityDescendants(ref, traversal, ANY, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref, Filter<EntityRef>... filters)
-    {
-        return findEntityDescendants(ref, Unordered, ANY, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref, Aspect aspect, Filter<EntityRef>... filters)
-    {
-        return findEntityDescendants(ref, Unordered, aspect, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal, Aspect aspect)
-    {
-        return findEntityDescendants(ref, traversal, aspect, ALL);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal, Filter<EntityRef>... filters)
-    {
-        return findEntityDescendants(ref, traversal, ANY, filters);
-    }
-
-    @Override
-    public List<EntityRef> findEntityDescendants(EntityRef ref, Traversal traversal, Aspect aspect, Filter<EntityRef>... filters)
-    {
-        checkNotNull(ref);
-        checkNotNull(traversal);
-        checkNotNull(aspect);
-
-        filters = filters != null ? filters : new Filter[0];
-
-        final EntityTree entityTree = getOrCreateEntityTree(ref.getContext());
-        return entityTree.findDescendants(ref, traversal, aspect, filters);
-    }
-
-    @Override
-    public boolean existsEntity(Context context, EntityPath path)
-    {
-        checkNotNull(context);
-        checkNotNull(path);
-
-        final EntityTree entityTree = getOrCreateEntityTree(context);
-        return entityTree != null && entityTree.existsEntity(path);
+            return resultSet.get(EntityRefListParam);
+        }
+        catch (TimeoutException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            throw new EntityManagerException(e, "Failed to find entities!");
+        }
     }
 
     @Override
     public EntityRef resolveEntity(Context context, UUID id)
     {
+        final EventManager eventManager;
+        final ResultSet resultSet;
+
         checkContextNotNullAndNotDisposed(context);
         checkNotNull(id);
 
-        final EntityTree entityTree = getOrCreateEntityTree(context);
-        return entityTree.resolveEntity(id);
+        try
+        {
+            eventManager = context.getService(EventManager.class);
+            resultSet = eventManager.query(ResolveEntityEvent.class,
+                param(ContextParam, context),
+                param(EntityIdParam, id)
+            );
+
+            resultSet.timeout(Success, TIMEOUT_IN_MILLISECONDS, "Failed to resolve '%s' to an entity within %sms", id, TIMEOUT_IN_MILLISECONDS);
+
+            return resultSet.get(EntityRefParam);
+        }
+        catch (TimeoutException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            throw new EntityManagerException(e, "Failed to resolve entity with id: %s", id);
+        }
     }
 
     @Override
@@ -475,10 +258,5 @@ implements EntityManager
     {
         checkContextNotNullAndNotDisposed(context);
         return new ContextualEntityManagerImpl(context, this);
-    }
-
-    private EntityTree getOrCreateEntityTree(Context context)
-    {
-        return context.get(ENTITY_TREE);
     }
 }

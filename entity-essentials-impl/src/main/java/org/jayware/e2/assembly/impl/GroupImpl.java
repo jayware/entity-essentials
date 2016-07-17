@@ -28,7 +28,6 @@ import org.jayware.e2.assembly.api.components.GroupComponent;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
-import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 
 import java.util.Iterator;
@@ -59,12 +58,6 @@ implements Group
     public UUID getId()
     {
         return myRef.getId();
-    }
-
-    @Override
-    public EntityPath getPath()
-    {
-        return myRef.getPath();
     }
 
     @Override

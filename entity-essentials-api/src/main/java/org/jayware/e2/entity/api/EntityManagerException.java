@@ -21,16 +21,19 @@
  */
 package org.jayware.e2.entity.api;
 
+import static java.lang.String.format;
+
+
 public class EntityManagerException
 extends RuntimeException
 {
-    public EntityManagerException(String message)
+    public EntityManagerException(String message, Object... args)
     {
-        super(message);
+        super(format(message, args));
     }
 
-    public EntityManagerException(Throwable cause)
+    public EntityManagerException(Throwable cause, String message, Object... args)
     {
-        super(cause);
+        super(format(message, args), cause);
     }
 }

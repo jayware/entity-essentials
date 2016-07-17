@@ -65,10 +65,11 @@ extends Contextual
      *
      * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
      */
-    List<EntityRef> deleteEntities() throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> deleteEntities() throws IllegalStateException;
 
     /**
-     * Returns a {@link List} of all {@link Entity Entities} within the {@link Context} of this {@link ContextualEntityManager}.
+     * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities}  within the {@link Context} of this
+     * {@link ContextualEntityManager}.
      *
      * @return a {@link List} of {@link EntityRef}s in any order, never <code>null</code>.
      *
@@ -92,7 +93,7 @@ extends Contextual
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities} within the {@link Context} of this
-     * {@link ContextualEntityManager} which pass specified {@link Filter}s.
+     * {@link ContextualEntityManager} which pass specified {@link Filter Filters}.
      *
      * @param filters one or more {@link Filter}s.
      *

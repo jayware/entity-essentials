@@ -23,8 +23,11 @@ package org.jayware.e2.component.api;
 
 import org.jayware.e2.entity.api.EntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent;
+import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventType.RootEvent;
 import org.jayware.e2.event.api.Presence;
+
+import java.util.Set;
 
 
 public interface ComponentEvent
@@ -34,6 +37,11 @@ extends RootEvent
      * The component's type ({@link Class}) which is subject of the event.
      */
     String ComponentTypeParam = "org.jayware.e2.event.param.ComponentType";
+
+    /**
+     * A {@link Set} of component types ({@link Class}) which is subject to the event.
+     */
+    String ComponentTypeCollectionParam = "org.jayware.e2.event.param.ComponentTypeCollectionParam";
 
     /**
      * The {@link Component} which is subject of the event.
@@ -79,14 +87,15 @@ extends RootEvent
     interface ComponentAddedEvent extends ComponentEvent, EntityChangedEvent {}
 
     /**
-     * Signals the removal of a component from an entity.
+     * Signals the removal of all components with the specified type from the entity referenced by the given {@link EntityRef}.
+     * If the {@link ComponentEvent#ComponentTypeCollectionParam} is omitted, then all components are removed.
      * <p>
      * <b>Parameters:</b>
      * <table>
      *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
-     *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentTypeCollectionParam}</td><td>{@link Presence#Optional}</td></tr>
      *     <caption>Parameters</caption>
      * </table>
      */

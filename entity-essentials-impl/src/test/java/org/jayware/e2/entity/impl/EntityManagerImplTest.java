@@ -27,10 +27,9 @@ import mockit.Mocked;
 import mockit.Verifications;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
-import org.jayware.e2.entity.api.EntityEvent.DeleteAllEntitiesEvent;
+import org.jayware.e2.entity.api.EntityEvent.DeleteEntitiesEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.entity.api.EntityNotFoundException;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Parameters.Parameter;
@@ -43,22 +42,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
+import static java.util.UUID.fromString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityRefListParam;
-import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
-import static org.jayware.e2.event.api.Query.State.Success;
 
 
 public class EntityManagerImplTest
 {
-    private static final String TEST_ID = "051946d4-dee0-476e-8cb0-6e9f39776a10";
-    private static final UUID TEST_UUID = UUID.fromString(TEST_ID);
+    private static final UUID TEST_UUID = fromString("051946d4-dee0-476e-8cb0-6e9f39776a10");
 
     private Context context;
     private EntityManager testee;
@@ -77,7 +73,6 @@ public class EntityManagerImplTest
         new Expectations()
         {{
             testContext.getService(EventManager.class); result = testEventManager; minTimes = 0;
-
         }};
     }
 
@@ -92,50 +87,6 @@ public class EntityManagerImplTest
     {
         EntityRef ref = testee.createEntity(context);
         assertThat(ref.isValid()).isTrue();
-    }
-
-    @Test
-    public void testCreateEntityAbsolute()
-    {
-        EntityRef entityRef = testee.createEntity(context, path("/a/b"));
-
-        assertThat(entityRef.isValid()).isTrue();
-        assertThat(entityRef.getPath().asString()).isEqualTo("/a/b/");
-    }
-
-    @Test
-    public void testCreateEntityRelative()
-    {
-        final EntityRef ref = testee.createEntity(context, path("/a"));
-
-        EntityRef entityRef = testee.createEntity(ref, path("b"));
-
-        assertThat(entityRef.isValid()).isTrue();
-        assertThat(entityRef.getPath().asString()).isEqualTo("/a/b/");
-    }
-
-    @Test
-    public void testFindEntity()
-    {
-        testee.createEntity(context, path("/a/b"));
-
-        assertThat(testee.findEntity(context, path("/"))).isNotNull();
-        assertThat(testee.findEntity(context, path("/a"))).isNotNull();
-        assertThat(testee.findEntity(context, path("/a/b"))).isNotNull();
-        assertThat(testee.findEntity(context, path("/a/b/c"))).isNull();
-        assertThat(testee.findEntity(context, path(""))).isNull();
-    }
-
-    @Test
-    public void testDeleteEntity()
-    {
-        EntityRef ref = testee.createEntity(context, path("/a/b"));
-
-        assertThat(ref).isNotNull();
-        testee.deleteEntity(ref);
-
-        assertThat(testee.findEntity(context, path("/a/b"))).isNull();
-        assertThat(ref.isInvalid()).isTrue();
     }
 
     @Test
@@ -155,7 +106,7 @@ public class EntityManagerImplTest
         {{
             final Parameter[] parameters;
 
-            testEventManager.send(DeleteEntityEvent.class, parameters = withCapture());
+            testEventManager.query(DeleteEntityEvent.class, parameters = withCapture());
 
             assertThat(parameters).contains(param(ContextParam, testContext));
             assertThat(parameters).contains(param(EntityRefParam, testRefA));
@@ -193,8 +144,7 @@ public class EntityManagerImplTest
 
         new Expectations()
         {{
-            testEventManager.query(DeleteAllEntitiesEvent.class, withCapture(capturedQueryParameters)); result = testResultSet;
-            testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
+            testEventManager.query(DeleteEntitiesEvent.class, withCapture(capturedQueryParameters)); result = testResultSet;
             testResultSet.get(EntityRefListParam); result = expectedListOfDeletedEntities;
         }};
 
@@ -207,84 +157,14 @@ public class EntityManagerImplTest
             .isEqualTo(param(ContextParam, testContext));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testDeleteRootEntity()
-    {
-        EntityRef ref = testee.findEntity(context, path("/"));
-        assertThat(ref).isNotNull();
-
-        try
-        {
-            testee.deleteEntity(ref);
-        }
-        finally
-        {
-            // Assert that when an exception is thrown by the
-            // deleteEntity operation the entity does still exist.
-            assertThat(testee.findEntity(context, path("/"))).isNotNull();
-        }
-    }
-
     @Test
-    public void testGetEntity()
+    public void test_findEntities_With_Context_()
     {
-        testee.createEntity(context, path("/a/b"));
+        final EntityRef refA = testee.createEntity(context);
+        final EntityRef refB = testee.createEntity(context);
+        final EntityRef refC = testee.createEntity(context);
 
-        assertThat(testee.getEntity(context, path("/"))).isNotNull();
-        assertThat(testee.getEntity(context, path("/a"))).isNotNull();
-        assertThat(testee.getEntity(context, path("/a/b"))).isNotNull();
-    }
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testGetEntity_WithEmptyPath()
-    {
-        testee.getEntity(context, path(""));
-    }
-
-    @Test(expectedExceptions = EntityNotFoundException.class)
-    public void testGetEntity_WithAbsentEntity()
-    {
-        testee.getEntity(context, path("/a/b/c"));
-    }
-
-    @Test
-    public void testExistsEntity()
-    {
-        testee.createEntity(context, path("/a/b"));
-
-        assertThat(testee.existsEntity(context, path("/"))).isTrue();
-        assertThat(testee.existsEntity(context, path("/a"))).isTrue();
-        assertThat(testee.existsEntity(context, path("/a/b"))).isTrue();
-        assertThat(testee.existsEntity(context, path("/a/b/c"))).isFalse();
-    }
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void test_resolveEntity_With_String_Throws_IllegalArgrumentException_if_passed_Context_is_null()
-    {
-        testee.resolveEntity(null, TEST_ID);
-    }
-
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void test_resolveEntity_With_String_Throws_IllegalStateException_if_passed_Context_is_disposed()
-    {
-        new Expectations()
-        {{
-            testContext.isDisposed(); result = true;
-        }};
-
-        testee.resolveEntity(testContext, TEST_ID);
-    }
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void test_resolveEntity_With_String_Throws_IllegalArgrumentException_if_passed_String_is_null()
-    {
-        testee.resolveEntity(testContext, (String) null);
-    }
-
-    @Test
-    public void test_resolveEntity_With_String_Returns_not_null()
-    {
-        assertThat(testee.resolveEntity(context, TEST_ID)).isNotNull();
+        assertThat(testee.findEntities(context)).containsExactlyInAnyOrder(refA, refB, refC);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
@@ -307,13 +187,14 @@ public class EntityManagerImplTest
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_resolveEntity_With_UUID_Throws_IllegalArgrumentException_if_passed_UUID_is_null()
     {
-        testee.resolveEntity(testContext, (UUID) null);
+        testee.resolveEntity(testContext, null);
     }
 
     @Test
-    public void test_resolveEntity_With_UUID_Returns_not_null()
+    public void test_resolveEntity_With_UUID_Returns_the_expected_EntityRef()
     {
-        assertThat(testee.resolveEntity(context, TEST_UUID)).isNotNull();
+        final EntityRef expectedRef = testee.createEntity(context, TEST_UUID);
+        assertThat(testee.resolveEntity(context, TEST_UUID)).isEqualTo(expectedRef);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

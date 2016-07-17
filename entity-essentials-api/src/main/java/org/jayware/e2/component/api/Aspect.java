@@ -30,6 +30,7 @@ import org.jayware.e2.entity.api.EntityRef;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
@@ -141,7 +142,7 @@ public class Aspect
      */
     public static Aspect aspect(Class<? extends Component>... components)
     {
-        return new Aspect(new HashSet<Class<? extends Component>>(asList(components)));
+        return new Aspect(new CopyOnWriteArraySet<Class<? extends Component>>(asList(components)));
     }
 
     /**
@@ -153,7 +154,7 @@ public class Aspect
      */
     public static Aspect aspect(Set<Class<? extends Component>> components)
     {
-        return new Aspect(new HashSet<Class<? extends Component>>(components));
+        return new Aspect(new CopyOnWriteArraySet<Class<? extends Component>>(components));
     }
 
     public static Aspect combine(Aspect a, Aspect b)

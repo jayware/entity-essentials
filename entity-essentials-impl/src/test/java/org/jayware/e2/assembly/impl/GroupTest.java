@@ -35,7 +35,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jayware.e2.entity.api.EntityPath.path;
 
 
 public class GroupTest
@@ -58,11 +57,11 @@ public class GroupTest
         testEntityManager = testContext.getService(EntityManager.class);
         testComponentManager = testContext.getService(ComponentManager.class);
 
-        testeeRef = testEntityManager.createEntity(testContext, path("/testee"));
+        testeeRef = testEntityManager.createEntity(testContext);
         testComponentManager.addComponent(testeeRef, GroupComponent.class);
 
-        testEntityA = testEntityManager.createEntity(testContext, path("/a"));
-        testEntityB = testEntityManager.createEntity(testContext, path("/b"));
+        testEntityA = testEntityManager.createEntity(testContext);
+        testEntityB = testEntityManager.createEntity(testContext);
 
         testee = new GroupImpl(testeeRef);
     }

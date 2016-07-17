@@ -52,6 +52,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
+import static org.jayware.e2.event.impl.QueryBuilderImpl.createQueryBuilder;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.jayware.e2.util.ReferenceType.Weak;
 
@@ -98,7 +99,8 @@ implements EventManager
     public QueryBuilder createQuery(Class<? extends RootEvent> type)
     throws IllegalArgumentException
     {
-        throw new UnsupportedOperationException("EventManagerImpl.createQuery");
+        checkNotNull(type);
+        return createQueryBuilder(type);
     }
 
     @Override

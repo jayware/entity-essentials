@@ -19,12 +19,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.entity.impl;
+package org.jayware.e2.storage.impl;
 
+import org.jayware.e2.component.api.Component;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextInitializer;
+import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.event.api.EventManager;
+import org.jayware.e2.storage.api.ComponentDatabase;
+import org.jayware.e2.storage.api.Storage;
 
-import static org.jayware.e2.entity.impl.EntityManagerImpl.ENTITY_TREE;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.jayware.e2.storage.impl.StorageImpl.STORAGE_KEY;
 
 
 public class ContextInitializerImpl
@@ -33,6 +42,12 @@ implements ContextInitializer
     @Override
     public void initialize(Context context)
     {
-        context.put(ENTITY_TREE, new EntityTree(context));
+        final EventManager eventManager = context.getService(EventManager.class);
+        final ComponentDatabase componentDatabase = new ComponentDatabaseImpl(new HashMap<Class<? extends Component >, Map<EntityRef, Component>>());
+        final Storage storage = new StorageImpl(context, new HashMap<UUID, EntityRef>(), componentDatabase);
+
+        context.put(STORAGE_KEY, storage);
+
+        eventManager.subscribe(context, storage);
     }
 }

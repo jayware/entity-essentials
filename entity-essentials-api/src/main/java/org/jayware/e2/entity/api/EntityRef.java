@@ -30,7 +30,6 @@ import java.util.UUID;
  *
  *
  * @see Entity
- * @see EntityPath
  *
  * @since 1.0
  */
@@ -42,20 +41,6 @@ extends Contextual
      * @return the ID of an {@link Entity}
      */
     UUID getId();
-
-    /**
-     * Returns the {@link EntityPath} of the {@link Entity} this {@link EntityRef} points to.
-     * <p>
-     * <b>Note:</b> This operation may throw an {@link InvalidEntityRefException} if this {@link EntityRef}
-     * becomes invalid.
-     * </p>
-     *
-     * @return the referenced {@link Entity Entity's} {@link EntityPath}.
-     *
-     * @throws InvalidEntityRefException if the {@link EntityRef} is not valid
-     */
-    @Deprecated
-    EntityPath getPath() throws InvalidEntityRefException;
 
     /**
      * Returns whether this {@link EntityRef} is valid.

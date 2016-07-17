@@ -40,7 +40,6 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.entity.api.InvalidEntityRefException;
 import org.jayware.e2.event.api.Event;
@@ -378,13 +377,6 @@ implements Disposable
         throws InvalidEntityRefException
         {
             return myPendantRef.getId();
-        }
-
-        @Override
-        public EntityPath getPath()
-        throws InvalidEntityRefException
-        {
-            throw new UnsupportedOperationException("TreeNodeImpl.getPath");
         }
 
         @Override

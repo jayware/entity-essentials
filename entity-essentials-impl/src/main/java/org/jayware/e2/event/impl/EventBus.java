@@ -42,6 +42,7 @@ import org.jayware.e2.util.Consumer;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.ReferenceType;
 import org.jayware.e2.util.StateLatch;
+import org.jayware.e2.util.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +67,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static java.lang.Thread.currentThread;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jayware.e2.event.api.Query.State.Failed;
 import static org.jayware.e2.event.api.Query.State.Running;
 import static org.jayware.e2.event.api.Query.State.Success;
+import static org.jayware.e2.util.NotationUtil.shortNotationOf;
 
 
 public class EventBus
@@ -704,6 +707,33 @@ implements Disposable
         public boolean await(State state, long time, TimeUnit unit)
         {
             return myStateLatch.await(state, time, unit);
+        }
+
+        @Override
+        public void timeout(State state, long timeInMilliseconds)
+        {
+            timeout(state, timeInMilliseconds, MILLISECONDS);
+        }
+
+        @Override
+        public void timeout(State state, long time, TimeUnit unit)
+        {
+            timeout(state, time, unit, "Query (%s) did not reach state: '" + state + "' within %s%s", myQuery.getType().getSimpleName(), time, shortNotationOf(unit));
+        }
+
+        @Override
+        public void timeout(State state, long timeInMilliseconds, String message, Object... args)
+        {
+            timeout(state, timeInMilliseconds, MILLISECONDS, message, args);
+        }
+
+        @Override
+        public void timeout(State state, long time, TimeUnit unit, String message, Object... args)
+        {
+            if (!await(state, time, unit))
+            {
+                throw new TimeoutException(message, args);
+            }
         }
 
         @Override

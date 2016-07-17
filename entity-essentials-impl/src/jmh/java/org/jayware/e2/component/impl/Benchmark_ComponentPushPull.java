@@ -35,9 +35,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import static java.util.UUID.randomUUID;
-import static org.jayware.e2.entity.api.EntityPath.path;
-
 
 @Fork(3)
 @State(Scope.Benchmark)
@@ -59,7 +56,7 @@ public class Benchmark_ComponentPushPull
         myEntityManager = myContext.getService(EntityManager.class);
         myComponentManager = myContext.getService(ComponentManager.class);
 
-        myRef = myEntityManager.createEntity(myContext, path("/" + randomUUID().toString()));
+        myRef = myEntityManager.createEntity(myContext);
         myComponentManager.prepareComponent(myContext, BenchmarkComponent.class);
         myComponent = myComponentManager.addComponent(myRef, BenchmarkComponent.class);
     }

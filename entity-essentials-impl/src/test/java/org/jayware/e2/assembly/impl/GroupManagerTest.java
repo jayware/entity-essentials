@@ -36,7 +36,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,9 +57,9 @@ public class GroupManagerTest
 
         testContext = ContextProvider.getInstance().createContext();
 
-        final EntityManager entityManager = testContext.getEntityManager();
-        testEntityA = entityManager.createEntity(testContext, path("/a"));
-        testEntityB = entityManager.createEntity(testContext, path("/b"));
+        final EntityManager entityManager = testContext.getService(EntityManager.class);
+        testEntityA = entityManager.createEntity(testContext);
+        testEntityB = entityManager.createEntity(testContext);
     }
 
     @AfterMethod

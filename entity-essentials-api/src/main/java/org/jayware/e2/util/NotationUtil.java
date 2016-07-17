@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -19,17 +19,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jayware.e2.component.api;
+package org.jayware.e2.util;
+
+import java.util.concurrent.TimeUnit;
 
 
-import org.jayware.e2.entity.api.EntityRef;
-
-
-public class ComponentNotFoundException
-extends RuntimeException
+public class NotationUtil
 {
-    public ComponentNotFoundException(EntityRef ref, Class<? extends Component> component)
+    public static String shortNotationOf(TimeUnit unit)
     {
-        super(ref + " : " + component.getName());
+        switch (unit)
+        {
+            case NANOSECONDS:
+                return "ns";
+            case MICROSECONDS:
+                return "µs";
+            case MILLISECONDS:
+                return "ms";
+            case SECONDS:
+                return "s";
+            case MINUTES:
+                return "m";
+            case HOURS:
+                return "h";
+            case DAYS:
+                return "d";
+        }
+
+        throw new RuntimeException();
     }
 }

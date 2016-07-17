@@ -66,9 +66,9 @@ implements ComponentManager
 {
     private static final long COMMON_TIMEOUT_IN_MILLIS = 5000;
 
-    static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
-    static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
-    static final Key<ComponentPropertyAdapterProvider> PROPERTY_ADAPTER_PROVIDER = createKey("org.jayware.e2.PropertyAdapterProvider");
+    public static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
+    public static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
+    public static final Key<ComponentPropertyAdapterProvider> PROPERTY_ADAPTER_PROVIDER = createKey("org.jayware.e2.PropertyAdapterProvider");
 
     @Override
     public <T extends Component> T createComponent(Context context, Class<T> type)
