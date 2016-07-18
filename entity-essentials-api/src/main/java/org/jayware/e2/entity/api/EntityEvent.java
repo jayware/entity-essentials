@@ -22,12 +22,13 @@
 package org.jayware.e2.entity.api;
 
 
+import org.jayware.e2.context.api.Context;
 import org.jayware.e2.event.api.DeclarativeSanityChecker;
 import org.jayware.e2.event.api.EventType.RootEvent;
+import org.jayware.e2.event.api.Presence;
 import org.jayware.e2.event.api.SanityCheck;
 
-import static org.jayware.e2.entity.api.EntityEvent.ChildrenEntityEvent.ChildRefParam;
-import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityRefParam;
+import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityChangedEventSanityChecker;
 
 
 @SanityCheck(EntityEvent.EntityEventSanityChecker.class)
@@ -37,32 +38,94 @@ extends RootEvent
     /**
      * The {@link EntityPath} of the entity which is subject of the event.
      */
+    @Deprecated
     String EntityPathParam = "org.jayware.e2.event.param.EntityPath";
 
-    interface CreateEntityEvent extends EntityEvent
-    {
-        /**
-         * The id ({@link String}) of the entity which is subject of the event.
-         */
-        String EntityIdParam = "org.jayware.e2.event.param.EntityId";
+    /**
+     * The id ({@link String}) of the entity which is subject of the event.
+     */
+    String EntityIdParam = "org.jayware.e2.event.param.EntityId";
 
-        /**
-         * The {@link EntityRef} of the entity which was created due to this event.
-         */
-        String EntityRefParam = "org.jayware.e2.event.param.EntityRef";
-    }
+    /**
+     * The {@link EntityRef} of the entity which was created due to this event.
+     */
+    String EntityRefParam = "org.jayware.e2.event.param.EntityRef";
 
+    /**
+     * Signals the creation of an entity.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Optional}</td></tr>
+     * </table>
+     */
+    @SanityCheck(CreateEntityEventSanityChecker.class)
+    interface CreateEntityEvent extends EntityEvent {}
+
+    /**
+     * Signals that an entity has been created.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
+    @SanityCheck(EntityCreatedEventSanityChecker.class)
     interface EntityCreatedEvent extends EntityEvent {}
 
-    interface EntityDeletedEvent extends EntityEvent {}
-
+    /**
+     * Signals the deletion of an entity.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
+    @SanityCheck(DeleteEntityEventSanityChecker.class)
     interface DeleteEntityEvent extends EntityEvent {}
 
-    interface DeleteAllEntitiesEvent extends EntityEvent {}
+    /**
+     * Signals that an entity has been deleted.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
+    @SanityCheck(EntityDeletedEventSanityChecker.class)
+    interface EntityDeletedEvent extends EntityEvent {}
 
+    /**
+     * Signals that an entity is going to be deleted.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
+    @SanityCheck(EntityDeletingEventSanityChecker.class)
     interface EntityDeletingEvent extends EntityEvent {}
 
-    @SanityCheck(EntityChangedEvent.EntityChangedEventSanityChecker.class)
+    /**
+     * Signals the deletion of all entities within a {@link Context}.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
+    interface DeleteAllEntitiesEvent extends EntityEvent {}
+
+    @SanityCheck(EntityChangedEventSanityChecker.class)
     interface EntityChangedEvent extends EntityEvent
     {
         /**
@@ -81,6 +144,7 @@ extends RootEvent
         }
     }
 
+    @Deprecated
     interface ChildrenEntityEvent extends EntityChangedEvent
     {
         /**
@@ -89,8 +153,10 @@ extends RootEvent
         String ChildRefParam = "org.jayware.e2.event.param.ChildRef";
     }
 
+    @Deprecated
     interface ChildAddedEntityEvent extends ChildrenEntityEvent {}
 
+    @Deprecated
     interface ChildRemovedEntityEvent extends ChildrenEntityEvent {}
 
     class EntityEventSanityChecker
@@ -102,7 +168,61 @@ extends RootEvent
             // TODO: Create new checks according to the new query-api!
 //            checker.check(EntityEvent.class).param(EntityPathParam, "EntityPathParam").instanceOf(EntityPath.class).notNull().done();
             checker.check(EntityChangedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
-            checker.check(ChildrenEntityEvent.class).param(ChildRefParam, "ChildRefParam").instanceOf(EntityRef.class).notNull().done();
+//            checker.check(ChildrenEntityEvent.class).param(ChildRefParam, "ChildRefParam").instanceOf(EntityRef.class).notNull().done();
+        }
+    }
+
+    class CreateEntityEventSanityChecker
+    extends DeclarativeSanityChecker
+    {
+        @Override
+        protected void setup(SanityCheckerRuleBuilder checker)
+        {
+            checker.check(CreateEntityEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).done();
+        }
+    }
+
+    class EntityCreatedEventSanityChecker
+    extends DeclarativeSanityChecker
+    {
+        @Override
+        protected void setup(SanityCheckerRuleBuilder checker)
+        {
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
+        }
+    }
+
+    class DeleteEntityEventSanityChecker
+    extends DeclarativeSanityChecker
+    {
+        @Override
+        protected void setup(SanityCheckerRuleBuilder checker)
+        {
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
+        }
+    }
+
+    class EntityDeletedEventSanityChecker
+    extends DeclarativeSanityChecker
+    {
+        @Override
+        protected void setup(SanityCheckerRuleBuilder checker)
+        {
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
+        }
+    }
+
+    class EntityDeletingEventSanityChecker
+    extends DeclarativeSanityChecker
+    {
+        @Override
+        protected void setup(SanityCheckerRuleBuilder checker)
+        {
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
         }
     }
 }
