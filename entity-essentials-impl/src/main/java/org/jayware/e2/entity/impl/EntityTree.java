@@ -508,20 +508,20 @@ implements Disposable
     private void fireEntityDeletingEvent(EntityRef ref)
     {
         myEventManager.send(EntityDeletingEvent.class,
-        param(ContextParam, myContext),
-        param(EntityPathParam, ref.getPath()),
-        param(EntityRefParam, ref),
-        param(EntityIdParam, ref.getId())
+            param(ContextParam, myContext),
+            param(EntityPathParam, ref.getPath()),
+            param(EntityRefParam, ref),
+            param(EntityIdParam, ref.getId())
         );
     }
 
     private void fireEntityDeletedEvent(EntityRef ref)
     {
-        myEventManager.send(EntityDeletedEvent.class,
-        param(ContextParam, myContext),
-        param(EntityPathParam, ref.getPath()),
-        param(EntityRefParam, ref),
-        param(EntityIdParam, ref.getId())
+        myEventManager.post(EntityDeletedEvent.class,
+            param(ContextParam, myContext),
+            param(EntityPathParam, ref.getPath()),
+            param(EntityRefParam, ref),
+            param(EntityIdParam, ref.getId())
         );
     }
 
