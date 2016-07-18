@@ -24,6 +24,8 @@ package org.jayware.e2.context.api;
 
 import java.util.ServiceLoader;
 
+import static org.jayware.e2.util.Preconditions.checkNotNull;
+
 
 public abstract class ContextProvider
 {
@@ -33,6 +35,13 @@ public abstract class ContextProvider
 
     public static synchronized ContextProvider getInstance()
     {
-        return ServiceLoader.load(ContextProvider.class).iterator().next();
+        return getInstance(ContextProvider.class.getClassLoader());
+    }
+
+    public static synchronized ContextProvider getInstance(ClassLoader classLoader)
+    {
+        checkNotNull(classLoader);
+
+        return ServiceLoader.load(ContextProvider.class, classLoader).iterator().next();
     }
 }
