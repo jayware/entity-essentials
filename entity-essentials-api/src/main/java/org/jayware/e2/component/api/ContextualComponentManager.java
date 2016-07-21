@@ -28,6 +28,8 @@ import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityRef;
 
+import java.util.Collection;
+
 
 public interface ContextualComponentManager
 extends Contextual
@@ -183,4 +185,22 @@ extends Contextual
      * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
      */
     <T extends Component> T findComponent(EntityRef ref, Class<T> component) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
+
+    /**
+     * Returns a {@link Collection} containing all {@link Component Components} associated to the specified
+     * {@link EntityRef}.
+     * <p>
+     * This operation may return an empty {@link Collection} but never <code>null</code>.
+     *
+     * @param ref   an {@link EntityRef}.
+     *
+     * @return a {@link Collection}.
+     *
+     * @throws IllegalArgumentException If the passed {@link EntityRef} or the passed Component {@link Class} is <code>null</code>.
+     *
+     * @throws IllegalStateException If the {@link Context} to which this {@link ContextualComponentManager} belongs to has been disposed.
+     *
+     * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
+     */
+    Collection<Component> getComponents(EntityRef ref) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
 }

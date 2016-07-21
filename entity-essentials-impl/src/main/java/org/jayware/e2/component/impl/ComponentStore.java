@@ -412,7 +412,7 @@ implements Disposable
                                         @Param(value = ComponentParam, presence = Optional) Component component)
     {
         Map<EntityRef, Component> row;
-        Component instance;
+        AbstractComponent instance;
         Aspect oldAspect = null;
         Aspect newAspect = null;
         boolean fireEvents = false;
@@ -434,21 +434,22 @@ implements Disposable
                 myComponentDatabase.put(componentType, row);
             }
 
-            instance = row.get(ref);
+            instance = (AbstractComponent) row.get(ref);
 
             if (instance == null)
             {
                 oldAspect = getAspect(ref);
                 newAspect = oldAspect.add(componentType);
 
-                final AbstractComponent newComponent = (AbstractComponent) myComponentFactory.createComponent(componentType).newInstance(myContext);
+                instance = (AbstractComponent) myComponentFactory.createComponent(componentType).newInstance(myContext);
 
                 if (component != null)
                 {
-                    newComponent.copy(component);
+                    instance.copy(component);
+                    firePushEvent = true;
                 }
 
-                row.put(ref, newComponent);
+                row.put(ref, instance);
                 fireEvents = true;
             }
             else
@@ -463,10 +464,11 @@ implements Disposable
 
         if (fireEvents)
         {
-            fireComponentAddedEvent(ref, componentType);
+            fireComponentAddedEvent(ref, instance);
             fireAspectGainedEvent(ref, newAspect, oldAspect);
         }
-        else if (firePushEvent)
+
+        if (firePushEvent)
         {
             firePushComponentEvent(ref, component);
         }
@@ -478,7 +480,7 @@ implements Disposable
     {
         final Map<EntityRef, Component> row;
 
-        final Component instance;
+        Component instance = null;
         Aspect oldAspect = null;
         Aspect newAspect = null;
         boolean fireEvents = false;
@@ -510,7 +512,7 @@ implements Disposable
 
         if (fireEvents)
         {
-            fireComponentRemovedEvent(ref, componentType);
+            fireComponentRemovedEvent(ref, instance);
             fireAspectLostEvent(ref, newAspect, oldAspect);
         }
     }
@@ -629,23 +631,25 @@ implements Disposable
         );
     }
 
-    private void fireComponentAddedEvent(EntityRef ref, Class<? extends Component> type)
+    private void fireComponentAddedEvent(EntityRef ref, Component component)
     {
         myEventManager.post(ComponentAddedEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
             param(EntityPathParam, ref.getPath()),
-            param(ComponentTypeParam, type)
+            param(ComponentParam, component),
+            param(ComponentTypeParam, component.type())
         );
     }
 
-    private void fireComponentRemovedEvent(EntityRef ref, Class<? extends Component> type)
+    private void fireComponentRemovedEvent(EntityRef ref, Component component)
     {
         myEventManager.post(ComponentRemovedEvent.class,
             param(ContextParam, myContext),
             param(EntityRefParam, ref),
             param(EntityPathParam, ref.getPath()),
-            param(ComponentTypeParam, type)
+            param(ComponentParam, component),
+            param(ComponentTypeParam, component.type())
         );
     }
 

@@ -21,8 +21,10 @@
  */
 package org.jayware.e2.component.api;
 
+import org.jayware.e2.entity.api.EntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent;
 import org.jayware.e2.event.api.EventType.RootEvent;
+import org.jayware.e2.event.api.Presence;
 
 
 public interface ComponentEvent
@@ -46,12 +48,59 @@ extends RootEvent
 
     interface ComponentCreatedEvent extends ComponentEvent {}
 
+    /**
+     * Signals the adding of a component to an entity.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentParam}</td><td>{@link Presence#Optional}</td></tr>
+     * </table>
+     */
     interface AddComponentEvent extends ComponentEvent, EntityChangedEvent {}
 
+    /**
+     * Signals that a component has been added to an entity.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
     interface ComponentAddedEvent extends ComponentEvent, EntityChangedEvent {}
 
+    /**
+     * Signals the removal of a component from an entity.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
     interface RemoveComponentEvent extends ComponentEvent, EntityChangedEvent {}
 
+    /**
+     * Signals that a component has been removed from an entity.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
+     * </table>
+     */
     interface ComponentRemovedEvent extends ComponentEvent, EntityChangedEvent {}
 
     interface ComponentChangeEvent

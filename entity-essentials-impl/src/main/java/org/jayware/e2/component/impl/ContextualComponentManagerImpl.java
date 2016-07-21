@@ -34,6 +34,8 @@ import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.EntityRef;
 
+import java.util.Collection;
+
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.context.api.Preconditions.checkContextualNotNullAndBelongsToContext;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -124,6 +126,15 @@ implements ContextualComponentManager
         checkNotNull(component);
 
         return myDelegate.findComponent(ref, component);
+    }
+
+    @Override
+    public Collection<Component> getComponents(EntityRef ref)
+    {
+        checkContextNotNullAndNotDisposed(myContext);
+        checkContextualNotNullAndBelongsToContext(ref, myContext);
+
+        return myDelegate.getComponents(ref);
     }
 
     @Override

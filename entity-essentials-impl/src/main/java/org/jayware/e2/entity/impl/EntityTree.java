@@ -155,7 +155,7 @@ implements Disposable
                         param(ContextParam, myContext),
                         param(EntityPathParam, currentPath),
                         param(EntityRefParam, currentEntity.getRef()),
-                        param(EntityIdParam, currentEntity.identifier())
+                        param(EntityIdParam, currentEntity.identifier().toString())
                     );
 
                     myEventManager.post(ChildAddedEntityEvent.class,

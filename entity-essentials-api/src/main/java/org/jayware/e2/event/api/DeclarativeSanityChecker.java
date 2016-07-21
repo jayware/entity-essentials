@@ -54,7 +54,7 @@ implements SanityChecker
                     }
                 }
 
-                if (rule.getCheckInstanceOf())
+                if (rule.getCheckInstanceOf() && parameter != null)
                 {
                     if (!rule.getParamType().isAssignableFrom(parameter.getClass()))
                     {

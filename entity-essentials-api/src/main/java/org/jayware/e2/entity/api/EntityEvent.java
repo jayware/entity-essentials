@@ -128,11 +128,6 @@ extends RootEvent
     @SanityCheck(EntityChangedEventSanityChecker.class)
     interface EntityChangedEvent extends EntityEvent
     {
-        /**
-         * The {@link EntityRef} of the entity which is subject of the event.
-         */
-        String EntityRefParam = "org.jayware.e2.event.param.EntityRef";
-
         class EntityChangedEventSanityChecker
         extends DeclarativeSanityChecker
         {
