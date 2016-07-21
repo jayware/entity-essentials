@@ -50,6 +50,9 @@ import static org.jayware.e2.event.api.Parameters.param;
 
 public class EntityManagerImplTest
 {
+    private static final String TEST_ID = "051946d4-dee0-476e-8cb0-6e9f39776a10";
+    private static final UUID TEST_UUID = UUID.fromString(TEST_ID);
+
     private Context context;
     private EntityManager testee;
 
@@ -236,6 +239,64 @@ public class EntityManagerImplTest
         assertThat(testee.existsEntity(context, path("/a"))).isTrue();
         assertThat(testee.existsEntity(context, path("/a/b"))).isTrue();
         assertThat(testee.existsEntity(context, path("/a/b/c"))).isFalse();
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_resolveEntity_With_String_Throws_IllegalArgrumentException_if_passed_Context_is_null()
+    {
+        testee.resolveEntity(null, TEST_ID);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_resolveEntity_With_String_Throws_IllegalStateException_if_passed_Context_is_disposed()
+    {
+        new Expectations()
+        {{
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.resolveEntity(testContext, TEST_ID);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_resolveEntity_With_String_Throws_IllegalArgrumentException_if_passed_String_is_null()
+    {
+        testee.resolveEntity(testContext, (String) null);
+    }
+
+    @Test
+    public void test_resolveEntity_With_String_Returns_not_null()
+    {
+        assertThat(testee.resolveEntity(context, TEST_ID)).isNotNull();
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_resolveEntity_With_UUID_Throws_IllegalArgrumentException_if_passed_Context_is_null()
+    {
+        testee.resolveEntity(null, TEST_UUID);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_resolveEntity_With_UUID_Throws_IllegalStateException_if_passed_Context_is_disposed()
+    {
+        new Expectations()
+        {{
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.resolveEntity(testContext, TEST_UUID);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_resolveEntity_With_UUID_Throws_IllegalArgrumentException_if_passed_UUID_is_null()
+    {
+        testee.resolveEntity(testContext, (UUID) null);
+    }
+
+    @Test
+    public void test_resolveEntity_With_UUID_Returns_not_null()
+    {
+        assertThat(testee.resolveEntity(context, TEST_UUID)).isNotNull();
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

@@ -29,6 +29,7 @@ import org.jayware.e2.util.Filter;
 import org.jayware.e2.util.Traversal;
 
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -964,6 +965,10 @@ public interface EntityManager
      */
     @Deprecated
     boolean existsEntity(Context context, EntityPath path);
+
+    EntityRef resolveEntity(Context context, String id);
+
+    EntityRef resolveEntity(Context context, UUID id);
 
     /**
      * Returns a new instance of a {@link ContextualEntityManager} which belongs to the specified {@link Context}.

@@ -41,7 +41,9 @@ import org.jayware.e2.util.Key;
 import org.jayware.e2.util.Traversal;
 
 import java.util.List;
+import java.util.UUID;
 
+import static java.util.UUID.fromString;
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.component.api.Aspect.ANY;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
@@ -432,6 +434,25 @@ implements EntityManager
 
         final EntityTree entityTree = getOrCreateEntityTree(context);
         return entityTree != null && entityTree.existsEntity(path);
+    }
+
+    @Override
+    public EntityRef resolveEntity(Context context, String id)
+    {
+        checkContextNotNullAndNotDisposed(context);
+        checkNotNull(id);
+
+        return resolveEntity(context, fromString(id));
+    }
+
+    @Override
+    public EntityRef resolveEntity(Context context, UUID id)
+    {
+        checkContextNotNullAndNotDisposed(context);
+        checkNotNull(id);
+
+        final EntityTree entityTree = getOrCreateEntityTree(context);
+        return entityTree.resolveEntity(id);
     }
 
     @Override

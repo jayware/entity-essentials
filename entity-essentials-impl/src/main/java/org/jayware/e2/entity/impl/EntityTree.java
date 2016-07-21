@@ -485,6 +485,11 @@ implements Disposable
         }
     }
 
+    public EntityRef resolveEntity(UUID id)
+    {
+        return new EntityRefImpl(id);
+    }
+
     @Override
     public void dispose(Context context)
     {
@@ -651,7 +656,15 @@ implements Disposable
                 throw new InvalidEntityRefException(this);
             }
 
-            return myEntities.get(myIdentifier).getPath();
+            myReadLock.lock();
+            try
+            {
+                return myEntities.get(myIdentifier).getPath();
+            }
+            finally
+            {
+                myReadLock.unlock();
+            }
         }
 
         @Override
@@ -675,7 +688,15 @@ implements Disposable
         @Override
         public boolean isValid()
         {
-            return !myContext.isDisposed() && myEntities.containsKey(myIdentifier);
+            myReadLock.lock();
+            try
+            {
+                return !myContext.isDisposed() && myEntities.containsKey(myIdentifier);
+            }
+            finally
+            {
+                myReadLock.unlock();
+            }
         }
 
         @Override
