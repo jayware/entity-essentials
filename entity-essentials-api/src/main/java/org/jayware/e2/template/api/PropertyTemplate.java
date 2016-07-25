@@ -28,6 +28,10 @@ public interface PropertyTemplate<V>
 
     void setName(String name);
 
+    Class<V> getType();
+
+    void setType(Class<V> type);
+
     V getValue();
 
     void setValue(V value);

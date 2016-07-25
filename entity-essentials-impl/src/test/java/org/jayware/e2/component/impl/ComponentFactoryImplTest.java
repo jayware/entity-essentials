@@ -31,6 +31,8 @@ import org.jayware.e2.context.api.Context;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -77,20 +79,5 @@ public class ComponentFactoryImplTest
     public void test_prepareComponent_Should_fail_when_parameter_types_do_not_match()
     {
         testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
-    }
-
-    private static class Fubar
-    {
-        private String[] values;
-
-        public void bar()
-        {
-            fubar(new Integer[] {1, 2});
-        }
-
-        public void fubar(Object value)
-        {
-            values = (String[]) value;
-        }
     }
 }

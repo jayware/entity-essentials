@@ -38,7 +38,7 @@ import org.jayware.e2.component.impl.generation.writer.ComponentCopyThisMethodWr
 import org.jayware.e2.component.impl.generation.writer.ComponentDefaultConstructorWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentGetMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyNamesMethodWriter;
-import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyTypeNamesMethodWriter;
+import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyTypesMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentHasMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyFieldWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyGetterMethodWriter;
@@ -304,7 +304,7 @@ implements ComponentFactory
         final ComponentPropertySetterMethodWriter propertySetterWriter = myWriterFactory.createComponentPropertySetterWriter();
         final ComponentPropertyFieldWriter propertyFieldWriter = myWriterFactory.createComponentPropertyFieldWriter();
         final ComponentGetPropertyNamesMethodWriter getPropertyNamesMethodWriter = myWriterFactory.createGetPropertyNamesMethodWriter();
-        final ComponentGetPropertyTypeNamesMethodWriter getPropertyTypeNamesMethodWriter = myWriterFactory.createGetPropertyTypeNamesMethodWriter();
+        final ComponentGetPropertyTypesMethodWriter getPropertyTypeNamesMethodWriter = myWriterFactory.createGetPropertyTypeNamesMethodWriter();
         final ComponentGetMethodWriter getMethodWriter = myWriterFactory.createComponentGetMethodWriter();
         final ComponentSetMethodWriter setMethodWriter = myWriterFactory.createComponentSetMethodWriter();
         final ComponentHasMethodWriter hasMethodWriter = myWriterFactory.createComponentHasMethodWriter();
@@ -332,7 +332,7 @@ implements ComponentFactory
 
         {
             classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyNames", getDescriptor(List.class), null, null);
-            classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyTypeNames", getDescriptor(List.class), null, null);
+            classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyTypes", getDescriptor(List.class), null, null);
         }
 
         for (ComponentPropertyGenerationPlan propertyPlan : componentGenerationPlan.getComponentPropertyGenerationPlans())

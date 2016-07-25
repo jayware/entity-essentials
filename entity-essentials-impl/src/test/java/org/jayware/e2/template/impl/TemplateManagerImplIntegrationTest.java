@@ -73,8 +73,6 @@ public class TemplateManagerImplIntegrationTest
         final TestComponentC component = componentManager.createComponent(context, TestComponentC.class);
 
         final TestComponentTemplateImpl template = templateManager.exportComponent(component, testTemplateProvider);
-
-        System.out.println();
     }
 
     public static class TestComponentTemplateImpl
@@ -111,6 +109,7 @@ public class TemplateManagerImplIntegrationTest
     implements PropertyTemplate
     {
         private String name;
+        private Class type;
         private Object value;
 
         @Override
@@ -123,6 +122,18 @@ public class TemplateManagerImplIntegrationTest
         public void setName(String name)
         {
             this.name = name;
+        }
+
+        @Override
+        public Class getType()
+        {
+            return type;
+        }
+
+        @Override
+        public void setType(Class type)
+        {
+            this.type = type;
         }
 
         @Override

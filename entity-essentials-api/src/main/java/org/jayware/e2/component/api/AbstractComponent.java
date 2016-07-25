@@ -43,7 +43,7 @@ implements Component, Contextual
 
     public abstract List<String> getPropertyNames();
 
-    public abstract List<String> getPropertyTypeNames();
+    public abstract List<Class> getPropertyTypes();
 
     public abstract Object get(String name);
 
