@@ -22,7 +22,7 @@
 package org.jayware.e2.component.impl;
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.ComponentEvent.ComponentPushedEvent;
+import org.jayware.e2.component.api.ComponentEvent.ComponentAddedEvent;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
@@ -34,10 +34,7 @@ import org.jayware.e2.event.api.Param;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.internal.thread.ThreadUtil;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -112,7 +109,7 @@ public class ComponentIntegrationTest
             myRef = ref;
         }
 
-        @Handle(ComponentPushedEvent.class)
+        @Handle(ComponentAddedEvent.class)
         public void handleComponentPushedEvent(@Param(EntityRefParam) EntityRef ref, @Param(ComponentParam) Component component) throws InterruptedException
         {
             if (myRef.equals(ref) && component.type().equals(TestComponent.class))

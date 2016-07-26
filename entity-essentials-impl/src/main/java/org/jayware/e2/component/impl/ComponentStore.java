@@ -413,10 +413,11 @@ implements Disposable
     {
         Map<EntityRef, Component> row;
         AbstractComponent instance;
+        AbstractComponent oldComponent = null, newComponent = null;
         Aspect oldAspect = null;
         Aspect newAspect = null;
         boolean fireEvents = false;
-        boolean firePushEvent = false;
+        boolean firePushedEvent = false;
 
         myWriteLock.lock();
         try
@@ -443,18 +444,17 @@ implements Disposable
 
                 instance = (AbstractComponent) myComponentFactory.createComponent(componentType).newInstance(myContext);
 
-                if (component != null)
-                {
-                    instance.copy(component);
-                    firePushEvent = true;
-                }
-
                 row.put(ref, instance);
                 fireEvents = true;
             }
-            else
+
+            if (component != null)
             {
-                firePushEvent = component != null;
+                oldComponent = instance.copy();
+                instance.copy(component);
+                newComponent = instance.copy();
+
+                firePushedEvent = true;
             }
         }
         finally
@@ -468,9 +468,9 @@ implements Disposable
             fireAspectGainedEvent(ref, newAspect, oldAspect);
         }
 
-        if (firePushEvent)
+        if (firePushedEvent)
         {
-            firePushComponentEvent(ref, component);
+            fireComponentPushedEvent(ref, newComponent, oldComponent);
         }
     }
 
@@ -679,7 +679,6 @@ implements Disposable
     private void fireComponentPushedEvent(EntityRef ref, Component newComponent, Component oldComponent)
     {
         myEventManager.post(ComponentPushedEvent.class,
-            param(ContextParam, myContext),
             param(ContextParam, myContext),
             param(EntityRefParam, ref), param(EntityPathParam, ref.getPath()),
             param(ComponentTypeParam, newComponent.type()),

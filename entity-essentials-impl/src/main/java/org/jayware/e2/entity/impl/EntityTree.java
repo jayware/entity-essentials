@@ -524,7 +524,6 @@ implements Disposable
     {
         myEventManager.post(EntityDeletedEvent.class,
             param(ContextParam, myContext),
-            param(EntityPathParam, ref.getPath()),
             param(EntityRefParam, ref),
             param(EntityIdParam, ref.getId())
         );
