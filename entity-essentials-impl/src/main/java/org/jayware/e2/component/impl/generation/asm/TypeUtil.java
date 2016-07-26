@@ -102,6 +102,11 @@ public class TypeUtil
         return type.isArray() && boolean.class.equals(type.getComponentType());
     }
 
+    public static boolean isArrayType(Class<?> type)
+    {
+        return type.isArray();
+    }
+
     public static boolean isObjectType(Class<?> type)
     {
         return !type.isPrimitive() && !type.isArray();

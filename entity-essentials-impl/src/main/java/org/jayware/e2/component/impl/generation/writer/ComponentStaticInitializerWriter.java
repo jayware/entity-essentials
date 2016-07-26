@@ -31,13 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBooleanPrimitiveType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isDoublePrimitiveType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isFloatPrimitiveType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isIntegerPrimitiveType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isLongPrimitiveType;
-import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isPrimitiveType;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 
@@ -63,33 +57,9 @@ public class ComponentStaticInitializerWriter
             methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
             methodBuilder.loadReferenceVariable(typesList);
 
-            if (isBooleanPrimitiveType(propertyPlan.getPropertyType()))
+            if (isPrimitiveType(propertyPlan.getPropertyType()))
             {
-                methodBuilder.loadStaticField(Boolean.class, "TYPE", Class.class);
-            }
-            else if (isBytePrimitiveType(propertyPlan.getPropertyType()))
-            {
-                methodBuilder.loadStaticField(Byte.class, "TYPE", Class.class);
-            }
-            else if (isShortPrimitiveType(propertyPlan.getPropertyType()))
-            {
-                methodBuilder.loadStaticField(Short.class, "TYPE", Class.class);
-            }
-            else if (isIntegerPrimitiveType(propertyPlan.getPropertyType()))
-            {
-                methodBuilder.loadStaticField(Integer.class, "TYPE", Class.class);
-            }
-            else if (isLongPrimitiveType(propertyPlan.getPropertyType()))
-            {
-                methodBuilder.loadStaticField(Long.class, "TYPE", Class.class);
-            }
-            else if (isFloatPrimitiveType(propertyPlan.getPropertyType()))
-            {
-                methodBuilder.loadStaticField(Float.class, "TYPE", Class.class);
-            }
-            else if (isDoublePrimitiveType(propertyPlan.getPropertyType()))
-            {
-                methodBuilder.loadStaticField(Double.class, "TYPE", Class.class);
+                methodBuilder.loadPrimitiveTypeConstant(propertyPlan.getPropertyType());
             }
             else
             {

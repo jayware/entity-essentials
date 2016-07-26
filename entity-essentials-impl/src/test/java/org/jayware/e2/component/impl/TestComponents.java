@@ -176,8 +176,48 @@ public class TestComponents
 
         void setPrimitiveDoubleArray(double[] value);
 
+        Boolean[] getBooleanObjectArray();
+
+        void setBooleanObjectArray(Boolean[] value);
+
+        Byte[] getByteObjectArray();
+
+        void setByteObjectArray(Byte[] value);
+
+        Short[] getShortObjectArray();
+
+        void setShortObjectArray(Short[] value);
+
+        Integer[] getIntegerObjectArray();
+
+        void setIntegerObjectArray(Integer[] value);
+
+        Long[] getLongObjectArray();
+
+        void setLongObjectArray(Long[] value);
+
+        Float[] getFloatObjectArray();
+
+        void setFloatObjectArray(Float[] value);
+
+        Double[] getDoubleObjectArray();
+
+        void setDoubleObjectArray(Double[] value);
+
+        Object[] getObjectArray();
+
+        void setObjectArray(Object[] value);
+
         String[] getStringArray();
 
         void setStringArray(String[] value);
+
+        TestEnum getEnum();
+
+        void setEnum(TestEnum value);
+
+        TestEnum[] getEnumArray();
+
+        void setEnumArray(TestEnum[] value);
     }
 }

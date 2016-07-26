@@ -27,12 +27,14 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isArrayType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBooleanPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isDoublePrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isFloatPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isIntegerPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isLongPrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isObjectType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.resolveOpcodePrimitiveType;
 import static org.objectweb.asm.Opcodes.ACONST_NULL;
@@ -132,6 +134,42 @@ public class MethodBuilder
     public void loadConstant(Class constant)
     {
         myVisitor.visitLdcInsn(getType(constant));
+    }
+
+    public void loadPrimitiveTypeConstant(Class type)
+    {
+        if (isBooleanPrimitiveType(type))
+        {
+            loadStaticField(Boolean.class, "TYPE", Class.class);
+        }
+        else if (isBytePrimitiveType(type))
+        {
+            loadStaticField(Byte.class, "TYPE", Class.class);
+        }
+        else if (isShortPrimitiveType(type))
+        {
+            loadStaticField(Short.class, "TYPE", Class.class);
+        }
+        else if (isIntegerPrimitiveType(type))
+        {
+            loadStaticField(Integer.class, "TYPE", Class.class);
+        }
+        else if (isLongPrimitiveType(type))
+        {
+            loadStaticField(Long.class, "TYPE", Class.class);
+        }
+        else if (isFloatPrimitiveType(type))
+        {
+            loadStaticField(Float.class, "TYPE", Class.class);
+        }
+        else if (isDoublePrimitiveType(type))
+        {
+            loadStaticField(Double.class, "TYPE", Class.class);
+        }
+        else
+        {
+            throw new RuntimeException();
+        }
     }
 
     public void loadThis()
@@ -374,6 +412,10 @@ public class MethodBuilder
         else if (isDoublePrimitiveType(type))
         {
             myVisitor.visitInsn(DCONST_0);
+        }
+        else if (isObjectType(type) || isArrayType(type))
+        {
+            myVisitor.visitInsn(ACONST_NULL);
         }
         else
         {
