@@ -28,6 +28,7 @@ import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
+import org.jayware.e2.component.impl.TestComponents.TestComponentB;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.IllegalContextException;
@@ -35,7 +36,15 @@ import org.jayware.e2.entity.api.EntityRef;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.extractProperty;
+import static org.assertj.core.api.Assertions.setRemoveAssertJRelatedElementsFromStackTrace;
 
 
 public class ContextualComponentManagerImplTest
@@ -62,7 +71,7 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void test_prepareComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    public void test_prepareComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
         {{
@@ -91,7 +100,7 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void test_createComponent_With_Class_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    public void test_createComponent_With_Class_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
         {{
@@ -131,7 +140,7 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void test_addComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    public void test_addComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
         {{
@@ -186,7 +195,7 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
         {{
@@ -257,7 +266,7 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void test_removeComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    public void test_removeComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
         {{
@@ -312,7 +321,7 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void test_getComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    public void test_getComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
         {{
@@ -363,7 +372,7 @@ public class ContextualComponentManagerImplTest
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void test_findComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentMananger_belongs_to_has_been_disposed()
+    public void test_findComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
         {{
@@ -394,6 +403,132 @@ public class ContextualComponentManagerImplTest
         }};
 
         assertThat(testee.findComponent(testRefA, TestComponentA.class)).isEqualTo(testComponentA);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_findComponent_With_EntityRef_and_VarArg_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
+    {
+        testee.hasComponent(null, TestComponentA.class);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_findComponent_With_EntityRef_and_VarArg_Throws_IllegalArgumentException_if_the_passed_Component_Classes_are_null()
+    {
+        new Expectations()
+        {{
+            testRefA.isInvalid(); result = false;
+            testRefA.belongsTo(testContext); result = true;
+        }};
+
+        testee.hasComponent(testRefA, (Class<? extends Component>) null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_hasComponent_With_EntityRef_and_VarArg_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
+    {
+        new Expectations()
+        {{
+            testRefA.isInvalid(); result = false;
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.hasComponent(testRefA, TestComponentA.class);
+    }
+
+    @Test(expectedExceptions = IllegalContextException.class)
+    public void test_hasComponent_With_EntityRef_and_VarArg_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
+    {
+        new Expectations()
+        {{
+            testRefA.isInvalid(); result = false;
+            testRefA.belongsTo(testContext); result = false;
+        }};
+
+        testee.hasComponent(testRefA, TestComponentA.class);
+    }
+
+    @Test
+    public void test_hasComponent_With_EntityRef_and_VarArg_Returns_true_if_the_specified_type_of_Component_is_present_at_the_referenced_Entity()
+    {
+        final List<Collection<Class<? extends Component>>> capturedComponentTypes = new ArrayList<Collection<Class<? extends Component>>>();
+
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true;
+            testComponentManager.hasComponents(testRefA, withCapture(capturedComponentTypes)); result = true; times = 1;
+        }};
+
+        assertThat(testee.hasComponent(testRefA, TestComponentA.class)).isTrue();
+        assertThat(capturedComponentTypes.get(0)).contains(TestComponentA.class);
+    }
+
+    @Test
+    public void test_hasComponent_With_EntityRef_and_VarArg_Returns_false_if_the_specified_type_of_Component_is_not_present_at_the_referenced_Entity()
+    {
+        final List<Collection<Class<? extends Component>>> capturedComponentTypes = new ArrayList<Collection<Class<? extends Component>>>();
+
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true;
+            testComponentManager.hasComponents(testRefA, withCapture(capturedComponentTypes)); result = false; times = 1;
+        }};
+
+        assertThat(testee.hasComponent(testRefA, TestComponentA.class)).isFalse();
+        assertThat(capturedComponentTypes.get(0)).contains(TestComponentA.class);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_hasComponent_With_EntityRef_and_Collection_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
+    {
+        new Expectations()
+        {{
+            testRefA.isInvalid(); result = false;
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class));
+    }
+
+    @Test(expectedExceptions = IllegalContextException.class)
+    public void test_hasComponent_With_EntityRef_and_Collection_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
+    {
+        new Expectations()
+        {{
+            testRefA.isInvalid(); result = false;
+            testRefA.belongsTo(testContext); result = false;
+        }};
+
+        testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class));
+    }
+
+    @Test
+    public void test_hasComponent_With_EntityRef_and_Collection_Returns_true_if_the_specified_type_of_Component_is_present_at_the_referenced_Entity()
+    {
+        final List<Collection<Class<? extends Component>>> capturedComponentTypes = new ArrayList<Collection<Class<? extends Component>>>();
+
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true;
+            testComponentManager.hasComponents(testRefA, withCapture(capturedComponentTypes)); result = true; times = 1;
+        }};
+
+        assertThat(testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class))).isTrue();
+        assertThat(capturedComponentTypes.get(0)).contains(TestComponentA.class, TestComponentB.class);
+    }
+
+    @Test
+    public void test_hasComponent_With_EntityRef_and_Collection_Returns_false_if_the_specified_type_of_Component_is_not_present_at_the_referenced_Entity()
+    {
+        final List<Collection<Class<? extends Component>>> capturedComponentTypes = new ArrayList<Collection<Class<? extends Component>>>();
+
+        new Expectations()
+        {{
+            testRefA.belongsTo(testContext); result = true;
+            testComponentManager.hasComponents(testRefA, withCapture(capturedComponentTypes)); result = false; times = 1;
+        }};
+
+        assertThat(testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class))).isFalse();
+        assertThat(capturedComponentTypes.get(0)).contains(TestComponentA.class, TestComponentB.class);
     }
 
     @Test

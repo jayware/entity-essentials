@@ -203,4 +203,38 @@ extends Contextual
      * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
      */
     Collection<Component> getComponents(EntityRef ref) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
+
+    /**
+     * Returns whether all {@link Component Components} of the specified types are associated to the {@link Entity} referenced
+     * by the passed {@link EntityRef}.
+     *
+     * @param ref        an {@link EntityRef}.
+     * @param components a var-arg of {@link Class Classes}.
+     *
+     * @return <code>true</code> if the {@link Entity} has all {@link Component Components} of the specified types, otherwise <code>false</code>.
+     *
+     * @throws IllegalArgumentException If the passed {@link EntityRef} or the passed Component types is <code>null</code>.
+     *
+     * @throws IllegalStateException    If the {@link Context} to which this {@link ContextualComponentManager} belongs to has been disposed.
+     *
+     * @throws IllegalContextException  If the specified {@link EntityRef} belongs to another {@link Context}.
+     */
+    boolean hasComponent(EntityRef ref, Class<? extends Component>... components);
+
+    /**
+     * Returns whether all {@link Component Components} of the specified types are associated to the {@link Entity} referenced
+     * by the passed {@link EntityRef}.
+     *
+     * @param ref an {@link EntityRef}.
+     * @param components a {@link Collection} of {@link Class Classes}.
+     *
+     * @return <code>true</code> if the {@link Entity} has all {@link Component Components} of the specified types, otherwise <code>false</code>.
+     *
+     * @throws IllegalArgumentException If the passed {@link EntityRef} or the passed Component {@link Class} is <code>null</code>.
+     *
+     * @throws IllegalStateException If the {@link Context} to which this {@link ContextualComponentManager} belongs to has been disposed.
+     *
+     * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
+     */
+    boolean hasComponent(EntityRef ref, Collection<Class<? extends Component>> components);
 }
