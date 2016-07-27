@@ -24,7 +24,6 @@ package org.jayware.e2.entity.impl;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Fork;
@@ -35,13 +34,9 @@ import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Warmup;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
-import static java.util.UUID.randomUUID;
-import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.openjdk.jmh.annotations.Scope.Benchmark;
-import static org.openjdk.jmh.annotations.Scope.Thread;
 
 
 @Fork(3)
@@ -63,21 +58,14 @@ public class Benchmark_DeleteEntity
 
         for(int i = 0; i < 200000; ++i)
         {
-            myQueue.add(myEntityManager.createEntity(myContext, path("/" + randomUUID().toString())));
+            myQueue.add(myEntityManager.createEntity(myContext));
         }
     }
 
     @TearDown
     public void teardown()
     {
-        final List<EntityRef> entities = myEntityManager.findEntities(myContext);
-        for (EntityRef entity : entities)
-        {
-            if (!entity.getPath().equals(EntityPath.ROOT_PATH))
-            {
-                myEntityManager.deleteEntity(entity);
-            }
-        }
+        myEntityManager.deleteEntities(myContext);
     }
 
     @Benchmark

@@ -31,8 +31,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import static java.util.UUID.randomUUID;
-import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.openjdk.jmh.annotations.Scope.Benchmark;
 
 
@@ -55,6 +53,6 @@ public class Benchmark_CreateEntity
     @Benchmark
     public void benchmark()
     {
-        myEntityManager.createEntity(myContext, path("/" + randomUUID().toString()));
+        myEntityManager.createEntity(myContext);
     }
 }

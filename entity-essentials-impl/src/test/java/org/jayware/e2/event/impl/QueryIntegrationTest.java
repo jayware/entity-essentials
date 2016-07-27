@@ -34,6 +34,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
@@ -71,14 +78,58 @@ public class QueryIntegrationTest
     public void test()
     throws InterruptedException
     {
-        final Query testQuery = testee.createQuery(TestQueryEvent.class,
-                                                   param(ContextParam, testContext),
-                                                   param(TEST_PARAM, TEST_VALUE));
+        final int count = 100;
+        final List<Computation> computations = new CopyOnWriteArrayList<Computation>();
+        final CountDownLatch startLatch = new CountDownLatch(1);
+        final CountDownLatch finishLatch = new CountDownLatch(count);
 
-        final ResultSet result = testee.query(testQuery);
+        for (int i = 0; i < count; ++i)
+        {
+            final Computation computation = new Computation((int) (Math.random() * 100), (int) (Math.random() * 100));
+            computations.add(computation);
 
-        assertThat(result.await(Success, 10, SECONDS)).isTrue();
-        assertThat((Integer) result.get(TEST_PARAM)).isEqualTo(TEST_VALUE * TEST_VALUE);
+            final Thread thread = new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        if (startLatch.await(10, SECONDS))
+                        {
+                            sleep(10 + new Random().nextInt(100));
+
+                            final Query testQuery = testee.createQuery(TestQueryEvent.class,
+                                                        param(ContextParam, testContext),
+                                                        param("computation", computation)
+                                                    );
+
+                            final ResultSet resultSet = testee.query(testQuery);
+                            computation.result.set(resultSet.get("result"));
+                        }
+                    }
+                    catch (InterruptedException ignored)
+                    {
+
+                    }
+
+                    finishLatch.countDown();
+                }
+            });
+
+            thread.start();
+            sleep(5);
+
+        }
+
+        startLatch.countDown();
+
+        assertThat(finishLatch.await(10, SECONDS)).isTrue();
+
+        for (Computation computation : computations)
+        {
+            assertThat(computation.result.get()).isEqualTo(computation.expectation);
+        }
     }
 
     public interface TestQueryEvent
@@ -90,9 +141,25 @@ public class QueryIntegrationTest
     public class TestHandler
     {
         @Handle(TestQueryEvent.class)
-        public void handle(Query query, @Param(TEST_PARAM) Integer input)
+        public void handle(Query query, @Param("computation") Computation computation)
         {
-            query.result(TEST_PARAM, input * input);
+            query.result("result", computation.inputA + computation.inputB);
+        }
+    }
+
+    public static class Computation
+    {
+        private final int inputA;
+        private final int inputB;
+        private final int expectation;
+        private final AtomicInteger result;
+
+        public Computation(int a, int b)
+        {
+            inputA = a;
+            inputB = b;
+            expectation = a + b;
+            result = new AtomicInteger();
         }
     }
 }

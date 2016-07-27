@@ -59,6 +59,10 @@ dependencies {
 
 test {
     useTestNG() {}
+    testLogging {
+        displayGranularity 4
+        events "started", "passed", "skipped", "failed"
+    }
 }
 
 bintray {
