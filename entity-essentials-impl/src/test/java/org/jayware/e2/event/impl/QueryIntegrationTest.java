@@ -105,7 +105,7 @@ public class QueryIntegrationTest
                                                     );
 
                             final ResultSet resultSet = testee.query(testQuery);
-                            computation.result.set(resultSet.get("result"));
+                            computation.result.set(((Integer) resultSet.get("result")).intValue());
                         }
                     }
                     catch (InterruptedException ignored)

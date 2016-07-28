@@ -27,12 +27,10 @@ import org.jayware.e2.util.Filter;
 
 
 /**
- * An <code>EventFilter</code> is every time applied when an {@link EventManager} dispatches an {@link Event} to a subscriber.
+ * An <code>EventFilter</code> is every time applied when an Event is dispatched to a subscriber.
  *
  * @see Event
  * @see EventManager
- *
- * @since 1.0
  */
 public interface EventFilter
 extends Filter<Event>
