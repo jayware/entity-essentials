@@ -137,7 +137,7 @@ public class ContextualEntityManagerImplTest
     @Test
     public void test_DeleteEntity_Calls_its_delegate_to_delete_Entities_and_returns_a_list_containing_all_deleted_Entities()
     {
-        final List<EntityRef> resultList = new ArrayList<>();
+        final List<EntityRef> resultList = new ArrayList<EntityRef>();
         resultList.add(testRefA);
         resultList.add(testRefB);
 

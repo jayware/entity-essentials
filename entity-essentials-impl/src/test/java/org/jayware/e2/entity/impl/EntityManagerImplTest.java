@@ -186,8 +186,8 @@ public class EntityManagerImplTest
     public void test_deleteEntities_Fires_DeleteAllEntitiesEvent_as_Query_with_expected_parameters()
     throws Exception
     {
-        final List<EntityRef> expectedListOfDeletedEntities = new ArrayList<>();
-        final List<Parameter[]> queryParameter = new ArrayList<>();
+        final List<EntityRef> expectedListOfDeletedEntities = new ArrayList<EntityRef>();
+        final List<Parameter[]> queryParameter = new ArrayList<Parameter[]>();
 
         expectedListOfDeletedEntities.addAll(Arrays.<EntityRef>asList(testRefA, testRefB, testRefC));
 

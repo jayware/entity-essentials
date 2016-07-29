@@ -237,7 +237,7 @@ implements Disposable
         myWriteLock.lock();
         try
         {
-            for (EntityImpl entity : myEntities.values())
+            for (EntityImpl entity : new ArrayList<EntityImpl>(myEntities.values()))
             {
                 final EntityRef ref = entity.getRef();
                 if (!entity.getPath().equals(EntityPath.ROOT_PATH))
