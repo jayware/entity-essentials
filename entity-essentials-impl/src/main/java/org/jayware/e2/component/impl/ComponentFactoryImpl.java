@@ -188,7 +188,7 @@ implements ComponentFactory
             final Class aClass = componentClasses.poll();
             for (Class interfaceClass : aClass.getInterfaces())
             {
-                if (!(interfaceClass.isInterface() && Component.class.isAssignableFrom(interfaceClass)))
+                if (!(interfaceClass.isInterface()))
                 {
                     throw new MalformedComponentException("Invalid inheritance of a non component interface: " + interfaceClass.getName());
                 }
@@ -277,18 +277,36 @@ implements ComponentFactory
 
                     propertyGenerationPlan.setPropertyAnnotation(componentPropertyAnnotation);
                 }
-
-                if (propertyGenerationPlan.hasGetter() && propertyGenerationPlan.hasSetter())
-                {
-                    propertyDescriptorMap.remove(propertyName);
-                    componentGenerationPlan.addComponentPropertyGenerationPlan(propertyGenerationPlan);
-                }
+            }
+            else
+            {
+                throw new MalformedComponentException("Method '" + method + "' is neither a setter nor a getter!");
             }
         }
 
-        if (!propertyDescriptorMap.isEmpty())
+        for (ComponentPropertyGenerationPlan propertyGenerationPlan : propertyDescriptorMap.values())
         {
-            throw new MalformedComponentException();
+            if (propertyGenerationPlan.isComplete())
+            {
+                componentGenerationPlan.addComponentPropertyGenerationPlan(propertyGenerationPlan);
+            }
+            else
+            {
+                final String propertyName = propertyGenerationPlan.getPropertyName();
+
+                if (!propertyGenerationPlan.hasGetter())
+                {
+                    throw new MalformedComponentException("There is no getter for property: " + propertyName);
+                }
+                else if (!propertyGenerationPlan.hasSetter())
+                {
+                    throw new MalformedComponentException("There is no setter for property: " + propertyName);
+                }
+                else
+                {
+                    throw new MalformedComponentException("Incomplete ComponentPropertyGenerationPlan: " + propertyGenerationPlan);
+                }
+            }
         }
 
         return componentGenerationPlan;

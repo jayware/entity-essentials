@@ -24,9 +24,11 @@ package org.jayware.e2.component.impl;
 
 import mockit.Mocked;
 import org.jayware.e2.component.api.ComponentFactoryException;
+import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentC;
+import org.jayware.e2.component.impl.TestComponents.TestComponentWhichExtendsARenegade;
 import org.jayware.e2.context.api.Context;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -79,5 +81,21 @@ public class ComponentFactoryImplTest
     public void test_prepareComponent_Should_fail_when_parameter_types_do_not_match()
     {
         testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
+    }
+
+    @Test
+    public void test_()
+    throws Exception
+    {
+        testee.prepareComponent(TestComponentWhichExtendsARenegade.class);
+
+        final ComponentInstancer<TestComponentWhichExtendsARenegade> instancer = testee.createComponent(TestComponentWhichExtendsARenegade.class);
+        final TestComponentWhichExtendsARenegade component = instancer.newInstance(testContext);
+        final TestComponents.Renegade renegade = component;
+
+        component.setText("Hello World");
+
+//        assertThat(component.getText()).isEqualTo("Hello World");
+//        assertThat(renegade.getText()).isEqualTo("Hello World");
     }
 }

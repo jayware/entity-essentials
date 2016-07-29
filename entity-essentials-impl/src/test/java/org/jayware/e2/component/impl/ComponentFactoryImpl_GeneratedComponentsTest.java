@@ -33,6 +33,7 @@ import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentAB;
 import org.jayware.e2.component.impl.TestComponents.TestComponentB;
 import org.jayware.e2.component.impl.TestComponents.TestComponentC;
+import org.jayware.e2.component.impl.TestComponents.TestComponentWhichExtendsARenegade;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
 import org.testng.annotations.BeforeMethod;
@@ -130,7 +131,7 @@ public class ComponentFactoryImpl_GeneratedComponentsTest
     }
 
     @Test(expectedExceptions = MalformedComponentException.class)
-    public void test_combined_component_Fails_if_the_component_extends_a_non_component_type()
+    public void test_combined_component_Fails_if_the_component_extends_a_type_which_declares_illegal_operations()
     {
         componentFactory.prepareComponent(MalformedCombinedTestComponent.class);
     }

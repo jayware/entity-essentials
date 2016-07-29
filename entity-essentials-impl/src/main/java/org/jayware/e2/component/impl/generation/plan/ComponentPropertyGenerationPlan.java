@@ -134,6 +134,16 @@ public class ComponentPropertyGenerationPlan
         return myAnnotation;
     }
 
+    public boolean isComplete()
+    {
+        return hasGetter() && hasSetter() && myType != null;
+    }
+
+    public boolean isIncomplete()
+    {
+        return !isComplete();
+    }
+
     @Override
     public boolean equals(Object o)
     {

@@ -85,6 +85,21 @@ public class TestComponents
         void setString(int value);
     }
 
+    public interface TestComponentWhichExtendsARenegade
+    extends Component, Renegade
+    {
+        void setNumber(int number);
+
+        String getText();
+    }
+
+    public interface Renegade
+    {
+        void setText(String text);
+
+        int getNumber();
+    }
+
     public interface TestComponentC
     extends Component
     {
