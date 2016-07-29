@@ -420,7 +420,7 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = true;
         }};
 
-        testee.hasComponent(testRefA, (Class<? extends Component>) null);
+        testee.hasComponent(testRefA, (Class<? extends Component>[]) null);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)

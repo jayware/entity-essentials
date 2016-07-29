@@ -22,7 +22,7 @@
 package org.jayware.e2.event.api;
 
 
-import static org.jayware.e2.event.api.Util.buildExceptionMessage;
+import static org.jayware.e2.event.api.Inspector.generateReport;
 
 
 public class EventDispatchException
@@ -30,11 +30,11 @@ extends RuntimeException
 {
     public EventDispatchException(String message, Event event)
     {
-        super(buildExceptionMessage(message, event));
+        super(generateReport(message, event));
     }
 
     public EventDispatchException(String message, Event event, Throwable cause)
     {
-        super(buildExceptionMessage(message, event), cause);
+        super(generateReport(message, event), cause);
     }
 }

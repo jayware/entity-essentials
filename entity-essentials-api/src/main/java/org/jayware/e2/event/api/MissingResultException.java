@@ -22,7 +22,7 @@
 package org.jayware.e2.event.api;
 
 
-import static org.jayware.e2.event.api.Util.buildExceptionMessage;
+import static org.jayware.e2.event.api.Inspector.generateReport;
 
 
 public class MissingResultException
@@ -35,11 +35,11 @@ extends RuntimeException
 
     public MissingResultException(String message, ResultSet resultSet)
     {
-        super(buildExceptionMessage(message, resultSet.getQuery()));
+        super(generateReport(message, resultSet.getQuery()));
     }
 
     public MissingResultException(String message, ResultSet resultSet, Throwable cause)
     {
-        super(buildExceptionMessage(message, resultSet.getQuery()), cause);
+        super(generateReport(message, resultSet.getQuery()), cause);
     }
 }

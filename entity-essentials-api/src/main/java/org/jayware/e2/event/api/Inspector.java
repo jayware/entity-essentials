@@ -22,13 +22,22 @@
 package org.jayware.e2.event.api;
 
 
-class Util
+public class Inspector
 {
-    static String buildExceptionMessage(String message, Event event)
+    public static String generateReport(Event event)
+    {
+        return generateReport(null, event);
+    }
+
+    public static String generateReport(String message, Event event)
     {
         final StringBuilder messageBuilder = new StringBuilder();
 
-        messageBuilder.append(message).append('\n');
+        if (message != null)
+        {
+            messageBuilder.append(message).append('\n');
+        }
+
         messageBuilder.append('\t').append(event.isQuery() ? "Query: " : "Event: ").append(event.getType().getName()).append('\n');
         messageBuilder.append('\t').append("Parameters: ");
         for (Parameters.Parameter parameter : event.getParameters())
