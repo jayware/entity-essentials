@@ -30,6 +30,7 @@ import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteAllEntitiesEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityManager;
+import org.jayware.e2.entity.api.EntityManagerException;
 import org.jayware.e2.entity.api.EntityNotFoundException;
 import org.jayware.e2.entity.api.EntityPath;
 import org.jayware.e2.entity.api.EntityRef;
@@ -42,14 +43,17 @@ import org.jayware.e2.util.Traversal;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 import static java.util.UUID.fromString;
 import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jayware.e2.component.api.Aspect.ANY;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
+import static org.jayware.e2.entity.api.EntityEvent.EntityRefListParam;
 import static org.jayware.e2.entity.api.EntityPath.EMPTY_PATH;
 import static org.jayware.e2.entity.api.EntityPath.ROOT_PATH;
 import static org.jayware.e2.entity.api.EntityPathFilter.ALL;
@@ -151,12 +155,33 @@ implements EntityManager
     }
 
     @Override
-    public void deleteEntities(Context context)
+    public List<EntityRef> deleteEntities(Context context)
     {
         checkContextNotNullAndNotDisposed(context);
 
-        final EventManager eventManager = context.getService(EventManager.class);
-        eventManager.send(DeleteAllEntitiesEvent.class, param(ContextParam, context));
+        try
+        {
+            final EventManager eventManager = context.getService(EventManager.class);
+            final ResultSet resultSet = eventManager.query(DeleteAllEntitiesEvent.class, param(ContextParam, context));
+
+            if (!resultSet.await(Success, 5000, MILLISECONDS))
+            {
+                throw new TimeoutException("Failed to delete all entities within 5000ms!");
+            }
+
+            final List<EntityRef> result = resultSet.get(EntityRefListParam);
+
+            if (result == null)
+            {
+                throw new EntityManagerException("The ResultSet of DeleteAllEntitiesEvent does not contain the expected list of deleted entities!");
+            }
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new EntityManagerException(e);
+        }
     }
 
     @Override

@@ -34,6 +34,9 @@ import org.jayware.e2.util.Filter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -118,6 +121,32 @@ public class ContextualEntityManagerImplTest
         {{
             testEntityManager.deleteEntity(testRefA);
         }};
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_DeleteEntities_Throws_IllegalStateException_if_its_Context_has_been_disposed()
+    {
+        new Expectations()
+        {{
+            testContext.isDisposed(); result = true;
+        }};
+
+        testee.deleteEntities();
+    }
+
+    @Test
+    public void test_DeleteEntity_Calls_its_delegate_to_delete_Entities_and_returns_a_list_containing_all_deleted_Entities()
+    {
+        final List<EntityRef> resultList = new ArrayList<>();
+        resultList.add(testRefA);
+        resultList.add(testRefB);
+
+        new Expectations()
+        {{
+            testEntityManager.deleteEntities(testContext); result = resultList;
+        }};
+
+        assertThat(testee.deleteEntities()).containsOnlyElementsOf(resultList);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)

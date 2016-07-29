@@ -103,7 +103,7 @@ public interface EntityManager
      *
      * @throws IllegalStateException if the passed {@link Context} has been disposed.
      */
-    void deleteEntities(Context context) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> deleteEntities(Context context) throws IllegalArgumentException, IllegalStateException;
 
     /**
      * Moves an {@link Entity} from its current parent to an other one.

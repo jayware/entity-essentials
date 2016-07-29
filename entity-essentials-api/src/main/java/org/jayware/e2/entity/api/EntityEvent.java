@@ -51,6 +51,8 @@ extends RootEvent
      */
     String EntityRefParam = "org.jayware.e2.event.param.EntityRef";
 
+    String EntityRefListParam = "org.jayware.e2.event.param.EntityRefList";
+
     /**
      * Signals the creation of an entity.
      * <p>

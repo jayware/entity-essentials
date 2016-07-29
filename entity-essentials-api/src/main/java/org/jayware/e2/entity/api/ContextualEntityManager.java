@@ -59,6 +59,15 @@ extends Contextual
     void deleteEntity(EntityRef ref) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
 
     /**
+     * Deletes all {@link Entity Entities} from the {@link Context} of this {@link ContextualEntityManager}.
+     *
+     * @return a {@link List} of {@link EntityRef}s.
+     *
+     * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
+     */
+    List<EntityRef> deleteEntities() throws IllegalArgumentException, IllegalStateException;
+
+    /**
      * Returns a {@link List} of all {@link Entity Entities} within the {@link Context} of this {@link ContextualEntityManager}.
      *
      * @return a {@link List} of {@link EntityRef}s in any order, never <code>null</code>.

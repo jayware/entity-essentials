@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -68,6 +69,7 @@ import static org.jayware.e2.entity.api.EntityEvent.ChildrenEntityEvent.ChildRef
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityPathParam;
+import static org.jayware.e2.entity.api.EntityEvent.EntityRefListParam;
 import static org.jayware.e2.entity.api.EntityPath.EMPTY_PATH;
 import static org.jayware.e2.entity.api.EntityPath.ROOT_PATH;
 import static org.jayware.e2.entity.api.EntityPath.SEPARATOR;
@@ -223,29 +225,38 @@ implements Disposable
     }
 
     @Handle(DeleteAllEntitiesEvent.class)
-    public void deleteAllEntities(@Param(ContextParam) Context context)
+    public void deleteAllEntities(Event event, @Param(ContextParam) Context context)
     {
         if (!myContext.equals(context))
         {
             return;
         }
 
+        final List<EntityRef> deletedEntities = new CopyOnWriteArrayList<EntityRef>();
+
         myWriteLock.lock();
         try
         {
             for (EntityImpl entity : myEntities.values())
             {
+                final EntityRef ref = entity.getRef();
                 if (!entity.getPath().equals(EntityPath.ROOT_PATH))
                 {
-                    fireEntityDeletingEvent(entity.getRef());
+                    fireEntityDeletingEvent(ref);
                     myEntities.remove(entity.identifier());
-                    fireEntityDeletedEvent(entity.getRef());
+                    fireEntityDeletedEvent(ref);
+                    deletedEntities.add(ref);
                 }
             }
         }
         finally
         {
             myWriteLock.unlock();
+        }
+
+        if (event.isQuery())
+        {
+            ((Query) event).result(EntityRefListParam, deletedEntities);
         }
     }
 

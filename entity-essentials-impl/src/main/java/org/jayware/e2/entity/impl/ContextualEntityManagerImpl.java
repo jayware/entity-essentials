@@ -69,6 +69,14 @@ implements ContextualEntityManager
     }
 
     @Override
+    public List<EntityRef> deleteEntities()
+    {
+        checkContextNotNullAndNotDisposed(myContext);
+
+        return myDelegate.deleteEntities(myContext);
+    }
+
+    @Override
     public List<EntityRef> findEntities()
     {
         checkContextNotNullAndNotDisposed(myContext);

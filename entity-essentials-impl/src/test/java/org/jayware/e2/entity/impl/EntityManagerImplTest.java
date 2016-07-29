@@ -34,18 +34,25 @@ import org.jayware.e2.entity.api.EntityNotFoundException;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Parameters.Parameter;
+import org.jayware.e2.event.api.ResultSet;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
+import static org.jayware.e2.entity.api.EntityEvent.EntityRefListParam;
 import static org.jayware.e2.entity.api.EntityPath.path;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
+import static org.jayware.e2.event.api.Query.State.Success;
 
 
 public class EntityManagerImplTest
@@ -58,7 +65,8 @@ public class EntityManagerImplTest
 
     private @Mocked Context testContext;
     private @Mocked EventManager testEventManager;
-    private @Mocked EntityRef testRef;
+    private @Mocked EntityRef testRefA, testRefB, testRefC;
+    private @Mocked ResultSet testResultSet;
 
     @BeforeMethod
     public void setup()
@@ -138,10 +146,10 @@ public class EntityManagerImplTest
 
         new Expectations()
         {{
-            testRef.getId(); result = id;
+            testRefA.getId(); result = id;
         }};
 
-        testee.deleteEntity(testRef);
+        testee.deleteEntity(testRefA);
 
         new Verifications()
         {{
@@ -150,7 +158,7 @@ public class EntityManagerImplTest
             testEventManager.send(DeleteEntityEvent.class, parameters = withCapture());
 
             assertThat(parameters).contains(param(ContextParam, testContext));
-            assertThat(parameters).contains(param(EntityRefParam, testRef));
+            assertThat(parameters).contains(param(EntityRefParam, testRefA));
             assertThat(parameters).contains(param(EntityIdParam, id));
         }};
     }
@@ -175,19 +183,28 @@ public class EntityManagerImplTest
     }
 
     @Test
-    public void test_deleteEntities_Fires_DeleteAllEntitiesEvent_with_expected_parameters()
+    public void test_deleteEntities_Fires_DeleteAllEntitiesEvent_as_Query_with_expected_parameters()
     throws Exception
     {
-        testee.deleteEntities(testContext);
+        final List<EntityRef> expectedListOfDeletedEntities = new ArrayList<>();
+        final List<Parameter[]> queryParameter = new ArrayList<>();
 
-        new Verifications()
+        expectedListOfDeletedEntities.addAll(Arrays.<EntityRef>asList(testRefA, testRefB, testRefC));
+
+        new Expectations()
         {{
-            final Parameter[] parameters;
-
-            testEventManager.send(DeleteAllEntitiesEvent.class, parameters = withCapture());
-
-            assertThat(parameters).contains(param(ContextParam, testContext));
+            testEventManager.query(DeleteAllEntitiesEvent.class, withCapture(queryParameter)); result = testResultSet;
+            testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
+            testResultSet.get(EntityRefListParam); result = expectedListOfDeletedEntities;
         }};
+
+        assertThat(testee.deleteEntities(testContext))
+            .withFailMessage("The result of deleteEntities does not contain the expected list of deleted entities!")
+            .containsOnlyElementsOf(expectedListOfDeletedEntities);
+
+        assertThat(queryParameter.get(0)[0])
+            .withFailMessage("The DeleteAllEntitiesEvent was not fired with the expected ContextParam!")
+            .isEqualTo(param(ContextParam, testContext));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
