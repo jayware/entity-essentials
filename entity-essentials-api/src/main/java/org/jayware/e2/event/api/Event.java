@@ -33,6 +33,13 @@ package org.jayware.e2.event.api;
 public interface Event
 {
     /**
+     * Returns the Id of this {@link Event}.
+     *
+     * @return a {@link String} representing this {@link Event}'s Id.
+     */
+    String getId();
+
+    /**
      * Returns the {@link EventType} of this {@link Event}.
      *
      * @return this {@link Event}'s {@link EventType}.

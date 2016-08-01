@@ -601,6 +601,12 @@ implements Disposable
         }
 
         @Override
+        public String getId()
+        {
+            return myQuery.getId();
+        }
+
+        @Override
         public Class<? extends EventType> getType()
         {
             return myQuery.getType();

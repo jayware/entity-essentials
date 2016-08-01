@@ -51,6 +51,12 @@ implements Event
     }
 
     @Override
+    public String getId()
+    {
+        return myId.toString();
+    }
+
+    @Override
     public Class<? extends EventType> getType()
     {
         return myType;
@@ -87,6 +93,6 @@ implements Event
     @Override
     public String toString()
     {
-        return "Event {" + myType.getName() + '}';
+        return "Event { " + myId + " [ " + myType.getSimpleName() + " ]" + '}';
     }
 }

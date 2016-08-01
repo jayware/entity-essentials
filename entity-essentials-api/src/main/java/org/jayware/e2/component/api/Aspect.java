@@ -337,7 +337,7 @@ public class Aspect
         final StringBuilder result = new StringBuilder("Aspect { ");
         for (Class<? extends Component> component : myComponentSet)
         {
-            result.append(component.getSimpleName()).append(" ");
+            result.append(component.getSimpleName()).append(", ");
         }
         result.append("}");
         return result.toString();

@@ -67,6 +67,12 @@ implements Query
     }
 
     @Override
+    public String getId()
+    {
+        return myEvent.getId();
+    }
+
+    @Override
     public Class<? extends EventType> getType()
     {
         return myEvent.getType();
@@ -110,6 +116,6 @@ implements Query
     @Override
     public String toString()
     {
-        return "Query {" + myEvent.getType().getName() + '}';
+        return "Query { " + getId() + " [ " + getType().getSimpleName() + " ]" + '}';
     }
 }
