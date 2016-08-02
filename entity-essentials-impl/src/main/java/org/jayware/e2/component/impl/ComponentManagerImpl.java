@@ -28,6 +28,7 @@ import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentEvent.AddComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.CreateComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.PrepareComponentEvent;
+import org.jayware.e2.component.api.ComponentEvent.RemoveComponentEvent;
 import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.ComponentManagerException;
@@ -51,6 +52,7 @@ import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
+import static org.jayware.e2.entity.api.EntityEvent.EntityIdParam;
 import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
@@ -133,6 +135,7 @@ implements ComponentManager
             final ResultSet resultSet = eventManager.query(AddComponentEvent.class,
                 param(ContextParam, context),
                 param(EntityRefParam, ref),
+                param(EntityIdParam, ref.getId()),
                 param(ComponentTypeParam, component)
             );
 
@@ -145,7 +148,7 @@ implements ComponentManager
         }
         catch (Exception e)
         {
-            throw new ComponentManagerException("Failed to add Component '" + component.getSimpleName() + "' to {" + ref.getId() + "}", e);
+            throw new ComponentManagerException("Failed to add Component '" + component.getSimpleName() + "' to entity {" + ref.getId() + "}", e);
         }
     }
 
@@ -157,25 +160,59 @@ implements ComponentManager
 
         final Context context = checkContextNotNullAndNotDisposed(ref.getContext());
         final EventManager eventManager = context.getService(EventManager.class);
-        eventManager.send(
-            AddComponentEvent.class,
-            param(ContextParam, context),
-            param(EntityRefParam, ref),
-            param(ComponentTypeParam, component.type()),
-            param(ComponentParam, component)
-        );
 
-        return component;
+        try
+        {
+            final ResultSet resultSet = eventManager.query(AddComponentEvent.class,
+                param(ContextParam, context),
+                param(EntityRefParam, ref),
+                param(EntityIdParam, ref.getId()),
+                param(ComponentTypeParam, component.type()),
+                param(ComponentParam, component)
+            );
+
+            if (!resultSet.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
+            {
+                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
+            }
+
+            return resultSet.get(ComponentParam);
+        }
+        catch (Exception e)
+        {
+            throw new ComponentManagerException("Failed to add Component '" + component.type().getSimpleName() + "' to entity {" + ref.getId() + "}", e);
+        }
     }
 
     @Override
-    public <T extends Component> void removeComponent(EntityRef ref, Class<T> component)
+    public <T extends Component> T removeComponent(EntityRef ref, Class<T> component)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(component);
 
-        final ComponentStore componentStore = getOrCreateComponentStore(ref);
-        componentStore.removeComponent(ref, component);
+        final Context context = ref.getContext();
+        final EventManager eventManager = context.getService(EventManager.class);
+
+        try
+        {
+            final ResultSet result = eventManager.query(RemoveComponentEvent.class,
+                param(ContextParam, context),
+                param(EntityRefParam, ref),
+                param(EntityIdParam, ref.getId()),
+                param(ComponentTypeParam, component)
+            );
+
+            if (!result.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
+            {
+                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
+            }
+
+            return result.get(ComponentParam);
+        }
+        catch (Exception e)
+        {
+            throw new ComponentManagerException("Failed to remove Component '" + component.getSimpleName() + "' from entity {" + ref.getId() + "}", e);
+        }
     }
 
     @Override
