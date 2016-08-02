@@ -60,6 +60,7 @@ extends RootEvent
      * <table>
      *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Optional}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     @SanityCheck(CreateEntityEventSanityChecker.class)
@@ -73,6 +74,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     @SanityCheck(EntityCreatedEventSanityChecker.class)
@@ -86,6 +88,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     @SanityCheck(DeleteEntityEventSanityChecker.class)
@@ -99,6 +102,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     @SanityCheck(EntityDeletedEventSanityChecker.class)
@@ -112,6 +116,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     @SanityCheck(EntityDeletingEventSanityChecker.class)
@@ -123,10 +128,22 @@ extends RootEvent
      * <b>Parameters:</b>
      * <table>
      *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     interface DeleteAllEntitiesEvent extends EntityEvent {}
 
+    /**
+     * Signals that an entity has changed.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
+     * </table>
+     */
     @SanityCheck(EntityChangedEventSanityChecker.class)
     interface EntityChangedEvent extends EntityEvent
     {

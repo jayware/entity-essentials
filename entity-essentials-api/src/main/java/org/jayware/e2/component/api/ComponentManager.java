@@ -123,6 +123,8 @@ public interface ComponentManager
      *            the {@link Class} of the {@link Component}.
      * @param <T> the type of the {@link Component}.
      * @param component a {@link Component} which will be removed
+     *
+     * @return the removed {@link Component}.
      */
     <T extends Component> T removeComponent(EntityRef ref, Class<T> component);
 

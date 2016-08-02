@@ -58,6 +58,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link ComponentEvent#ComponentParam}</td><td>{@link Presence#Optional}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     interface AddComponentEvent extends ComponentEvent, EntityChangedEvent {}
@@ -72,6 +73,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link ComponentEvent#ComponentParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     interface ComponentAddedEvent extends ComponentEvent, EntityChangedEvent {}
@@ -85,6 +87,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#EntityIdParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     interface RemoveComponentEvent extends ComponentEvent, EntityChangedEvent {}
@@ -99,6 +102,7 @@ extends RootEvent
      *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link ComponentEvent#ComponentParam}</td><td>{@link Presence#Required}</td></tr>
      *     <tr><td>{@link ComponentEvent#ComponentTypeParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
      * </table>
      */
     interface ComponentRemovedEvent extends ComponentEvent, EntityChangedEvent {}
