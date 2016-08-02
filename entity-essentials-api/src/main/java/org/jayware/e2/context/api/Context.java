@@ -62,6 +62,8 @@ public interface Context
         T provide(Context context);
     }
 
+    String getId();
+
     /**
      * Disposes of this <code>Context</code> and all associated {@link Disposable Disposables}.
      */

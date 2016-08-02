@@ -25,10 +25,12 @@
    [[ #21 ]](https://github.com/jayware/entity-essentials/issues/21)
  - Framework-components are now instantiated eagerly to avoid problems when entities/components get created in an event-driven fashion.
    [[ #29 ]](https://github.com/jayware/entity-essentials/issues/29)
- - A Bug has been fixed where two EntityRefs of two different contexts are equal if they reference an entity with the same UUID.
+ - A bug has been fixed where two EntityRefs of two different contexts are equal if they reference an entity with the same UUID.
    [[ #30 ]](https://github.com/jayware/entity-essentials/issues/30)
- - A Bug has been fixed which prevents the deletion of entities, because events which are related to the deletion use deprecated EntityPath instead of UUID.
+ - A bug has been fixed which prevents the deletion of entities, because events which are related to the deletion use deprecated EntityPath instead of UUID.
    [[ #31 ]](https://github.com/jayware/entity-essentials/issues/31)
+ - Fixed a bug has been fixed which potentially leads to a deadlock, because queries where scheduled on other worker threads. 
+   [[ #37 ]](https://github.com/jayware/entity-essentials/issues/37)
 
 ## Dependencies
 

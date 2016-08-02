@@ -27,6 +27,7 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -62,6 +63,12 @@ public class TreeNodeTest
         testNodeA = testTreeManager.createTreeNodeFor(testRefA);
         testNodeB = testTreeManager.createTreeNodeFor(testRefB);
         testNodeC = testTreeManager.createTreeNodeFor(testRefC);
+    }
+
+    @AfterMethod
+    public void tearDown()
+    {
+        testContext.dispose();
     }
 
     @Test

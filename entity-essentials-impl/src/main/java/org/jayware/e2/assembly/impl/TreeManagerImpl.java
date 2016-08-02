@@ -41,8 +41,8 @@ import static org.jayware.e2.assembly.api.Preconditions.checkNodeNotNullAndValid
 import static org.jayware.e2.assembly.api.TreeEvent.CreateTreeNodeEvent;
 import static org.jayware.e2.assembly.api.TreeEvent.DeleteTreeNodeEvent;
 import static org.jayware.e2.assembly.api.TreeEvent.FindChildrenQuery.ChildrenParam;
-import static org.jayware.e2.assembly.api.TreeEvent.NodePendantParam;
 import static org.jayware.e2.assembly.api.TreeEvent.NodeParam;
+import static org.jayware.e2.assembly.api.TreeEvent.NodePendantParam;
 import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
@@ -52,16 +52,9 @@ import static org.jayware.e2.event.api.Query.State.Success;
 public class TreeManagerImpl
 implements TreeManager
 {
-    private static final Key<TreeHub> TREE_HUB = Key.createKey("org.jayware.e2.TreeHub");
+    private static final long COMMON_TIMEOUT_IN_MILLIS = 5000;
 
-    private static final Context.ValueProvider<TreeHub> TREE_HUB_VALUE_PROVIDER = new Context.ValueProvider<TreeHub>()
-    {
-        @Override
-        public TreeHub provide(Context context)
-        {
-            return new TreeHub(context);
-        }
-    };
+    static final Key<TreeHub> TREE_HUB = Key.createKey("org.jayware.e2.TreeHub");
 
     @Override
     public TreeNode createTreeNodeFor(EntityRef pendant)
@@ -72,12 +65,11 @@ implements TreeManager
         final EventManager eventManager;
         final ResultSet resultSet;
 
-        createTreeHub(context);
-
         eventManager = context.getService(EventManager.class);
         resultSet = eventManager.query(CreateTreeNodeEvent.class,
-                                    param(ContextParam, context),
-                                    param(NodePendantParam, pendant));
+            param(ContextParam, context),
+            param(NodePendantParam, pendant)
+        );
 
         await(resultSet);
 
@@ -131,14 +123,9 @@ implements TreeManager
     {
         if (!resultSet.await(Success, 30, SECONDS))
         {
-            throw new TreeManagerException("Query did not succeed before timeout!");
+            throw new TreeManagerException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
         }
 
         return resultSet;
-    }
-
-    private void createTreeHub(Context context)
-    {
-        context.putIfAbsent(TREE_HUB, TREE_HUB_VALUE_PROVIDER);
     }
 }

@@ -187,13 +187,13 @@ public class EntityManagerImplTest
     throws Exception
     {
         final List<EntityRef> expectedListOfDeletedEntities = new ArrayList<EntityRef>();
-        final List<Parameter[]> queryParameter = new ArrayList<Parameter[]>();
+        final List<Parameter[]> capturedQueryParameters = new ArrayList<Parameter[]>();
 
         expectedListOfDeletedEntities.addAll(Arrays.<EntityRef>asList(testRefA, testRefB, testRefC));
 
         new Expectations()
         {{
-            testEventManager.query(DeleteAllEntitiesEvent.class, withCapture(queryParameter)); result = testResultSet;
+            testEventManager.query(DeleteAllEntitiesEvent.class, withCapture(capturedQueryParameters)); result = testResultSet;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
             testResultSet.get(EntityRefListParam); result = expectedListOfDeletedEntities;
         }};
@@ -202,7 +202,7 @@ public class EntityManagerImplTest
             .withFailMessage("The result of deleteEntities does not contain the expected list of deleted entities!")
             .containsOnlyElementsOf(expectedListOfDeletedEntities);
 
-        assertThat(queryParameter.get(0)[0])
+        assertThat(capturedQueryParameters.get(0)[0])
             .withFailMessage("The DeleteAllEntitiesEvent was not fired with the expected ContextParam!")
             .isEqualTo(param(ContextParam, testContext));
     }

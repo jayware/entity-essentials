@@ -147,6 +147,7 @@ public class GroupManagerTest
 
         when(ref.isInvalid()).thenReturn(true);
         when(ref.isValid()).thenReturn(false);
+        when(ref.getContext()).thenReturn(testContext);
 
         testee.addEntityToGroup(ref, testGroup);
     }
@@ -196,6 +197,7 @@ public class GroupManagerTest
 
         when(ref.isInvalid()).thenReturn(true);
         when(ref.isValid()).thenReturn(false);
+        when(ref.getContext()).thenReturn(testContext);
 
         testee.removeEntityFromGroup(ref, testGroup);
     }

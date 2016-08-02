@@ -100,12 +100,30 @@ implements Disposable
         myEventManager.subscribe(context, this);
     }
 
-    public void prepareComponent(Class<? extends Component> component)
+    private void prepareComponent(Class<? extends Component> component)
     {
-        myEventManager.send(PrepareComponentEvent.class,
-            param(ContextParam, myContext),
-            param(ComponentTypeParam, component)
-        );
+        boolean fireEvents = false;
+
+        myWriteLock.lock();
+        try
+        {
+            if (!myComponentClassMap.containsKey(component.getName()))
+            {
+                myComponentFactory.prepareComponent(component);
+                myComponentClassMap.put(component.getName(), component);
+
+                fireEvents = true;
+            }
+        }
+        finally
+        {
+            myWriteLock.unlock();
+        }
+
+        if (fireEvents)
+        {
+            fireComponentPreparedEvent(component);
+        }
     }
 
     public <T extends Component> T addComponent(EntityRef ref, Class<T> component)
@@ -371,26 +389,7 @@ implements Disposable
     @Handle(PrepareComponentEvent.class)
     public void handlePrepareComponentEvent(@Param(ComponentTypeParam) Class<? extends Component> componentType)
     {
-        boolean fireEvents = false;
-
-        myWriteLock.lock();
-        try
-        {
-            if (!myComponentClassMap.containsKey(componentType.getName()))
-            {
-                myComponentFactory.prepareComponent(componentType);
-                myComponentClassMap.put(componentType.getName(), componentType);
-            }
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
-
-        if (fireEvents)
-        {
-            fireComponentPreparedEvent(componentType);
-        }
+        prepareComponent(componentType);
     }
 
     @Handle(CreateComponentEvent.class)
@@ -407,7 +406,8 @@ implements Disposable
     }
 
     @Handle(AddComponentEvent.class)
-    public void handleAddComponentEvent(@Param(EntityRefParam) EntityRef ref,
+    public void handleAddComponentEvent(Event event,
+                                        @Param(EntityRefParam) EntityRef ref,
                                         @Param(ComponentTypeParam) Class<? extends Component> componentType,
                                         @Param(value = ComponentParam, presence = Optional) Component component)
     {
@@ -472,18 +472,24 @@ implements Disposable
         {
             fireComponentPushedEvent(ref, newComponent, oldComponent);
         }
+
+        if (event.isQuery())
+        {
+            ((Query) event).result(ComponentParam, instance.copy());
+        }
     }
 
     @Handle(RemoveComponentEvent.class)
-    public void handleRemoveComponentEvent(@Param(EntityRefParam) EntityRef ref,
+    public void handleRemoveComponentEvent(Event event,
+                                           @Param(EntityRefParam) EntityRef ref,
                                            @Param(ComponentTypeParam) Class<? extends Component> componentType)
     {
         final Map<EntityRef, Component> row;
 
-        Component instance = null;
+        AbstractComponent instance = null;
         Aspect oldAspect = null;
         Aspect newAspect = null;
-        boolean fireEvents = false;
+        boolean removedComponent = false;
 
         myWriteLock.lock();
         try
@@ -492,7 +498,7 @@ implements Disposable
 
             if (row != null)
             {
-                instance = row.get(ref);
+                instance = (AbstractComponent) row.get(ref);
 
                 if (instance != null)
                 {
@@ -501,7 +507,7 @@ implements Disposable
 
                     row.remove(ref);
 
-                    fireEvents = true;
+                    removedComponent = true;
                 }
             }
         }
@@ -510,10 +516,15 @@ implements Disposable
             myWriteLock.unlock();
         }
 
-        if (fireEvents)
+        if (removedComponent)
         {
             fireComponentRemovedEvent(ref, instance);
             fireAspectLostEvent(ref, newAspect, oldAspect);
+
+            if (event.isQuery())
+            {
+                ((Query) event).result(ComponentParam, instance.copy());
+            }
         }
     }
 

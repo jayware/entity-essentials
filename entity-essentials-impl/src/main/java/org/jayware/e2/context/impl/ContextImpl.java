@@ -62,6 +62,12 @@ implements Context
     }
 
     @Override
+    public String getId()
+    {
+        return myContextId.toString();
+    }
+
+    @Override
     public void dispose()
     {
         myContextState.get().dispose();
@@ -214,6 +220,12 @@ implements Context
         {
             myServiceProvider = serviceProvider;
             myMap = new HashMap<>();
+        }
+
+        @Override
+        public String getId()
+        {
+            return myContextId.toString();
         }
 
         @Override
@@ -459,9 +471,15 @@ implements Context
         }
     }
 
-    private static class DisposedContext
+    private class DisposedContext
     implements Context
     {
+        @Override
+        public String getId()
+        {
+            return myContextId.toString();
+        }
+
         @Override
         public void dispose()
         {

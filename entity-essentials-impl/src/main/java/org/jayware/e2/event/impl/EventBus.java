@@ -21,6 +21,7 @@
  */
 package org.jayware.e2.event.impl;
 
+import com.google.common.base.MoreObjects;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.event.api.Event;
@@ -224,7 +225,7 @@ implements Disposable
 
         private EventBusWorkerPool(int workers, int workersQueueSize)
         {
-            myThreadGroup = new ThreadGroup("event-bus");
+            myThreadGroup = new ThreadGroup("entity-essentials");
             myWorkerList = new CopyOnWriteArrayList<>();
             for (int i = 0; i < workers; ++i)
             {
@@ -234,6 +235,31 @@ implements Disposable
         }
 
         public void send(Event event)
+        {
+            chooseWorker().send(event);
+        }
+
+        public void post(Event event)
+        {
+            nextWorker().post(event);
+        }
+
+        public ResultSet query(Query query)
+        {
+            return chooseWorker().query(query);
+        }
+
+        public void shutdown()
+        {
+            for (EventBusWorker eventBusWorker : myWorkerList)
+            {
+                eventBusWorker.shutdown();
+            }
+
+            myWorkerList.clear();
+        }
+
+        private EventBusWorker chooseWorker()
         {
             final Thread currentThread = currentThread();
             EventBusWorker worker = null;
@@ -256,27 +282,7 @@ implements Disposable
                 worker = nextWorker();
             }
 
-            worker.send(event);
-        }
-
-        public void post(Event event)
-        {
-            nextWorker().post(event);
-        }
-
-        public ResultSet query(Query query)
-        {
-            return nextWorker().query(query);
-        }
-
-        public void shutdown()
-        {
-            for (EventBusWorker eventBusWorker : myWorkerList)
-            {
-                eventBusWorker.shutdown();
-            }
-
-            myWorkerList.clear();
+            return worker;
         }
 
         private EventBusWorker nextWorker()
@@ -352,10 +358,20 @@ implements Disposable
 
             try
             {
-                myDispatchQueue.put(dispatch);
+                // Distinguish between the worker's thread and a foreign
+                // thread, because the worker cannot wait on itself.
+                if (myThread != currentThread())
+                {
+                    myDispatchQueue.put(dispatch);
+                }
+                else
+                {
+                    dispatch(dispatch);
+                }
+
                 return dispatch.getResult();
             }
-            catch (InterruptedException e)
+            catch (Exception e)
             {
                 throw new QueryException("Failed to dispatch query!", query, e);
             }
@@ -415,6 +431,14 @@ implements Disposable
             {
                 myExecutionStack.pop();
             }
+        }
+
+        @Override
+        public String toString()
+        {
+            return MoreObjects.toStringHelper(this)
+                .add("name", myThread.getName())
+                .toString();
         }
     }
 
@@ -709,7 +733,7 @@ implements Disposable
 
             if (value == null)
             {
-                throw new MissingResultException("ResultSet does not contain a value associated to to the name: '" + name + "'", this);
+                throw new MissingResultException("ResultSet does not contain a value associated to the name: '" + name + "'", this);
             }
 
             return value;
@@ -722,7 +746,7 @@ implements Disposable
 
             if (value == null)
             {
-                throw new MissingResultException("ResultSet does not contain a value associated to to the key: '" + key + "'", this);
+                throw new MissingResultException("ResultSet does not contain a value associated to the key: '" + key + "'", this);
             }
 
             return value;

@@ -25,8 +25,9 @@ import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.AbstractComponentWrapper;
 import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.ComponentEvent;
+import org.jayware.e2.component.api.ComponentEvent.AddComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.CreateComponentEvent;
+import org.jayware.e2.component.api.ComponentEvent.PrepareComponentEvent;
 import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.ComponentManagerException;
@@ -44,12 +45,13 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
+import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.api.Query.State.Success;
@@ -77,22 +79,21 @@ implements ComponentManager
         try
         {
             final EventManager eventManager = context.getService(EventManager.class);
-            final ResultSet resultSet = eventManager.query(
-                CreateComponentEvent.class,
+            final ResultSet resultSet = eventManager.query(CreateComponentEvent.class,
                 param(ContextParam, context),
                 param(ComponentTypeParam, type)
             );
 
-            if (!resultSet.await(Success, 10, SECONDS))
+            if (!resultSet.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Failed to create Component '" + type.getName() + "' within " + COMMON_TIMEOUT_IN_MILLIS + " ms");
+                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
             }
 
             return resultSet.get(ComponentParam);
         }
         catch (Exception e)
         {
-            throw new ComponentManagerException("Failed to create Component '" + type.getName() + "", e);
+            throw new ComponentManagerException("Failed to create Component '" + type.getSimpleName() + "'", e);
         }
     }
 
@@ -102,8 +103,11 @@ implements ComponentManager
         checkNotNull(context);
         checkNotNull(component);
 
-        final ComponentStore componentStore = getOrCreateComponentStore(context);
-        componentStore.prepareComponent(component);
+        final EventManager eventManager = context.getService(EventManager.class);
+        eventManager.send(PrepareComponentEvent.class,
+            param(ContextParam, context),
+            param(ComponentTypeParam, component)
+        );
     }
 
     @Override
@@ -119,23 +123,42 @@ implements ComponentManager
     @Override
     public <T extends Component> T addComponent(EntityRef ref, Class<T> component)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(component);
 
-        final ComponentStore componentStore = getOrCreateComponentStore(ref);
-        return componentStore.addComponent(ref, component);
+        try
+        {
+            final Context context = checkContextNotNullAndNotDisposed(ref.getContext());
+            final EventManager eventManager = context.getService(EventManager.class);
+            final ResultSet resultSet = eventManager.query(AddComponentEvent.class,
+                param(ContextParam, context),
+                param(EntityRefParam, ref),
+                param(ComponentTypeParam, component)
+            );
+
+            if (!resultSet.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
+            {
+                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
+            }
+
+            return resultSet.get(ComponentParam);
+        }
+        catch (Exception e)
+        {
+            throw new ComponentManagerException("Failed to add Component '" + component.getSimpleName() + "' to {" + ref.getId() + "}", e);
+        }
     }
 
     @Override
     public <T extends Component> T addComponent(EntityRef ref, T component)
     {
-        checkNotNull(component);
+        checkRefNotNullAndValid(ref);
         checkContextualsNotNullAndSameContext(ref, (AbstractComponent) component);
 
         final Context context = checkContextNotNullAndNotDisposed(ref.getContext());
         final EventManager eventManager = context.getService(EventManager.class);
         eventManager.send(
-            ComponentEvent.AddComponentEvent.class,
+            AddComponentEvent.class,
             param(ContextParam, context),
             param(EntityRefParam, ref),
             param(ComponentTypeParam, component.type()),

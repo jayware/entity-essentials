@@ -26,6 +26,7 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.entity.api.InvalidEntityRefException;
 
 import java.util.Collection;
 import java.util.Set;
@@ -84,7 +85,7 @@ public interface ComponentManager
      *
      * @return a {@link Component} of the type <code>T</code>.
      */
-    <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws ComponentFactoryException, MalformedComponentException;
+    <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws ComponentFactoryException, MalformedComponentException, InvalidEntityRefException;
 
     /**
      * Adds the specified {@link Component} to the {@link Entity} referenced by the passed {@link EntityRef}.

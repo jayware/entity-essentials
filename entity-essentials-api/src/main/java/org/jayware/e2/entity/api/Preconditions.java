@@ -22,6 +22,9 @@
 package org.jayware.e2.entity.api;
 
 
+import org.jayware.e2.context.api.Context;
+
+
 public class Preconditions
 {
     /**
@@ -32,18 +35,28 @@ public class Preconditions
      * @return the non-null reference that was validated
      *
      * @throws IllegalArgumentException if {@link EntityRef} is null.
-     * @throws IllegalStateException if {@link EntityRef} is invalid.
+     * @throws IllegalStateException if the {@link Context} to which the passed {@link EntityRef} belongs to, has been disposed.
+     * @throws InvalidEntityRefException if the {@link EntityRef} is invalid.
      */
     public static EntityRef checkRefNotNullAndValid(EntityRef ref)
     {
         if (ref == null)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("EntityRef must'n be null!");
         }
 
         if (ref.isInvalid())
         {
-            throw new InvalidEntityRefException(ref);
+            final Context context = ref.getContext();
+
+            if (context.isDisposed())
+            {
+                throw new IllegalStateException("Context {" + context.getId() + "} has been disposed!");
+            }
+            else
+            {
+                throw new InvalidEntityRefException(ref);
+            }
         }
 
         return ref;

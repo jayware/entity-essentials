@@ -90,6 +90,7 @@ public class TreeManagerTest
         final EntityRef ref = mock(EntityRef.class);
         when(ref.isValid()).thenReturn(false);
         when(ref.isInvalid()).thenReturn(true);
+        when(ref.getContext()).thenReturn(testContext);
 
         testee.createTreeNodeFor(ref);
     }

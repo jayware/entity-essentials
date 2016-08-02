@@ -30,8 +30,10 @@ import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.entity.api.InvalidEntityRefException;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.EventType;
+import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.Query.State;
@@ -39,6 +41,8 @@ import org.jayware.e2.event.api.ResultSet;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +51,7 @@ import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefParam;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
+import static org.jayware.e2.event.api.Query.State.Success;
 
 
 public class ComponentManagerImplTest
@@ -57,7 +62,7 @@ public class ComponentManagerImplTest
 
     private @Mocked EntityRef testRef;
     private @Mocked TestComponentA testComponentA;
-    private @Mocked  AbstractComponent testAbstractComponent;
+    private @Mocked AbstractComponent testAbstractComponent;
 
     private ComponentManagerImpl testee;
 
@@ -120,6 +125,24 @@ public class ComponentManagerImplTest
     public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_Component_is_null()
     {
         testee.addComponent(testRef, (TestComponentA) null);
+    }
+
+    @Test(expectedExceptions = InvalidEntityRefException.class)
+    public void test_addComponent_With_EntityRef_and_Component_Throws_InvalidEntityRefException_if_the_EntityRef_is_invalid()
+    {
+        new Expectations()
+        {{
+            testRef.isValid(); result = false; minTimes = 0;
+            testRef.isInvalid(); result = true; minTimes = 0;
+            testRef.getContext(); result = testContext; minTimes = 0;
+            testRef.belongsTo(testContext); result = true; minTimes = 0;
+            testRef.belongsTo(testAbstractComponent); result = true; minTimes = 0;
+            testAbstractComponent.getContext(); result = testContext; minTimes = 0;
+            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+            testAbstractComponent.belongsTo(testRef); result = true; minTimes = 0;
+        }};
+
+        testee.addComponent(testRef, testAbstractComponent);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -189,6 +212,79 @@ public class ComponentManagerImplTest
                 param(ComponentTypeParam, TestComponentA.class),
                 param(ComponentParam, testAbstractComponent)
             );
+        }};
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addComponent_With_EntityRef_and_Class_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
+    {
+        testee.addComponent(null, TestComponentA.class);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void test_addComponent_With_EntityRef_and_Class_Throws_IllegalArgumentException_if_the_passed_Component_is_null()
+    {
+        testee.addComponent(testRef, (Class) null);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void test_addComponent_With_EntityRef_and_Class_Throws_IllegalStateException_if_the_Context_to_which_the_EntityRef_belongs_to_has_been_disposed()
+    {
+        new Expectations()
+        {{
+            testRef.isValid(); result = false; minTimes = 0;
+            testRef.isInvalid(); result = true; minTimes = 0;
+            testRef.getContext(); result = testContext; minTimes = 0;
+            testContext.isDisposed(); result = true; minTimes = 0;
+        }};
+
+        testee.addComponent(testRef, TestComponentA.class);
+    }
+
+
+    @Test(expectedExceptions = InvalidEntityRefException.class)
+    public void test_addComponent_With_EntityRef_and_Class_Throws_InvalidEntityRefException_if_the_EntityRef_is_invalid()
+    {
+        new Expectations()
+        {{
+            testRef.isValid(); result = false; minTimes = 0;
+            testRef.isInvalid(); result = true; minTimes = 0;
+        }};
+
+        testee.addComponent(testRef, TestComponentA.class);
+    }
+
+    @Test
+    public void test_addComponent_With_EntityRef_and_Class_Fires_AddComponentEvent_with_expected_parameters()
+    {
+        new Expectations()
+        {{
+            testRef.getContext(); result = testContext; minTimes = 0;
+            testContext.isDisposed(); result = false; minTimes = 0;
+            testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
+            testResultSet.get(ComponentParam); result = testComponentA;
+        }};
+
+        assertThat(testee.addComponent(testRef, TestComponentA.class)).isNotNull();
+
+        new Verifications()
+        {{
+            final Parameter[] parameters;
+
+            testEventManager.query(AddComponentEvent.class, parameters = withCapture());
+
+            assertThat(parameters)
+                .withFailMessage("ComponentManager fired a query to add a component without the expected ContextParam!")
+                .contains(param(ContextParam, testContext));
+
+            assertThat(parameters)
+                .withFailMessage("ComponentManager fired a query to add a component without the expected EntityRefParam!")
+                .contains(param(EntityRefParam, testRef));
+
+            assertThat(parameters)
+                .withFailMessage("ComponentManager fired a query to add a component without the expected ComponentTypeParam!")
+                .contains(param(ComponentTypeParam, TestComponentA.class));
+
         }};
     }
 }
