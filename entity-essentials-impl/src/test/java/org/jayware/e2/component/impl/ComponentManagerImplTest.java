@@ -43,6 +43,7 @@ import org.testng.annotations.Test;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.UUID.fromString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
@@ -55,7 +56,7 @@ import static org.jayware.e2.event.api.Query.State.Success;
 
 public class ComponentManagerImplTest
 {
-    private final String testRefId = "e2b94185-38e2-4a0f-abfc-f8ef4fb4e92b";
+    private final UUID testRefId = fromString("e2b94185-38e2-4a0f-abfc-f8ef4fb4e92b");
 
     private @Mocked Context testContext, anotherContext;
     private @Mocked EventManager testEventManager;
@@ -382,7 +383,7 @@ public class ComponentManagerImplTest
             testRef.isValid(); result = true; minTimes = 0;
             testRef.isInvalid(); result = false; minTimes = 0;
             testRef.getContext(); result = testContext; minTimes = 0;
-            testRef.getId(); result = "fubar";
+            testRef.getId(); result = testRefId;
             testContext.isDisposed(); result = false; minTimes = 0;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
             testResultSet.get(ComponentParam); result = testComponentA;
@@ -406,7 +407,7 @@ public class ComponentManagerImplTest
 
             assertThat(parameters)
                 .withFailMessage("ComponentManager fired a query to remove a component without the expected EntityIdParam!")
-                .contains(param(EntityIdParam, "fubar"));
+                .contains(param(EntityIdParam, testRefId));
 
             assertThat(parameters)
                 .withFailMessage("ComponentManager fired a query to remove a component without the expected ComponentTypeParam!")

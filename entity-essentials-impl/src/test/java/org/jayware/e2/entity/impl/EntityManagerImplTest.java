@@ -142,7 +142,7 @@ public class EntityManagerImplTest
     public void test_deleteEntity_Fires_DeleteEntityEvent_with_expected_parameters()
     throws Exception
     {
-        final String id = UUID.randomUUID().toString();
+        final UUID id = UUID.randomUUID();
 
         new Expectations()
         {{

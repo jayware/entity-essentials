@@ -21,8 +21,8 @@
  */
 package org.jayware.e2.assembly.impl;
 
-import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.Group;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.InvalidGroupException;
 import org.jayware.e2.assembly.api.components.GroupComponent;
 import org.jayware.e2.component.api.ComponentManager;
@@ -33,6 +33,7 @@ import org.jayware.e2.entity.api.EntityRef;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 
 public class GroupImpl
@@ -55,7 +56,7 @@ implements Group
     }
 
     @Override
-    public String getId()
+    public UUID getId()
     {
         return myRef.getId();
     }

@@ -23,13 +23,14 @@ package org.jayware.e2.template.api;
 
 
 import java.util.List;
+import java.util.UUID;
 
 
 public interface EntityTemplate
 {
-    String getId();
+    UUID getId();
 
-    void setId(String name);
+    void setId(UUID name);
 
     List<ComponentTemplate> components();
 }

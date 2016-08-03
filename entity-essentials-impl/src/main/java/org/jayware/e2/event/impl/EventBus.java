@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -625,7 +626,7 @@ implements Disposable
         }
 
         @Override
-        public String getId()
+        public UUID getId()
         {
             return myQuery.getId();
         }

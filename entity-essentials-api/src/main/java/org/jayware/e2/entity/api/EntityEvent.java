@@ -28,6 +28,8 @@ import org.jayware.e2.event.api.EventType.RootEvent;
 import org.jayware.e2.event.api.Presence;
 import org.jayware.e2.event.api.SanityCheck;
 
+import java.util.UUID;
+
 import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityChangedEventSanityChecker;
 
 
@@ -192,7 +194,7 @@ extends RootEvent
         @Override
         protected void setup(SanityCheckerRuleBuilder checker)
         {
-            checker.check(CreateEntityEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).done();
+            checker.check(CreateEntityEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(UUID.class).done();
         }
     }
 
@@ -202,7 +204,7 @@ extends RootEvent
         @Override
         protected void setup(SanityCheckerRuleBuilder checker)
         {
-            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(UUID.class).notNull().done();
             checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
         }
     }
@@ -213,7 +215,7 @@ extends RootEvent
         @Override
         protected void setup(SanityCheckerRuleBuilder checker)
         {
-            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(UUID.class).notNull().done();
             checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
         }
     }
@@ -224,7 +226,7 @@ extends RootEvent
         @Override
         protected void setup(SanityCheckerRuleBuilder checker)
         {
-            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(UUID.class).notNull().done();
             checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
         }
     }
@@ -235,7 +237,7 @@ extends RootEvent
         @Override
         protected void setup(SanityCheckerRuleBuilder checker)
         {
-            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(String.class).notNull().done();
+            checker.check(EntityCreatedEvent.class).param(EntityIdParam, "EntityIdParam").instanceOf(UUID.class).notNull().done();
             checker.check(EntityCreatedEvent.class).param(EntityRefParam, "EntityRefParam").instanceOf(EntityRef.class).notNull().done();
         }
     }

@@ -51,9 +51,9 @@ implements Event
     }
 
     @Override
-    public String getId()
+    public UUID getId()
     {
-        return myId.toString();
+        return myId;
     }
 
     @Override

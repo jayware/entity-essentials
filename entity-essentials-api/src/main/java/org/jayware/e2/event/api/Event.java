@@ -22,6 +22,9 @@
 package org.jayware.e2.event.api;
 
 
+import java.util.UUID;
+
+
 /**
  * Base <code>Event</code>.
  *
@@ -35,9 +38,9 @@ public interface Event
     /**
      * Returns the Id of this {@link Event}.
      *
-     * @return a {@link String} representing this {@link Event}'s Id.
+     * @return a {@link UUID} representing this {@link Event}'s Id.
      */
-    String getId();
+    UUID getId();
 
     /**
      * Returns the {@link EventType} of this {@link Event}.

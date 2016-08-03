@@ -62,7 +62,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.google.common.base.Objects.equal;
 import static java.util.Collections.singletonList;
-import static java.util.UUID.fromString;
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.entity.api.EntityEvent.ChildAddedEntityEvent.ChildRemovedEntityEvent;
 import static org.jayware.e2.entity.api.EntityEvent.ChildrenEntityEvent.ChildRefParam;
@@ -111,7 +110,7 @@ implements Disposable
     public void createEntity(Event event,
                              @Param(ContextParam) Context context,
                              @Param(value = EntityPathParam, presence = Optional) EntityPath entityPath,
-                             @Param(value = EntityIdParam, presence = Optional) String id)
+                             @Param(value = EntityIdParam, presence = Optional) UUID id)
     {
         if (!myContext.equals(context))
         {
@@ -143,7 +142,7 @@ implements Disposable
                 {
                     if (count == depth && id != null)
                     {
-                        currentEntity = new EntityImpl(fromString(id));
+                        currentEntity = new EntityImpl(id);
                     }
                     else
                     {
@@ -157,7 +156,7 @@ implements Disposable
                         param(ContextParam, myContext),
                         param(EntityPathParam, currentPath),
                         param(EntityRefParam, currentEntity.getRef()),
-                        param(EntityIdParam, currentEntity.identifier().toString())
+                        param(EntityIdParam, currentEntity.identifier())
                     );
 
                     myEventManager.post(ChildAddedEntityEvent.class,
@@ -185,7 +184,7 @@ implements Disposable
 
     @Handle(DeleteEntityEvent.class)
     public void deleteEntity(@Param(ContextParam) Context context,
-                             @Param(EntityIdParam) String id)
+                             @Param(EntityIdParam) UUID id)
     {
         if (!myContext.equals(context))
         {
@@ -195,7 +194,7 @@ implements Disposable
         myWriteLock.lock();
         try
         {
-            final EntityImpl entity = myEntities.get(fromString(id));
+            final EntityImpl entity = myEntities.get(id);
             final EntityPath entityPath = entity.getPath();
             final EntityImpl parent = entity.getParent();
 
@@ -215,7 +214,7 @@ implements Disposable
                 param(ContextParam, myContext),
                 param(EntityPathParam, entityPath),
                 param(EntityRefParam, parent.getRef()),
-                param(EntityIdParam, id)
+                param(EntityIdParam, entity.identifier())
             );
         }
         finally
@@ -653,9 +652,9 @@ implements Disposable
         }
 
         @Override
-        public String getId()
+        public UUID getId()
         {
-            return myIdentifier.toString();
+            return myIdentifier;
         }
 
         @Override

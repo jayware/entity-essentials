@@ -67,7 +67,7 @@ implements Query
     }
 
     @Override
-    public String getId()
+    public UUID getId()
     {
         return myEvent.getId();
     }

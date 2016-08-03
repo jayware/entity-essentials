@@ -29,6 +29,8 @@ import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
 
+import java.util.UUID;
+
 
 /**
  * A <code>Context</code>
@@ -62,7 +64,7 @@ public interface Context
         T provide(Context context);
     }
 
-    String getId();
+    UUID getId();
 
     /**
      * Disposes of this <code>Context</code> and all associated {@link Disposable Disposables}.

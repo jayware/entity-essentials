@@ -23,6 +23,8 @@ package org.jayware.e2.entity.api;
 
 import org.jayware.e2.context.api.Contextual;
 
+import java.util.UUID;
+
 
 /**
  *
@@ -39,7 +41,7 @@ extends Contextual
      * Returns the ID of the {@link Entity} this {@link EntityRef} points to.
      * @return the ID of an {@link Entity}
      */
-    String getId();
+    UUID getId();
 
     /**
      * Returns the {@link EntityPath} of the {@link Entity} this {@link EntityRef} points to.

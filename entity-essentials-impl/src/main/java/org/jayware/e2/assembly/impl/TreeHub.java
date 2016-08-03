@@ -46,18 +46,14 @@ import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
-import org.jayware.e2.event.api.Presence;
 import org.jayware.e2.event.api.Query;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
-import static java.util.Arrays.copyOf;
 import static org.jayware.e2.assembly.api.TreeEvent.ChildNodeRemovedEvent.ParentNodeParam;
 import static org.jayware.e2.assembly.api.TreeEvent.FindChildrenQuery.ChildrenParam;
 import static org.jayware.e2.assembly.api.TreeEvent.NodeParam;
@@ -378,7 +374,7 @@ implements Disposable
         }
 
         @Override
-        public String getId()
+        public UUID getId()
         throws InvalidEntityRefException
         {
             return myPendantRef.getId();

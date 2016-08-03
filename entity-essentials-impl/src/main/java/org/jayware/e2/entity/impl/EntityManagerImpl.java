@@ -77,7 +77,7 @@ implements EntityManager
         final EventManager eventManager = context.getService(EventManager.class);
         final ResultSet resultSet = eventManager.query(CreateEntityEvent.class,
             param(ContextParam, context),
-            param(EntityIdParam, randomUUID().toString())
+            param(EntityIdParam, randomUUID())
         );
 
         if (resultSet.await(Success) && resultSet.has(EntityRefParam))

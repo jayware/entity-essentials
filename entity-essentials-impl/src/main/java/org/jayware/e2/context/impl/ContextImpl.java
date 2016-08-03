@@ -62,9 +62,9 @@ implements Context
     }
 
     @Override
-    public String getId()
+    public UUID getId()
     {
-        return myContextId.toString();
+        return myContextId;
     }
 
     @Override
@@ -223,9 +223,9 @@ implements Context
         }
 
         @Override
-        public String getId()
+        public UUID getId()
         {
-            return myContextId.toString();
+            return myContextId;
         }
 
         @Override
@@ -475,9 +475,9 @@ implements Context
     implements Context
     {
         @Override
-        public String getId()
+        public UUID getId()
         {
-            return myContextId.toString();
+            return myContextId;
         }
 
         @Override
