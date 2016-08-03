@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
-import static java.util.UUID.fromString;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jayware.e2.component.api.Aspect.ANY;
@@ -459,15 +458,6 @@ implements EntityManager
 
         final EntityTree entityTree = getOrCreateEntityTree(context);
         return entityTree != null && entityTree.existsEntity(path);
-    }
-
-    @Override
-    public EntityRef resolveEntity(Context context, String id)
-    {
-        checkContextNotNullAndNotDisposed(context);
-        checkNotNull(id);
-
-        return resolveEntity(context, fromString(id));
     }
 
     @Override

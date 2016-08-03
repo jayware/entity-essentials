@@ -968,8 +968,6 @@ public interface EntityManager
     @Deprecated
     boolean existsEntity(Context context, EntityPath path);
 
-    EntityRef resolveEntity(Context context, String id);
-
     EntityRef resolveEntity(Context context, UUID id);
 
     /**
