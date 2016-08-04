@@ -172,7 +172,7 @@ public class StorageImplTest
             testSetOfEntities.get(testId); result = testRef;
         }};
 
-        testee.handleDeleteEntityEvent(testId);
+        testee.handleDeleteEntityEvent(testQuery, testId);
 
         new Verifications()
         {{
@@ -199,7 +199,7 @@ public class StorageImplTest
             testEventManager.post((Class<? extends RootEvent>) any, (Parameter[]) any);
         }};
 
-        testee.handleDeleteEntityEvent(testId);
+        testee.handleDeleteEntityEvent(testQuery, testId);
 
         final Parameters parameters = new Parameters(capturedParameters.toArray(new Parameter[3]));
 
@@ -239,7 +239,7 @@ public class StorageImplTest
             testEventManager.post(withCapture(capturedEventTypes), withCapture(capturedParameters), withCapture(capturedParameters), withCapture(capturedParameters));
         }};
 
-        testee.handleDeleteEntityEvent(testId);
+        testee.handleDeleteEntityEvent(testQuery, testId);
 
         final Parameters parameters = new Parameters(capturedParameters.toArray(new Parameter[3]));
 

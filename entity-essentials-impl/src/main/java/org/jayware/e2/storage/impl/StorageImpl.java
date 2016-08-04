@@ -29,6 +29,7 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent;
+import org.jayware.e2.entity.api.EntityEvent.DeleteEntitiesEvent;
 import org.jayware.e2.entity.api.EntityEvent.DeleteEntityEvent;
 import org.jayware.e2.entity.api.EntityEvent.EntityCreatedEvent;
 import org.jayware.e2.entity.api.EntityEvent.EntityDeletedEvent;
@@ -144,7 +145,7 @@ implements Storage, Disposable
     }
 
     @Handle(DeleteEntityEvent.class)
-    public void handleDeleteEntityEvent(@Param(value = EntityIdParam) UUID id)
+    public void handleDeleteEntityEvent(Event event, @Param(value = EntityIdParam) UUID id)
     {
         boolean fireEntityDeletedEvent = false;
         EntityRef ref;
@@ -177,6 +178,11 @@ implements Storage, Disposable
             myUpdateLock.unlock();
         }
 
+        if (event.isQuery())
+        {
+            ((Query) event).result(EntityRefParam, ref);
+        }
+
         if (fireEntityDeletedEvent)
         {
             postEntityDeletedEvent(ref);
@@ -184,6 +190,37 @@ implements Storage, Disposable
         else
         {
             log.warn("The entity '{}' does not exist in '{}'!", id, myContext);
+        }
+    }
+
+    @Handle(DeleteEntitiesEvent.class)
+    public void handleDeleteEntitiesEvent(Event event)
+    {
+        final List<EntityRef> result;
+
+        myWriteLock.lock();
+        try
+        {
+            result = new CopyOnWriteArrayList<EntityRef>(myEntities.values());
+
+            for (EntityRef ref : result)
+            {
+                myEntities.remove(ref.getId());
+            }
+        }
+        finally
+        {
+            myWriteLock.unlock();
+        }
+
+        for (EntityRef ref : result)
+        {
+            postEntityDeletedEvent(ref);
+        }
+
+        if (event.isQuery())
+        {
+            ((Query) event).result(EntityRefListParam, Collections.<EntityRef>unmodifiableList(result));
         }
     }
 
