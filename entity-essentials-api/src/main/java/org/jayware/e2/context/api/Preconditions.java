@@ -38,43 +38,48 @@ public class Preconditions
     {
         if (context == null)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Context mustn't be null!");
         }
 
         if (context.isDisposed())
         {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Context mustn't be disposed!");
         }
 
         return context;
     }
 
     /**
-     * Ensures that the passed {@link Contextual}s <code>a</code> and <code>b</code> are not <code>null</code> and they
+     * Ensures that the passed {@link Contextual}s <code>first</code> and <code>second</code> are not <code>null</code> and they
      * belong to the same valid {@link Context}.
      *
-     * @param a a {@link Contextual}
-     * @param b a {@link Contextual}
+     * @param first first {@link Contextual}
+     * @param second first {@link Contextual}
      *
-     * @throws IllegalArgumentException if <code>a</code> or <code>b</code> are <code>null</code>.
-     * @throws IllegalStateException if either the {@link Context} of <code>a</code> or the {@link Context} of <code>b</code> is disposed.
-     * @throws IllegalContextException if <code>a</code> and <code>b</code> do not belong to the same {@link Context}.
+     * @throws IllegalArgumentException if <code>first</code> or <code>second</code> are <code>null</code>.
+     * @throws IllegalStateException if either the {@link Context} of <code>first</code> or the {@link Context} of <code>second</code> is disposed.
+     * @throws IllegalContextException if <code>first</code> and <code>second</code> do not belong to the same {@link Context}.
      */
-    public static void checkContextualsNotNullAndSameContext(Contextual a, Contextual b)
+    public static void checkContextualsNotNullAndSameContext(Contextual first, Contextual second)
     {
-        if (a == null || b == null)
+        if (first == null)
         {
-            throw new IllegalArgumentException("One or both contextuals are null!");
+            throw new IllegalArgumentException("First contextual mustn't be null!");
         }
 
-        if (!a.belongsTo(b))
+        if (second == null)
         {
-            throw new IllegalContextException("The contextuals do not belong to the same context!");
+            throw new IllegalArgumentException("Second contextual mustn't be null!");
         }
 
-        if (a.getContext().isDisposed())
+        if (first.getContext().isDisposed())
         {
-            throw new IllegalStateException("The context has been disposed!");
+            throw new IllegalStateException("Context mustn't be disposed!");
+        }
+
+        if (!first.belongsTo(second))
+        {
+            throw new IllegalContextException("Contextuals do not belong to the same context!");
         }
     }
 
@@ -93,9 +98,14 @@ public class Preconditions
      */
     public static <C extends Contextual> C checkContextualNotNullAndBelongsToContext(C contextual, Context context)
     {
-        if (contextual == null || context == null)
+        if (contextual == null)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Contextual mustn't be null!");
+        }
+
+        if (context == null)
+        {
+            throw new IllegalArgumentException("Context mustn't be null!");
         }
 
         if (!contextual.belongsTo(context))
