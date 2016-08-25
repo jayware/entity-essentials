@@ -162,6 +162,8 @@ public interface ComponentManager
      */
     Collection<Component> getComponents(EntityRef ref);
 
+    Collection<Class<? extends Component>> getComponentTypes(EntityRef ref);
+
     /**
      * Returns the component of the specified type associated to the {@link Entity} referenced by the passed
      * {@link EntityRef}.
@@ -239,9 +241,7 @@ public interface ComponentManager
      *
      * @return the number of {@link Component Components} or <code>0</code> if no {@link Component} is associated.
      */
-    int numberOfComponents(EntityRef ref);
-
-    Aspect getAspect(EntityRef ref);
+    int getNumberOfComponents(EntityRef ref);
 
     /**
      * Resolves the {@link Class} of a {@link Component} by the name of the {@link Component}. To resolve
@@ -299,7 +299,6 @@ public interface ComponentManager
      *         if there is no appropriate adapter.
      */
     <T> ComponentPropertyAdapter<T> getPropertyAdapter(Context context, Class<T> type);
-
 
     /**
      * Returns a new instance of a {@link ContextualComponentManager} which belongs to the specified {@link Context}.

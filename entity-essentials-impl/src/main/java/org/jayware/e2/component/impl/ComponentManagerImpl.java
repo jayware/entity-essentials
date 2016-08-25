@@ -23,9 +23,9 @@ package org.jayware.e2.component.impl;
 
 import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.AbstractComponentWrapper;
-import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentEvent.AddComponentEvent;
+import org.jayware.e2.component.api.ComponentEvent.ComponentTypesQuery;
 import org.jayware.e2.component.api.ComponentEvent.CreateComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.PrepareComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.RemoveComponentEvent;
@@ -41,13 +41,14 @@ import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Key;
+import org.jayware.e2.util.TimeoutException;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
+import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeCollectionParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
@@ -64,7 +65,7 @@ import static org.jayware.e2.util.Preconditions.checkNotNull;
 public class ComponentManagerImpl
 implements ComponentManager
 {
-    private static final long COMMON_TIMEOUT_IN_MILLIS = 5000;
+    private static final long TIMEOUT_IN_MILLIS = 5000;
 
     public static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
     public static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
@@ -86,9 +87,9 @@ implements ComponentManager
                 param(ComponentTypeParam, type)
             );
 
-            if (!resultSet.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
+            if (!resultSet.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
             }
 
             return resultSet.get(ComponentParam);
@@ -139,9 +140,9 @@ implements ComponentManager
                 param(ComponentTypeParam, component)
             );
 
-            if (!resultSet.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
+            if (!resultSet.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
             }
 
             return resultSet.get(ComponentParam);
@@ -171,9 +172,9 @@ implements ComponentManager
                 param(ComponentParam, component)
             );
 
-            if (!resultSet.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
+            if (!resultSet.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
             }
 
             return resultSet.get(ComponentParam);
@@ -202,9 +203,9 @@ implements ComponentManager
                 param(ComponentTypeParam, component)
             );
 
-            if (!result.await(Success, COMMON_TIMEOUT_IN_MILLIS, MILLISECONDS))
+            if (!result.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + COMMON_TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
             }
 
             return result.get(ComponentParam);
@@ -255,6 +256,35 @@ implements ComponentManager
     }
 
     @Override
+    public Collection<Class<? extends Component>> getComponentTypes(EntityRef ref)
+    {
+        checkRefNotNullAndValid(ref);
+
+        final Context context = ref.getContext();
+        final EventManager eventManager = context.getService(EventManager.class);
+
+        try
+        {
+            final ResultSet resultSet = eventManager.query(ComponentTypesQuery.class,
+                param(ContextParam, context),
+                param(EntityRefParam, ref)
+            );
+
+            resultSet.timeout(Success, TIMEOUT_IN_MILLIS, "Failed to query all types of components associated to %s within %sms", ref, TIMEOUT_IN_MILLIS);
+
+            return resultSet.get(ComponentTypeCollectionParam);
+        }
+        catch (org.jayware.e2.util.TimeoutException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            throw new ComponentManagerException(e, "Failed to query all types of components associated to %s", ref);
+        }
+    }
+
+    @Override
     public <T extends Component> void pullComponent(EntityRef ref, T component)
     throws ComponentNotFoundException
     {
@@ -296,21 +326,12 @@ implements ComponentManager
     }
 
     @Override
-    public int numberOfComponents(EntityRef ref)
+    public int getNumberOfComponents(EntityRef ref)
     {
         checkNotNull(ref);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
         return componentStore.numberOfComponents(ref);
-    }
-
-    @Override
-    public Aspect getAspect(EntityRef ref)
-    {
-        checkNotNull(ref);
-
-        final ComponentStore componentStore = getOrCreateComponentStore(ref);
-        return componentStore.getAspect(ref);
     }
 
     @Override

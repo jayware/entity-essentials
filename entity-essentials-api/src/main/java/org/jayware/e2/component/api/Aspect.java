@@ -1,7 +1,7 @@
 /**
  * Entity Essentials -- A Component-based Entity System
  *
- * Copyright (C) 2015 Elmar Schug <elmar.schug@jayware.org>,
+ * Copyright (C) 2016 Elmar Schug <elmar.schug@jayware.org>,
  *                    Markus Neubauer <markus.neubauer@jayware.org>
  *
  *     This file is part of Entity Essentials.
@@ -24,31 +24,23 @@ package org.jayware.e2.component.api;
 import com.google.common.base.Objects;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.Entity;
-import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
+import static com.google.common.base.Objects.equal;
+import static java.lang.String.format;
+import static java.util.Collections.addAll;
+import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
+import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
-/**
- * An <code>Aspect</code> is a set of {@link Component Components} describing together a specific characteristic.
- * <p>
- * An {@link Entity} fulfills an certain <code>Aspect</code> if it has at least the <code>Aspect's</code>
- * {@link Component Components}.
- * <p>
- *
- * @see Entity
- * @see EntityManager
- * @see Component
- *
- * @since 1.0
- */
 public class Aspect
 {
     /**
@@ -57,18 +49,6 @@ public class Aspect
     public static final Aspect ANY = new Aspect()
     {
         public boolean matches(EntityRef ref)
-        {
-            return true;
-        }
-
-        @Override
-        public boolean satisfies(Aspect other)
-        {
-            return true;
-        }
-
-        @Override
-        public boolean contains(Class<? extends Component> component)
         {
             return true;
         }
@@ -81,230 +61,150 @@ public class Aspect
     {
         public boolean matches(EntityRef ref)
         {
+            checkRefNotNullAndValid(ref);
+
             final ComponentManager componentManager = ref.getContext().getService(ComponentManager.class);
-            return componentManager.numberOfComponents(ref) == 0;
-        }
-
-        @Override
-        public boolean satisfies(Aspect other)
-        {
-            return false;
-        }
-
-        @Override
-        public boolean contains(Class<? extends Component> component)
-        {
-            return false;
+            return componentManager.getNumberOfComponents(ref) == 0;
         }
     };
 
-    /**
-     * Matches never.
-     */
-    public static final Aspect NONE = new Aspect()
-    {
-        public boolean matches(EntityRef ref)
-        {
-            return false;
-        }
+    protected final Set<Class<? extends Component>> myIntersectionSet;
+    protected final Set<Class<? extends Component>> myUnificationSet;
+    protected final Set<Class<? extends Component>> myDifferenceSet;
 
-        @Override
-        public boolean satisfies(Aspect other)
-        {
-            return false;
-        }
-
-        @Override
-        public boolean contains(Class<? extends Component> component)
-        {
-            return false;
-        }
-    };
-
-    private final Set<Class<? extends Component>> myComponentSet;
+    protected final String myToString;
 
     protected Aspect()
     {
-        this(Collections.<Class<? extends Component>>emptySet());
+        myIntersectionSet = Collections.<Class<? extends Component>>emptySet();
+        myUnificationSet = Collections.<Class<? extends Component>>emptySet();
+        myDifferenceSet = Collections.<Class<? extends Component>>emptySet();
+
+        myToString = toString(this);
     }
 
-    protected Aspect(Set<Class<? extends Component>> set)
+    protected Aspect(Set<Class<? extends Component>> intersectionSet, Set<Class<? extends Component>> unificationSet, Set<Class<? extends Component>> differenceSet)
     {
-        myComponentSet = unmodifiableSet(set);
+        this.myIntersectionSet = Collections.<Class<? extends Component>>unmodifiableSet(new HashSet<Class<? extends Component>>(intersectionSet));
+        this.myUnificationSet = Collections.<Class<? extends Component>>unmodifiableSet(new HashSet<Class<? extends Component>>(unificationSet));
+        this.myDifferenceSet = Collections.<Class<? extends Component>>unmodifiableSet(new HashSet<Class<? extends Component>>(differenceSet));
+
+        myToString = toString(this);
     }
 
-    /**
-     * Creates an {@link Aspect} from the passed {@link Component} types.
-     *
-     * @param components the {@link Component Components}.
-     *
-     * @return a new {@link Aspect}.
-     */
+    public static Aspect aspect()
+    {
+        return EMPTY;
+    }
+
     public static Aspect aspect(Class<? extends Component>... components)
     {
-        return new Aspect(new CopyOnWriteArraySet<Class<? extends Component>>(asList(components)));
+        return aspect(combine(Collections.<Class<? extends Component>>emptySet(), components), Collections.<Class<? extends Component>>emptySet(), Collections.<Class<? extends Component>>emptySet());
     }
 
-    /**
-     * Creates an {@link Aspect} from the specified {@link Set} of {@link Component} types.
-     *
-     * @param components the {@link Component Components}.
-     *
-     * @return a new {@link Aspect}.
-     */
     public static Aspect aspect(Set<Class<? extends Component>> components)
     {
-        return new Aspect(new CopyOnWriteArraySet<Class<? extends Component>>(components));
+        return aspect(components, Collections.<Class<? extends Component>>emptySet(), Collections.<Class<? extends Component>>emptySet());
     }
 
-    public static Aspect combine(Aspect a, Aspect b)
+    public static Aspect aspect(Set<Class<? extends Component>> allOf, Set<Class<? extends Component>> oneOf, Set<Class<? extends Component>> noneOf)
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>();
-        resultSet.addAll(a.myComponentSet);
-        resultSet.addAll(b.myComponentSet);
-
-        return new Aspect(resultSet);
+        return new Aspect(allOf, oneOf, noneOf);
     }
 
-    public Aspect intersect(Aspect a, Aspect b)
+    public Aspect withAllOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>();
+        checkNotNull(components, "Components mustn't be null!");
 
-        for (Class<? extends Component> component : a.myComponentSet)
-        {
-            if (b.myComponentSet.contains(component))
-            {
-                resultSet.add(component);
-            }
-        }
-
-        if (resultSet.isEmpty())
-        {
-            return EMPTY;
-        }
-
-        return new Aspect(resultSet);
+        return checked(new Aspect(combine(myIntersectionSet, components), myUnificationSet, myDifferenceSet));
     }
 
-    public Aspect add(Aspect aspect)
+    public Aspect withAllOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
     {
-        return combine(this, aspect);
+        checkNotNull(components, "Components mustn't be null!");
+
+        return checked(new Aspect(combine(myIntersectionSet, components), myUnificationSet, myDifferenceSet));
     }
 
-    /**
-     * Adds the specified type of {@link Component}.
-     *
-     * @param component the type of {@link Component}.
-     *
-     * @return a new {@link Aspect}.
-     */
-    public Aspect add(Class<? extends Component> component)
+    public Aspect withOneOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>(myComponentSet);
-        resultSet.add(component);
+        checkNotNull(components, "Components mustn't be null!");
 
-        return new Aspect(resultSet);
+        return checked(new Aspect(myIntersectionSet, combine(myUnificationSet, components), myDifferenceSet));
     }
 
-    public Aspect remove(Aspect aspect)
+    public Aspect withOneOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
     {
-        final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>(myComponentSet);
-        resultSet.removeAll(aspect.myComponentSet);
+        checkNotNull(components, "Components mustn't be null!");
 
-        if (resultSet.isEmpty())
-        {
-            return EMPTY;
-        }
-
-        return new Aspect(resultSet);
+        return checked(new Aspect(myIntersectionSet, combine(myUnificationSet, components), myDifferenceSet));
     }
 
-    /**
-     * Removes the specified type of {@link Component}.
-     *
-     * @param component the type of {@link Component}.
-     *
-     * @return a new {@link Aspect}.
-     */
-    public Aspect remove(Class<? extends Component> component)
+    public Aspect withNoneOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
     {
-        if (myComponentSet.contains(component))
-        {
-            final Set<Class<? extends Component>> resultSet = new HashSet<Class<? extends Component>>(myComponentSet);
-            resultSet.remove(component);
+        checkNotNull(components, "Components mustn't be null!");
 
-            if (resultSet.isEmpty())
-            {
-                return EMPTY;
-            }
-
-            return new Aspect(resultSet);
-        }
-
-        return this;
+        return checked(new Aspect(myIntersectionSet, myUnificationSet, combine(myDifferenceSet, components)));
     }
 
-    public Aspect intersect(Aspect aspect)
+    public Aspect withNoneOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
     {
-        return intersect(this, aspect);
+        checkNotNull(components, "Components mustn't be null!");
+
+        return checked(new Aspect(myIntersectionSet, myUnificationSet, combine(myDifferenceSet, components)));
     }
 
-    /**
-     * Returns whether the {@link Entity} referenced by the specified {@link EntityRef} matches this {@link Aspect}.
-     *
-     * @param ref an {@link EntityRef}
-     *
-     * @return true if the {@link Entity} matches this {@link Aspect}, otherwise false.
-     */
+    public Aspect and(Aspect other) throws IllegalArgumentException, IllegalAspectException
+    {
+        return checked(aspect(combine(getIntersectionSet(), other.getIntersectionSet()), combine(getUnificationSet(), other.getUnificationSet()), combine(getDifferenceSet(), other.getDifferenceSet())));
+    }
+
     public boolean matches(EntityRef ref)
     {
+        checkRefNotNullAndValid(ref);
+
         final Context context = ref.getContext();
-        final ComponentManager componentManager = context.getComponentManager();
+        final ComponentManager componentManager = context.getService(ComponentManager.class);
 
-        return componentManager.hasComponents(ref, myComponentSet);
-    }
+        int matchesAllOf = 0;
+        int matchesOneOf = 0;
+        boolean matchesNoneOf = true;
 
-    /**
-     * Returns whether this {@link Aspect} satisfies the specified {@link Aspect}.
-     * <p>
-     * An {@link Aspect} A satisfies an {@link Aspect} B if and only if A encompasses at least all components of B.
-     * <p>
-     * Example: <b>A</b> {c1}, <b>B</b> {c1, c2, c3, c4}, <b>C</b> {c1, c3}<br>
-     * <table>
-     *     <tr><th></th><th>A</th><th>B</th><th>C</th><th></th><th>Description</th></tr>
-     *     <tr><th>A</th><td>x</td><td></td><td></td><td></td><td><b>A</b> doesn't satisfy <b>B</b> nor <b>C</b>, because <b>A</b> doesn't contain c2, c3 and c4.<br></td></tr>
-     *     <tr><th>B</th><td>x</td><td>x</td><td>x</td><td></td><td><b>B</b> satisfies <b>A</b> and <b>C</b> because <b>B</b> contains c1 and c3.</td></tr>
-     *     <tr><th>C</th><td>x</td><td></td><td>x</td><td></td><td><b>C</b> satisfies <b>A</b> but not <b>B</b>, because <b>C</b> contains c1 but not c2 and c4.</td></tr>
-     *     <caption>resulting table</caption>
-     * </table>
-     *
-     * @param other an {@link Aspect}.
-     *
-     * @return <code>true</code> if <code>this</code> {@link Aspect} satisfies the other {@link Aspect},
-     *         otherwise <code>false</code>.
-     */
-    public boolean satisfies(Aspect other)
-    {
-        if (other.equals(ANY) || other.equals(EMPTY))
+        for (Class<? extends Component> type : componentManager.getComponentTypes(ref))
         {
-            return true;
-        }
-        else if (other.equals(NONE))
-        {
-            return false;
+            if (myDifferenceSet.contains(type))
+            {
+                matchesNoneOf = false;
+                break;
+            }
+
+            if (matchesAllOf < myIntersectionSet.size() && myIntersectionSet.contains(type))
+            {
+                ++matchesAllOf;
+            }
+
+            if (matchesOneOf == 0 && myUnificationSet.contains(type))
+            {
+                ++matchesOneOf;
+            }
         }
 
-        return myComponentSet.containsAll(other.myComponentSet);
+        return matchesNoneOf && matchesAllOf == myIntersectionSet.size() && (matchesOneOf > 0 || myUnificationSet.isEmpty());
     }
 
-    public boolean contains(Class<? extends Component> component)
+    public Set<Class<? extends Component>> getIntersectionSet()
     {
-        return myComponentSet.contains(component);
+        return myIntersectionSet;
     }
 
-    public Set<Class<? extends Component>> components()
+    public Set<Class<? extends Component>> getUnificationSet()
     {
-        return myComponentSet;
+        return myUnificationSet;
+    }
+
+    public Set<Class<? extends Component>> getDifferenceSet()
+    {
+        return myDifferenceSet;
     }
 
     @Override
@@ -321,26 +221,179 @@ public class Aspect
         }
 
         final Aspect other = (Aspect) obj;
-
-        return myComponentSet.containsAll(other.myComponentSet) &&
-               other.myComponentSet.containsAll(myComponentSet);
+        return equal(getIntersectionSet(), other.getIntersectionSet()) &&
+               equal(getUnificationSet(), other.getUnificationSet()) &&
+               equal(getDifferenceSet(), other.getDifferenceSet());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(myComponentSet);
+        return Objects.hashCode(getIntersectionSet(), getUnificationSet(), getDifferenceSet());
     }
 
     @Override
     public String toString()
     {
-        final StringBuilder result = new StringBuilder("Aspect { ");
-        for (Class<? extends Component> component : myComponentSet)
+        return myToString;
+    }
+
+    public static String toString(Aspect aspect)
+    {
+        final StringBuilder stringBuilder = new StringBuilder("Aspect ");
+
+        stringBuilder.append("{");
+
+        if (!aspect.myIntersectionSet.isEmpty())
         {
-            result.append(component.getSimpleName()).append(", ");
+            stringBuilder.append(" allOf: [");
+
+            for (Iterator<Class<? extends Component>> iterator = aspect.myIntersectionSet.iterator(); iterator.hasNext(); )
+            {
+                final Class<? extends Component> component = iterator.next();
+                stringBuilder.append(component.getSimpleName());
+
+                if (iterator.hasNext())
+                {
+                    stringBuilder.append(", ");
+                }
+            }
+
+            stringBuilder.append("]");
         }
-        result.append("}");
-        return result.toString();
+
+        if (!aspect.myUnificationSet.isEmpty())
+        {
+            stringBuilder.append(" oneOf: [");
+
+            for (Iterator<Class<? extends Component>> iterator = aspect.myUnificationSet.iterator(); iterator.hasNext(); )
+            {
+                final Class<? extends Component> component = iterator.next();
+                stringBuilder.append(component.getSimpleName());
+
+                if (iterator.hasNext())
+                {
+                    stringBuilder.append(", ");
+                }
+            }
+
+            stringBuilder.append("]");
+        }
+
+        if (!aspect.myDifferenceSet.isEmpty())
+        {
+            stringBuilder.append(" noneOf: [");
+
+            for (Iterator<Class<? extends Component>> iterator = aspect.myDifferenceSet.iterator(); iterator.hasNext(); )
+            {
+                final Class<? extends Component> component = iterator.next();
+                stringBuilder.append(component.getSimpleName());
+
+                if (iterator.hasNext())
+                {
+                    stringBuilder.append(", ");
+                }
+            }
+
+            stringBuilder.append("]");
+        }
+
+        stringBuilder.append("}");
+
+        return stringBuilder.toString();
+    }
+
+    protected static Aspect checked(final Aspect aspect) throws IllegalAspectException
+    {
+        final Set<Class<? extends Component>> temp = new HashSet<Class<? extends Component>>();
+
+        temp.addAll(aspect.getIntersectionSet());
+        temp.retainAll(aspect.getUnificationSet());
+
+        if (!temp.isEmpty())
+        {
+            failCheck(aspect, temp, "intersection", "unification");
+        }
+
+        temp.addAll(aspect.getIntersectionSet());
+        temp.retainAll(aspect.getDifferenceSet());
+
+        if (!temp.isEmpty())
+        {
+            failCheck(aspect, temp, "intersection", "difference");
+        }
+
+        temp.addAll(aspect.getUnificationSet());
+        temp.retainAll(aspect.getIntersectionSet());
+
+        if (!temp.isEmpty())
+        {
+            failCheck(aspect, temp, "unification", "intersection");
+        }
+
+        temp.addAll(aspect.getUnificationSet());
+        temp.retainAll(aspect.getDifferenceSet());
+
+        if (!temp.isEmpty())
+        {
+            failCheck(aspect, temp, "unification", "difference");
+        }
+
+        temp.addAll(aspect.getDifferenceSet());
+        temp.retainAll(aspect.getIntersectionSet());
+
+        if (!temp.isEmpty())
+        {
+            failCheck(aspect, temp, "difference", "intersection");
+        }
+
+        temp.addAll(aspect.getDifferenceSet());
+        temp.retainAll(aspect.getUnificationSet());
+
+        if (!temp.isEmpty())
+        {
+            failCheck(aspect, temp, "difference", "unification");
+        }
+
+        return aspect;
+    }
+
+    private static void failCheck(Aspect aspect, Set<Class<? extends Component>> temp, Object... args)
+    {
+        final String messageTemplate = "\t    The component %s is part of the %s and the %s set!";
+
+        String message = "";
+        for (Class<? extends Component> aClass : temp)
+        {
+            message += format(messageTemplate, aClass.getSimpleName(), args[0], args[1]) + "\n";
+        }
+
+        throw new IllegalAspectException(aspect, message);
+    }
+
+    protected static Set<Class<? extends Component>> combine(Collection<Class<? extends Component>> set, Class<? extends Component>[] components)
+    {
+        final Set<Class<? extends Component>> result = new HashSet<Class<? extends Component>>(set);
+        addAll(result, components);
+        return result;
+    }
+
+    protected static Set<Class<? extends Component>> combine(Collection<Class<? extends Component>> a, Collection<Class<? extends Component>> b)
+    {
+        final Set<Class<? extends Component>> result = new HashSet<Class<? extends Component>>(a);
+        result.addAll(b);
+        return result;
+    }
+
+    protected static Collection<String> collectNames(Collection<Class<? extends Component>> classes)
+    {
+        final List<String> result = new ArrayList<String>();
+
+        for (Class aClass : classes)
+        {
+            result.add(aClass.getSimpleName());
+        }
+
+        return result;
     }
 }

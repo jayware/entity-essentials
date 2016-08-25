@@ -24,16 +24,10 @@ package org.jayware.e2.component.api;
 import static java.lang.String.format;
 
 
-public class ComponentManagerException
-extends RuntimeException
+public class IllegalAspectException extends RuntimeException
 {
-    public ComponentManagerException(String message, Object... args)
+    public IllegalAspectException(Aspect aspect, String message, Object... objects)
     {
-        super(format(message, args));
-    }
-
-    public ComponentManagerException(Throwable cause, String message, Object... args)
-    {
-        super(format(message, args), cause);
+        super(aspect + "\n\nReason:\n" + format(message, objects));
     }
 }

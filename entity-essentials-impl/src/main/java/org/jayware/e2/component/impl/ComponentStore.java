@@ -33,6 +33,7 @@ import org.jayware.e2.component.api.ComponentEvent.ComponentPreparedEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentPulledEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentPushedEvent;
 import org.jayware.e2.component.api.ComponentEvent.ComponentRemovedEvent;
+import org.jayware.e2.component.api.ComponentEvent.ComponentTypesQuery;
 import org.jayware.e2.component.api.ComponentEvent.CreateComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.PrepareComponentEvent;
 import org.jayware.e2.component.api.ComponentEvent.PullComponentEvent;
@@ -64,6 +65,7 @@ import static org.jayware.e2.component.api.AspectEvent.NewAspectParam;
 import static org.jayware.e2.component.api.AspectEvent.OldAspectParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentChangeEvent.ComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentPulledEvent.OldComponentParam;
+import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeCollectionParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityChangedEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEvent.EntityIdParam;
@@ -440,7 +442,7 @@ implements Disposable
             if (instance == null)
             {
                 oldAspect = getAspect(ref);
-                newAspect = oldAspect.add(componentType);
+                newAspect = aspect(getComponentTypes(ref));
 
                 instance = (AbstractComponent) myComponentFactory.createComponent(componentType).newInstance(myContext);
 
@@ -503,7 +505,7 @@ implements Disposable
                 if (instance != null)
                 {
                     oldAspect = getAspect(ref);
-                    newAspect = oldAspect.remove(componentType);
+                    newAspect = aspect(getComponentTypes(ref));
 
                     row.remove(ref);
 
@@ -592,6 +594,43 @@ implements Disposable
         {
             fireComponentPushedEvent(ref, newComponent, oldComponent);
         }
+    }
+
+    @Handle(ComponentTypesQuery.class)
+    public void handleComponentTypesQuery(Event event, @Param(EntityRefParam) EntityRef ref)
+    {
+        final Set<Class<? extends Component>> types;
+
+        myReadLock.lock();
+        try
+        {
+            types = getComponentTypes(ref);
+        }
+        finally
+        {
+            myReadLock.unlock();
+        }
+
+        if (event.isQuery())
+        {
+            ((Query) event).result(ComponentTypeCollectionParam, types);
+        }
+    }
+
+    private Set<Class<? extends Component>> getComponentTypes(@Param(EntityRefParam) EntityRef ref)
+    {
+        final Set<Class<? extends Component>> types = new HashSet<Class<? extends Component>>();
+
+        for (Map<EntityRef, Component> typeMap : myComponentDatabase.values())
+        {
+            final Component component = typeMap.get(ref);
+            if (component != null)
+            {
+                types.add(component.type());
+            }
+        }
+
+        return types;
     }
 
     @Override

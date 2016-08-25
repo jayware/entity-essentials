@@ -55,7 +55,6 @@ import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.api.Query.State.Success;
-import static org.jayware.e2.util.Filter.ALL;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -169,7 +168,7 @@ implements EntityManager
     @Override
     public List<EntityRef> findEntities(Context context, Aspect aspect)
     {
-        return findEntities(context, aspect, (Filter<EntityRef>) ALL);
+        return findEntities(context, aspect, (Filter<EntityRef>[]) null);
     }
 
     @Override

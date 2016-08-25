@@ -143,4 +143,20 @@ extends RootEvent
          */
         String OldComponentParam = "org.jayware.e2.event.param.OldComponent";
     }
+
+    /**
+     * Queries all types of {@link Component}s of an entity.
+     * <p>
+     * <b>Parameters:</b>
+     * <table>
+     *     <tr><td>{@link EntityEvent#ContextParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <tr><td>{@link EntityEvent#EntityRefParam}</td><td>{@link Presence#Required}</td></tr>
+     *     <caption>Parameters</caption>
+     * </table>
+     */
+    interface ComponentTypesQuery
+    extends RootEvent
+    {
+
+    }
 }
