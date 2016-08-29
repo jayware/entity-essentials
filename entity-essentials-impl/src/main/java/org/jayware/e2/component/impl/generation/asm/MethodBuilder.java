@@ -39,6 +39,7 @@ import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimi
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.resolveOpcodePrimitiveType;
 import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ANEWARRAY;
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.ARRAYLENGTH;
 import static org.objectweb.asm.Opcodes.ASTORE;
@@ -67,6 +68,8 @@ import static org.objectweb.asm.Opcodes.ISTORE;
 import static org.objectweb.asm.Opcodes.LCONST_0;
 import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.NEWARRAY;
+import static org.objectweb.asm.Opcodes.POP;
+import static org.objectweb.asm.Opcodes.POP2;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
@@ -346,7 +349,12 @@ public class MethodBuilder
 
     public void castTo(Class<?> type)
     {
-        myVisitor.visitTypeInsn(CHECKCAST, getInternalName(type));
+        castTo(getInternalName(type));
+    }
+
+    public void castTo(String internalName)
+    {
+        myVisitor.visitTypeInsn(CHECKCAST, internalName);
     }
 
     public void swap()
@@ -362,6 +370,11 @@ public class MethodBuilder
     public void arrayLength()
     {
         myVisitor.visitInsn(ARRAYLENGTH);
+    }
+
+    public void newArray(Class<?> type)
+    {
+        myVisitor.visitTypeInsn(ANEWARRAY, getInternalName(type));
     }
 
     public void newPrimitiveArray(Class<?> type)
@@ -421,5 +434,25 @@ public class MethodBuilder
         {
             throw new RuntimeException();
         }
+    }
+
+    public void pushConstantValue(int value)
+    {
+        myVisitor.visitLdcInsn(value);
+    }
+
+    public void dup()
+    {
+        myVisitor.visitInsn(DUP);
+    }
+
+    public void pop()
+    {
+        myVisitor.visitInsn(POP);
+    }
+
+    public void pop2()
+    {
+        myVisitor.visitInsn(POP2);
     }
 }

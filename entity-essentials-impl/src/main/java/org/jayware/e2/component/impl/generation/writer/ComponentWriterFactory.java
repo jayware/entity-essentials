@@ -94,6 +94,16 @@ public class ComponentWriterFactory
         return new ComponentCopyThisMethodWriter();
     }
 
+    public ComponentEqualsMethodWriter createComponentEqualsMethodWriter()
+    {
+        return new ComponentEqualsMethodWriter();
+    }
+
+    public ComponentHashCodeMethodWriter createComponentHashcodeMethodWriter()
+    {
+        return new ComponentHashCodeMethodWriter();
+    }
+
     public ComponentToStringMethodWriter createComponentToStringMethodWriter()
     {
         return new ComponentToStringMethodWriter();

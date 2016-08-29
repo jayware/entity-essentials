@@ -38,7 +38,7 @@ public class ComponentTypeMethodWriter
         final ClassWriter classWriter = componentPlan.getClassWriter();
         final MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, "type", "()Ljava/lang/Class;", null, null);
         mv.visitCode();
-        mv.visitLdcInsn(getType(componentPlan.getComponentClass()));
+        mv.visitLdcInsn(getType(componentPlan.getComponentType()));
         mv.visitInsn(ARETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

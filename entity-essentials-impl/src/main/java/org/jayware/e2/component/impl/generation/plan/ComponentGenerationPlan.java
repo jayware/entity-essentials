@@ -30,10 +30,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.objectweb.asm.Type.getInternalName;
+
 
 public class ComponentGenerationPlan
 {
-    private final Class<? extends Component> myComponentClass;
+    private final Class<? extends Component> myComponentType;
 
     private ClassWriter myClassWriter;
 
@@ -45,15 +47,20 @@ public class ComponentGenerationPlan
 
     public ComponentGenerationPlan(Class<? extends Component> component)
     {
-        myComponentClass = component;
+        myComponentType = component;
         myGeneratedClassPackageName = component.getPackage().getName();
         myGeneratedClassName = "_generated_" + component.getSimpleName();
         myPropertyGenerationPlans = new HashMap<String, ComponentPropertyGenerationPlan>();
     }
 
-    public Class<? extends Component> getComponentClass()
+    public Class<? extends Component> getComponentType()
     {
-        return myComponentClass;
+        return myComponentType;
+    }
+
+    public String getComponentTypeInternalName()
+    {
+        return getInternalName(myComponentType);
     }
 
     public String getGeneratedClassInternalName()

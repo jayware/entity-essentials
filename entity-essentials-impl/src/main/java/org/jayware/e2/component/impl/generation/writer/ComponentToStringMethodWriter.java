@@ -23,12 +23,15 @@ package org.jayware.e2.component.impl.generation.writer;
 
 
 import org.jayware.e2.component.api.Component;
+import org.jayware.e2.component.impl.generation.asm.TypeUtil;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isBytePrimitiveType;
+import static org.jayware.e2.component.impl.generation.asm.TypeUtil.isShortPrimitiveType;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
@@ -45,7 +48,7 @@ public class ComponentToStringMethodWriter
 {
     public void writeToStringMethodFor(ComponentGenerationPlan componentPlan)
     {
-        final Class<? extends Component> componentClass = componentPlan.getComponentClass();
+        final Class<? extends Component> componentClass = componentPlan.getComponentType();
         final String classInternalName = componentPlan.getGeneratedClassInternalName();
         final ClassWriter classWriter = componentPlan.getClassWriter();
 
@@ -77,9 +80,17 @@ public class ComponentToStringMethodWriter
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
 
-            if (propertyType.isPrimitive())
+            if (TypeUtil.isPrimitiveType(propertyType))
             {
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(" + propertyTypeDescriptor + ")Ljava/lang/StringBuilder;", false);
+                // StringBuilder does not support Short and Byte primitives.
+                if (isShortPrimitiveType(propertyType) || isBytePrimitiveType(propertyType))
+                {
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false);
+                }
+                else
+                {
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(" + propertyTypeDescriptor + ")Ljava/lang/StringBuilder;", false);
+                }
             }
             else
             {

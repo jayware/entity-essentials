@@ -36,10 +36,12 @@ import org.jayware.e2.component.impl.generation.writer.ComponentCopyConstructorW
 import org.jayware.e2.component.impl.generation.writer.ComponentCopyOtherMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentCopyThisMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentDefaultConstructorWriter;
+import org.jayware.e2.component.impl.generation.writer.ComponentEqualsMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentGetMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyNamesMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyTypesMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentHasMethodWriter;
+import org.jayware.e2.component.impl.generation.writer.ComponentHashCodeMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyFieldWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyGetterMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertySetterMethodWriter;
@@ -329,9 +331,11 @@ implements ComponentFactory
         final ComponentTypeMethodWriter typeMethodWriter = myWriterFactory.createComponentTypeMethodWriter();
         final ComponentCopyOtherMethodWriter copyOtherMethodWriter = myWriterFactory.createComponentCopyOtherMethodWriter();
         final ComponentCopyThisMethodWriter copyThisMethodWriter = myWriterFactory.createComponentCopyThisMethodWriter();
+        final ComponentEqualsMethodWriter equalsMethodWriter = myWriterFactory.createComponentEqualsMethodWriter();
+        final ComponentHashCodeMethodWriter hashCodeMethodWriter = myWriterFactory.createComponentHashcodeMethodWriter();
         final ComponentToStringMethodWriter toStringMethodWriter = myWriterFactory.createComponentToStringMethodWriter();
 
-        final Class<? extends Component> componentClass = componentGenerationPlan.getComponentClass();
+        final Class<? extends Component> componentClass = componentGenerationPlan.getComponentType();
 
         componentGenerationPlan.setOutputDirectory(myOutputDirectory);
         componentGenerationPlan.setClassWriter(new ClassWriter(ClassWriter.COMPUTE_FRAMES));
@@ -384,6 +388,10 @@ implements ComponentFactory
         copyThisMethodWriter.writeCopyThisMethodFor(componentGenerationPlan);
 
         copyOtherMethodWriter.writeCopyOtherMethodFor(componentGenerationPlan);
+
+        equalsMethodWriter.writeEqualsMethodFor(componentGenerationPlan);
+
+        hashCodeMethodWriter.writeHashCodeMethodFor(componentGenerationPlan);
 
         toStringMethodWriter.writeToStringMethodFor(componentGenerationPlan);
 

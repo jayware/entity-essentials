@@ -65,7 +65,7 @@ public class ComponentCopyOtherMethodWriter
 {
     public void writeCopyOtherMethodFor(ComponentGenerationPlan componentPlan)
     {
-        final Class<? extends Component> componentClass = componentPlan.getComponentClass();
+        final Class<? extends Component> componentClass = componentPlan.getComponentType();
         final ClassWriter classWriter = componentPlan.getClassWriter();
 
         final MethodVisitor visitor = classWriter.visitMethod(ACC_PUBLIC, "copy", "(" + getDescriptor(Component.class) + ")" + getDescriptor(Component.class), null, null);

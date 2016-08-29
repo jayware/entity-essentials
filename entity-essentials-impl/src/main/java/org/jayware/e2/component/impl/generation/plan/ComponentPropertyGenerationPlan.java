@@ -22,10 +22,11 @@
 package org.jayware.e2.component.impl.generation.plan;
 
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.jayware.e2.component.api.ComponentProperty;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 
 import static org.objectweb.asm.Type.getMethodDescriptor;
 
@@ -155,14 +156,25 @@ public class ComponentPropertyGenerationPlan
         {
             return false;
         }
-        ComponentPropertyGenerationPlan that = (ComponentPropertyGenerationPlan) o;
-        return Objects.equals(myOwner, that.myOwner) &&
-        Objects.equals(myName, that.myName);
+
+        final ComponentPropertyGenerationPlan that = (ComponentPropertyGenerationPlan) o;
+        return Objects.equal(myOwner, that.myOwner) &&
+               Objects.equal(myName, that.myName);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(myOwner, myName);
+        return Objects.hashCode(myOwner, myName);
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper(this)
+        .add("name", myName)
+        .add("type", myType)
+        .add("owner", myOwner.getComponentType().getSimpleName())
+        .toString();
     }
 }
