@@ -123,12 +123,12 @@ public class Aspect
 
     private final Set<Class<? extends Component>> myComponentSet;
 
-    private Aspect()
+    protected Aspect()
     {
         this(Collections.<Class<? extends Component>>emptySet());
     }
 
-    private Aspect(Set<Class<? extends Component>> set)
+    protected Aspect(Set<Class<? extends Component>> set)
     {
         myComponentSet = unmodifiableSet(set);
     }
