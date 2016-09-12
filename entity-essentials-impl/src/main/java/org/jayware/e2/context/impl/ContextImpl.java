@@ -22,6 +22,8 @@
 package org.jayware.e2.context.impl;
 
 import com.google.common.base.Objects;
+import com.googlecode.concurentlocks.ReadWriteUpdateLock;
+import com.googlecode.concurentlocks.ReentrantReadWriteUpdateLock;
 import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
@@ -35,12 +37,11 @@ import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static org.jayware.e2.util.Key.createKey;
@@ -209,9 +210,10 @@ implements Context
     {
         private final ServiceProvider myServiceProvider;
 
-        private final ReadWriteLock myLock = new ReentrantReadWriteLock();
+        private final ReadWriteUpdateLock myLock = new ReentrantReadWriteUpdateLock();
         private final Lock myReadLock = myLock.readLock();
         private final Lock myWriteLock = myLock.writeLock();
+        private final Lock myUpdateLock = myLock.updateLock();
 
         private final Map<Key, Object> myMap;
         private boolean isDisposing = false;
@@ -238,7 +240,11 @@ implements Context
                 {
                     isDisposing = true;
 
-                    for (Object obj : myMap.values())
+                    final HashSet toDispose = new HashSet(myMap.values());
+
+                    myWriteLock.unlock();
+
+                    for (Object obj : toDispose)
                     {
                         if (obj instanceof Disposable)
                         {
@@ -246,9 +252,10 @@ implements Context
                         }
                     }
 
-                    myMap.clear();
-
                     myContextState.set(new DisposedContext());
+
+                    myWriteLock.lock();
+                    myMap.clear();
                 }
             }
             finally
@@ -284,22 +291,6 @@ implements Context
         {
             checkNotNull(type, "Key mustn't be null!");
             put(createKey(type.getName()), value);
-        }
-
-        private void checkDisposing()
-        {
-            myReadLock.lock();
-            try
-            {
-                if (isDisposing)
-                {
-                    throw new IllegalStateException("Context is goning to be disposed!");
-                }
-            }
-            finally
-            {
-                myReadLock.unlock();
-            }
         }
 
         @Override
@@ -353,7 +344,7 @@ implements Context
         public <T> void remove(Key<T> key)
         {
             checkNotNull(key, "Key mustn't be null!");
-            myWriteLock.lock();
+            myUpdateLock.lock();
             try
             {
                 checkDisposing();
@@ -361,7 +352,7 @@ implements Context
             }
             finally
             {
-                myWriteLock.unlock();
+                myUpdateLock.unlock();
             }
         }
 
@@ -369,14 +360,14 @@ implements Context
         public <T> T get(Key<T> key)
         {
             checkNotNull(key, "Key mustn't be null!");
-            myReadLock.lock();
+            myUpdateLock.lock();
             try
             {
                 return (T) myMap.get(key);
             }
             finally
             {
-                myReadLock.unlock();
+                myUpdateLock.unlock();
             }
         }
 
@@ -384,7 +375,7 @@ implements Context
         public <T> T get(Key<T> key, T defaultValue)
         {
             checkNotNull(key, "Key mustn't be null!");
-            myReadLock.lock();
+            myUpdateLock.lock();
             try
             {
                 final T value = (T) myMap.get(key);
@@ -392,21 +383,21 @@ implements Context
             }
             finally
             {
-                myReadLock.unlock();
+                myUpdateLock.unlock();
             }
         }
 
         @Override
         public boolean contains(Key key)
         {
-            myReadLock.lock();
+            myUpdateLock.lock();
             try
             {
                 return myMap.containsKey(key);
             }
             finally
             {
-                myReadLock.unlock();
+                myUpdateLock.unlock();
             }
         }
 
@@ -426,14 +417,39 @@ implements Context
         @Override
         public <S> S findService(Class<? extends S> service)
         {
-            Object instance = myMap.get(createKey(service.getName()));
-
-            if (instance == null || !service.isAssignableFrom(instance.getClass()))
+            myUpdateLock.lock();
+            try
             {
-                instance = myServiceProvider.findService(service);
-            }
+                Object instance = myMap.get(createKey(service.getName()));
 
-            return (S) instance;
+                if (instance == null || !service.isAssignableFrom(instance.getClass()))
+                {
+                    instance = myServiceProvider.findService(service);
+                    myWriteLock.lock();
+                    try
+                    {
+                        myMap.put(createKey(service.getName()), instance);
+                    }
+                    finally
+                    {
+                        myWriteLock.unlock();
+                    }
+                }
+
+                return (S) instance;
+            }
+            finally
+            {
+                myUpdateLock.unlock();
+            }
+        }
+
+        private void checkDisposing()
+        {
+            if (isDisposing)
+            {
+                throw new IllegalStateException("Context is goning to be disposed!");
+            }
         }
 
         @Override
