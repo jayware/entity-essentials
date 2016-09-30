@@ -183,11 +183,6 @@ public class ContextualComponentManagerImplTest
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_Component_is_null()
     {
-        new Expectations()
-        {{
-            testRefA.belongsTo(testContext); result = true; minTimes = 0;
-        }};
-
         testee.addComponent(testRefA, (Component) null);
     }
 
@@ -196,8 +191,6 @@ public class ContextualComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRefA.belongsTo(testContext); result = true; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
             testContext.isDisposed(); result = true;
         }};
 
@@ -209,8 +202,7 @@ public class ContextualComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRefA.belongsTo(testContext); result = false; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+            testRefA.belongsTo(testContext); result = false;
         }};
 
         testee.addComponent(testRefA, testAbstractComponent);
@@ -221,8 +213,8 @@ public class ContextualComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRefA.belongsTo(testContext); result = true; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = false; minTimes = 0;
+            testRefA.belongsTo(testContext); result = true;
+            testAbstractComponent.belongsTo(testContext); result = false;
         }};
 
         testee.addComponent(testRefA, testAbstractComponent);
@@ -233,8 +225,8 @@ public class ContextualComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRefA.belongsTo(testContext); result = true; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
+            testRefA.belongsTo(testContext); result = true;
+            testAbstractComponent.belongsTo(testContext); result = true;
         }};
 
         testee.addComponent(testRefA, testAbstractComponent);

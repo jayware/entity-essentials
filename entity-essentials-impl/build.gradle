@@ -55,10 +55,10 @@ dependencies {
     compile 'org.ow2.asm:asm-all:5.1'
     compile "com.googlecode.concurrent-locks:concurrent-locks:1.0.0"
 
-    testCompile 'org.testng:testng:6.9.12'
+    testCompile 'org.testng:testng:6.9.13.6'
     testCompile 'org.assertj:assertj-core:3.5.2'
     testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'org.jmockit:jmockit:1.25'
+    testCompile 'org.jmockit:jmockit:1.28'
     testCompile 'ch.qos.logback:logback-classic:1.1.7'
 }
 

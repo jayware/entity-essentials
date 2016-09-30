@@ -98,10 +98,6 @@ public class ComponentManagerImplTest
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_createComponent_with_Context_and_Class_Throws_IllegalArgumentException_if_the_passed_Class_is_null()
     {
-        new Expectations() {{
-            testContext.isDisposed(); result = false; minTimes = 0;
-        }};
-
         testee.createComponent(testContext, null);
     }
 
@@ -133,14 +129,8 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = false; minTimes = 0;
-            testRef.isInvalid(); result = true; minTimes = 0;
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testRef.belongsTo(testContext); result = true; minTimes = 0;
-            testRef.belongsTo(testAbstractComponent); result = true; minTimes = 0;
-            testAbstractComponent.getContext(); result = testContext; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
-            testAbstractComponent.belongsTo(testRef); result = true; minTimes = 0;
+            testRef.isInvalid(); result = true;
+            testRef.getContext(); result = testContext;
         }};
 
         testee.addComponent(testRef, testAbstractComponent);
@@ -151,12 +141,7 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testRef.belongsTo(testContext); result = true; minTimes = 0;
-            testRef.belongsTo(testAbstractComponent); result = true; minTimes = 0;
-            testAbstractComponent.getContext(); result = testContext; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
-            testAbstractComponent.belongsTo(testRef); result = true; minTimes = 0;
+            testRef.getContext(); result = testContext;
             testContext.isDisposed(); result = true;
         }};
 
@@ -168,15 +153,9 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testRef.belongsTo(testContext); result = true; minTimes = 0;
-            testRef.belongsTo(testAbstractComponent); result = false; minTimes = 0;
-            testAbstractComponent.getContext(); result = anotherContext; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = false; minTimes = 0;
-            testAbstractComponent.belongsTo(anotherContext); result = true; minTimes = 0;
-            testAbstractComponent.belongsTo(testRef); result = false; minTimes = 0;
-            testContext.isDisposed(); result = false; minTimes = 0;
-            anotherContext.isDisposed(); result = false; minTimes = 0;
+            testRef.getContext(); result = testContext;
+            testRef.belongsTo(testAbstractComponent); result = false;
+            testContext.isDisposed(); result = false;
         }};
 
         testee.addComponent(testRef, testAbstractComponent);
@@ -187,14 +166,10 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testRef.belongsTo(testContext); result = true; minTimes = 0;
-            testRef.belongsTo(testAbstractComponent); result = true; minTimes = 0;
-            testAbstractComponent.getContext(); result = testContext; minTimes = 0;
-            testAbstractComponent.belongsTo(testContext); result = true; minTimes = 0;
-            testAbstractComponent.belongsTo(testRef); result = true; minTimes = 0;
+            testRef.getContext(); result = testContext;
+            testRef.belongsTo(testAbstractComponent); result = true;
             testAbstractComponent.type(); result = TestComponentA.class;
-            testContext.isDisposed(); result = false; minTimes = 0;
+            testContext.isDisposed(); result = false;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
             testResultSet.get(ComponentParam); result = testComponentB;
         }};
@@ -246,10 +221,9 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = false; minTimes = 0;
-            testRef.isInvalid(); result = true; minTimes = 0;
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testContext.isDisposed(); result = true; minTimes = 0;
+            testRef.isInvalid(); result = true;
+            testRef.getContext(); result = testContext;
+            testContext.isDisposed(); result = true;
         }};
 
         testee.addComponent(testRef, TestComponentA.class);
@@ -260,8 +234,7 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = false; minTimes = 0;
-            testRef.isInvalid(); result = true; minTimes = 0;
+            testRef.isInvalid(); result = true;
         }};
 
         testee.addComponent(testRef, TestComponentA.class);
@@ -272,10 +245,9 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = true; minTimes = 0;
-            testRef.isInvalid(); result = false; minTimes = 0;
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testContext.isDisposed(); result = false; minTimes = 0;
+            testRef.isInvalid(); result = false;
+            testRef.getContext(); result = testContext;
+            testContext.isDisposed(); result = false;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = false;
         }};
 
@@ -287,8 +259,8 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testContext.isDisposed(); result = false; minTimes = 0;
+            testRef.getContext(); result = testContext;
+            testContext.isDisposed(); result = false;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
             testResultSet.get(ComponentParam); result = testComponentA;
         }};
@@ -337,8 +309,7 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = false; minTimes = 0;
-            testRef.isInvalid(); result = true; minTimes = 0;
+            testRef.isInvalid(); result = true;
             testRef.getContext(); result = testContext;
             testContext.isDisposed(); result = true;
         }};
@@ -351,8 +322,7 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = false; minTimes = 0;
-            testRef.isInvalid(); result = true; minTimes = 0;
+            testRef.isInvalid(); result = true;
             testRef.getContext(); result = testContext;
             testContext.isDisposed(); result = false;
         }};
@@ -365,10 +335,8 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = true; minTimes = 0;
-            testRef.isInvalid(); result = false; minTimes = 0;
-            testRef.getContext(); result = testContext; minTimes = 0;
-            testContext.isDisposed(); result = false; minTimes = 0;
+            testRef.isInvalid(); result = false;
+            testRef.getContext(); result = testContext;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = false;
         }};
 
@@ -380,11 +348,9 @@ public class ComponentManagerImplTest
     {
         new Expectations()
         {{
-            testRef.isValid(); result = true; minTimes = 0;
-            testRef.isInvalid(); result = false; minTimes = 0;
-            testRef.getContext(); result = testContext; minTimes = 0;
+            testRef.isInvalid(); result = false;
+            testRef.getContext(); result = testContext;
             testRef.getId(); result = testRefId;
-            testContext.isDisposed(); result = false; minTimes = 0;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
             testResultSet.get(ComponentParam); result = testComponentA;
         }};
