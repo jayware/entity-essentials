@@ -9,14 +9,16 @@
    [[ #12 ]](https://github.com/jayware/entity-essentials/issues/12)
 
 ## Enhancements
- - A couple of JavaDoc warnings have been fixed.
-   [[ #16 ]](https://github.com/jayware/entity-essentials/issues/16)
  - The ComponentManager does now offer an operation to obtain an instance of a component without the need to add the component to an entity.
    [[ #25 ]](https://github.com/jayware/entity-essentials/issues/25)
  - An Anspect does now offer an operation to get the internal set of component-types.
    [[ #26 ]](https://github.com/jayware/entity-essentials/issues/26)
  - The EntityManager does now offer an operation to delete all entities at once.
    [[ #32 ]](https://github.com/jayware/entity-essentials/issues/32)
+ - The Aspect class has been rewritten and does now offer possibilities to specify an aspect of an entity more precisely.   
+   [[ #35 ]](https://github.com/jayware/entity-essentials/issues/35)
+ - Components do now implement the equals and hashcode operations.
+   [[ #38 ]](https://github.com/jayware/entity-essentials/issues/38)
 
 ## Fixes
  - A NegativeArraySizeException has been fixed which occurred when an EventDispatcher was generated for an EventHandler with long or double parameters.
@@ -29,8 +31,14 @@
    [[ #30 ]](https://github.com/jayware/entity-essentials/issues/30)
  - A bug has been fixed which prevents the deletion of entities, because events which are related to the deletion use deprecated EntityPath instead of UUID.
    [[ #31 ]](https://github.com/jayware/entity-essentials/issues/31)
- - Fixed a bug has been fixed which potentially leads to a deadlock, because queries where scheduled on other worker threads. 
+ - A bug has been fixed which potentially leads to a deadlock, because queries where scheduled on other worker threads. 
    [[ #37 ]](https://github.com/jayware/entity-essentials/issues/37)
+
+## Misc
+ - A couple of JavaDoc warnings have been fixed.
+   [[ #16 ]](https://github.com/jayware/entity-essentials/issues/16)
+ - The description of events has been revised.
+   [[ #34 ]](https://github.com/jayware/entity-essentials/issues/34)
 
 ## Dependencies
 
@@ -38,9 +46,9 @@
 | :----------------------------- | ----------- | ----------- |
 | org.slf4j:slf4j-api            | 1.7.18      | 1.7.21      |
 | ch.qos.logback:logback-classic | 1.1.5       | 1.1.7       |
-| org.testng:testng              | 6.9.10      | 6.9.12      |
+| org.testng:testng              | 6.9.10      | 6.9.13.6    |
 | org.assertj:assertj-core       | 3.3.0       | 3.5.1       |
-| org.jmockit:jmockit            | -           | 1.25        |
+| org.jmockit:jmockit            | -           | 1.28        |
 
 # Version 0.2.0 (2016-02-29)
 
