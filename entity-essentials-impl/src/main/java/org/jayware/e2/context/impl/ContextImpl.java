@@ -59,7 +59,6 @@ implements Context
     {
         myContextId = UUID.randomUUID();
         myContextState.set(new DefaultContext(serviceProvider));
-        Runtime.getRuntime().addShutdownHook(new ShutdownHook());
     }
 
     @Override
@@ -603,16 +602,6 @@ implements Context
         public GroupManager getGroupManager()
         {
             throw new IllegalStateException("No GroupManager available. Context is disposed!");
-        }
-    }
-
-    private class ShutdownHook
-    extends Thread
-    {
-        @Override
-        public void run()
-        {
-            dispose();
         }
     }
 }
