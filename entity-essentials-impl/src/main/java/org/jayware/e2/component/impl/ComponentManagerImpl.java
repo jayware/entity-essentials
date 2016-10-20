@@ -208,7 +208,7 @@ implements ComponentManager
                 throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
             }
 
-            return result.get(ComponentParam);
+            return result.find(ComponentParam);
         }
         catch (Exception e)
         {

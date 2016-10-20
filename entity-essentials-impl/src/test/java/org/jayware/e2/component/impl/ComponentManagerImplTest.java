@@ -352,7 +352,7 @@ public class ComponentManagerImplTest
             testRef.getContext(); result = testContext;
             testRef.getId(); result = testRefId;
             testResultSet.await(Success, anyLong, (TimeUnit) any); result = true;
-            testResultSet.get(ComponentParam); result = testComponentA;
+            testResultSet.find(ComponentParam); result = testComponentA;
         }};
 
         assertThat(testee.removeComponent(testRef, TestComponentA.class)).isEqualTo(testComponentA);
