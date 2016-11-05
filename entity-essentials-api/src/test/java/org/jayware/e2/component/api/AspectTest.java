@@ -215,8 +215,8 @@ public class AspectTest
     {
         new Expectations()
         {{
-            testComponentManager.getComponentTypes(testRefA); result = asList(TestComponentA.class, TestComponentB.class, TestComponentC.class); minTimes = 0;
-            testComponentManager.getComponentTypes(testRefB); result = asList(TestComponentD.class); minTimes = 0;
+            testComponentManager.getComponentTypes(testRefA); result = asList(TestComponentA.class, TestComponentB.class, TestComponentC.class);
+            testComponentManager.getComponentTypes(testRefB); result = asList(TestComponentD.class);
         }};
 
         assertThat(aspect().withAllOf(TestComponentA.class, TestComponentB.class).matches(testRefA)).isTrue();

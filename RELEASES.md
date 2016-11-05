@@ -44,11 +44,12 @@
 
 | artifact                       | old version | new version |
 | :----------------------------- | ----------- | ----------- |
+| com.google.guava:guava         | 19          | 20          |
 | org.slf4j:slf4j-api            | 1.7.18      | 1.7.21      |
 | ch.qos.logback:logback-classic | 1.1.5       | 1.1.7       |
 | org.testng:testng              | 6.9.10      | 6.9.13.6    |
 | org.assertj:assertj-core       | 3.3.0       | 3.5.1       |
-| org.jmockit:jmockit            | -           | 1.28        |
+| org.jmockit:jmockit            | -           | 1.29        |
 
 # Version 0.2.0 (2016-02-29)
 

@@ -77,8 +77,6 @@ implements ComponentManager
         checkNotNull(type);
         checkContextNotNullAndNotDisposed(context);
 
-        getOrCreateComponentStore(context);
-
         try
         {
             final EventManager eventManager = context.getService(EventManager.class);

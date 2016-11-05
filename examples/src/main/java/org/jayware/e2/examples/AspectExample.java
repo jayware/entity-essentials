@@ -29,7 +29,6 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
-import org.jayware.e2.event.api.EventManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +43,6 @@ public class AspectExample
     {
         /* Create a context and obtain required managers */
         Context context = ContextProvider.getInstance().createContext();
-        EventManager eventManager = context.getService(EventManager.class);
         EntityManager entityManager = context.getService(EntityManager.class);
         ComponentManager componentManager = context.getService(ComponentManager.class);
 

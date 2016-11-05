@@ -362,13 +362,13 @@ public class Aspect
     {
         final String messageTemplate = "\t    The component %s is part of the %s and the %s set!";
 
-        String message = "";
+        final StringBuffer message = new StringBuffer();
         for (Class<? extends Component> aClass : temp)
         {
-            message += format(messageTemplate, aClass.getSimpleName(), args[0], args[1]) + "\n";
+            message.append(format(messageTemplate, aClass.getSimpleName(), args[0], args[1]) + "\n");
         }
 
-        throw new IllegalAspectException(aspect, message);
+        throw new IllegalAspectException(aspect, message.toString());
     }
 
     protected static Set<Class<? extends Component>> combine(Collection<Class<? extends Component>> set, Class<? extends Component>[] components)
