@@ -59,7 +59,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -306,15 +305,15 @@ implements Disposable
         private final Logger log = LoggerFactory.getLogger(EventBusWorker.class);
 
         private final Thread myThread;
-        private final BlockingQueue<EventDispatch> myDispatchQueue;
-        private final Stack<EventDispatch> myExecutionStack;
+        private final BlockingQueue<EventBusWorkerTask> myDispatchQueue;
+        private final Stack<EventBusWorkerTask> myExecutionStack;
 
-        private final AtomicBoolean keepRunning = new AtomicBoolean(false);
+        private boolean keepRunning = false;
 
         public EventBusWorker(ThreadGroup threadGroup, String threadName, int queueSize)
         {
-            myDispatchQueue = new ArrayBlockingQueue<EventDispatch>(queueSize);
-            myExecutionStack = new Stack<EventDispatch>();
+            myDispatchQueue = new ArrayBlockingQueue<EventBusWorkerTask>(queueSize);
+            myExecutionStack = new Stack<EventBusWorkerTask>();
 
             myThread = new Thread(threadGroup, this, threadName);
             myThread.start();
@@ -333,7 +332,10 @@ implements Disposable
                     myDispatchQueue.put(dispatch);
                     dispatch.await();
                 }
-                catch (InterruptedException ignored) {}
+                catch (InterruptedException ignored)
+                {
+                    currentThread().interrupt();
+                }
             }
             else
             {
@@ -349,7 +351,10 @@ implements Disposable
             {
                 myDispatchQueue.put(dispatch);
             }
-            catch (InterruptedException ignored) {}
+            catch (InterruptedException ignored)
+            {
+                currentThread().interrupt();
+            }
         }
 
         public ResultSet query(Query query)
@@ -379,25 +384,43 @@ implements Disposable
 
         public void shutdown()
         {
-            keepRunning.set(false);
-            myThread.interrupt();
-
             try
             {
+                myDispatchQueue.put(new EventBusWorkerTask()
+                {
+                    @Override
+                    public void execute()
+                    {
+                        keepRunning = false;
+                    }
+                });
+
                 myThread.join();
             }
-            catch (InterruptedException ignored) {}
+            catch (InterruptedException ignored)
+            {
+                currentThread().interrupt();
+            }
         }
 
         @Override
         public void run()
         {
-            keepRunning.set(true);
-            while (keepRunning.get())
+            keepRunning = true;
+            while (keepRunning)
             {
                 try
                 {
-                    dispatch(myDispatchQueue.take());
+                    final EventBusWorkerTask task = myDispatchQueue.take();
+
+                    if (task instanceof EventDispatch)
+                    {
+                        dispatch((EventDispatch) task);
+                    }
+                    else
+                    {
+                        task.execute();
+                    }
                 }
                 catch (InterruptedException ignored) {}
                 catch (Exception e)
@@ -417,11 +440,11 @@ implements Disposable
                 if (myExecutionStack.size() >= DISPATCH_CIRCUIT_BREAKER_THRESHOLD)
                 {
                     throw new EventDispatchException(
-                        "Circuit Breaker aborts event dispatch! " +
-                        "This may be an evidence for a bug, because the number of synchronously dispatched events reached " +
-                        "the circuit breaker's threshold ( " + DISPATCH_CIRCUIT_BREAKER_THRESHOLD + " ). " +
-                        "To many synchronously dispatched events may exhaust the stack of the JVM and lead to StackOverflowErrors.",
-                        event
+                    "Circuit Breaker aborts event dispatch! " +
+                    "This may be an evidence for a bug, because the number of synchronously dispatched events reached " +
+                    "the circuit breaker's threshold ( " + DISPATCH_CIRCUIT_BREAKER_THRESHOLD + " ). " +
+                    "To many synchronously dispatched events may exhaust the stack of the JVM and lead to StackOverflowErrors.",
+                    event
                     );
                 }
 
@@ -442,7 +465,13 @@ implements Disposable
         }
     }
 
+    private interface EventBusWorkerTask
+    {
+        void execute();
+    }
+
     private class EventDispatch
+    implements EventBusWorkerTask
     {
         protected final Event myEvent;
         protected final Collection<Subscription> mySubscriptions;
