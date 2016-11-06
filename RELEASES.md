@@ -1,6 +1,6 @@
 # Releases
 
-# Version 0.3.0 (soon)
+# Version 0.3.0 (2016-11-09)
 
 ## Features
  - Combined components: This version introduces the ability to define components by extending existing ones.

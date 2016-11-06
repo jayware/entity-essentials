@@ -9,7 +9,7 @@ def buildNumber = versionProps['buildNumber'].toInteger() + 1
 versionProps['buildNumber'] = buildNumber.toString()
 versionProps.store(versionPropsFile.newWriter(), null)
 
-version="${currentVersion}-${buildNumber}"
+version="${currentVersion}"//-${buildNumber}"
 
 ext.projectObjectModel = pom {
     project {
