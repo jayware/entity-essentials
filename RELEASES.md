@@ -1,6 +1,12 @@
 # Releases
 
-# Version 0.3.0 (2016-11-09)
+# Version 0.3.1 (2016-11-11)
+
+## Fixes
+ - A Bug has been Fixed which potentially leads to an dead lock when the context gets disposed.
+   [[ #39 ]](https://github.com/jayware/entity-essentials/issues/39)
+
+# Version 0.3.0 (2016-11-06)
 
 ## Features
  - Combined components: This version introduces the ability to define components by extending existing ones.
