@@ -107,8 +107,8 @@ More examples can be found [here](examples/README.md).
 ### Maven coordinates
 | Group ID              | Artifact ID                                                                                                      | Version |
 | :-------------------: | :--------------------------------------------------------------------------------------------------------------: | :-----: |
-| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-api/">entity-essentials-api</a>     | 0.3.1   |
-| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-impl/">entity-essentials-impl</a>   | 0.3.1   |
+| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-api/">entity-essentials-api</a>     | 0.3.2   |
+| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-impl/">entity-essentials-impl</a>   | 0.3.2   |
 
 ### Gradle
 ###### Repository
@@ -120,8 +120,8 @@ repositories {
 ###### Dependencies
 ```groovy
 dependencies {
-    compile group: 'org.jayware', name: 'entity-essentials-api', version: '0.3.1'
-    runtime group: 'org.jayware', name: 'entity-essentials-impl', version: '0.3.1'
+    compile group: 'org.jayware', name: 'entity-essentials-api', version: '0.3.2'
+    runtime group: 'org.jayware', name: 'entity-essentials-impl', version: '0.3.2'
 }
 ```
 
@@ -139,12 +139,12 @@ dependencies {
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-api</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
 </dependency>
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-impl</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
     <scope>runtime</scope>
 </dependency>
 ```

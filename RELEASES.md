@@ -1,6 +1,6 @@
 # Releases
 
-# Version 0.3.1 (2016-11-11)
+# Version 0.3.2 (2016-11-14)
 
 ## Fixes
  - A Bug has been Fixed which potentially leads to an dead lock when the context gets disposed.
