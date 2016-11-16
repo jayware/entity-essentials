@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -86,7 +87,7 @@ implements Disposable
         myLastSubscriptionCollection.set(new HashSet<Subscription>(mySubscriptionsMap.values()));
         myLastSubscriptionsMapHash.set(mySubscriptionsMapHash.get());
 
-        myWorkerPool = new ThreadPoolExecutor(4, 4, 0L, SECONDS, new ArrayBlockingQueue<Runnable>(128), new EventBusThreadFactory());
+        myWorkerPool = new ThreadPoolExecutor(4, 4, 0L, SECONDS, new ArrayBlockingQueue<Runnable>(256), new EventBusThreadFactory(), new CallerRunsPolicy());
     }
 
     public void subscribe(Object subscriber, ReferenceType referenceType, EventFilter[] filters)
