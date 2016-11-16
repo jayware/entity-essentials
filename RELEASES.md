@@ -1,5 +1,11 @@
 # Releases
 
+# Version 0.3.3 (2016-11-16)
+
+## Fixes
+ - A Bug has been Fixed which leads to a RejectedExecutionException when to many events exceed the size of the EventBus's work queue.
+   [[ #40 ]](https://github.com/jayware/entity-essentials/issues/40)
+
 # Version 0.3.2 (2016-11-14)
 
 ## Fixes
