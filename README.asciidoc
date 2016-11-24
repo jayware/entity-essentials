@@ -1,3 +1,4 @@
+++++
 <p align="center">
     <img src="http://jayware.github.io/entity-essentials/assets/images/e2-logo.svg" height="250" alt="Entity Essentials">
 </p>
@@ -46,14 +47,19 @@
     </tbody>
 </table>
 </p>
+++++
+
+:api-version: 0.3.3
+:impl-version: 0.3.3
 
 ## Description
 Entity Essentials is a Component-based Entity System written in Java. This framework provides operations and structures to work with entities and components.
-Apart from that, it provides a couple of useful extras. The current implementation isn't a typical <a href="https://en.wikipedia.org/wiki/Entity_component_system">Entity Component System (ECS)</a>
-known from game development as a part of a game engine. Instead, this framework is designed as foundation for graphical modeling editors.
+Apart from that, it provides a couple of useful extras. The current implementation isn't a typical https://en.wikipedia.org/wiki/Entity_component_system[Entity Component System (ECS)]
+known from game development as a part of a game engine. Instead, this framework is designed as foundation when you need the most flexible runtime-model for your application.
 
 ## Quickstart
-```java
+[source,java]
+----
 public class Quickstart
 {
     public static void main(String[] args) {
@@ -99,43 +105,58 @@ public class Quickstart
         void setTextSize(int size);
     }
 }
-```
-More examples can be found [here](examples/README.md).
+----
+
+More examples can be found link:examples/README.md[here].
 
 ## Usage
 
 ### Maven coordinates
-| Group ID              | Artifact ID                                                                                                      | Version |
-| :-------------------: | :--------------------------------------------------------------------------------------------------------------: | :-----: |
-| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-api/">entity-essentials-api</a>     | 0.3.3   |
-| org.jayware           | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-impl/">entity-essentials-impl</a>   | 0.3.3   |
+
+|===
+| Group ID |Artifact ID | Version
+
+| org.jayware
+| entity-essentials-api
+| {api-version}
+
+| org.jayware
+| entity-essentials-impl
+| {impl-version}
+
+|===
 
 ### Gradle
 ###### Repository
-```groovy
+[source,groovy]
+----
 repositories {
    jcenter()
 }
-```
+----
+
 ###### Dependencies
-```groovy
+[source,java,subs="attributes"]
+----
 dependencies {
-    compile group: 'org.jayware', name: 'entity-essentials-api', version: '0.3.3'
-    runtime group: 'org.jayware', name: 'entity-essentials-impl', version: '0.3.3'
+    compile group: 'org.jayware', name: 'entity-essentials-api', version: '{api-version}'
+    runtime group: 'org.jayware', name: 'entity-essentials-impl', version: '{impl-version}'
 }
-```
+----
 
 ### Maven
 ###### Repository
-```xml
+[source,xml]
+----
 <repository>
     <id>central</id>
     <name>bintray</name>
     <url>http://jcenter.bintray.com</url>
 </repository>
-```
+----
 ###### Dependencies
-```xml
+[source,xml]
+----
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-api</artifactId>
@@ -147,11 +168,13 @@ dependencies {
     <version>0.3.3</version>
     <scope>runtime</scope>
 </dependency>
-```
+----
 
-### Download
-| <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-api/">entity-essentials-api</a> | <a href="https://jcenter.bintray.com/org/jayware/entity-essentials-impl">entity-essentials-impl</a> |
-| :------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
+### Direct Download
+
+|===
+|https://jcenter.bintray.com/org/jayware/entity-essentials-api/{api-version}/[entity-essentials-api] |https://jcenter.bintray.com/org/jayware/entity-essentials-impl/{impl-version}/[entity-essentials-impl]
+|===
 
 ## Contributions
 All contributions are welcome: ideas, patches, documentation, bug reports, complaints.
