@@ -43,8 +43,6 @@ public class ComponentWrapperExample
         /* Create an entity */
         final EntityRef ref = entityManager.createEntity(context);
 
-        /* Prepare the component and add it the entity */
-        componentManager.prepareComponent(context, ExampleComponent.class);
         ExampleComponent component = componentManager.addComponent(ref, ExampleComponent.class);
 
         /* Wrap-up the component and its owner entity */

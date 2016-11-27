@@ -62,9 +62,6 @@ public class ComponentManagerIntegrationTest
     {
         final EntityRef entity = entityManager.createEntity(context);
 
-        componentManager.prepareComponent(context, TestComponentA.class);
-        componentManager.prepareComponent(context, TestComponentB.class);
-
         componentManager.addComponent(entity, TestComponentA.class).pushTo(entity);
         componentManager.createComponent(context, TestComponentB.class).addTo(entity);
 

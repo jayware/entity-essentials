@@ -39,9 +39,6 @@ public class Quickstart
         EntityManager entityManager = context.getService(EntityManager.class);
         ComponentManager componentManager = context.getService(ComponentManager.class);
 
-        /* Initially prepare custom components */
-        componentManager.prepareComponent(context, ExampleComponent.class);
-
         /* Create an entity */
         final EntityRef ref = entityManager.createEntity(context);
 

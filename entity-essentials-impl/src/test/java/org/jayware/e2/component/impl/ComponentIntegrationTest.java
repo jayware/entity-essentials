@@ -81,7 +81,6 @@ public class ComponentIntegrationTest
 
         eventManager.subscribe(context, handler);
 
-        componentManager.prepareComponent(context, TestComponent.class);
         final TestComponent component = componentManager.createComponent(context, TestComponent.class);
         component.setText(A_TEXT);
 

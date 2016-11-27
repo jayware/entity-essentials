@@ -68,6 +68,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.Class.forName;
 import static java.util.Arrays.asList;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
@@ -150,18 +151,17 @@ implements ComponentFactory
     throws ComponentFactoryException, MalformedComponentException
     {
         checkNotNull(componentClass, "The component's class mustn't be null to create a component!");
-        return createComponent(componentClass.getName());
-    }
 
-    @Override
-    public <C extends Component> ComponentInstancer<C> createComponent(String componentClass)
-    throws ComponentFactoryException, MalformedComponentException
-    {
-        checkNotNull(componentClass, "The component's class name mustn't be null to create a component!");
+        final String componentClassName = componentClass.getName();
 
         try
         {
-            ComponentInstancer<C> instancer = (ComponentInstancer<C>) myCache.get(componentClass);
+//            if (!myCache.containsKey(componentClassName))
+            {
+                prepareComponent(componentClass);
+            }
+
+            final ComponentInstancer<T> instancer = (ComponentInstancer<T>) myCache.get(componentClassName);
 
             if (instancer == null)
             {
@@ -174,6 +174,16 @@ implements ComponentFactory
         {
             throw new ComponentFactoryException("Something went wrong on instantiating a component for: " + componentClass, e);
         }
+
+    }
+
+    @Override
+    public <C extends Component> ComponentInstancer<C> createComponent(String componentClass)
+    throws ComponentFactoryException, MalformedComponentException, ClassNotFoundException
+    {
+        checkNotNull(componentClass, "The component's class name mustn't be null to create a component!");
+
+        return createComponent((Class<C>) forName(componentClass));
     }
 
     private ComponentGenerationPlan analyseComponent(Class<? extends Component> componentClass)

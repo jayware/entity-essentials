@@ -57,7 +57,6 @@ public class Benchmark_ComponentPushPull
         myComponentManager = myContext.getService(ComponentManager.class);
 
         myRef = myEntityManager.createEntity(myContext);
-        myComponentManager.prepareComponent(myContext, BenchmarkComponent.class);
         myComponent = myComponentManager.addComponent(myRef, BenchmarkComponent.class);
     }
 

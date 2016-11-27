@@ -41,9 +41,8 @@ public class ContextualManagersExample
 
         /* In many cases there is only one context. Therefore it is impractical to pass the context in, again and again. */
         entityManager.createEntity(context);
-        componentManager.prepareComponent(context, Quickstart.ExampleComponent.class);
 
-        /* To avoid such situations, it is possible to create XXXManager which are bound to a specific context.*/
+        /* To avoid such situations, it is possible to create so called 'contextual managers' which are bound to a specific context.*/
         ContextualEntityManager contextualEntityManager = entityManager.asContextual(context);
         ContextualComponentManager contextualComponentManager = componentManager.asContextual(context);
 

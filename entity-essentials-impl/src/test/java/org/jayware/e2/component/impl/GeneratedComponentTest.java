@@ -80,6 +80,7 @@ public class GeneratedComponentTest
 
         testeeA = componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
         testeeB = componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
+        System.out.println();
     }
 
     @Test

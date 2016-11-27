@@ -59,6 +59,7 @@ public class ComponentEqualsMethodWriter
     {
         final ClassWriter classWriter = componentPlan.getClassWriter();
         final MethodBuilder methodBuilder = createMethodBuilder(classWriter, ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z");
+        final String componentTypeInternalName = componentPlan.getComponentTypeInternalName();
         final String generatedClassInternalName = componentPlan.getGeneratedClassInternalName();
 
         methodBuilder.beginMethod();
@@ -75,14 +76,14 @@ public class ComponentEqualsMethodWriter
 
         methodBuilder.label(endIfSameObject);
         methodBuilder.loadReferenceVariable(1);
-        methodBuilder.custom().visitTypeInsn(INSTANCEOF, generatedClassInternalName);
+        methodBuilder.custom().visitTypeInsn(INSTANCEOF, componentTypeInternalName);
         methodBuilder.jumpIfNotEquals(endIfInstanceOf);
         methodBuilder.push_0i();
         methodBuilder.returnValue(boolean.class);
 
         methodBuilder.label(endIfInstanceOf);
         methodBuilder.loadReferenceVariable(1);
-        methodBuilder.castTo(generatedClassInternalName);
+        methodBuilder.castTo(componentTypeInternalName);
         methodBuilder.storeVariable(2, componentPlan.getComponentType());
 
         for (ComponentPropertyGenerationPlan propertyGenerationPlan : componentPlan.getComponentPropertyGenerationPlans())
@@ -93,7 +94,7 @@ public class ComponentEqualsMethodWriter
             methodBuilder.loadField(generatedClassInternalName, propertyGenerationPlan.getPropertyName(), propertyType);
 
             methodBuilder.loadReferenceVariable(2);
-            methodBuilder.loadField(generatedClassInternalName, propertyGenerationPlan.getPropertyName(), propertyType);
+            methodBuilder.invokeInterfaceMethod(componentTypeInternalName, propertyGenerationPlan.getPropertyGetterMethodName(), propertyGenerationPlan.getPropertyType());
 
             if (isObjectType(propertyType))
             {

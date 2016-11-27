@@ -71,7 +71,7 @@ test {
 }
 
 jmh {
-    jmhVersion = '1.12'
+    jmhVersion = '1.17'
 }
 
 bintray {

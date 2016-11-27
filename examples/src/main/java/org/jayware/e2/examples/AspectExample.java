@@ -46,9 +46,6 @@ public class AspectExample
         EntityManager entityManager = context.getService(EntityManager.class);
         ComponentManager componentManager = context.getService(ComponentManager.class);
 
-        componentManager.prepareComponent(context, HeroComponent.class);
-        componentManager.prepareComponent(context, HumanComponent.class);
-
         /* A couple of entities */
         EntityRef clark = entityManager.createEntity(context);
         EntityRef steve = entityManager.createEntity(context);

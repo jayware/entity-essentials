@@ -23,7 +23,6 @@ package org.jayware.e2.component.impl;
 
 
 import mockit.Mocked;
-import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
@@ -32,8 +31,6 @@ import org.jayware.e2.component.impl.TestComponents.TestComponentWhichExtendsARe
 import org.jayware.e2.context.api.Context;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,12 +66,6 @@ public class ComponentFactoryImplTest
     public void test_createComponent_From_Class_Fails_if_null_is_passed()
     {
         testee.createComponent((Class) null);
-    }
-
-    @Test(expectedExceptions = ComponentFactoryException.class)
-    public void test_createComponent_From_Class_Fails_if_component_is_not_prepared()
-    {
-        testee.createComponent(TestComponentA.class);
     }
 
     @Test(expectedExceptions = MalformedComponentException.class)

@@ -41,9 +41,6 @@ public class ComponentCreationExample
         EntityRef ref = entityManager.createEntity(context);
         ExampleComponent component;
 
-        /* Before you can create components you have to prepare them once within a context. */
-        componentManager.prepareComponent(context, ExampleComponent.class);
-
         /* Create a detached component, which is initially not assigned to an entity. */
         component = componentManager.createComponent(context, ExampleComponent.class);
 

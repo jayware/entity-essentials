@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jayware.e2.component.impl.TestComponents.*;
+import static org.jayware.e2.component.impl.TestComponents.TestComponentC;
 
 
 public class TemplateManagerImplIntegrationTest
@@ -69,7 +69,6 @@ public class TemplateManagerImplIntegrationTest
     @Test
     public void test()
     {
-        componentManager.prepareComponent(context, TestComponentC.class);
         final TestComponentC component = componentManager.createComponent(context, TestComponentC.class);
 
         final TestComponentTemplateImpl template = templateManager.exportComponent(component, testTemplateProvider);
