@@ -4,3 +4,6 @@ include "entity-essentials-api"
 include "entity-essentials-impl"
 
 include "examples"
+
+include "entity-essentials-assertj"
+project(":entity-essentials-assertj").projectDir = new File(rootDir, "extensions/entity-essentials-assertj")

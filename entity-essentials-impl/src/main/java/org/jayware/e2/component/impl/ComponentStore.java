@@ -397,13 +397,15 @@ implements Disposable
     @Handle(CreateComponentEvent.class)
     public void handleCreateComponentEvent(Event event, @Param(ComponentTypeParam) Class<? extends Component> type)
     {
+        final Component component;
+
         if (event.isQuery())
         {
-            final Component result = myComponentFactory.createComponent(type).newInstance(myContext);
+            component = instantiateComponent(type);
 
-            fireComponentCreatedEvent(result);
+            fireComponentCreatedEvent(component);
 
-            ((Query) event).result(ComponentParam, result);
+            ((Query) event).result(ComponentParam, component);
         }
     }
 
@@ -424,11 +426,6 @@ implements Disposable
         myWriteLock.lock();
         try
         {
-            if (!myComponentClassMap.containsKey(componentType.getName()))
-            {
-                prepareComponent(componentType);
-            }
-
             row = myComponentDatabase.get(componentType);
 
             if (row == null)
@@ -444,7 +441,7 @@ implements Disposable
                 oldAspect = getAspect(ref);
                 newAspect = aspect(getComponentTypes(ref));
 
-                instance = (AbstractComponent) myComponentFactory.createComponent(componentType).newInstance(myContext);
+                instance = (AbstractComponent) instantiateComponent(componentType);
 
                 row.put(ref, instance);
                 fireEvents = true;
@@ -631,6 +628,16 @@ implements Disposable
         }
 
         return types;
+    }
+
+    private Component instantiateComponent(Class<? extends Component> type)
+    {
+        if (!myComponentClassMap.containsKey(type.getName()))
+        {
+            prepareComponent(type);
+        }
+
+        return myComponentFactory.createComponent(type).newInstance(myContext);
     }
 
     @Override
