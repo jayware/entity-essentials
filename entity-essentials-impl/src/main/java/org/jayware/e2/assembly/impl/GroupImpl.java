@@ -49,8 +49,8 @@ implements Group
     {
         myRef = ref;
         myContext = myRef.getContext();
-        myComponentManager = myContext.getComponentManager();
-        myGroupManager = myContext.getGroupManager();
+        myComponentManager = myContext.getService(ComponentManager.class);
+        myGroupManager = myContext.getService(GroupManager.class);
         myGroupComponent = myComponentManager.getComponent(myRef, GroupComponent.class);
     }
 

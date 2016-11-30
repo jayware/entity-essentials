@@ -22,7 +22,6 @@
 package org.jayware.e2.context.impl;
 
 import org.jayware.e2.assembly.api.GroupManager;
-import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.ServiceProvider;
 import org.jayware.e2.context.api.ServiceUnavailableException;
@@ -70,12 +69,6 @@ public class DefaultServiceProviderImplTest
     }
 
     @Test
-    public void test_getService_CanLoadBindingManager()
-    {
-        assertThat(testee.getService(BindingManager.class)).isNotNull();
-    }
-
-    @Test
     public void test_getService_CanLoadTemplateManager()
     {
         assertThat(testee.getService(TemplateManager.class)).isNotNull();
@@ -109,12 +102,6 @@ public class DefaultServiceProviderImplTest
     public void test_findService_CanLoadEventManager()
     {
         assertThat(testee.findService(EventManager.class)).isNotNull();
-    }
-
-    @Test
-    public void test_findService_CanLoadBindingManager()
-    {
-        assertThat(testee.findService(BindingManager.class)).isNotNull();
     }
 
     @Test

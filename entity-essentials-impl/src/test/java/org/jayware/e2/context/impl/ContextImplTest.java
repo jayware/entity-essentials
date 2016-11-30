@@ -23,7 +23,6 @@ package org.jayware.e2.context.impl;
 
 
 import org.jayware.e2.assembly.api.GroupManager;
-import org.jayware.e2.binding.api.BindingManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ServiceProvider;
@@ -55,7 +54,6 @@ public class ContextImplTest
 
     private @Mock EntityManager entityManager;
     private @Mock ComponentManager componentManager;
-    private @Mock BindingManager bindingManager;
     private @Mock TemplateManager templateManager;
     private @Mock EventManager eventManager;
     private @Mock GroupManager myGroupManager;
@@ -72,8 +70,6 @@ public class ContextImplTest
         when(serviceProvider.findService(EntityManager.class)).thenReturn(entityManager);
         when(serviceProvider.getService(ComponentManager.class)).thenReturn(componentManager);
         when(serviceProvider.findService(ComponentManager.class)).thenReturn(componentManager);
-        when(serviceProvider.getService(BindingManager.class)).thenReturn(bindingManager);
-        when(serviceProvider.findService(BindingManager.class)).thenReturn(bindingManager);
         when(serviceProvider.getService(TemplateManager.class)).thenReturn(templateManager);
         when(serviceProvider.findService(TemplateManager.class)).thenReturn(templateManager);
         when(serviceProvider.getService(EventManager.class)).thenReturn(eventManager);
@@ -318,7 +314,6 @@ public class ContextImplTest
         }
     }
 
-
     @Test
     public void testGetOrDefaultWhenDisposed()
     {
@@ -367,94 +362,6 @@ public class ContextImplTest
         try
         {
             testee.contains(null);
-            fail("IllegalStateException expected!");
-        }
-        catch (IllegalStateException e)
-        {
-
-        }
-    }
-
-    @Test
-    public void testGetEntityManager()
-    {
-        assertThat(testee.getEntityManager()).isEqualTo(entityManager);
-    }
-
-    @Test
-    public void testGetEntityManagerWhenDisposed()
-    {
-        testee.dispose();
-
-        try
-        {
-            testee.getEntityManager();
-            fail("IllegalStateException expected!");
-        }
-        catch (IllegalStateException e)
-        {
-
-        }
-    }
-
-    @Test
-    public void testGetComponentManager()
-    {
-        assertThat(testee.getComponentManager()).isEqualTo(componentManager);
-    }
-
-    @Test
-    public void testGetComponentManagerWhenDisposed()
-    {
-        testee.dispose();
-
-        try
-        {
-            testee.getComponentManager();
-            fail("IllegalStateException expected!");
-        }
-        catch (IllegalStateException e)
-        {
-
-        }
-    }
-
-    @Test
-    public void testGetTemplateManager()
-    {
-        assertThat(testee.getTemplateManager()).isEqualTo(templateManager);
-    }
-
-    @Test
-    public void testGetTemplateManagerWhenDisposed()
-    {
-        testee.dispose();
-
-        try
-        {
-            testee.getTemplateManager();
-            fail("IllegalStateException expected!");
-        }
-        catch (IllegalStateException e)
-        {
-
-        }
-    }
-
-    @Test
-    public void testGetEventManager()
-    {
-        assertThat(testee.getEventManager()).isEqualTo(eventManager);
-    }
-
-    @Test
-    public void testGetEventManagerWhenDisposed()
-    {
-        testee.dispose();
-
-        try
-        {
-            testee.getEventManager();
             fail("IllegalStateException expected!");
         }
         catch (IllegalStateException e)

@@ -24,16 +24,10 @@ package org.jayware.e2.context.impl;
 import com.google.common.base.Objects;
 import com.googlecode.concurentlocks.ReadWriteUpdateLock;
 import com.googlecode.concurentlocks.ReentrantReadWriteUpdateLock;
-import org.jayware.e2.assembly.api.GroupManager;
-import org.jayware.e2.binding.api.BindingManager;
-import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.context.api.ServiceProvider;
 import org.jayware.e2.context.api.ServiceUnavailableException;
-import org.jayware.e2.entity.api.EntityManager;
-import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
 
 import java.util.HashMap;
@@ -137,42 +131,6 @@ implements Context
     public <S> S findService(Class<? extends S> service)
     {
         return myContextState.get().findService(service);
-    }
-
-    @Override
-    public EntityManager getEntityManager()
-    {
-        return myContextState.get().getEntityManager();
-    }
-
-    @Override
-    public ComponentManager getComponentManager()
-    {
-        return myContextState.get().getComponentManager();
-    }
-
-    @Override
-    public BindingManager getBindingManager()
-    throws IllegalStateException
-    {
-        return myContextState.get().getBindingManager();
-    }
-
-    @Override
-    public TemplateManager getTemplateManager()
-    {
-        return myContextState.get().getTemplateManager();
-    }
-
-    @Override
-    public EventManager getEventManager()
-    {
-        return myContextState.get().getEventManager();
-    }
-
-    public GroupManager getGroupManager()
-    {
-        return myContextState.get().getGroupManager();
     }
 
     @Override
@@ -450,41 +408,6 @@ implements Context
                 throw new IllegalStateException("Context is goning to be disposed!");
             }
         }
-
-        @Override
-        public EntityManager getEntityManager()
-        {
-            return getService(EntityManager.class);
-        }
-
-        @Override
-        public ComponentManager getComponentManager()
-        {
-            return getService(ComponentManager.class);
-        }
-
-        @Override
-        public BindingManager getBindingManager()
-        {
-            return getService(BindingManager.class);
-        }
-
-        @Override
-        public TemplateManager getTemplateManager()
-        {
-            return getService(TemplateManager.class);
-        }
-
-        @Override
-        public EventManager getEventManager()
-        {
-            return getService(EventManager.class);
-        }
-
-        public GroupManager getGroupManager()
-        {
-            return getService(GroupManager.class);
-        }
     }
 
     private class DisposedContext
@@ -566,42 +489,6 @@ implements Context
         public <S> S findService(Class<? extends S> service)
         {
             throw new IllegalStateException("No services available. Context is disposed!");
-        }
-
-        @Override
-        public EntityManager getEntityManager()
-        {
-            throw new IllegalStateException("No EntityManager available. Context is disposed!");
-        }
-
-        @Override
-        public ComponentManager getComponentManager()
-        {
-            throw new IllegalStateException("No ComponentManager available. Context is disposed!");
-        }
-
-        @Override
-        public BindingManager getBindingManager()
-        throws IllegalStateException
-        {
-            throw new IllegalStateException("No BindingManager available. Context is disposed!");
-        }
-
-        @Override
-        public TemplateManager getTemplateManager()
-        {
-            throw new IllegalStateException("No TemplateManager available. Context is disposed!");
-        }
-
-        @Override
-        public EventManager getEventManager()
-        {
-            throw new IllegalStateException("No EventManager available. Context is disposed!");
-        }
-
-        public GroupManager getGroupManager()
-        {
-            throw new IllegalStateException("No GroupManager available. Context is disposed!");
         }
     }
 }

@@ -32,7 +32,6 @@ import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGeneration
 import org.jayware.e2.context.api.Context;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,7 +67,7 @@ implements ComponentInstancer<C>
             final Constructor<C> constructor = (Constructor<C>) myComponentClass.getConstructor(Context.class);
             final C instance = constructor.newInstance(context);
 
-            final ComponentManager componentManager = context.getComponentManager();
+            final ComponentManager componentManager = context.getService(ComponentManager.class);
             for (Class<? extends ComponentPropertyAdapter> adapter : myRequiredAdaptersSet)
             {
                 componentManager.registerPropertyAdapter(context, adapter);

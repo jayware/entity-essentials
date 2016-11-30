@@ -22,11 +22,11 @@
 package org.jayware.e2.assembly.impl;
 
 
+import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupEvent.CreateGroupEvent;
 import org.jayware.e2.assembly.api.GroupEvent.DeleteGroupEvent;
 import org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.RemoveEntityFromGroupEvent;
 import org.jayware.e2.assembly.api.GroupManager;
-import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupNotFoundException;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
@@ -36,10 +36,10 @@ import org.jayware.e2.util.Key;
 import java.util.List;
 import java.util.UUID;
 
-import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.AddEntityToGroupEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.CreateGroupEvent.GroupNameParam;
-import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.AddEntityToGroupEvent;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityRefParam;
+import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
 import static org.jayware.e2.assembly.api.Preconditions.checkGroupNotNullAndValid;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
@@ -78,7 +78,7 @@ implements GroupManager
 
         getOrCreateGroupHub(context);
 
-        final EventManager eventManager = context.getEventManager();
+        final EventManager eventManager = context.getService(EventManager.class);
 
         eventManager.send(
             CreateGroupEvent.class,
@@ -96,7 +96,7 @@ implements GroupManager
         checkGroupNotNullAndValid(group);
 
         final Context context = group.getContext();
-        final EventManager eventManager = context.getEventManager();
+        final EventManager eventManager = context.getService(EventManager.class);
 
         eventManager.send(
             DeleteGroupEvent.class,
@@ -137,7 +137,7 @@ implements GroupManager
         checkContextualsNotNullAndSameContext(ref, group);
 
         final Context context = ref.getContext();
-        final EventManager eventManager = context.getEventManager();
+        final EventManager eventManager = context.getService(EventManager.class);
 
         eventManager.send(
             AddEntityToGroupEvent.class,
@@ -155,7 +155,7 @@ implements GroupManager
         checkGroupNotNullAndValid(group);
 
         final Context context = ref.getContext();
-        final EventManager eventManager = context.getEventManager();
+        final EventManager eventManager = context.getService(EventManager.class);
 
         eventManager.send(
             RemoveEntityFromGroupEvent.class,
