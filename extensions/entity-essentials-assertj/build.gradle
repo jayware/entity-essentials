@@ -48,7 +48,7 @@ dependencies {
 
     compileOnly project(':entity-essentials-api')
 
-    compile 'org.assertj:assertj-core:3.5.2'
+    compile 'org.assertj:assertj-core:3.6.1'
 
     testCompile project(':entity-essentials-api')
 
