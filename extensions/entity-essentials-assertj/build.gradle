@@ -56,7 +56,7 @@ dependencies {
     testCompile 'org.jmockit:jmockit:1.29'
 
     testRuntime project(":entity-essentials-impl")
-    testRuntime 'ch.qos.logback:logback-classic:1.1.7'
+    testRuntime 'ch.qos.logback:logback-classic:1.1.8'
 }
 
 test {
