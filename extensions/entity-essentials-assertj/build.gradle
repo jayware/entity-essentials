@@ -70,13 +70,13 @@ test {
 bintray {
     pkg {
         repo = 'maven'
-        name = 'entity-essentials-assert'
+        name = 'entity-essentials-assertj'
         userOrg = 'jayware'
         licenses = ['LGPL-3.0']
         vcsUrl = 'https://github.com/jayware/entity-essentials'
         version {
             name = project.version
-            desc = 'Entity Essentials AssertJ is an extension which provides custom AssertJ asserations.'
+            desc = 'Entity Essentials AssertJ is an extension which provides custom AssertJ asserations for testing code which uses the entity-essentials framework.'
             released  = new Date()
             vcsTag = project.version
         }

@@ -1,0 +1,4 @@
+# Entity Essentials AssertJ
+
+## Description
+Entity Essentials AssertJ is an extension which provides custom AssertJ asserations for testing code which uses the entity-essentials framework.
