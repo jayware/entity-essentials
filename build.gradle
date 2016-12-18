@@ -117,6 +117,15 @@ allprojects {
                     surefire.appendNode('groupId', 'org.apache.maven.plugins')
                     surefire.appendNode('artifactId', 'maven-surefire-plugin')
                     surefire.appendNode('version', '2.19.1')
+                    def dependencies = root.dependencies.first()
+                    configurations.compileOnly.resolvedConfiguration.resolvedArtifacts.each {
+                        def dependency = dependencies.appendNode('dependency')
+                        def id = it.getModuleVersion().getId()
+                        dependency.appendNode('groupId', id.getGroup())
+                        dependency.appendNode('artifactId', id.getName())
+                        dependency.appendNode('version', id.getVersion())
+                        dependency.appendNode('scope', "provided")
+                    }
                 }
             }.writeTo("pom.xml")
         }
