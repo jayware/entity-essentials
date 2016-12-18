@@ -49,8 +49,8 @@
 </p>
 ++++
 
-:api-version: 0.3.3
-:impl-version: 0.3.3
+:api-version: 0.4.0
+:impl-version: 0.4.0
 
 ## Description
 Entity Essentials is a Component-based Entity System written in Java. This framework provides operations and structures to work with entities and components.
@@ -68,9 +68,6 @@ public class Quickstart
         Context context = ContextProvider.getInstance().createContext();
         EntityManager entityManager = context.getService(EntityManager.class);
         ComponentManager componentManager = context.getService(ComponentManager.class);
-
-        /* Initially prepare custom components */
-        componentManager.prepareComponent(context, ExampleComponent.class);
 
         /* Create an entity */
         EntityRef ref = entityManager.createEntity(context);
@@ -160,12 +157,12 @@ dependencies {
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-api</artifactId>
-    <version>0.3.3</version>
+    <version>0.4.0</version>
 </dependency>
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-impl</artifactId>
-    <version>0.3.3</version>
+    <version>0.4.0</version>
     <scope>runtime</scope>
 </dependency>
 ----

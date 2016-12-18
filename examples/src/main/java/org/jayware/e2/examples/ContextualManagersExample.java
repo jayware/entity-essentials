@@ -48,7 +48,7 @@ public class ContextualManagersExample
 
         /* These managers offer an api which does not requires a context paramter. */
         contextualEntityManager.createEntity();
-        contextualComponentManager.prepareComponent(Quickstart.ExampleComponent.class);
+        contextualComponentManager.createComponent(Quickstart.ExampleComponent.class);
 
         /* Shutdown everything */
         context.dispose();
