@@ -1,4 +1,115 @@
 # Entity Essentials AssertJ
 
 ## Description
-Entity Essentials AssertJ is an extension which provides custom AssertJ asserations for testing code which uses the entity-essentials framework.
+Entity Essentials AssertJ is an extension which provides custom AssertJ asserations for testing code which uses the
+entity-essentials framework.
+
+## Quickstart
+[source,java]
+----
+public class Example
+{
+    private Context context;
+    private EntityManager entityManager;
+    private ComponentManager componentManager;
+    private EntityRef ref;
+
+    public interface ComponentA extends Component {}
+    public interface ComponentB extends Component {}
+    public interface ComponentC extends Component {}
+
+    @BeforeMethod
+    public void setup()
+    {
+        context = ContextProvider.getInstance().createContext();
+        entityManager = context.getService(EntityManager.class);
+        componentManager = context.getService(ComponentManager.class);
+
+        ref = entityManager.createEntity(context);
+        componentManager.addComponent(ref, ComponentA.class);
+        componentManager.addComponent(ref, ComponentB.class);
+    }
+
+    @Test
+    public void example()
+    {
+        ContextAssertions.assertThat(context).isNotDisposed(); // <1>
+
+        EntityAssertions.assertThat(ref).isValid(); // <2>
+
+        EntityAssertions.assertThat(ref).hasAtLeast(ComponentA.class); // <3>
+
+        EntityAssertions.assertThat(ref).hasExactly(ComponentA.class, ComponentB.class); // <4>
+
+        EntityAssertions.assertThat(ref).doesNotHave(ComponentC.class); // <5>
+
+        EntityAssertions.assertThat(ref).matches(aspect(ComponentA.class, ComponentB.class)); // <6>
+    }
+}
+----
+There are a couple of assertions to check certain condition:
+
+<1> The ContextAssertions class provides operations to check whether a context has a certain UUID is disposed or not.
+<2> To check whether an entity is valid or not, the EntityAssertions class offers the `isValid()` and `isInvalid()`
+    operations.
+<3> It is also possible to verify whether an entity has certain Components. There are two flavours. `hasAtLeast()`
+    checks that an entity possesses the specified Components at the minimum, but an entity is allowed to have other
+    Components too.
+<4> `hasExactly()` verifies that an entity has only the specified set of Components.
+<5> On the other hand `doesNotHave()` checks the opposite, that an entity dose not have the specified Components.
+<6> Last but not least it is also possible to check whether an entity `matches()` a certain Aspect.
+
+## Usage
+:version: 0.1.0
+
+### Maven coordinates
+
+|===
+| Group ID |Artifact ID | Version
+
+| org.jayware
+| entity-essentials-asserj
+| {version}
+
+|===
+
+### Gradle
+###### Repository
+[source,groovy]
+----
+repositories {
+   jcenter()
+}
+----
+
+###### Dependencies
+[source,java,subs="attributes"]
+----
+dependencies {
+    testCompile group: 'org.jayware', name: 'entity-essentials-assertj', version: '{version}'
+}
+----
+
+### Maven
+###### Repository
+[source,xml]
+----
+<repository>
+    <id>central</id>
+    <name>bintray</name>
+    <url>http://jcenter.bintray.com</url>
+</repository>
+----
+###### Dependencies
+[source,xml]
+----
+<dependency>
+    <groupId>org.jayware</groupId>
+    <artifactId>entity-essentials-assertj</artifactId>
+    <version>0.1.0</version>
+    <scope>test</scope>
+</dependency>
+----
+
+## Contributions
+All contributions are welcome: ideas, patches, documentation, bug reports, complaints.
