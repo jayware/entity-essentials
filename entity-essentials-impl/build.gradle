@@ -42,8 +42,8 @@ ext.projectObjectModel = pom {
         dev.appendNode('organization', 'JayWare')
         dev.appendNode('organizationUrl', 'https://jayware.org')
         def license = root.appendNode('licenses').appendNode('license')
-        license.appendNode('name', 'GNU Lesser General Public License 3.0')
-        license.appendNode('url', 'http://www.gnu.org/licenses/')
+        license.appendNode('name', 'Apache License 2.0')
+        license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0')
         license.appendNode('distribution', 'repo')
     }
 }
@@ -82,7 +82,7 @@ bintray {
         repo = 'maven'
         name = 'entity-essentials-impl'
         userOrg = 'jayware'
-        licenses = ['LGPL-3.0']
+        licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/jayware/entity-essentials'
         version {
             name = project.version
@@ -125,8 +125,8 @@ publishing {
                 dev.appendNode('organization', 'JayWare')
                 dev.appendNode('organizationUrl', 'https://jayware.org')
                 def license = root.appendNode('licenses').appendNode('license')
-                license.appendNode('name', 'GNU Lesser General Public License 3.0')
-                license.appendNode('url', 'http://www.gnu.org/licenses/')
+                license.appendNode('name', 'Apache License 2.0')
+                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0')
                 license.appendNode('distribution', 'repo')
             }
         }
@@ -159,7 +159,7 @@ jar {
         name 'Entity Essentials IMPL'
         description 'Default implementation of the Entity Essentials API'
         symbolicName 'org.jayware.e2.impl'
-        license 'http://www.gnu.org/licenses/lgpl-3.0.txt'
+        license 'http://www.apache.org/licenses/LICENSE-2.0'
         instruction 'Bundle-Category', 'e2,entity-essentials,impl'
         instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.6'
         instruction 'Service-Component', 'OSGI-INF/*.xml'
