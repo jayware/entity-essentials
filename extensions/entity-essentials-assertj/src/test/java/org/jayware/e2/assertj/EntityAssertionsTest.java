@@ -152,6 +152,26 @@ public class EntityAssertionsTest
     }
 
     @Test
+    public void test_that_doesNotHave_fails_if_the_Entity_denoted_by_the_passed_EntityRef_does_have_the_specified_Components()
+    {
+        new Expectations() {{
+            testRef.getId(); result = ID;
+            testComponentManager.getComponentTypes(testRef); result = asList(ComponentA.class, ComponentC.class);
+        }};
+
+        try
+        {
+            EntityAssertions.assertThat(testRef).doesNotHave(ComponentC.class);
+        }
+        catch (AssertionError ignored)
+        {
+            return;
+        }
+
+        fail("Expected an AssertionError.");
+    }
+
+    @Test
     public void test_that_hasId_with_String_fails_if_the_EntityRef_does_not_have_the_expected_Id()
     {
         new Expectations() {{

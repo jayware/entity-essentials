@@ -115,6 +115,19 @@ extends AbstractAssert<EntityAssertions, EntityRef>
         return this;
     }
 
+    public EntityAssertions doesNotHave(Class<? extends Component>... expectedComponents)
+    {
+        isNotNull();
+
+        final Collection<Class<? extends Component>> actualComponents = myComponentManager.getComponentTypes(actual);
+
+        Assertions.assertThat(actualComponents)
+            .withFailMessage("Expected that Entity { %s } does not have the components:\n\n%s\nbut has:\n\n%s", actual.getId(), stringify(expectedComponents), stringify(actualComponents))
+            .doesNotContain(expectedComponents);
+
+        return this;
+    }
+
     public EntityAssertions hasId(String expectedId)
     {
         isNotNull();
