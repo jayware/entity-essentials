@@ -53,7 +53,7 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.6.1'
 
     testCompile 'org.testng:testng:6.10'
-    testCompile 'org.jmockit:jmockit:1.29'
+    testCompile 'org.jmockit:jmockit:1.30'
 
     testRuntime project(":entity-essentials-impl")
     testRuntime 'ch.qos.logback:logback-classic:1.1.8'
