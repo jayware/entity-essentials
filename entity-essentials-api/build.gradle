@@ -47,7 +47,7 @@ ext.projectObjectModel = pom {
 
 dependencies {
 
-    compile 'com.google.guava:guava:20.0'
+    compile 'com.google.guava:guava:21.0'
     compile 'org.slf4j:slf4j-api:1.7.22'
 
     testCompile 'org.testng:testng:6.10'
