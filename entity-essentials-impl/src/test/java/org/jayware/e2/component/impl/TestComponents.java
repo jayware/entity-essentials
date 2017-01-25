@@ -21,7 +21,11 @@
  */
 package org.jayware.e2.component.impl;
 
+import com.google.common.base.Objects;
 import org.jayware.e2.component.api.Component;
+import org.jayware.e2.entity.api.EntityRef;
+
+import java.util.Arrays;
 
 
 public class TestComponents
@@ -234,5 +238,83 @@ public class TestComponents
         TestEnum[] getEnumArray();
 
         void setEnumArray(TestEnum[] value);
+    }
+
+    public static class CustomComponentASubtype
+    implements TestComponentA
+    {
+        private TestEnum myEnum;
+        private double[] myArray;
+
+        @Override
+        public TestEnum getTestEnum()
+        {
+            return myEnum;
+        }
+
+        @Override
+        public void setTestEnum(final TestEnum testEnum)
+        {
+            myEnum = testEnum;
+        }
+
+        @Override
+        public double[] getArray()
+        {
+            return myArray;
+        }
+
+        @Override
+        public void setArray(final double[] array)
+        {
+            myArray = array;
+        }
+
+        @Override
+        public void pullFrom(final EntityRef ref)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void pushTo(final EntityRef ref)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addTo(final EntityRef ref)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Class<? extends Component> type()
+        {
+            return TestComponentA.class;
+        }
+
+        public boolean equals(Object var1) {
+            if (this == var1)
+            {
+                return true;
+            }
+            else
+            {
+                if (!(var1 instanceof TestComponentA))
+                {
+                    return false;
+                }
+                else
+                {
+                    final TestComponentA var2 = (TestComponentA) var1;
+                    return Arrays.equals(myArray, var2.getArray()) && Objects.equal(myEnum, var2.getTestEnum());
+                }
+            }
+        }
+
+        public int hashCode() {
+            return Objects.hashCode(new Object[]{myArray, myEnum});
+        }
     }
 }
