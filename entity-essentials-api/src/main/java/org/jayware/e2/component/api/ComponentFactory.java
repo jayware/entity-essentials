@@ -29,4 +29,6 @@ public interface ComponentFactory
     <C extends Component> ComponentInstancer<C> createComponent(Class<C> componentClass) throws ComponentFactoryException, MalformedComponentException;
 
     <C extends Component> ComponentInstancer<C> createComponent(String componentClass) throws ComponentFactoryException, MalformedComponentException, ClassNotFoundException;
+
+    boolean isComponentPrepared(Class<? extends Component> componentClass);
 }

@@ -27,12 +27,16 @@ import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentC;
-import org.jayware.e2.component.impl.TestComponents.TestComponentWhichExtendsARenegade;
 import org.jayware.e2.context.api.Context;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 
 public class ComponentFactoryImplTest
@@ -75,18 +79,39 @@ public class ComponentFactoryImplTest
     }
 
     @Test
-    public void test_()
+    public void test_concurrent_component_preparation()
     throws Exception
     {
-        testee.prepareComponent(TestComponentWhichExtendsARenegade.class);
+        final int executorCount = 10;
+        final int jobCount = 100;
+        final ComponentInstancer<TestComponentA> instancer;
+        final TestComponentA testComponentA;
+        final ExecutorService threadPool = Executors.newFixedThreadPool(executorCount);
+        final Runnable prepareComponentRunnable = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                testee.prepareComponent(TestComponentA.class);
+            }
+        };
 
-        final ComponentInstancer<TestComponentWhichExtendsARenegade> instancer = testee.createComponent(TestComponentWhichExtendsARenegade.class);
-        final TestComponentWhichExtendsARenegade component = instancer.newInstance(testContext);
-        final TestComponents.Renegade renegade = component;
+        for (int i = 0; i < jobCount; ++i)
+        {
+            threadPool.execute(prepareComponentRunnable);
+        }
 
-        component.setText("Hello World");
+        threadPool.shutdown();
+        if (!threadPool.awaitTermination(16, TimeUnit.SECONDS))
+        {
+            fail("ThreadPool did not terminate within the maximum time to wait!");
+        }
 
-//        assertThat(component.getText()).isEqualTo("Hello World");
-//        assertThat(renegade.getText()).isEqualTo("Hello World");
+        assertThat(testee.isComponentPrepared(TestComponentA.class)).isTrue();
+
+        instancer = testee.createComponent(TestComponentA.class);
+        testComponentA = instancer.newInstance(testContext);
+
+        assertThat(testComponentA).isNotNull();
     }
 }

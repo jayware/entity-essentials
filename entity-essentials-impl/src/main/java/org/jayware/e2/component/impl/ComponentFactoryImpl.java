@@ -51,6 +51,8 @@ import org.jayware.e2.component.impl.generation.writer.ComponentToStringMethodWr
 import org.jayware.e2.component.impl.generation.writer.ComponentTypeMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentWriterFactory;
 import org.objectweb.asm.ClassWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -93,6 +95,10 @@ implements ComponentFactory
 
     private boolean forceClassGeneration = true;
 
+    private final Object myLock = new Object();
+
+    private final Logger log = LoggerFactory.getLogger(ComponentFactoryImpl.class);
+
     public ComponentFactoryImpl()
     throws ComponentFactoryException
     {
@@ -122,20 +128,18 @@ implements ComponentFactory
     {
         try
         {
-            if (!myCache.containsKey(componentClass.getName()) || forceClassGeneration)
+            if (!isComponentPrepared(componentClass) || forceClassGeneration)
             {
-                final ComponentGenerationPlan plan = analyseComponent(componentClass);
-                generateComponentClass(plan);
+                prepareComponent(componentClass);
             }
 
             if (componentClasses != null)
             {
                 for (Class<?> clazz : componentClasses)
                 {
-                    if (!myCache.containsKey(clazz.getName()) || forceClassGeneration)
+                    if (!isComponentPrepared(componentClass) || forceClassGeneration)
                     {
-                        final ComponentGenerationPlan plan = analyseComponent(componentClass);
-                        generateComponentClass(plan);
+                        prepareComponent(componentClass);
                     }
                 }
             }
@@ -156,7 +160,7 @@ implements ComponentFactory
 
         try
         {
-//            if (!myCache.containsKey(componentClassName))
+            if (!isComponentPrepared(componentClass))
             {
                 prepareComponent(componentClass);
             }
@@ -184,6 +188,24 @@ implements ComponentFactory
         checkNotNull(componentClass, "The component's class name mustn't be null to create a component!");
 
         return createComponent((Class<C>) forName(componentClass));
+    }
+
+    @Override
+    public boolean isComponentPrepared(final Class<? extends Component> componentClass)
+    {
+        return myCache.containsKey(componentClass.getName());
+    }
+
+    private void prepareComponent(final Class<? extends Component> componentClass)
+    {
+        synchronized (myLock)
+        {
+            if (!isComponentPrepared(componentClass))
+            {
+                log.debug("Preparing Component: {}", componentClass.getName());
+                generateComponentClass(analyseComponent(componentClass));
+            }
+        }
     }
 
     private ComponentGenerationPlan analyseComponent(Class<? extends Component> componentClass)
@@ -432,7 +454,10 @@ implements ComponentFactory
         {
             final ClassLoader classLoader = new URLClassLoader(new URL[]{myOutputDirectory.toURI().toURL()}, componentClass.getClassLoader());
             final Class<? extends Component> loadedClass = (Class<? extends Component>) classLoader.loadClass(componentGenerationPlan.getGeneratedClassName());
+
             myCache.put(componentClass.getName(), new ComponentInstancerImpl<Component, Component>(componentGenerationPlan, loadedClass));
+
+            log.debug("Component prepared: {}", componentClass.getName());
         }
         catch (Exception e)
         {
