@@ -217,7 +217,7 @@ implements ComponentManager
     @Override
     public <T extends Component> T getComponent(EntityRef ref, Class<T> component)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(component);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
@@ -228,7 +228,7 @@ implements ComponentManager
     public <T extends Component, W extends AbstractComponentWrapper<W, T>> W getComponent(EntityRef ref, W wrapper)
     throws ComponentNotFoundException
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(wrapper);
 
         return wrapper.wrap(ref, getComponent(ref, wrapper.type()));
@@ -237,7 +237,7 @@ implements ComponentManager
     @Override
     public Collection<Component> getComponents(EntityRef ref)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
         return componentStore.getComponents(ref);
@@ -246,7 +246,7 @@ implements ComponentManager
     @Override
     public <T extends Component> T findComponent(EntityRef ref, Class<T> component)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(component);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
@@ -286,7 +286,7 @@ implements ComponentManager
     public <T extends Component> void pullComponent(EntityRef ref, T component)
     throws ComponentNotFoundException
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(component);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
@@ -296,7 +296,7 @@ implements ComponentManager
     @Override
     public <T extends Component> void pushComponent(EntityRef ref, T component)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(component);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
@@ -306,7 +306,7 @@ implements ComponentManager
     @Override
     public boolean hasComponent(EntityRef ref, Class<? extends Component> component)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(component);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
@@ -316,7 +316,7 @@ implements ComponentManager
     @Override
     public boolean hasComponents(EntityRef ref, Collection<Class<? extends Component>> components)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
         checkNotNull(components);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
@@ -326,7 +326,7 @@ implements ComponentManager
     @Override
     public int getNumberOfComponents(EntityRef ref)
     {
-        checkNotNull(ref);
+        checkRefNotNullAndValid(ref);
 
         final ComponentStore componentStore = getOrCreateComponentStore(ref);
         return componentStore.numberOfComponents(ref);
