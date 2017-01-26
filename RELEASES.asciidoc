@@ -1,5 +1,15 @@
 # Releases
 
+# Version 0.4.0 (2017-01-26)
+
+## Fixes
+ - The implementation of the ComponentManager has been fixed to verify EntityRefs correctly.
+   https://github.com/jayware/entity-essentials/issues/36[#36]
+ - The signature of the ComponentManagerException has been changed to avoid swallowing of exceptions.
+   https://github.com/jayware/entity-essentials/issues/42[#42]
+ - A bug has been fixed which leads to corrupt class files when multiple threads try to prepare a component.
+   https://github.com/jayware/entity-essentials/issues/43[#43]
+
 # Version 0.4.0 (2016-12-18)
 
 ## Enhancements
