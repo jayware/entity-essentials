@@ -29,7 +29,7 @@ extends RuntimeException
         super(format(message, args));
     }
 
-    public ComponentManagerException(Throwable cause, String message, Object... args)
+    public ComponentManagerException(String message, Throwable cause, Object... args)
     {
         super(format(message, args), cause);
     }

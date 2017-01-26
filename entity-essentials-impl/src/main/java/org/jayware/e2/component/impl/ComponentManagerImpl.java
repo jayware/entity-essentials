@@ -278,7 +278,7 @@ implements ComponentManager
         }
         catch (Exception e)
         {
-            throw new ComponentManagerException(e, "Failed to query all types of components associated to %s", ref);
+            throw new ComponentManagerException("Failed to query all types of components associated to %s", e, ref);
         }
     }
 
