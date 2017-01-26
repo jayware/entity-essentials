@@ -1,6 +1,6 @@
 # Releases
 
-# Version 0.4.0 (2017-01-26)
+# Version 0.4.1 (2017-01-26)
 
 ## Fixes
  - The implementation of the ComponentManager has been fixed to verify EntityRefs correctly.
