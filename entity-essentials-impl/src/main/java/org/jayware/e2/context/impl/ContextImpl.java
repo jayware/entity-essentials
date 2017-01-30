@@ -21,7 +21,6 @@
  */
 package org.jayware.e2.context.impl;
 
-import com.google.common.base.Objects;
 import com.googlecode.concurentlocks.ReadWriteUpdateLock;
 import com.googlecode.concurentlocks.ReentrantReadWriteUpdateLock;
 import org.jayware.e2.context.api.Context;
@@ -29,6 +28,7 @@ import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.context.api.ServiceProvider;
 import org.jayware.e2.context.api.ServiceUnavailableException;
 import org.jayware.e2.util.Key;
+import org.jayware.e2.util.ObjectUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +37,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
 import static org.jayware.e2.util.Key.createKey;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
@@ -145,21 +144,23 @@ implements Context
             return false;
         }
         final ContextImpl context = (ContextImpl) o;
-        return Objects.equal(myContextId, context.myContextId);
+        return ObjectUtil.equal(myContextId, context.myContextId);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(myContextId);
+        return ObjectUtil.hashCode(myContextId);
     }
 
     @Override
     public String toString()
     {
-        return toStringHelper(this)
-        .add("id", myContextId)
-        .toString();
+        final StringBuffer sb = new StringBuffer("ContextImpl{");
+        sb.append("myContextId=").append(myContextId);
+        sb.append(", myContextState=").append(myContextState);
+        sb.append('}');
+        return sb.toString();
     }
 
     private class DefaultContext

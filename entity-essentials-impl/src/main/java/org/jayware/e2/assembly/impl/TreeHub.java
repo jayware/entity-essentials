@@ -19,7 +19,6 @@
 package org.jayware.e2.assembly.impl;
 
 
-import com.google.common.base.Objects;
 import org.jayware.e2.assembly.api.TreeEvent;
 import org.jayware.e2.assembly.api.TreeEvent.AddChildNodeEvent;
 import org.jayware.e2.assembly.api.TreeEvent.ChildNodeAddedEvent;
@@ -44,6 +43,7 @@ import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Query;
+import org.jayware.e2.util.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -419,13 +419,13 @@ implements Disposable
             }
 
             final TreeNodeImpl other = (TreeNodeImpl) o;
-            return Objects.equal(myNodeRef, other.myNodeRef);
+            return ObjectUtil.equal(myNodeRef, other.myNodeRef);
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hashCode(myNodeRef);
+            return ObjectUtil.hashCode(myNodeRef);
         }
     }
 }

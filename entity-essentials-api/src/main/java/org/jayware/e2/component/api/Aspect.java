@@ -18,10 +18,10 @@
  */
 package org.jayware.e2.component.api;
 
-import com.google.common.base.Objects;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.util.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,10 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Objects.equal;
 import static java.lang.String.format;
 import static java.util.Collections.addAll;
 import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
+import static org.jayware.e2.util.ObjectUtil.equal;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -226,7 +226,7 @@ public class Aspect
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(getIntersectionSet(), getUnificationSet(), getDifferenceSet());
+        return ObjectUtil.hashCode(getIntersectionSet(), getUnificationSet(), getDifferenceSet());
     }
 
     @Override

@@ -21,9 +21,9 @@
  */
 package org.jayware.e2.component.impl;
 
-import com.google.common.base.Objects;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.util.ObjectUtil;
 
 import java.util.Arrays;
 
@@ -308,13 +308,13 @@ public class TestComponents
                 else
                 {
                     final TestComponentA var2 = (TestComponentA) var1;
-                    return Arrays.equals(myArray, var2.getArray()) && Objects.equal(myEnum, var2.getTestEnum());
+                    return Arrays.equals(myArray, var2.getArray()) && ObjectUtil.equal(myEnum, var2.getTestEnum());
                 }
             }
         }
 
         public int hashCode() {
-            return Objects.hashCode(new Object[]{myArray, myEnum});
+            return ObjectUtil.hashCode(new Object[]{myArray, myEnum});
         }
     }
 }

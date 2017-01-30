@@ -18,10 +18,10 @@
  */
 package org.jayware.e2.component.impl.generation.writer;
 
-import com.google.common.base.Objects;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
+import org.jayware.e2.util.ObjectUtil;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 
@@ -95,7 +95,7 @@ public class ComponentEqualsMethodWriter
 
             if (isObjectType(propertyType))
             {
-                methodBuilder.invokeStaticMethod(Objects.class, "equal", boolean.class, Object.class, Object.class);
+                methodBuilder.invokeStaticMethod(ObjectUtil.class, "equal", boolean.class, Object.class, Object.class);
                 methodBuilder.jumpIfEquals(endIf);
             }
             else if (isArrayType(propertyType))

@@ -18,10 +18,10 @@
  */
 package org.jayware.e2.component.impl.generation.writer;
 
-import com.google.common.base.Objects;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
+import org.jayware.e2.util.ObjectUtil;
 import org.objectweb.asm.ClassWriter;
 
 import java.util.Collection;
@@ -100,7 +100,7 @@ public class ComponentHashCodeMethodWriter
             methodBuilder.custom().visitInsn(AASTORE);
         }
 
-        methodBuilder.invokeStaticMethod(Objects.class, "hashCode", int.class, Object[].class);
+        methodBuilder.invokeStaticMethod(ObjectUtil.class, "hashCode", int.class, Object[].class);
         methodBuilder.returnValue(int.class);
         methodBuilder.endMethod();
     }

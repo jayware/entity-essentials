@@ -22,7 +22,7 @@
 package org.jayware.e2.util;
 
 
-import com.google.common.base.Objects;
+import static org.jayware.e2.util.ObjectUtil.equal;
 
 
 /**
@@ -59,13 +59,13 @@ public class Key<V>
         }
 
         final Key<?> other = (Key<?>) obj;
-        return Objects.equal(myKey, other.myKey);
+        return equal(myKey, other.myKey);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(myKey);
+        return ObjectUtil.hashCode(myKey);
     }
 
     @Override

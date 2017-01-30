@@ -22,13 +22,12 @@
 package org.jayware.e2.event.api;
 
 
-import com.google.common.base.Objects;
+import org.jayware.e2.util.ObjectUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
 import static java.util.Collections.unmodifiableMap;
 
 
@@ -230,23 +229,24 @@ implements ReadOnlyParameters
             }
 
             final Parameter parameter = (Parameter) obj;
-            return Objects.equal(name, parameter.name) &&
-                   Objects.equal(value, parameter.value);
+            return ObjectUtil.equal(name, parameter.name) &&
+                   ObjectUtil.equal(value, parameter.value);
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hashCode(name);
+            return ObjectUtil.hashCode(name);
         }
 
         @Override
         public String toString()
         {
-            return toStringHelper(this)
-            .add("name", name)
-            .add("value", value)
-            .toString();
+            final StringBuffer sb = new StringBuffer("Parameter{");
+            sb.append("name='").append(name).append('\'');
+            sb.append(", value=").append(value);
+            sb.append('}');
+            return sb.toString();
         }
     }
 }

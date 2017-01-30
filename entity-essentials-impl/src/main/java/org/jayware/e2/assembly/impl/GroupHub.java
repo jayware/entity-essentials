@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.collect.ObjectArrays.concat;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static org.jayware.e2.assembly.api.GroupEvent.CreateGroupEvent;
@@ -51,6 +50,7 @@ import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
 import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
+import static org.jayware.e2.util.ArrayUtil.concat;
 
 
 public class GroupHub

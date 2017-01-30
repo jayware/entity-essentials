@@ -18,7 +18,6 @@
  */
 package org.jayware.e2.storage.impl;
 
-import com.google.common.base.Objects;
 import com.googlecode.concurentlocks.ReadWriteUpdateLock;
 import com.googlecode.concurentlocks.ReentrantReadWriteUpdateLock;
 import org.jayware.e2.component.api.Aspect;
@@ -43,6 +42,7 @@ import org.jayware.e2.storage.api.ComponentDatabase;
 import org.jayware.e2.storage.api.Storage;
 import org.jayware.e2.util.Filter;
 import org.jayware.e2.util.Key;
+import org.jayware.e2.util.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -396,13 +396,13 @@ implements Storage, Disposable
             }
 
             final EntityRef ref = (EntityRef) other;
-            return Objects.equal(myId, ref.getId()) && belongsTo(ref);
+            return ObjectUtil.equal(myId, ref.getId()) && belongsTo(ref);
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hashCode(myContext, myId);
+            return ObjectUtil.hashCode(myContext, myId);
         }
 
         @Override
