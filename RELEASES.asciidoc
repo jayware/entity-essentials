@@ -1,5 +1,10 @@
 # Releases
 
+# Version 0.4.2 (2017-01-30)
+
+ - Refactored out google's guava because of incompatibilities.
+   https://github.com/jayware/entity-essentials/issues/44[#44]
+
 # Version 0.4.1 (2017-01-26)
 
 ## Fixes
