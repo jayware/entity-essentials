@@ -15,12 +15,12 @@
         <tr>
             <td align="center">
                 <a href="https://travis-ci.org/jayware/entity-essentials">
-                    <img src="https://img.shields.io/travis/jayware/entity-essentials/master.svg?style=flat-square" alt="Build Status">
+                    <img src="https://travis-ci.org/jayware/entity-essentials.svg?branch=master" alt="Build Status">
                 </a>
             </td>
             <td align="center">
-                <a href="https://coveralls.io/github/jayware/entity-essentials?branch=master">
-                    <img src="https://img.shields.io/coveralls/jayware/entity-essentials/master.svg?style=flat-square" alt="Coverage Status" />
+                <a href='https://coveralls.io/github/jayware/entity-essentials?branch=master'>
+                    <img src='https://coveralls.io/repos/github/jayware/entity-essentials/badge.svg?branch=master' alt='Coverage Status' />
                 </a>
             </td>
             <td align="center">
@@ -30,12 +30,12 @@
             </td>
             <td align="center">
                 <a href="https://travis-ci.org/jayware/entity-essentials">
-                    <img src="https://img.shields.io/travis/jayware/entity-essentials/development.svg?style=flat-square" alt="Build Status">
+                    <img src="https://travis-ci.org/jayware/entity-essentials.svg?branch=development" alt="Build Status">
                 </a>
             </td>
             <td align="center">
-                <a href="https://coveralls.io/github/jayware/entity-essentials?branch=development">
-                    <img src="https://img.shields.io/coveralls/jayware/entity-essentials/development.svg?style=flat-square" alt="Coverage Status" />
+                <a href='https://coveralls.io/github/jayware/entity-essentials?branch=development'>
+                    <img src='https://coveralls.io/repos/github/jayware/entity-essentials/badge.svg?branch=development' alt='Coverage Status' />
                 </a>
             </td>
             <td align="center">
