@@ -18,6 +18,7 @@
  */
 package org.jayware.e2.storage.impl;
 
+import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.impl.ComponentManagerImpl;
 import org.jayware.e2.component.impl.ComponentStore;
@@ -29,12 +30,15 @@ import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.ResultSet;
+import org.jayware.e2.util.Filter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.List;
 import java.util.UUID;
 
+import static java.util.Arrays.asList;
 import static java.util.UUID.fromString;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -148,5 +152,51 @@ public class StorageImplIntegrationTest
         assertThat(ref.isInvalid())
             .withFailMessage("Expected an EntityRef to be invalid when the corresponding entity has been delete!")
             .isTrue();
+    }
+
+    @Test
+    public void test_find_all_entities_by_EntityManager()
+    {
+        final EntityRef a = entityManager.createEntity(context);
+        final EntityRef b = entityManager.createEntity(context);
+
+        final List<EntityRef> result = entityManager.findEntities(context);
+
+        assertThat(result)
+            .withFailMessage("Expected that the result contains the previously created entities: %s", asList(a, b))
+            .containsExactlyInAnyOrder(a, b);
+    }
+
+    @Test
+    public void test_find_entities_with_aspect_and_filter_by_EntityManager()
+    {
+        final EntityRef a = entityManager.createEntity(context);
+        final EntityRef b = entityManager.createEntity(context);
+
+        List<EntityRef> result = entityManager.findEntities(context, Aspect.ANY, new Filter<EntityRef>()
+        {
+            @Override
+            public boolean accepts(final Context context, final EntityRef ref)
+            {
+                return false;
+            }
+        });
+
+        assertThat(result)
+            .withFailMessage("Expected that the result is empty because the filter rejected it all!")
+            .isEmpty();
+
+        result = entityManager.findEntities(context, Aspect.ANY, new Filter<EntityRef>()
+        {
+            @Override
+            public boolean accepts(final Context context, final EntityRef ref)
+            {
+                return ref.equals(b);
+            }
+        });
+
+        assertThat(result)
+            .withFailMessage("Expected that the result contains only %s, because the filter accepts only this entity, but it contains: %s!", b, result)
+            .containsExactlyInAnyOrder(b);
     }
 }

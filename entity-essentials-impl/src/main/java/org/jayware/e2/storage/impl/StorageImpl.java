@@ -39,10 +39,13 @@ import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.storage.api.ComponentDatabase;
+import org.jayware.e2.storage.api.EntityFinder;
 import org.jayware.e2.storage.api.Storage;
+import org.jayware.e2.storage.api.StorageException;
 import org.jayware.e2.util.Filter;
 import org.jayware.e2.util.Key;
 import org.jayware.e2.util.ObjectUtil;
+import org.jayware.e2.util.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +78,8 @@ implements Storage, Disposable
 
     private final EventManager myEventManager;
 
+    private final EntityFinder myEntityFinder;
+
     private final Map<UUID, EntityRef> myEntities;
     private final ComponentDatabase myComponentDatabase;
 
@@ -86,6 +91,7 @@ implements Storage, Disposable
     {
         myContext = context;
         myEventManager = context.getService(EventManager.class);
+
         myEntities = entities;
         myComponentDatabase = database;
 
@@ -93,6 +99,15 @@ implements Storage, Disposable
         myReadLock = myLock.readLock();
         myUpdateLock = myLock.updateLock();
         myWriteLock = myLock.writeLock();
+
+        myEntityFinder = new EntityFinderImpl(context, new Provider<List<EntityRef>>()
+        {
+            @Override
+            public List<EntityRef> provide()
+            {
+                return new CopyOnWriteArrayList<EntityRef>();
+            }
+        });
     }
 
     @Handle(CreateEntityEvent.class)
@@ -225,47 +240,23 @@ implements Storage, Disposable
     public void handleFindEntityEvent(Query query, @Param(value = AspectParam, presence = Optional) Aspect aspect,
                                                    @Param(value = FilterListParam, presence = Optional) List<Filter<EntityRef>> filters)
     {
-        final List<EntityRef> result = new CopyOnWriteArrayList<EntityRef>();
+        List<EntityRef> result = Collections.<EntityRef>emptyList();
 
         myReadLock.lock();
         try
         {
-            for (EntityRef ref : myEntities.values())
-            {
-                boolean addToResult = true;
-
-                if (aspect != null)
-                {
-                    if (!aspect.matches(ref))
-                    {
-                        continue;
-                    }
-                }
-
-                if (filters != null)
-                {
-                    for (Filter<EntityRef> filter : filters)
-                    {
-                        if (!filter.accepts(myContext, ref))
-                        {
-                            addToResult = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (addToResult)
-                {
-                    result.add(ref);
-                }
-            }
+            result = myEntityFinder.filter(myEntities.values(), aspect, filters);
+        }
+        catch (Exception e)
+        {
+            throw new StorageException("Failed to find entities!", e);
         }
         finally
         {
             myReadLock.unlock();
-        }
 
-        query.result(EntityRefListParam, Collections.<EntityRef>unmodifiableList(result));
+            query.result(EntityRefListParam, Collections.<EntityRef>unmodifiableList(result));
+        }
     }
 
     @Handle(ResolveEntityEvent.class)
