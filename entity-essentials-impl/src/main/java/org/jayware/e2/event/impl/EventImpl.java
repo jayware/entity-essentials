@@ -91,6 +91,12 @@ implements Event
     }
 
     @Override
+    public boolean isNotQuery()
+    {
+        return true;
+    }
+
+    @Override
     public String toString()
     {
         return "Event { " + myId + " [ " + myType.getSimpleName() + " ]" + '}';

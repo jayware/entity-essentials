@@ -92,6 +92,12 @@ implements Query
         return true;
     }
 
+    @Override
+    public boolean isNotQuery()
+    {
+        return false;
+    }
+
     public QueryResultSet getResult()
     {
         return myResult;

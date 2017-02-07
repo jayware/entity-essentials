@@ -24,12 +24,16 @@ import org.jayware.e2.assembly.api.GroupEvent.CreateGroupEvent;
 import org.jayware.e2.assembly.api.GroupEvent.DeleteGroupEvent;
 import org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.RemoveEntityFromGroupEvent;
 import org.jayware.e2.assembly.api.GroupManager;
+import org.jayware.e2.assembly.api.GroupManagerException;
 import org.jayware.e2.assembly.api.GroupNotFoundException;
+import org.jayware.e2.assembly.api.components.GroupComponent;
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.util.Key;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +42,7 @@ import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.AddEnt
 import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityRefParam;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
 import static org.jayware.e2.assembly.api.Preconditions.checkGroupNotNullAndValid;
+import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
 import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
@@ -49,6 +54,8 @@ import static org.jayware.e2.util.Preconditions.checkStringNotEmpty;
 public class GroupManagerImpl
 implements GroupManager
 {
+    private static final long TIMEOUT_IN_MILLISECONDS = 5000;
+
     private static final Key<GroupHub> GROUP_HUB = Key.createKey("org.jayware.e2.GroupHub");
 
     private static final Context.ValueProvider<GroupHub> GROUP_HUB_VALUE_PROVIDER = new Context.ValueProvider<GroupHub>()
@@ -123,6 +130,35 @@ implements GroupManager
         checkStringNotEmpty(name);
 
         return getOrCreateGroupHub(context).findGroup(name);
+    }
+
+    @Override
+    public List<Group> findGroups(Context context)
+    {
+        final EntityManager entityManager;
+        final List<EntityRef> entities;
+        final List<Group> result;
+
+        checkContextNotNullAndNotDisposed(context);
+
+        try
+        {
+            entityManager = context.getService(EntityManager.class);
+            entities = entityManager.findEntities(context, aspect(GroupComponent.class));
+
+            result = new ArrayList<Group>(entities.size());
+
+            for (EntityRef entity : entities)
+            {
+                result.add(GroupImpl.createGroup(entity));
+            }
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new GroupManagerException("Failed to find groups!", e);
+        }
     }
 
     @Override

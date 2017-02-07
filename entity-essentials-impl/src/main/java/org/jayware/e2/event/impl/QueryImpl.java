@@ -105,6 +105,12 @@ implements Query
         return true;
     }
 
+    @Override
+    public boolean isNotQuery()
+    {
+        return false;
+    }
+
     public Map<State, Consumer<ResultSet>> getConsumers()
     {
         return myConsumers;

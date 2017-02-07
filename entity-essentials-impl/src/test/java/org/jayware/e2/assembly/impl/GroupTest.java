@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jayware.e2.assembly.impl.GroupImpl.createGroup;
 
 
 public class GroupTest
@@ -60,7 +61,7 @@ public class GroupTest
         testEntityA = testEntityManager.createEntity(testContext);
         testEntityB = testEntityManager.createEntity(testContext);
 
-        testee = new GroupImpl(testeeRef);
+        testee = createGroup(testeeRef);
     }
 
     @Test

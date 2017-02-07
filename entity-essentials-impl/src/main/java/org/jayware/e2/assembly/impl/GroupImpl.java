@@ -19,6 +19,7 @@
 package org.jayware.e2.assembly.impl;
 
 import org.jayware.e2.assembly.api.Group;
+import org.jayware.e2.assembly.api.GroupInstantiationException;
 import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.InvalidGroupException;
 import org.jayware.e2.assembly.api.components.GroupComponent;
@@ -42,13 +43,35 @@ implements Group
 
     private final GroupComponent myGroupComponent;
 
-    public GroupImpl(EntityRef ref)
+    private GroupImpl(final EntityRef ref, final Context context, final ComponentManager componentManager, final GroupManager groupManager, final GroupComponent component)
     {
         myRef = ref;
-        myContext = myRef.getContext();
-        myComponentManager = myContext.getService(ComponentManager.class);
-        myGroupManager = myContext.getService(GroupManager.class);
-        myGroupComponent = myComponentManager.getComponent(myRef, GroupComponent.class);
+        myContext = context;
+        myComponentManager = componentManager;
+        myGroupManager = groupManager;
+        myGroupComponent = component;
+    }
+
+    static Group createGroup(final EntityRef ref)
+    {
+        final Context context;
+        final ComponentManager componentManager;
+        final GroupManager groupManager;
+        final GroupComponent groupComponent;
+
+        try
+        {
+            context = ref.getContext();
+            componentManager = context.getService(ComponentManager.class);
+            groupManager = context.getService(GroupManager.class);
+            groupComponent = componentManager.getComponent(ref, GroupComponent.class);
+
+            return new GroupImpl(ref, context, componentManager, groupManager, groupComponent);
+        }
+        catch (Exception e)
+        {
+            throw new GroupInstantiationException("Failed to instantiate group for: %s ", e, ref);
+        }
     }
 
     @Override
@@ -145,6 +168,15 @@ implements Group
     public int hashCode()
     {
         return myRef.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        final StringBuffer sb = new StringBuffer("Group {");
+        sb.append("name=").append(myGroupComponent.getName());
+        sb.append('}');
+        return sb.toString();
     }
 
     protected void check()

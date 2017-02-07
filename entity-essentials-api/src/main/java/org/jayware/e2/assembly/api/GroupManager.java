@@ -22,6 +22,7 @@ package org.jayware.e2.assembly.api;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityRef;
+import org.jayware.e2.util.TimeoutException;
 
 import java.util.List;
 
@@ -113,6 +114,8 @@ public interface GroupManager
      * @throws IllegalStateException if the passed Context is disposed.
      */
     Group findGroup(Context context, String name) throws IllegalArgumentException, IllegalStateException;
+
+    List<Group> findGroups(Context context) throws IllegalArgumentException, IllegalStateException, TimeoutException, GroupManagerException;
 
     /**
      * Adds the {@link Entity} referenced by the passed {@link EntityRef} to the specified {@link Group}.

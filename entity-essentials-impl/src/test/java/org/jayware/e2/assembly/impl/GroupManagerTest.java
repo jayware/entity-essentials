@@ -19,9 +19,14 @@
 package org.jayware.e2.assembly.impl;
 
 
+import mockit.Expectations;
+import mockit.Mocked;
 import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.InvalidGroupException;
+import org.jayware.e2.assembly.api.components.GroupComponent;
+import org.jayware.e2.component.api.Aspect;
+import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.context.api.IllegalContextException;
@@ -32,6 +37,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -41,10 +49,18 @@ public class GroupManagerTest
 {
     private GroupManager testee;
 
-    private Context testContext;
+    private Context context;
 
     private EntityRef testEntityA;
     private EntityRef testEntityB;
+
+    private @Mocked Context testContext;
+    private @Mocked EntityManager testEntityManager;
+    private @Mocked ComponentManager testComponentManager;
+    private @Mocked GroupComponent testGroupComponent;
+
+    private @Mocked EntityRef testRefC;
+    private @Mocked EntityRef testRefD;
 
     @BeforeMethod
     public void setUp()
@@ -52,23 +68,23 @@ public class GroupManagerTest
     {
         testee = new GroupManagerImpl();
 
-        testContext = ContextProvider.getInstance().createContext();
+        context = ContextProvider.getInstance().createContext();
 
-        final EntityManager entityManager = testContext.getService(EntityManager.class);
-        testEntityA = entityManager.createEntity(testContext);
-        testEntityB = entityManager.createEntity(testContext);
+        final EntityManager entityManager = context.getService(EntityManager.class);
+        testEntityA = entityManager.createEntity(context);
+        testEntityB = entityManager.createEntity(context);
     }
 
     @AfterMethod
     public void tearDown()
     {
-        testContext.dispose();
+        context.dispose();
     }
 
     @Test
     public void testCreateGroup()
     {
-        assertThat(testee.createGroup(testContext)).isNotNull();
+        assertThat(testee.createGroup(context)).isNotNull();
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
@@ -104,19 +120,19 @@ public class GroupManagerTest
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_CreateGroupWithName_ThrowsIllegalArgumentExceptionWhenPassedStringIsNull()
     {
-        testee.createGroup(testContext, null);
+        testee.createGroup(context, null);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void test_CreateGroupWithName_ThrowsIllegalArgumentExceptionWhenPassedNameIsEmpty()
     {
-        testee.createGroup(testContext, "");
+        testee.createGroup(context, "");
     }
 
     @Test
     public void test_deleteGroup()
     {
-        final Group group = testee.createGroup(testContext);
+        final Group group = testee.createGroup(context);
         assertThat(group.isValid()).isTrue();
         testee.deleteGroup(group);
         assertThat(group.isValid()).isFalse();
@@ -143,7 +159,7 @@ public class GroupManagerTest
 
         when(ref.isInvalid()).thenReturn(true);
         when(ref.isValid()).thenReturn(false);
-        when(ref.getContext()).thenReturn(testContext);
+        when(ref.getContext()).thenReturn(context);
 
         testee.addEntityToGroup(ref, testGroup);
     }
@@ -193,7 +209,7 @@ public class GroupManagerTest
 
         when(ref.isInvalid()).thenReturn(true);
         when(ref.isValid()).thenReturn(false);
-        when(ref.getContext()).thenReturn(testContext);
+        when(ref.getContext()).thenReturn(context);
 
         testee.removeEntityFromGroup(ref, testGroup);
     }
@@ -218,7 +234,7 @@ public class GroupManagerTest
     @Test
     public void test_getEntitiesOfGroup()
     {
-        final Group testGroup = testee.createGroup(testContext);
+        final Group testGroup = testee.createGroup(context);
         testee.addEntityToGroup(testEntityA, testGroup);
         testee.addEntityToGroup(testEntityB, testGroup);
 
@@ -244,10 +260,33 @@ public class GroupManagerTest
     }
 
     @Test
+    public void test_findGroups_With_Context_Returns_the_expected_List_of_Groups()
+    {
+        final List<EntityRef> listOfEntities = asList(testRefC, testRefD);
+        final List<Group> groups;
+
+        new Expectations() {{
+            context.isDisposed(); result = false;
+            context.getService(EntityManager.class); result = testEntityManager;
+            context.getService(ComponentManager.class); result = testComponentManager;
+            testRefC.getContext(); result = testContext;
+            testRefD.getContext(); result = testContext;
+            testEntityManager.findEntities((Context) any, (Aspect) any); result = listOfEntities;
+            testComponentManager.getComponent((EntityRef) any, GroupComponent.class); result = testGroupComponent;
+        }};
+
+        groups = testee.findGroups(testContext);
+
+        assertThat(groups)
+            .withFailMessage("Expected that the result list contains the same number of elements as the passed list of entities!")
+            .hasSize(listOfEntities.size());
+    }
+
+    @Test
     public void test_GroupMembership()
     throws Exception
     {
-        final Group testGroup = testee.createGroup(testContext);
+        final Group testGroup = testee.createGroup(context);
 
         testee.addEntityToGroup(testEntityA, testGroup);
 

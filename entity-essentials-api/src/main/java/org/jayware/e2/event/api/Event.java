@@ -95,7 +95,18 @@ public interface Event
     /**
      * Returns whether this {@link Event} is a {@link Query}.
      *
+     * <b>Note:</b> This operation returns the opposite of {@link Event#isNotQuery()}
+     *
      * @return <code>true</code> if this {@link Event} is a {@link Query}, otherwise <code>false</code>.
      */
     boolean isQuery();
+
+    /**
+     * Returns whether this {@link Event} is <u>not</u> a {@link Query}.
+     *
+     * <b>Note:</b> This operation returns the opposite of {@link Event#isQuery()} ()}
+     *
+     * @return <code>true</code> if this {@link Event} isn't a {@link Query}, otherwise <code>false</code>.
+     */
+    boolean isNotQuery();
 }

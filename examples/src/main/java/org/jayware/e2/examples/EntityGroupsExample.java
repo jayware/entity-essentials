@@ -20,9 +20,9 @@ package org.jayware.e2.examples;
 
 
 import org.jayware.e2.assembly.api.Group;
-import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityFromGroupRemovedEvent;
 import org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityToGroupAddedEvent;
+import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
@@ -32,6 +32,7 @@ import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityRefParam;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
@@ -62,6 +63,7 @@ public class EntityGroupsExample
 
         /* Creating a group with a name */
         Group avengers = groupManager.createGroup(context, "the avengers");
+        Group justiceleague = groupManager.createGroup(context, "justice league");
 
         /* Adding an entity to a group can be done in two ways. */
         groupManager.addEntityToGroup(steve, avengers);
@@ -74,8 +76,11 @@ public class EntityGroupsExample
         /* Because a group is an Iterable it is possible to iterate directly over the members of a group. */
         for (EntityRef avenger : avengers) {}
 
-        /* The GroupManager offers an operation to check whether an entity is member of a group */
+        /* The GroupManager offers an operation to check whether an entity is member of a group. */
         groupManager.isEntityMemberOfGroup(clark, avengers);
+
+        /* It is also possible to get a list of all groups within a context. */
+        List<Group> groups = groupManager.findGroups(context);
 
         /* Shutdown everything */
         context.dispose();
