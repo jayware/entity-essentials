@@ -157,7 +157,43 @@ implements GroupManager
         }
         catch (Exception e)
         {
-            throw new GroupManagerException("Failed to find groups!", e);
+            throw new GroupManagerException("Failed to find groups in context '%s' !", e, context.getId());
+        }
+    }
+
+    @Override
+    public List<Group> findGroups(final EntityRef ref)
+    {
+        final Context context;
+        final EntityManager entityManager;
+        final List<EntityRef> entities;
+        final List<Group> result;
+
+        checkRefNotNullAndValid(ref);
+
+        try
+        {
+            context = ref.getContext();
+            entityManager = context.getService(EntityManager.class);
+            entities = entityManager.findEntities(context, aspect(GroupComponent.class));
+
+            result = new ArrayList<Group>();
+
+            for (EntityRef entity : entities)
+            {
+                final Group group = GroupImpl.createGroup(entity);
+
+                if (isEntityMemberOfGroup(ref, group))
+                {
+                    result.add(group);
+                }
+            }
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new GroupManagerException("Failed to find groups of entity '%s' !", e, ref.getId());
         }
     }
 

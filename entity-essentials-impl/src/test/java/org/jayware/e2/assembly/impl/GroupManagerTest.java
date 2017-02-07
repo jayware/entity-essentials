@@ -19,14 +19,9 @@
 package org.jayware.e2.assembly.impl;
 
 
-import mockit.Expectations;
-import mockit.Mocked;
 import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.assembly.api.InvalidGroupException;
-import org.jayware.e2.assembly.api.components.GroupComponent;
-import org.jayware.e2.component.api.Aspect;
-import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.context.api.IllegalContextException;
@@ -39,7 +34,6 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,14 +47,6 @@ public class GroupManagerTest
 
     private EntityRef testEntityA;
     private EntityRef testEntityB;
-
-    private @Mocked Context testContext;
-    private @Mocked EntityManager testEntityManager;
-    private @Mocked ComponentManager testComponentManager;
-    private @Mocked GroupComponent testGroupComponent;
-
-    private @Mocked EntityRef testRefC;
-    private @Mocked EntityRef testRefD;
 
     @BeforeMethod
     public void setUp()
@@ -262,24 +248,36 @@ public class GroupManagerTest
     @Test
     public void test_findGroups_With_Context_Returns_the_expected_List_of_Groups()
     {
-        final List<EntityRef> listOfEntities = asList(testRefC, testRefD);
-        final List<Group> groups;
+        final Group groupA = testee.createGroup(context);
+        final Group groupB = testee.createGroup(context);
 
-        new Expectations() {{
-            context.isDisposed(); result = false;
-            context.getService(EntityManager.class); result = testEntityManager;
-            context.getService(ComponentManager.class); result = testComponentManager;
-            testRefC.getContext(); result = testContext;
-            testRefD.getContext(); result = testContext;
-            testEntityManager.findEntities((Context) any, (Aspect) any); result = listOfEntities;
-            testComponentManager.getComponent((EntityRef) any, GroupComponent.class); result = testGroupComponent;
-        }};
-
-        groups = testee.findGroups(testContext);
+        final List<Group> groups = testee.findGroups(context);
 
         assertThat(groups)
-            .withFailMessage("Expected that the result list contains the same number of elements as the passed list of entities!")
-            .hasSize(listOfEntities.size());
+            .withFailMessage("Expected that the result list contains the previously created groups!")
+            .containsExactlyInAnyOrder(groupA, groupB);
+    }
+
+    @Test
+    public void test_findGroups_With_EntityRef_Returns_the_expected_List_of_Groups()
+    {
+        final Group groupA = testee.createGroup(context);
+        final Group groupB = testee.createGroup(context);
+        final Group groupC = testee.createGroup(context);
+        List<Group> groups;
+
+        groupA.add(testEntityA);
+        groupC.add(testEntityA);
+
+        groups = testee.findGroups(testEntityA);
+
+        assertThat(groups)
+            .withFailMessage("Expected that the result list contains the groups %s and %s because the entity is member of these two groups!", groupA, groupB)
+            .containsExactlyInAnyOrder(groupA, groupC);
+
+        assertThat(groups)
+            .withFailMessage("Expected that the result list does not contains group %s because the entity is not a member of this group!", groupA, groupB)
+            .doesNotContain(groupB);
     }
 
     @Test

@@ -32,7 +32,6 @@ import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityRefParam;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
@@ -68,6 +67,7 @@ public class EntityGroupsExample
         /* Adding an entity to a group can be done in two ways. */
         groupManager.addEntityToGroup(steve, avengers);
         avengers.add(tony);
+        justiceleague.add(clark);
 
         /* The opposite (remove) can also be done in two ways. */
         groupManager.removeEntityFromGroup(steve, avengers);
@@ -80,7 +80,7 @@ public class EntityGroupsExample
         groupManager.isEntityMemberOfGroup(clark, avengers);
 
         /* It is also possible to get a list of all groups within a context. */
-        List<Group> groups = groupManager.findGroups(context);
+        groupManager.findGroups(context);
 
         /* Shutdown everything */
         context.dispose();

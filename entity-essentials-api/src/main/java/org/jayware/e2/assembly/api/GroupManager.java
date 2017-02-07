@@ -117,6 +117,8 @@ public interface GroupManager
 
     List<Group> findGroups(Context context) throws IllegalArgumentException, IllegalStateException, TimeoutException, GroupManagerException;
 
+    List<Group> findGroups(EntityRef ref) throws IllegalArgumentException, IllegalStateException, TimeoutException, GroupManagerException;
+
     /**
      * Adds the {@link Entity} referenced by the passed {@link EntityRef} to the specified {@link Group}.
      *
