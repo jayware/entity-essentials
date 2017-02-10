@@ -1,5 +1,11 @@
 # Releases
 
+# Version 0.5.1 (2017-02-10)
+
+## Fixes
+ - A bug in The ComponentStore has been fixed which caused the resolveComponent operation to return null.
+   https://github.com/jayware/entity-essentials/issues/49[#49]
+
 # Version 0.5.0 (2017-02-07)
 
 ## Enhancements
@@ -9,6 +15,8 @@
    https://github.com/jayware/entity-essentials/issues/47[#47]
 
 # Version 0.4.2 (2017-01-30)
+
+## Fixes
  - Refactored out google's guava because of incompatibilities.
    https://github.com/jayware/entity-essentials/issues/44[#44]
 
