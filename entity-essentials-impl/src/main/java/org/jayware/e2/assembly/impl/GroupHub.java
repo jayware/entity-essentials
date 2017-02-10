@@ -76,10 +76,10 @@ implements Disposable
     public void handleCreateGroupEvent(@Param(GroupNameParam) String name)
     {
         final EntityRef ref = myEntityManager.createEntity(myContext);
-        final GroupComponent component = myComponentManager.addComponent(ref, GroupComponent.class);
+        final GroupComponent component = myComponentManager.createComponent(myContext, GroupComponent.class);
 
         component.setName(name);
-        component.pushTo(ref);
+        component.addTo(ref);
 
         myEventManager.post(
             GroupCreatedEvent.class,
