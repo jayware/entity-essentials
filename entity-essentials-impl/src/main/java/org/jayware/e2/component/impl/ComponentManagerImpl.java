@@ -118,7 +118,7 @@ implements ComponentManager
         checkNotNull(name);
 
         final ComponentStore componentStore = getOrCreateComponentStore(context);
-        return componentStore.getComponentClassByName(name);
+        return componentStore.resolveComponent(name);
     }
 
     @Override

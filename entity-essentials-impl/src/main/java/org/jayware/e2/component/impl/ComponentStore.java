@@ -60,6 +60,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static java.lang.Class.forName;
+import static java.lang.String.format;
 import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.component.api.AspectEvent.NewAspectParam;
 import static org.jayware.e2.component.api.AspectEvent.OldAspectParam;
@@ -348,12 +350,38 @@ implements Disposable
         }
     }
 
-    public Class<? extends Component> getComponentClassByName(String name)
+    public Class<? extends Component> resolveComponent(String name)
     {
+        Class<? extends Component> componentClass;
         myReadLock.lock();
         try
         {
-            return myComponentClassMap.get(name);
+            componentClass = myComponentClassMap.get(name);
+
+            if (componentClass == null)
+            {
+                final Class<?> potentialComponent = forName(name);
+
+                if (!Component.class.isAssignableFrom(potentialComponent))
+                {
+                    throw new RuntimeException(format("Invalid component-class! The potential component-class '%s' is not assignable to type '%s'.", potentialComponent, Component.class));
+                }
+
+                prepareComponent((Class<? extends Component>) potentialComponent);
+            }
+
+            componentClass = myComponentClassMap.get(name);
+
+            if (componentClass == null)
+            {
+                throw new IllegalStateException(format("Something went wrong! Expected the component '%s' to be prepared!", name));
+            }
+
+            return componentClass;
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(format("Failed to resolve '%s' as a component!", name), e);
         }
         finally
         {
