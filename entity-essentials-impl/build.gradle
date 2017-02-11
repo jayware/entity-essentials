@@ -2,9 +2,6 @@ plugins {
     id 'me.champeau.gradle.jmh' version '0.3.1'
 }
 
-apply plugin: 'java'
-apply plugin: 'osgi'
-
 def versionPropsFile = file('build.properties')
 def Properties versionProps = new Properties()
 versionProps.load(new FileInputStream(versionPropsFile))

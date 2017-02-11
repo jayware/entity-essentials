@@ -55,48 +55,55 @@ allprojects {
             }
         }
     }
+}
 
-    plugins.withType(JavaPlugin) {
-        project.apply plugin: 'maven'
-        project.apply plugin: 'maven-publish'
-        project.apply plugin: 'findbugs'
-        project.apply plugin: 'jacoco'
+configure ([
+    project(':entity-essentials-api'),
+    project(':entity-essentials-impl'),
+    project(':entity-essentials-assertj')
+]) {
+    println "applying java plugin to $project"
+    project.apply plugin: 'java'
+    project.apply plugin: 'osgi'
+    project.apply plugin: 'maven'
+    project.apply plugin: 'maven-publish'
+    project.apply plugin: 'findbugs'
+    project.apply plugin: 'jacoco'
 
-        sourceCompatibility = 1.6
-        targetCompatibility = 1.6
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
 
-        findbugs {
-            toolVersion = "3.0.1"
-            sourceSets = [sourceSets.main]
+    findbugs {
+        toolVersion = "3.0.1"
+        sourceSets = [project.sourceSets.main]
+    }
+
+    task codeCoverageReport(type: JacocoReport, dependsOn: test) {
+        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+        sourceDirectories = files(sourceSets.main.java)
+        classDirectories = files(sourceSets.main.output.classesDir)
+
+        reports {
+            html.enabled false
+            csv.enabled false
+            xml.enabled true
+            xml.destination "${buildDir}/reports/jacoco/report.xml"
         }
+    }
 
-        task codeCoverageReport(type: JacocoReport, dependsOn: test) {
-            executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-            sourceDirectories = files(sourceSets.main.java)
-            classDirectories = files(sourceSets.main.output.classesDir)
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 
-            reports {
-                html.enabled false
-                csv.enabled false
-                xml.enabled true
-                xml.destination "${buildDir}/reports/jacoco/report.xml"
-            }
-        }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
 
-        task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = 'sources'
-            from sourceSets.main.allSource
-        }
-
-        task javadocJar(type: Jar, dependsOn: javadoc) {
-            classifier = 'javadoc'
-            from javadoc.destinationDir
-        }
-
-        artifacts {
-            archives sourcesJar
-            archives javadocJar
-        }
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
     }
 }
 

@@ -1,6 +1,4 @@
 apply plugin: "java"
-apply plugin: "eclipse"
-apply plugin: "idea"
 
 dependencies {
 
@@ -17,90 +15,4 @@ dependencies {
 
 test {
     useTestNG() {}
-}
-
-task createIdeaExample(type: Zip/*, dependsOn: tasks['idea']*/) {
-    baseName "entity-essentials-idea-examples"
-    from exampleFiles()
-}
-
-task createEclipseExample(type: Zip) {
-    baseName "entity-essentials-eclipse-examples"
-    from exampleFiles()
-}
-
-eclipse {
-
-}
-
-def exampleFiles() {
-    def result = files(
-        files(rootProject.file("LICENCE.txt")),
-        fileTree(projectDir) {
-            include "src/**/*"
-            include "build.gradle"
-            include "README.md"
-        }
-    )
-
-    return result
-}
-
-publishing {
-    publications {
-        e2Examples(MavenPublication) {
-            artifact createIdeaExample
-            artifact createEclipseExample
-            groupId project.group
-            artifactId project.name
-            version project.version
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('name', "${project.group}:${project.name}")
-                root.appendNode('description', 'Entity Essentials Example Project')
-                root.appendNode('url', 'http://jayware.github.io/entity-essentials/')
-                root.appendNode('inceptionYear', '2015')
-                def scm = root.appendNode('scm')
-                scm.appendNode('url', 'https://github.com/jayware/entity-essentials')
-                scm.appendNode('connection', 'git@github.com:jayware/entity-essentials.git')
-                scm.appendNode('developerConnection', 'git@github.com:jayware/entity-essentials.git')
-                def developers = root.appendNode('developers')
-                def dev = developers.appendNode('developer')
-                dev.appendNode('name', 'Elmar Schug')
-                dev.appendNode('email', 'elmar.schug@jayware.org')
-                dev.appendNode('organization', 'JayWare')
-                dev.appendNode('organizationUrl', 'https://jayware.org')
-                dev = developers.appendNode('developer')
-                dev.appendNode('name', 'Markus Neubauer')
-                dev.appendNode('email', 'markus.neubauer@jayware.org')
-                dev.appendNode('organization', 'JayWare')
-                dev.appendNode('organizationUrl', 'https://jayware.org')
-                def license = root.appendNode('licenses').appendNode('license')
-                license.appendNode('name', 'Apache License 2.0')
-                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0')
-                license.appendNode('distribution', 'repo')
-            }
-        }
-    }
-}
-
-//bintray {
-//    pkg {
-//        repo = 'maven'
-//        name = 'entity-essentials-examples'
-//        userOrg = 'jayware'
-//        licenses = ['Apache-2.0']
-//        vcsUrl = 'https://github.com/jayware/entity-essentials'
-//        version {
-//            name = project.version
-//            desc = 'Entity Essentials Example Project'
-//            released  = new Date()
-//            vcsTag = project.version
-//        }
-//    }
-//    publications = ['e2Examples']
-//}
-
-artifactoryPublish {
-    skip = true
 }
