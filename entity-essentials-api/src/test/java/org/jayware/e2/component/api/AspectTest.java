@@ -25,13 +25,16 @@ import org.jayware.e2.entity.api.EntityRef;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.jayware.e2.component.api.Aspect.EMPTY;
 import static org.jayware.e2.component.api.Aspect.aspect;
+import static org.jayware.e2.component.api.Aspect.collectNames;
 
 
 public class AspectTest
@@ -269,6 +272,50 @@ public class AspectTest
         assertThat(testee.getIntersectionSet()).containsExactlyInAnyOrder(TestComponentA.class, TestComponentD.class);
         assertThat(testee.getUnificationSet()).containsExactlyInAnyOrder(TestComponentB.class, TestComponentE.class);
         assertThat(testee.getDifferenceSet()).containsExactlyInAnyOrder(TestComponentC.class, TestComponentF.class);
+    }
+
+    @Test
+    public void test_that_equals_returns_false_if_the_passed_object_is_not_an_instance_of_Aspect()
+    {
+        assertThat(aspect().equals(new Object())).isFalse();
+    }
+
+    @Test
+    public void test_equlas_and_hashcode()
+    {
+        final Aspect
+            a1 = aspect(),
+            b1 = aspect(),
+            a2 = aspect().withAllOf(TestComponentA.class),
+            b2 = aspect().withAllOf(TestComponentA.class),
+            a3 = aspect().withAllOf(TestComponentA.class).withOneOf(TestComponentC.class),
+            b3 = aspect().withAllOf(TestComponentA.class).withOneOf(TestComponentC.class),
+            a4 = aspect().withAllOf(TestComponentA.class).withOneOf(TestComponentB.class).withNoneOf(TestComponentC.class),
+            b4 = aspect().withAllOf(TestComponentA.class).withOneOf(TestComponentB.class).withNoneOf(TestComponentC.class);
+
+        assertThat(a1).isEqualTo(b1);
+        assertThat(a1).isNotEqualTo(b4);
+        assertThat(a1.hashCode()).isEqualTo(b1.hashCode());
+
+        assertThat(a2).isEqualTo(b2);
+        assertThat(a2).isNotEqualTo(b3);
+        assertThat(a2.hashCode()).isEqualTo(b2.hashCode());
+
+        assertThat(a3).isEqualTo(b3);
+        assertThat(a3).isNotEqualTo(b2);
+        assertThat(a3.hashCode()).isEqualTo(b3.hashCode());
+
+        assertThat(a4).isEqualTo(b4);
+        assertThat(a4).isNotEqualTo(b1);
+        assertThat(a4.hashCode()).isEqualTo(b4.hashCode());
+    }
+
+    @Test
+    public void test_that_collectNames_Returns_the_expected_List_of_Component_names()
+    {
+        List<Class<? extends Component>> components = Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class);
+
+        assertThat(collectNames(components)).containsExactly("TestComponentA", "TestComponentB");
     }
 
     public interface TestComponentA extends Component {}
