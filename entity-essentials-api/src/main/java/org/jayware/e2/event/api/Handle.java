@@ -23,7 +23,6 @@ package org.jayware.e2.event.api;
 
 
 import org.jayware.e2.event.api.EventType.RootEvent;
-import org.jayware.e2.util.Priority;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -37,7 +36,6 @@ import java.lang.annotation.Target;
  * @see Event
  * @see EventManager
  * @see RootEvent
- * @see Priority
  * @see Presence
  *
  * @since 1.0

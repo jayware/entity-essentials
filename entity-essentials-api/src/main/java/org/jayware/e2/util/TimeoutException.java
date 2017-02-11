@@ -28,15 +28,4 @@ extends RuntimeException
     {
         super(format(message, args));
     }
-
-    public TimeoutException(String message, Throwable cause, Object... args)
-    {
-        super(format(message, args), cause);
-    }
-
-    public static void timeout(String message, Object... args)
-    {
-        throw new TimeoutException(message, args);
-    }
-
 }
