@@ -20,11 +20,15 @@ package org.jayware.e2.util;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.jayware.e2.util.Preconditions.checkNotNull;
+
 
 public class NotationUtil
 {
-    public static String shortNotationOf(TimeUnit unit)
+    public static String shortNotationOf(final TimeUnit unit)
     {
+        checkNotNull(unit);
+
         switch (unit)
         {
             case NANOSECONDS:
@@ -43,6 +47,6 @@ public class NotationUtil
                 return "d";
         }
 
-        throw new RuntimeException();
+        throw new IllegalArgumentException(String.format("There is no short notation for: '%s'", unit));
     }
 }
