@@ -60,6 +60,7 @@ allprojects {
         project.apply plugin: 'maven'
         project.apply plugin: 'maven-publish'
         project.apply plugin: 'findbugs'
+        project.apply plugin: 'jacoco'
 
         sourceCompatibility = 1.6
         targetCompatibility = 1.6
@@ -69,71 +70,17 @@ allprojects {
             sourceSets = [sourceSets.main]
         }
 
-        task coveralls(type:Exec, dependsOn: 'generateCoverallsPom') {
-            commandLine 'mvn', 'clean', 'install', 'test', 'jacoco:report', 'coveralls:report'
-        }
+        task codeCoverageReport(type: JacocoReport, dependsOn: test) {
+            executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+            sourceDirectories = files(sourceSets.main.java)
+            classDirectories = files(sourceSets.main.output.classesDir)
 
-        task generateCoverallsPom {
-            doLast {
-                pom {
-                    project {
-                        groupId project.group
-                        artifactId project.name
-                        version project.version
-                    }
-                    withXml {
-                        def root = asNode()
-                        def properties = root.appendNode('properties')
-                        properties.appendNode('project.build.sourceEncoding', 'UTF-8')
-                        def repositories = root.appendNode('repositories')
-                        def repository = repositories.appendNode('repository')
-                        repository.appendNode('id', 'jcenter')
-                        repository.appendNode('name', 'bintray')
-                        repository.appendNode('url', 'http://jcenter.bintray.com')
-                        def build = root.appendNode('build')
-                        def plugins = build.appendNode('plugins')
-                        def jacoco = plugins.appendNode('plugin')
-                        jacoco.appendNode('groupId', 'org.jacoco')
-                        jacoco.appendNode('artifactId', 'jacoco-maven-plugin')
-                        jacoco.appendNode('version', '0.7.7.201606060606')
-                        def executions = jacoco.appendNode('executions')
-                        def execution = executions.appendNode('execution')
-                        execution.appendNode('id', 'prepare-agent')
-                        def goals = execution.appendNode('goals')
-                        goals.appendNode('goal', 'prepare-agent')
-                        def coveralls = plugins.appendNode('plugin')
-                        coveralls.appendNode('groupId', 'org.eluder.coveralls')
-                        coveralls.appendNode('artifactId', 'coveralls-maven-plugin')
-                        coveralls.appendNode('version', '4.3.0')
-                        def configuration = coveralls.appendNode('configuration')
-                        configuration.appendNode('repoToken', '${env.COVERALLS_REPO_TOKEN}')
-                        def javac = plugins.appendNode('plugin')
-                        javac.appendNode('groupId', 'org.apache.maven.plugins')
-                        javac.appendNode('artifactId', 'maven-compiler-plugin')
-                        javac.appendNode('version', '3.6.0')
-                        configuration = javac.appendNode('configuration')
-                        configuration.appendNode('source', '1.6')
-                        configuration.appendNode('target', '1.6')
-                        def surefire = plugins.appendNode('plugin')
-                        surefire.appendNode('groupId', 'org.apache.maven.plugins')
-                        surefire.appendNode('artifactId', 'maven-surefire-plugin')
-                        surefire.appendNode('version', '2.19.1')
-                        def dependencies = root.dependencies.first()
-                        configurations.compileOnly.resolvedConfiguration.resolvedArtifacts.each {
-                            def dependency = dependencies.appendNode('dependency')
-                            def id = it.getModuleVersion().getId()
-                            dependency.appendNode('groupId', id.getGroup())
-                            dependency.appendNode('artifactId', id.getName())
-                            dependency.appendNode('version', id.getVersion())
-                            dependency.appendNode('scope', "provided")
-                        }
-                    }
-                }.writeTo("pom.xml")
+            reports {
+                html.enabled false
+                csv.enabled false
+                xml.enabled true
+                xml.destination "${buildDir}/reports/jacoco/report.xml"
             }
-        }
-
-        clean{
-            delete "pom.xml"
         }
 
         task sourcesJar(type: Jar, dependsOn: classes) {

@@ -19,10 +19,6 @@ test {
     useTestNG() {}
 }
 
-coveralls {
-    enabled = false
-}
-
 task createIdeaExample(type: Zip/*, dependsOn: tasks['idea']*/) {
     baseName "entity-essentials-idea-examples"
     from exampleFiles()
