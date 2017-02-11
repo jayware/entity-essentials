@@ -19,8 +19,8 @@
                 </a>
             </td>
             <td align="center">
-                <a href='https://coveralls.io/github/jayware/entity-essentials?branch=master'>
-                    <img src='https://coveralls.io/repos/github/jayware/entity-essentials/badge.svg?branch=master' alt='Coverage Status' />
+                <a href="https://codecov.io/gh/jayware/entity-essentials">
+                  <img src="https://codecov.io/gh/jayware/entity-essentials/branch/master/graph/badge.svg" alt="Codecov" />
                 </a>
             </td>
             <td align="center">
@@ -34,8 +34,8 @@
                 </a>
             </td>
             <td align="center">
-                <a href='https://coveralls.io/github/jayware/entity-essentials?branch=development'>
-                    <img src='https://coveralls.io/repos/github/jayware/entity-essentials/badge.svg?branch=development' alt='Coverage Status' />
+                <a href="https://codecov.io/gh/jayware/entity-essentials">
+                  <img src="https://codecov.io/gh/jayware/entity-essentials/branch/development/graph/badge.svg" alt="Codecov" />
                 </a>
             </td>
             <td align="center">
