@@ -25,27 +25,8 @@ package org.jayware.e2.component.api;
 public class ComponentPropertyAdapterInstantiationException
 extends RuntimeException
 {
-    public ComponentPropertyAdapterInstantiationException()
-    {
-    }
-
-    public ComponentPropertyAdapterInstantiationException(String message)
-    {
-        super(message);
-    }
-
-    public ComponentPropertyAdapterInstantiationException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-
     public ComponentPropertyAdapterInstantiationException(Throwable cause)
     {
         super(cause);
-    }
-
-    public ComponentPropertyAdapterInstantiationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

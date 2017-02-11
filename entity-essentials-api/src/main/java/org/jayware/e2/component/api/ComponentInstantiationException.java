@@ -25,27 +25,8 @@ package org.jayware.e2.component.api;
 public class ComponentInstantiationException
 extends RuntimeException
 {
-    public ComponentInstantiationException()
-    {
-    }
-
-    public ComponentInstantiationException(String message)
-    {
-        super(message);
-    }
-
-    public ComponentInstantiationException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-
     public ComponentInstantiationException(Throwable cause)
     {
         super(cause);
-    }
-
-    public ComponentInstantiationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

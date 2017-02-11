@@ -25,10 +25,6 @@ package org.jayware.e2.component.api;
 public class MalformedComponentException
 extends RuntimeException
 {
-    public MalformedComponentException()
-    {
-    }
-
     public MalformedComponentException(String message)
     {
         super(message);
@@ -37,15 +33,5 @@ extends RuntimeException
     public MalformedComponentException(String message, Throwable cause)
     {
         super(message, cause);
-    }
-
-    public MalformedComponentException(Throwable cause)
-    {
-        super(cause);
-    }
-
-    public MalformedComponentException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }
