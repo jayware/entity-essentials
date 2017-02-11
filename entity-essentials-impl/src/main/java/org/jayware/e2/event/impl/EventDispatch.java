@@ -27,7 +27,6 @@ import org.jayware.e2.event.api.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 
 
@@ -38,10 +37,10 @@ implements Runnable
 
     protected final Context myContext;
     protected final Event myEvent;
-    protected final Collection<Subscription> mySubscriptions;
+    protected final Iterable<Subscription> mySubscriptions;
     protected final CountDownLatch isDispatched;
 
-    EventDispatch(Context context, Event event, Collection<Subscription> subscriptions)
+    EventDispatch(Context context, Event event, Iterable<Subscription> subscriptions)
     {
         myContext = context;
         myEvent = event;
@@ -59,7 +58,7 @@ implements Runnable
         return myEvent;
     }
 
-    public Collection<Subscription> getSubscriptions()
+    public Iterable<Subscription> getSubscriptions()
     {
         return mySubscriptions;
     }

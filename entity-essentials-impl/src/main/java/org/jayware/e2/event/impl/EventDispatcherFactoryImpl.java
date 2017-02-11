@@ -125,7 +125,7 @@ implements EventDispatcherFactory
         }
     }
 
-    public EventDispatcher createEventDispatcher(Class<?> target)
+    public synchronized EventDispatcher createEventDispatcher(Class<?> target)
     {
         TargetDescriptor targetDescriptor = myTargetDescriptionMap.get(target);
 

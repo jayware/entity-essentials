@@ -28,8 +28,6 @@ import org.jayware.e2.event.api.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-
 import static org.jayware.e2.event.api.Query.State.Failed;
 import static org.jayware.e2.event.api.Query.State.Running;
 import static org.jayware.e2.event.api.Query.State.Success;
@@ -42,7 +40,7 @@ extends EventDispatch
 
     private final QueryWrapper myQuery;
 
-    public QueryDispatch(Context context, QueryImpl query, Collection<Subscription> subscriptions)
+    public QueryDispatch(Context context, QueryImpl query, Iterable<Subscription> subscriptions)
     {
         super(context, new QueryWrapper(query, new QueryResultSet(query)), subscriptions);
         myQuery = (QueryWrapper) myEvent;

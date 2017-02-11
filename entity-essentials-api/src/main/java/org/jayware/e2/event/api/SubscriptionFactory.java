@@ -16,25 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jayware.e2.util;
+package org.jayware.e2.event.api;
 
-import java.util.Arrays;
+import org.jayware.e2.util.ReferenceType;
 
 
-public class ObjectUtil
+public interface SubscriptionFactory
 {
-    public static boolean equal(Object a, Object b)
-    {
-        return a == b || a != null && a.equals(b);
-    }
-
-    public static int hashCode(Object... objects)
-    {
-        return Arrays.hashCode(objects);
-    }
-
-    public static Object getClassNameOf(final Object object)
-    {
-        return object.getClass().getName();
-    }
+    Subscription createSubscription(final Object subscriber, final ReferenceType referenceType, EventFilter[] filters, final EventDispatcher dispatcher);
 }

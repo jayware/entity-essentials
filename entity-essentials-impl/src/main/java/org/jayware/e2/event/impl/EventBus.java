@@ -30,26 +30,21 @@ import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.event.api.Subscription;
+import org.jayware.e2.event.api.SubscriptionBookkeeper;
+import org.jayware.e2.event.api.SubscriptionFactory;
 import org.jayware.e2.util.ReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jayware.e2.util.ObjectUtil.getClassNameOf;
 
 
 public class EventBus
@@ -60,83 +55,44 @@ implements Disposable
     private final Context myContext;
 
     private final EventDispatcherFactory myEventDispatcherFactory;
+    private final SubscriptionFactory mySubscriptionFactory;
 
-    private final Map<Object, Subscription> mySubscriptionsMap;
-    private final AtomicInteger mySubscriptionsMapHash;
-
-    private final AtomicReference<Collection<Subscription>> myLastSubscriptionCollection;
-    private final AtomicInteger myLastSubscriptionsMapHash;
-
-    private final ReadWriteLock myReadWriteLock = new ReentrantReadWriteLock();
-    private final Lock myReadLock = myReadWriteLock.readLock();
-    private final Lock myWriteLock = myReadWriteLock.writeLock();
+    private final SubscriptionBookkeeper myBookkeeper;
 
     private final ThreadPoolExecutor myWorkerPool;
 
     public EventBus(Context context)
     {
         myContext = context;
-
         myEventDispatcherFactory = new EventDispatcherFactoryImpl();
-
-        mySubscriptionsMap = new HashMap<Object, Subscription>();
-        mySubscriptionsMapHash = new AtomicInteger(mySubscriptionsMap.hashCode());
-        myLastSubscriptionCollection = new AtomicReference<Collection<Subscription>>();
-        myLastSubscriptionsMapHash = new AtomicInteger();
-
-        myLastSubscriptionCollection.set(new HashSet<Subscription>(mySubscriptionsMap.values()));
-        myLastSubscriptionsMapHash.set(mySubscriptionsMapHash.get());
-
+        mySubscriptionFactory = new SubscriptionFactoryImpl();
+        myBookkeeper = new SubscriptionBookkeeperImpl();
         myWorkerPool = new ThreadPoolExecutor(4, 4, 0L, SECONDS, new ArrayBlockingQueue<Runnable>(256), new EventBusThreadFactory(), new CallerRunsPolicy());
     }
 
     public void subscribe(Object subscriber, ReferenceType referenceType, EventFilter[] filters)
     {
-        final EventDispatcher eventDispatcher = myEventDispatcherFactory.createEventDispatcher(subscriber.getClass());
+        final EventDispatcher eventDispatcher;
+        final Subscription subscription;
 
-        myWriteLock.lock();
-        try
+        if (myBookkeeper.isSubscribed(subscriber))
         {
-            if (!mySubscriptionsMap.containsKey(subscriber))
-            {
-                switch (referenceType)
-                {
-                    case Strong:
-                        mySubscriptionsMap.put(subscriber, new SubscriptionImpl_StrongReference(subscriber, eventDispatcher, filters));
-                        break;
-                    case Weak:
-                    default:
-                        mySubscriptionsMap.put(subscriber, new SubscriptionImpl_WeakReference(subscriber, eventDispatcher, filters));
-                        break;
-                }
+            return;
+        }
 
-                mySubscriptionsMapHash.set(mySubscriptionsMap.hashCode());
-                log.debug("Subscribe: [ {} ] {} Dispatcher: {}", referenceType, subscriber.getClass().getName(), eventDispatcher.getClass().getName());
-            }
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
+        eventDispatcher = myEventDispatcherFactory.createEventDispatcher(subscriber.getClass());
+        subscription = mySubscriptionFactory.createSubscription(subscriber, referenceType, filters, eventDispatcher);
+
+        myBookkeeper.subscribe(subscription);
+
+        log.debug("Subscribe: [ {} ] {} Dispatcher: {}", subscription.getReferenceType(), getClassNameOf(subscription), getClassNameOf(subscription.getEventDispatcher()));
     }
 
     public void unsubscribe(Object subscriber)
     {
-        myWriteLock.lock();
-        try
-        {
-            Object result = mySubscriptionsMap.remove(subscriber);
+        myBookkeeper.unsubscribe(subscriber);
 
-            if (result != null)
-            {
-                mySubscriptionsMapHash.set(mySubscriptionsMap.hashCode());
-                log.debug("Unsubscribe: {}", subscriber.getClass().getName());
-            }
-        }
-        finally
-        {
-            myWriteLock.unlock();
-        }
+        log.debug("Unsubscribe: {}", getClassNameOf(subscriber));
     }
 
     public void send(Event event)
@@ -168,44 +124,17 @@ implements Disposable
             log.warn("Due to disposing the event bus, never commenced the dispatch of: {}", runnable);
         }
 
-        mySubscriptionsMap.clear();
-        updateLastSubscriptionCollection();
-    }
-
-    protected Collection<Subscription> subscriptions()
-    {
-        return mySubscriptionsMap.values();
-    }
-
-    private void updateLastSubscriptionCollection()
-    {
-        while (myLastSubscriptionsMapHash.get() != mySubscriptionsMapHash.get())
-        {
-            myReadLock.lock();
-            try
-            {
-                myLastSubscriptionCollection.set(new HashSet<Subscription>(mySubscriptionsMap.values()));
-                myLastSubscriptionsMapHash.set(mySubscriptionsMapHash.get());
-            }
-            finally
-            {
-                myReadLock.unlock();
-            }
-        }
+        myBookkeeper.clear();
     }
 
     private EventDispatch createEventDispatch(Event event)
     {
-        updateLastSubscriptionCollection();
-
-        return new EventDispatch(myContext, event, myLastSubscriptionCollection.get());
+        return new EventDispatch(myContext, event, myBookkeeper.subscriptions());
     }
 
     private QueryDispatch createQueryDispatch(Query query)
     {
-        updateLastSubscriptionCollection();
-
-        return new QueryDispatch(myContext, (QueryImpl) query, myLastSubscriptionCollection.get());
+        return new QueryDispatch(myContext, (QueryImpl) query, myBookkeeper.subscriptions());
     }
 
     private static class EventBusThreadFactory

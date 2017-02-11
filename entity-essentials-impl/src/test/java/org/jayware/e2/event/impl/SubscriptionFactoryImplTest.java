@@ -20,50 +20,36 @@ package org.jayware.e2.event.impl;
 
 import mockit.Mocked;
 import org.jayware.e2.event.api.EventDispatcher;
-import org.jayware.e2.event.api.EventFilter;
+import org.jayware.e2.event.impl.SubscriptionFactoryImpl.SubscriptionImpl_StrongReference;
+import org.jayware.e2.event.impl.SubscriptionFactoryImpl.SubscriptionImpl_WeakReference;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jayware.e2.util.ReferenceType.Strong;
+import static org.jayware.e2.util.ReferenceType.Weak;
 
 
-public class SubscriptionImplTest_WeakReference
+public class SubscriptionFactoryImplTest
 {
-    private SubscriptionFactoryImpl.SubscriptionImpl_WeakReference testee;
+    private SubscriptionFactoryImpl testee;
 
     private @Mocked Object testSubscriber;
     private @Mocked EventDispatcher testDispatcher;
-    private @Mocked EventFilter testFilterA;
-    private @Mocked EventFilter testFilterB;
 
     @BeforeMethod
     public void setUp()
-    throws Exception
     {
-        testee = new SubscriptionFactoryImpl.SubscriptionImpl_WeakReference(testSubscriber, new EventFilter[] {testFilterA, testFilterB}, testDispatcher);
+        testee = new SubscriptionFactoryImpl();
     }
 
     @Test
-    public void test()
-    throws Exception
+    public void test_createSubscription_Returns_the_expected_Subscription_for_the_passed_ReferencesType()
     {
-        assertThat(testee.getSubscriber()).isEqualTo(testSubscriber);
-        assertThat(testee.getEventDispatcher()).isEqualTo(testDispatcher);
-        assertThat(testee.getFilters()).containsExactlyInAnyOrder(testFilterA, testFilterB);
-    }
+        assertThat(testee.createSubscription(testSubscriber, Strong, null, testDispatcher))
+            .isInstanceOf(SubscriptionImpl_StrongReference.class);
 
-    @Test
-    public void test_isValid_Returns_true_for_a_newly_constructed_subscription()
-    throws Exception
-    {
-        assertThat(testee.isValid()).isTrue();
-    }
-
-    @Test
-    public void test_isValid_Returns_false_when_subscription_gets_invalidated()
-    throws Exception
-    {
-        testee.invalidate();
-        assertThat(testee.isValid()).isFalse();
+        assertThat(testee.createSubscription(testSubscriber, Weak, null, testDispatcher))
+            .isInstanceOf(SubscriptionImpl_WeakReference.class);
     }
 }

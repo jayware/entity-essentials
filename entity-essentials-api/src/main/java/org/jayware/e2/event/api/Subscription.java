@@ -22,6 +22,9 @@
 package org.jayware.e2.event.api;
 
 
+import org.jayware.e2.util.ReferenceType;
+
+
 /**
  * A <code>Subscription</code> is a triple of a subscriber, a {@link EventFilter} and an {@link EventDispatcher}.
  *
@@ -53,6 +56,13 @@ public interface Subscription
      * @return the {@link EventDispatcher}, never <code>null</code>.
      */
     EventDispatcher getEventDispatcher();
+
+    /**
+     * Returns the {@link Subscription Subscription's} {@link ReferenceType}.
+     *
+     * @return the {@link ReferenceType}, never <code>null</code>.
+     */
+    ReferenceType getReferenceType();
 
     /**
      * Invalidates this <code>Subscription</code>.
