@@ -26,6 +26,19 @@ import static org.assertj.core.api.Assertions.fail;
 public class PreconditionsTest
 {
     @Test
+    public void test_checkArgument_Passes_if_the_Precondition_returns_true()
+    {
+        Preconditions.checkArgument(new Preconditions.Precondition()
+        {
+            @Override
+            public boolean check()
+            {
+                return true;
+            }
+        });
+    }
+
+    @Test
     public void test_checkArgument_Throws_an_IllegalArgumentException_if_the_passed_Precondition_returns_false()
     {
         try
@@ -48,6 +61,12 @@ public class PreconditionsTest
     }
 
     @Test
+    public void test_checkArgument_Passes_if_true_is_passed_in()
+    {
+        Preconditions.checkArgument(true);
+    }
+
+    @Test
     public void test_checkArgument_Throws_an_IllegalArgumentException_if_false_is_passed()
     {
         try
@@ -59,6 +78,19 @@ public class PreconditionsTest
         {
 
         }
+    }
+
+    @Test
+    public void test_checkState_Passes_if_the_Precondition_returns_true()
+    {
+        Preconditions.checkState(new Preconditions.Precondition()
+            {
+                @Override
+                public boolean check()
+                {
+                    return true;
+                }
+            });
     }
 
     @Test
@@ -81,6 +113,12 @@ public class PreconditionsTest
         {
 
         }
+    }
+
+    @Test
+    public void test_checkState_Passes_if_true_is_passed_in()
+    {
+        Preconditions.checkState(true);
     }
 
     @Test
@@ -119,6 +157,12 @@ public class PreconditionsTest
         {
 
         }
+    }
+
+    @Test
+    public void test_checkStringNotEmpty_Passes_if_the_String_is_neither_null_nor_empty()
+    {
+        Preconditions.checkStringNotEmpty("this should pass the check!");
     }
 
     @Test
