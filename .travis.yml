@@ -1,27 +1,23 @@
 language: java
 
 jdk:
-  - oraclejdk8
+- oraclejdk8
 
 branches:
   only:
   - master
   - development
 
-script: ./gradlew check --info --continue
+script: "./gradlew check --info --continue"
 
 before_install:
-  - pip install --user codecov
+- pip install --user codecov
 
 after_success:
-  - ./gradlew codeCoverageReport
-  - codecov
+- "./gradlew codeCoverageReport"
+- codecov
 
-addons:
-  coverity_scan:
-    project:
-      name: jayware/entity-essentials
-    notification_email: developers@jayware.org
-    build_command_prepend: cov-configure --java
-    build_command: gradle build -x test
-    branch_pattern: coverity
+notifications:
+  hipchat:
+    rooms:
+      secure: cyUXqr2UGEMnGAnHRZEqiKwl+HYmlZfXkxCRI/oCuUzlP6TgDaiMGsQPowrQg6UO0dBQch5xmaOAAS0EeN6Bs+GFgVqN+v8Mk2TzcRe+wNK26k0uLDeDrurbTx+hmmYveWPPd5aKX6byyhySZj1wtufPug8sFOKjRe48ZO2EpORvNIm645gC1ReV7ZvE4x2BOgqrk/mirUTISdEv2tNU30ILYNE6tdVNABat29/2nvjzckVSXQgyhYCUxjMhTlquyKTx0FQYJCxfVYUjc15sI/m6n6J8jCfDQAw1ktns36RZMR3tbj55o9TlA9ZAO5Ngp2sjw8kF1J7elCKb5FVueWYCOIQtZyK1JTcZY0ytIvbcw4qy6s/SE+ChWFxI40x6odshXQJPhgbyMw12nJQNKbQiAo/E2WsYxMEi2q9QVf4Q3rMLgxE0DRFrFcO+b4wzLbMP237lwt1C3fJQFy9/fKeVgu4jVrc8eQqvDfItUZK2TP7narP13yN2XvHqc2Sx3JINf4JL8NA5zacjvx5RtoGdihdrsvosif9cKyGTAoxNf2eplMI2t41qBb1Ad7gjaxF0GaBoy1+aqfDRWjPFjd0Zfll3+m5f1Zpow0adEJwxaKpkxy+8xRddYeogl9xrxrT9Larg/Y9rpM9TO88dZxwzO6srJ6LWICjrAmm7uh0=
