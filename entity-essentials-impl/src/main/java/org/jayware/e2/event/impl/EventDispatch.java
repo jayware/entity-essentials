@@ -20,7 +20,6 @@ package org.jayware.e2.event.impl;
 
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.event.api.Event;
-import org.jayware.e2.event.api.EventDispatchException;
 import org.jayware.e2.event.api.EventDispatcher;
 import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.Subscription;
@@ -28,6 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
+
+import static org.jayware.e2.event.api.EventDispatchException.throwEventDispatchException;
+import static org.jayware.e2.event.api.EventDispatchException.throwEventDispatchExceptionWithReport;
 
 
 public class EventDispatch
@@ -46,11 +48,6 @@ implements Runnable
         myEvent = event;
         mySubscriptions = subscriptions;
         isDispatched = new CountDownLatch(1);
-    }
-
-    public boolean isDispatched()
-    {
-        return isDispatched.getCount() == 0;
     }
 
     public Event getEvent()
@@ -78,32 +75,13 @@ implements Runnable
         {
             for (Subscription subscription : mySubscriptions)
             {
-                final EventFilter[] filters = subscription.getFilters();
-                final EventDispatcher eventDispatcher = subscription.getEventDispatcher();
-                boolean doDispatch = true;
-
-                if (eventDispatcher.accepts(myEvent.getType()))
+                try
                 {
-                    for (EventFilter filter : filters)
-                    {
-                        if (!filter.accepts(myContext, myEvent))
-                        {
-                            doDispatch = false;
-                            break;
-                        }
-                    }
-
-                    if (doDispatch)
-                    {
-                        try
-                        {
-                            eventDispatcher.dispatch(myEvent, subscription.getSubscriber());
-                        }
-                        catch (Exception exception)
-                        {
-                            log.error("", new EventDispatchException("Failed to dispatch event!", myEvent, exception));
-                        }
-                    }
+                    runEventDispatch(subscription.getEventDispatcher(), subscription.getSubscriber(), subscription.getFilters());
+                }
+                catch (Exception e)
+                {
+                    log.error("Failed to dispatch event!", e);
                 }
             }
         }
@@ -111,6 +89,48 @@ implements Runnable
         {
             isDispatched.countDown();
         }
+    }
+
+    protected void runEventDispatch(final EventDispatcher dispatcher, final Object subscriber, final EventFilter[] filters)
+    {
+        if (acceptedEvent(dispatcher) && passedFilters(filters))
+        {
+            try
+            {
+                dispatcher.dispatch(myEvent, subscriber);
+            }
+            catch (Exception cause)
+            {
+                throwEventDispatchExceptionWithReport(cause, myEvent, "Failed to dispatch event to: %s", subscriber);
+            }
+        }
+    }
+
+    protected boolean acceptedEvent(final EventDispatcher dispatcher)
+    {
+        return dispatcher.accepts(myEvent.getType());
+    }
+
+    protected boolean passedFilters(final EventFilter[] filters)
+    {
+        for (int index = 0; index < filters.length; ++index)
+        {
+            final EventFilter filter = filters[index];
+
+            try
+            {
+                if (!filter.accepts(myContext, myEvent))
+                {
+                    return false;
+                }
+            }
+            catch (Exception cause)
+            {
+                throwEventDispatchException(cause, "Failed to apply filter #%s: %s", index + 1, filter);
+            }
+        }
+
+        return true;
     }
 
     @Override

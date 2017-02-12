@@ -19,7 +19,6 @@
 package org.jayware.e2.event.impl;
 
 import org.jayware.e2.context.api.Context;
-import org.jayware.e2.event.api.EventDispatchException;
 import org.jayware.e2.event.api.EventDispatcher;
 import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.Query;
@@ -28,6 +27,7 @@ import org.jayware.e2.event.api.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jayware.e2.event.api.EventDispatchException.throwEventDispatchExceptionWithReport;
 import static org.jayware.e2.event.api.Query.State.Failed;
 import static org.jayware.e2.event.api.Query.State.Running;
 import static org.jayware.e2.event.api.Query.State.Success;
@@ -68,33 +68,13 @@ extends EventDispatch
 
             for (Subscription subscription : mySubscriptions)
             {
-                final EventFilter[] filters = subscription.getFilters();
-                final EventDispatcher eventDispatcher = subscription.getEventDispatcher();
-                boolean doDispatch = true;
-
-                if (eventDispatcher.accepts(myQuery.getType()))
+                if (!queryFailed)
                 {
-                    for (EventFilter filter : filters)
-                    {
-                        if (!filter.accepts(myContext, myQuery))
-                        {
-                            doDispatch = false;
-                            break;
-                        }
-                    }
-
-                    if (doDispatch)
-                    {
-                        try
-                        {
-                            eventDispatcher.dispatch(myQuery, subscription.getSubscriber());
-                        }
-                        catch (Exception exception)
-                        {
-                            log.error("", new EventDispatchException("Failed to dispatch event!", myQuery, exception));
-                            queryFailed = true;
-                        }
-                    }
+                    queryFailed = runQueryDispatch(subscription.getEventDispatcher(), subscription.getSubscriber(), subscription.getFilters());
+                }
+                else
+                {
+                    runQueryDispatch(subscription.getEventDispatcher(), subscription.getSubscriber(), subscription.getFilters());
                 }
             }
 
@@ -111,6 +91,24 @@ extends EventDispatch
         {
             isDispatched.countDown();
         }
+    }
+
+    private boolean runQueryDispatch(final EventDispatcher dispatcher, final Object subscriber, final EventFilter[] filters)
+    {
+        if (acceptedEvent(dispatcher) && passedFilters(filters))
+        {
+            try
+            {
+                dispatcher.dispatch(myQuery, subscriber);
+            }
+            catch (Exception cause)
+            {
+                throwEventDispatchExceptionWithReport(cause, myEvent, "Failed to dispatch event to: %s", subscriber);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

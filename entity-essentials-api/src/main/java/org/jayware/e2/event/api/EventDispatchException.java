@@ -22,19 +22,25 @@
 package org.jayware.e2.event.api;
 
 
+import static java.lang.String.format;
 import static org.jayware.e2.event.api.Inspector.generateReport;
 
 
 public class EventDispatchException
 extends RuntimeException
 {
-    public EventDispatchException(String message, Event event)
+    private EventDispatchException(String message, Throwable cause)
     {
-        super(generateReport(message, event));
+        super(message, cause);
     }
 
-    public EventDispatchException(String message, Event event, Throwable cause)
+    public static void throwEventDispatchException(Throwable cause, String message, Object... args)
     {
-        super(generateReport(message, event), cause);
+        throw new EventDispatchException(format(message, args), cause);
+    }
+
+    public static void throwEventDispatchExceptionWithReport(Throwable cause, Event event, String message, Object... args)
+    {
+        throw new EventDispatchException(generateReport(format(message, args), event), cause);
     }
 }

@@ -62,7 +62,6 @@ configure ([
     project(':entity-essentials-impl'),
     project(':entity-essentials-assertj')
 ]) {
-    println "applying java plugin to $project"
     project.apply plugin: 'java'
     project.apply plugin: 'osgi'
     project.apply plugin: 'maven'
