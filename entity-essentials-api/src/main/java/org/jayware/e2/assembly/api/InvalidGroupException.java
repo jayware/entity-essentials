@@ -31,9 +31,4 @@ extends RuntimeException
     {
         super(message);
     }
-
-    public InvalidGroupException(Group group, String message, Throwable cause)
-    {
-        super(message, cause);
-    }
 }

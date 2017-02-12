@@ -22,11 +22,6 @@ package org.jayware.e2.assembly.api;
 public class InvalidNodeException
 extends RuntimeException
 {
-    public InvalidNodeException(Node node)
-    {
-        super("");
-    }
-
     public InvalidNodeException(String message, Node node)
     {
         super(message);

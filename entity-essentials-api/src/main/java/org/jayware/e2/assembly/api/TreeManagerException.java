@@ -22,10 +22,6 @@ package org.jayware.e2.assembly.api;
 public class TreeManagerException
 extends RuntimeException
 {
-    public TreeManagerException()
-    {
-    }
-
     public TreeManagerException(String message)
     {
         super(message);
@@ -34,10 +30,5 @@ extends RuntimeException
     public TreeManagerException(String message, Throwable cause)
     {
         super(message, cause);
-    }
-
-    public TreeManagerException(Throwable cause)
-    {
-        super(cause);
     }
 }
