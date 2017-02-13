@@ -1,5 +1,13 @@
 # Releases
 
+# Version 0.5.2 (2017-02-13)
+
+## Fixes
+ - The mechanism of event-dispatching has been rework to fix a bug which led to swallowed exceptions.
+   https://github.com/jayware/entity-essentials/issues/45[#45]
+ - A bug has been fixed which prevented weak handlers from been collected by the GC.
+   https://github.com/jayware/entity-essentials/issues/50[#50]
+
 # Version 0.5.1 (2017-02-10)
 
 ## Fixes
