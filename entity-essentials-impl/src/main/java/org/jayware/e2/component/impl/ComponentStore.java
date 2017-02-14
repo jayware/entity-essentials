@@ -352,40 +352,55 @@ implements Disposable
 
     public Class<? extends Component> resolveComponent(String name)
     {
+        final Class<?> potentialComponent;
         Class<? extends Component> componentClass;
-        myReadLock.lock();
+
         try
         {
-            componentClass = myComponentClassMap.get(name);
-
-            if (componentClass == null)
+            myReadLock.lock();
+            try
             {
-                final Class<?> potentialComponent = forName(name);
+                componentClass = myComponentClassMap.get(name);
 
-                if (!Component.class.isAssignableFrom(potentialComponent))
+                if (componentClass != null)
                 {
-                    throw new RuntimeException(format("Invalid component-class! The potential component-class '%s' is not assignable to type '%s'.", potentialComponent, Component.class));
+                    return componentClass;
                 }
-
-                prepareComponent((Class<? extends Component>) potentialComponent);
             }
-
-            componentClass = myComponentClassMap.get(name);
-
-            if (componentClass == null)
+            finally
             {
-                throw new IllegalStateException(format("Something went wrong! Expected the component '%s' to be prepared!", name));
+                myReadLock.unlock();
             }
 
-            return componentClass;
+            potentialComponent = forName(name);
+
+            if (!Component.class.isAssignableFrom(potentialComponent))
+            {
+                throw new RuntimeException(format("Invalid component-class! The potential component-class '%s' is not assignable to type '%s'.", potentialComponent, Component.class));
+            }
+
+            prepareComponent((Class<? extends Component>) potentialComponent);
+
+            myReadLock.lock();
+            try
+            {
+                componentClass = myComponentClassMap.get(name);
+
+                if (componentClass != null)
+                {
+                    return componentClass;
+                }
+            }
+            finally
+            {
+                myReadLock.unlock();
+            }
+
+            throw new IllegalStateException(format("Something went wrong! Expected the component '%s' to be prepared!", name));
         }
         catch (Exception e)
         {
             throw new RuntimeException(format("Failed to resolve '%s' as a component!", name), e);
-        }
-        finally
-        {
-            myReadLock.unlock();
         }
     }
 
