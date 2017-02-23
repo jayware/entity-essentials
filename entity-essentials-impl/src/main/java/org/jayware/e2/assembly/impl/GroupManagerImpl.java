@@ -19,6 +19,7 @@
 package org.jayware.e2.assembly.impl;
 
 
+import org.jayware.e2.assembly.api.ContextualGroupManager;
 import org.jayware.e2.assembly.api.Group;
 import org.jayware.e2.assembly.api.GroupEvent.CreateGroupEvent;
 import org.jayware.e2.assembly.api.GroupEvent.DeleteGroupEvent;
@@ -249,6 +250,13 @@ implements GroupManager
         checkGroupNotNullAndValid(group);
 
         return getOrCreateGroupHub(ref.getContext()).isEntityMemberOfGroup(ref, group);
+    }
+
+    @Override
+    public ContextualGroupManager asContextual(final Context context)
+    {
+        checkContextNotNullAndNotDisposed(context);
+        return new ContextualGroupManagerImpl(context, this);
     }
 
     private GroupHub getOrCreateGroupHub(Context context)
