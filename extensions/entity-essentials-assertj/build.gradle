@@ -47,16 +47,16 @@ ext.projectObjectModel = pom {
 dependencies {
 
     compileOnly project(':entity-essentials-api')
-    compileOnly 'org.assertj:assertj-core:3.6.1'
+    compileOnly 'org.assertj:assertj-core:3.6.2'
 
     testCompile project(':entity-essentials-api')
-    testCompile 'org.assertj:assertj-core:3.6.1'
+    testCompile 'org.assertj:assertj-core:3.6.2'
 
     testCompile 'org.testng:testng:6.10'
     testCompile 'org.jmockit:jmockit:1.30'
 
     testRuntime project(":entity-essentials-impl")
-    testRuntime 'ch.qos.logback:logback-classic:1.1.8'
+    testRuntime 'ch.qos.logback:logback-classic:1.2.1'
 }
 
 test {
