@@ -49,8 +49,8 @@
 </p>
 ++++
 
-:api-version: 0.5.3
-:impl-version: 0.5.3
+:api-version: 0.6.0
+:impl-version: 0.6.0
 
 ## Description
 Entity Essentials is a Component-based Entity System written in Java. This framework provides operations and structures to work with entities and components.
@@ -157,12 +157,12 @@ dependencies {
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-api</artifactId>
-    <version>0.5.3</version>
+    <version>0.6.0</version>
 </dependency>
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-impl</artifactId>
-    <version>0.5.3</version>
+    <version>0.6.0</version>
     <scope>runtime</scope>
 </dependency>
 ----
