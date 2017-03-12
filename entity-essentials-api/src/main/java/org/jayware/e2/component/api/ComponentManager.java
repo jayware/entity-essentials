@@ -268,39 +268,6 @@ public interface ComponentManager
     Set<Class<? extends Component>> getComponentClasses(Context context);
 
     /**
-     * Registers the specified {@link ComponentPropertyAdapter} to the lost of available adapters in
-     * the given {@link Context}.
-     *
-     * @param context a {@link Context}.
-     * @param adapterClass the {@link Class} of the adapter.
-     */
-    void registerPropertyAdapter(Context context, Class<? extends ComponentPropertyAdapter> adapterClass);
-
-    /**
-     * Unregisters the specified {@link ComponentPropertyAdapter} from the list of available adapters in
-     * the given {@link Context}.
-     *
-     * @param context a {@link Context}.
-     * @param adapterClass the {@link Class} of the adapter.
-     */
-    void unregisterPropertyAdapter(Context context, Class<? extends ComponentPropertyAdapter> adapterClass);
-
-    /**
-     * Returns a {@link ComponentPropertyAdapter} to adapt the specified type.
-     * <p>
-     * This operation may return <code>null</code> if there is no appropriate adapter registered in the
-     * given {@link Context}.
-     *
-     * @param context a {@link Context}.
-     * @param type a {@link Class} representing the type of the property.
-     * @param <T> the getPropertyNames type.
-     *
-     * @return a {@link ComponentPropertyAdapter} for the specified type or <code>null</code>
-     *         if there is no appropriate adapter.
-     */
-    <T> ComponentPropertyAdapter<T> getPropertyAdapter(Context context, Class<T> type);
-
-    /**
      * Returns a new instance of a {@link ContextualComponentManager} which belongs to the specified {@link Context}.
      *
      * @param context a {@link Context}

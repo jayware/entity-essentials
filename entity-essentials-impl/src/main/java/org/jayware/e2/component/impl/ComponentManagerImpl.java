@@ -33,7 +33,6 @@ import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.ComponentManagerException;
 import org.jayware.e2.component.api.ComponentNotFoundException;
-import org.jayware.e2.component.api.ComponentPropertyAdapter;
 import org.jayware.e2.component.api.ComponentPropertyAdapterProvider;
 import org.jayware.e2.component.api.ContextualComponentManager;
 import org.jayware.e2.context.api.Context;
@@ -339,36 +338,6 @@ implements ComponentManager
 
         final ComponentStore componentStore = getOrCreateComponentStore(context);
         return componentStore.getComponentClasses();
-    }
-
-    @Override
-    public void registerPropertyAdapter(Context context, Class<? extends ComponentPropertyAdapter> adapterClass)
-    {
-        checkNotNull(context);
-        checkNotNull(adapterClass);
-
-        final ComponentPropertyAdapterProvider adapterProvider = getOrCreatePropertyAdapterProvider(context);
-        adapterProvider.registerPropertyAdapter(adapterClass);
-    }
-
-    @Override
-    public void unregisterPropertyAdapter(Context context, Class<? extends ComponentPropertyAdapter> adapterClass)
-    {
-        checkNotNull(context);
-        checkNotNull(adapterClass);
-
-        final ComponentPropertyAdapterProvider adapterProvider = getOrCreatePropertyAdapterProvider(context);
-        adapterProvider.unregisterPropertyAdapter(adapterClass);
-    }
-
-    @Override
-    public <T> ComponentPropertyAdapter<T> getPropertyAdapter(Context context, Class<T> type)
-    {
-        checkNotNull(context);
-        checkNotNull(type);
-
-        final ComponentPropertyAdapterProvider adapterProvider = getOrCreatePropertyAdapterProvider(context);
-        return adapterProvider.getAdapterFor(type);
     }
 
     @Override

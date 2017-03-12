@@ -22,7 +22,6 @@
 package org.jayware.e2.component.impl.generation.plan;
 
 
-import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.util.ObjectUtil;
 
 import java.lang.reflect.Method;
@@ -43,8 +42,6 @@ public class ComponentPropertyGenerationPlan
 
     private Method mySetterMethod;
     private String mySetterMethodDescriptor;
-
-    private ComponentProperty myAnnotation;
 
     public ComponentPropertyGenerationPlan(ComponentGenerationPlan owner, String propertyName)
     {
@@ -122,16 +119,6 @@ public class ComponentPropertyGenerationPlan
     public String getPropertySetterMethodDescriptor()
     {
         return mySetterMethodDescriptor;
-    }
-
-    public void setPropertyAnnotation(ComponentProperty annotation)
-    {
-        myAnnotation = annotation;
-    }
-
-    public ComponentProperty getPropertyAnnotation()
-    {
-        return myAnnotation;
     }
 
     public boolean isComplete()

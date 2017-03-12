@@ -24,16 +24,10 @@ package org.jayware.e2.component.impl;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.ComponentInstantiationException;
-import org.jayware.e2.component.api.ComponentManager;
-import org.jayware.e2.component.api.ComponentProperty;
-import org.jayware.e2.component.api.ComponentPropertyAdapter;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
 import org.jayware.e2.context.api.Context;
 
 import java.lang.reflect.Constructor;
-import java.util.HashSet;
-import java.util.Set;
 
 
 public class ComponentInstancerImpl<C extends Component, T extends C>
@@ -41,22 +35,11 @@ implements ComponentInstancer<C>
 {
     private final ComponentGenerationPlan myComponentGenerationPlan;
     private final Class<T> myComponentClass;
-    private final Set<Class<? extends ComponentPropertyAdapter>> myRequiredAdaptersSet;
 
     public ComponentInstancerImpl(ComponentGenerationPlan componentGenerationPlan, Class<? extends Component> componentClass)
     {
         myComponentGenerationPlan = componentGenerationPlan;
         myComponentClass = (Class<T>) componentClass;
-        myRequiredAdaptersSet = new HashSet<Class<? extends ComponentPropertyAdapter>>();
-
-        for (ComponentPropertyGenerationPlan propertyPlan : componentGenerationPlan.getComponentPropertyGenerationPlans())
-        {
-            ComponentProperty property = propertyPlan.getPropertyAnnotation();
-            if (property != null && !property.adapter().equals(ComponentProperty.DefaultAdapter.class))
-            {
-                myRequiredAdaptersSet.add(property.adapter());
-            }
-        }
     }
 
     @Override
@@ -65,15 +48,7 @@ implements ComponentInstancer<C>
         try
         {
             final Constructor<C> constructor = (Constructor<C>) myComponentClass.getConstructor(Context.class);
-            final C instance = constructor.newInstance(context);
-
-            final ComponentManager componentManager = context.getService(ComponentManager.class);
-            for (Class<? extends ComponentPropertyAdapter> adapter : myRequiredAdaptersSet)
-            {
-                componentManager.registerPropertyAdapter(context, adapter);
-            }
-
-            return instance;
+            return constructor.newInstance(context);
         }
         catch (Exception e)
         {

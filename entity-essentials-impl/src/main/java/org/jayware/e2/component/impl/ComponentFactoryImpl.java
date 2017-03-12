@@ -27,7 +27,6 @@ import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentInstancer;
-import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlanFactory;
@@ -252,8 +251,6 @@ implements ComponentFactory
                 propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
                 propertyGenerationPlan = propertyDescriptorMap.get(propertyName);
 
-                final ComponentProperty componentPropertyAnnotation = method.getAnnotation(ComponentProperty.class);
-
                 if (propertyGenerationPlan == null)
                 {
                     propertyGenerationPlan = myGenerationPlanFactory.createComponentPropertyGenerationPlan(componentGenerationPlan, propertyName);
@@ -300,16 +297,6 @@ implements ComponentFactory
                     }
 
                     propertyGenerationPlan.setPropertySetterMethod(method);
-                }
-
-                if (componentPropertyAnnotation != null)
-                {
-                    if (propertyGenerationPlan.getPropertyAnnotation() != null)
-                    {
-                        throw new MalformedComponentException("Ambiguous ComponentProperty annotation for '" + propertyGenerationPlan.getPropertyName() + "' in '" + propertyGenerationPlan.getPropertyType().getName() + "'! Remove the annotation either from the setter or getter.");
-                    }
-
-                    propertyGenerationPlan.setPropertyAnnotation(componentPropertyAnnotation);
                 }
             }
             else
