@@ -23,6 +23,7 @@ package org.jayware.e2.util;
 
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
 
@@ -149,5 +150,39 @@ public class ThreadUtil
     public static boolean isThreadInGroup(Thread thread, ThreadGroup group)
     {
         return thread.getThreadGroup() == group;
+    }
+
+    public static String generateThreadDump()
+    {
+        final StringBuilder dump = new StringBuilder();
+        final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+        final ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(threadMXBean.getAllThreadIds(), 100);
+
+        for (final ThreadInfo threadInfo : threadInfos)
+        {
+            final Thread.State state;
+            final StackTraceElement[] stackTraceElements;
+
+            dump.append('"');
+            dump.append(threadInfo.getThreadName());
+            dump.append("\" ");
+
+            state = threadInfo.getThreadState();
+
+            dump.append("\n   java.lang.Thread.State: ");
+            dump.append(state);
+
+            stackTraceElements = threadInfo.getStackTrace();
+
+            for (final StackTraceElement stackTraceElement : stackTraceElements)
+            {
+                dump.append("\n        at ");
+                dump.append(stackTraceElement);
+            }
+
+            dump.append("\n\n");
+        }
+
+        return dump.toString();
     }
 }
