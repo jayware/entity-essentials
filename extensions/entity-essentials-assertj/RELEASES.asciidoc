@@ -1,0 +1,17 @@
+# Releases
+
+# Version 0.3.0 (2017-03-24)
+
+## Enhancements
+ - Added ComponentAssertions to validate the state of components.
+   https://github.com/jayware/entity-essentials/issues/55[#55]
+ - Added an operation to assert that all entities within a context are valid.
+   https://github.com/jayware/entity-essentials/issues/56[#56]
+
+# Version 0.2.0 (2016-12-18)
+
+## Enhancements
+ - Added an operation to assert that an entity does not have certain components.
+
+# Version 0.1.0 (2016-12-18)
+Initial release.
