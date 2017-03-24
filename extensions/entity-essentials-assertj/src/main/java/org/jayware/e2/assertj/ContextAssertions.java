@@ -27,7 +27,7 @@ import java.util.UUID;
 public class ContextAssertions
 extends AbstractAssert<ContextAssertions, Context>
 {
-    public ContextAssertions(Context actual)
+    private ContextAssertions(Context actual)
     {
         super(actual, ContextAssertions.class);
     }
@@ -43,7 +43,7 @@ extends AbstractAssert<ContextAssertions, Context>
 
         if (!actual.isDisposed())
         {
-            failWithMessage("Expected Context { %s } to be disposed", actual.getId());
+            failWithMessage("Expected Context <%s> to be disposed", actual.getId());
         }
 
         return this;
@@ -55,7 +55,7 @@ extends AbstractAssert<ContextAssertions, Context>
 
         if (actual.isDisposed())
         {
-            failWithMessage("Expected Context { %s } not to be disposed", actual.getId());
+            failWithMessage("Expected Context <%s> not to be disposed", actual.getId());
         }
 
         return this;
@@ -67,7 +67,7 @@ extends AbstractAssert<ContextAssertions, Context>
 
         if (!actual.getId().toString().equals(expectedId))
         {
-            failWithMessage("Expected Context { %s } has id: %s", actual.getId(), expectedId);
+            failWithMessage("Expected Context <%s> has id: %s", actual.getId(), expectedId);
         }
 
         return this;

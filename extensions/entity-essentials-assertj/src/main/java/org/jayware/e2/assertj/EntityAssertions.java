@@ -39,7 +39,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
     private final Context myContext;
     private final ComponentManager myComponentManager;
 
-    public EntityAssertions(EntityRef actual)
+    private EntityAssertions(EntityRef actual)
     {
         super(actual, EntityAssertions.class);
 
@@ -74,7 +74,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
 
         if (actual.isInvalid())
         {
-            failWithMessage("Expected EntityRef { %s } to be valid", actual.getId());
+            failWithMessage("Expected EntityRef <%s> to be valid", actual.getId());
         }
 
         return this;
@@ -86,7 +86,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
 
         if (actual.isValid())
         {
-            failWithMessage("Expected EntityRef { %s } to be invalid", actual.getId());
+            failWithMessage("Expected EntityRef <%s> to be invalid", actual.getId());
         }
 
         return this;
@@ -98,7 +98,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
 
         if (!aspect.matches(actual))
         {
-            failWithMessage("Expected Entity { %s } to match the Aspect: %s", actual.getId(), aspect);
+            failWithMessage("Expected Entity <%s> to match the Aspect: %s", actual.getId(), aspect);
         }
 
         return this;
@@ -111,7 +111,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
         final Collection<Class<? extends Component>> actualComponents = myComponentManager.getComponentTypes(actual);
 
         Assertions.assertThat(myComponentManager.getComponentTypes(actual))
-            .withFailMessage("Expected that Entity { %s } has the components:\n\n%s\nbut has:\n\n%s", actual.getId(), stringify(expectedComponents), stringify(actualComponents))
+            .withFailMessage("Expected that Entity <%s> has the components:\n\n%s\nbut has:\n\n%s", actual.getId(), stringify(expectedComponents), stringify(actualComponents))
             .contains(expectedComponents);
 
         return this;
@@ -124,7 +124,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
         final Collection<Class<? extends Component>> actualComponents = myComponentManager.getComponentTypes(actual);
 
         Assertions.assertThat(actualComponents)
-            .withFailMessage("Expected that Entity { %s } has exactly the components:\n\n%s\nbut has:\n\n%s", actual.getId(), stringify(expectedComponents), stringify(actualComponents))
+            .withFailMessage("Expected that Entity <%s> has exactly the components:\n\n%s\nbut has:\n\n%s", actual.getId(), stringify(expectedComponents), stringify(actualComponents))
             .containsExactlyInAnyOrder(expectedComponents);
 
         return this;
@@ -137,7 +137,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
         final Collection<Class<? extends Component>> actualComponents = myComponentManager.getComponentTypes(actual);
 
         Assertions.assertThat(actualComponents)
-            .withFailMessage("Expected that Entity { %s } does not have the components:\n\n%s\nbut has:\n\n%s", actual.getId(), stringify(expectedComponents), stringify(actualComponents))
+            .withFailMessage("Expected that Entity <%s> does not have the components:\n\n%s\nbut has:\n\n%s", actual.getId(), stringify(expectedComponents), stringify(actualComponents))
             .doesNotContain(expectedComponents);
 
         return this;
@@ -149,7 +149,7 @@ extends AbstractAssert<EntityAssertions, EntityRef>
 
         if (!actual.getId().toString().equals(expectedId))
         {
-            failWithMessage("Expected EntityRef { %s } has id: %s", actual.getId(), expectedId);
+            failWithMessage("Expected EntityRef <%s> has id: %s", actual.getId(), expectedId);
         }
 
         return this;

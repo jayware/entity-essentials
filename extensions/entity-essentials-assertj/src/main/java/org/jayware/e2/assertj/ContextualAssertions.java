@@ -26,7 +26,7 @@ import org.jayware.e2.context.api.Contextual;
 public class ContextualAssertions
 extends AbstractAssert<ContextualAssertions, Contextual>
 {
-    public ContextualAssertions(Contextual actual)
+    private ContextualAssertions(Contextual actual)
     {
         super(actual, ContextualAssertions.class);
     }
@@ -42,7 +42,7 @@ extends AbstractAssert<ContextualAssertions, Contextual>
 
         if (!actual.belongsTo(context))
         {
-            failWithMessage("Expected Contextual '%s' belongs to Context { %s }", actual, context.getId());
+            failWithMessage("Expected Contextual <%s> belongs to Context <%s>", actual, context.getId());
         }
 
         return this;
@@ -54,7 +54,7 @@ extends AbstractAssert<ContextualAssertions, Contextual>
 
         if (!actual.belongsTo(contextual))
         {
-            failWithMessage("Expected Contextual '%s' belongs to the same Context as '%s'", actual, contextual);
+            failWithMessage("Expected Contextual <%s> belongs to the same Context as <%s>", actual, contextual);
         }
 
         return this;

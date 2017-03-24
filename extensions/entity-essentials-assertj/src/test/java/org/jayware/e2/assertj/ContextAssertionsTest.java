@@ -35,7 +35,6 @@ public class ContextAssertionsTest
 
     @Test
     public void test_assertThat_does_not_return_null()
-    throws Exception
     {
         Assertions.assertThat(ContextAssertions.assertThat(testContext)).isNotNull();
     }
