@@ -60,7 +60,7 @@ There are a couple of assertions to check certain condition:
 <6> Last but not least it is also possible to check whether an entity `matches()` a certain Aspect.
 
 ## Usage
-:version: 0.2.0
+:version: 0.3.0
 
 ### Maven coordinates
 
@@ -106,7 +106,7 @@ dependencies {
 <dependency>
     <groupId>org.jayware</groupId>
     <artifactId>entity-essentials-assertj</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <scope>test</scope>
 </dependency>
 ----
