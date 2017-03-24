@@ -25,6 +25,7 @@ import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 import org.testng.annotations.Test;
 
@@ -37,7 +38,8 @@ import static org.testng.Assert.fail;
 public class EntityAssertionsTest
 {
     private @Mocked Context testContext;
-    private @Mocked EntityRef testRef;
+    private @Mocked EntityRef testRefA, testRefB, testRefC;
+    private @Mocked EntityManager testEntityManager;
     private @Mocked ComponentManager testComponentManager;
     private @Mocked Aspect testAspect;
 
@@ -45,20 +47,20 @@ public class EntityAssertionsTest
     public void test_assertThat_does_not_return_null()
     throws Exception
     {
-        Assertions.assertThat(EntityAssertions.assertThat(testRef)).isNotNull();
+        Assertions.assertThat(EntityAssertions.assertThat(testRefA)).isNotNull();
     }
 
     @Test
     public void test_that_isValid_fails_if_the_passed_EntityRef_is_invalid()
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
-            testRef.isInvalid(); result = true;
+            testRefA.getId(); result = ID;
+            testRefA.isInvalid(); result = true;
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).isValid();
+            EntityAssertions.assertThat(testRefA).isValid();
         }
         catch (AssertionError ignored)
         {
@@ -72,13 +74,13 @@ public class EntityAssertionsTest
     public void test_that_isInvalid_fails_if_the_passed_EntityRef_is_valid()
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
-            testRef.isValid(); result = true;
+            testRefA.getId(); result = ID;
+            testRefA.isValid(); result = true;
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).isInvalid();
+            EntityAssertions.assertThat(testRefA).isInvalid();
         }
         catch (AssertionError ignored)
         {
@@ -89,16 +91,65 @@ public class EntityAssertionsTest
     }
 
     @Test
-    public void test_that_matches_fails_if_the_Entity_denoted_by_the_passed_EntityRef_does_not_match_the_specified_aspect()
+    public void test_that_assertThatAllEntityRefsAreValid_failes_if_at_least_one_EntityRef_is_invalid()
+    throws Exception
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
-            testAspect.matches(testRef); result = false;
+            testContext.isDisposed(); result = false;
+            testContext.getService(EntityManager.class); result = testEntityManager;
+            testEntityManager.findEntities(testContext); result = asList(testRefA, testRefB, testRefC);
+            testRefA.isInvalid(); result = false;
+            testRefB.isInvalid(); result = false;
+            testRefC.isInvalid(); result = true;
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).matches(testAspect);
+            EntityAssertions.assertThatAllEntityRefsAreValid(testContext);
+        }
+        catch (AssertionError ignored)
+        {
+            return;
+        }
+
+        fail("Expected an AssertionError.");
+    }
+
+
+    @Test
+    public void test_that_assertThatAllEntityRefsAreValid_does_not_fail_if_all_EntityRefs_are_valid()
+    throws Exception
+    {
+        new Expectations() {{
+            testContext.isDisposed(); result = false;
+            testContext.getService(EntityManager.class); result = testEntityManager;
+            testEntityManager.findEntities(testContext); result = asList(testRefA, testRefB, testRefC);
+            testRefA.isInvalid(); result = false;
+            testRefB.isInvalid(); result = false;
+            testRefC.isInvalid(); result = false;
+        }};
+
+        try
+        {
+            EntityAssertions.assertThatAllEntityRefsAreValid(testContext);
+        }
+        catch (AssertionError e)
+        {
+            fail("Unexpected AssertionError", e);
+        }
+    }
+
+    @Test
+    public void test_that_matches_fails_if_the_Entity_denoted_by_the_passed_EntityRef_does_not_match_the_specified_aspect()
+    {
+        new Expectations() {{
+            testRefA.getId(); result = ID;
+            testAspect.matches(testRefA); result = false;
+        }};
+
+        try
+        {
+            EntityAssertions.assertThat(testRefA).matches(testAspect);
         }
         catch (AssertionError ignored)
         {
@@ -112,13 +163,13 @@ public class EntityAssertionsTest
     public void test_that_hasAtLeast_fails_if_the_Entity_denoted_by_the_passed_EntityRef_does_not_have_the_expected_Components()
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
-            testComponentManager.getComponentTypes(testRef); result = asList(ComponentC.class);
+            testRefA.getId(); result = ID;
+            testComponentManager.getComponentTypes(testRefA); result = asList(ComponentC.class);
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).hasAtLeast(ComponentA.class, ComponentB.class);
+            EntityAssertions.assertThat(testRefA).hasAtLeast(ComponentA.class, ComponentB.class);
         }
         catch (AssertionError ignored)
         {
@@ -132,13 +183,13 @@ public class EntityAssertionsTest
     public void test_that_hasExactly_fails_if_the_Entity_denoted_by_the_passed_EntityRef_does_not_have_the_expected_Components()
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
-            testComponentManager.getComponentTypes(testRef); result = asList(ComponentC.class);
+            testRefA.getId(); result = ID;
+            testComponentManager.getComponentTypes(testRefA); result = asList(ComponentC.class);
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).hasExactly(ComponentA.class, ComponentB.class);
+            EntityAssertions.assertThat(testRefA).hasExactly(ComponentA.class, ComponentB.class);
         }
         catch (AssertionError ignored)
         {
@@ -152,13 +203,13 @@ public class EntityAssertionsTest
     public void test_that_doesNotHave_fails_if_the_Entity_denoted_by_the_passed_EntityRef_does_have_the_specified_Components()
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
-            testComponentManager.getComponentTypes(testRef); result = asList(ComponentA.class, ComponentC.class);
+            testRefA.getId(); result = ID;
+            testComponentManager.getComponentTypes(testRefA); result = asList(ComponentA.class, ComponentC.class);
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).doesNotHave(ComponentC.class);
+            EntityAssertions.assertThat(testRefA).doesNotHave(ComponentC.class);
         }
         catch (AssertionError ignored)
         {
@@ -172,12 +223,12 @@ public class EntityAssertionsTest
     public void test_that_hasId_with_String_fails_if_the_EntityRef_does_not_have_the_expected_Id()
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
+            testRefA.getId(); result = ID;
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).hasId(ID2.toString());
+            EntityAssertions.assertThat(testRefA).hasId(ID2.toString());
         }
         catch (AssertionError ignored)
         {
@@ -191,12 +242,12 @@ public class EntityAssertionsTest
     public void test_that_hasId_with_UUID_fails_if_the_EntityRef_does_not_have_the_expected_UUID()
     {
         new Expectations() {{
-            testRef.getId(); result = ID;
+            testRefA.getId(); result = ID;
         }};
 
         try
         {
-            EntityAssertions.assertThat(testRef).hasId(ID2);
+            EntityAssertions.assertThat(testRefA).hasId(ID2);
         }
         catch (AssertionError ignored)
         {

@@ -24,10 +24,12 @@ import org.jayware.e2.component.api.Aspect;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -48,6 +50,22 @@ extends AbstractAssert<EntityAssertions, EntityRef>
     public static EntityAssertions assertThat(EntityRef ref)
     {
         return new EntityAssertions(ref);
+    }
+
+    public static void assertThatAllEntityRefsAreValid(Context context)
+    {
+        final EntityManager entityManager;
+        final List<EntityRef> entities;
+
+        ContextAssertions.assertThat(context).isNotDisposed();
+
+        entityManager = context.getService(EntityManager.class);
+        entities = entityManager.findEntities(context);
+
+        for (EntityRef ref : entities)
+        {
+            assertThat(ref).isValid();
+        }
     }
 
     public EntityAssertions isValid()
