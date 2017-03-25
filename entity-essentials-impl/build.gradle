@@ -2,15 +2,6 @@ plugins {
     id 'me.champeau.gradle.jmh' version '0.3.1'
 }
 
-def versionPropsFile = file('build.properties')
-def Properties versionProps = new Properties()
-versionProps.load(new FileInputStream(versionPropsFile))
-def buildNumber = versionProps['buildNumber'].toInteger() + 1
-versionProps['buildNumber'] = buildNumber.toString()
-versionProps.store(versionPropsFile.newWriter(), null)
-
-version="${currentVersion}"//-${buildNumber}"
-
 ext.projectObjectModel = pom {
     project {
         groupId project.group
