@@ -19,8 +19,19 @@
 package org.jayware.e2.event.api;
 
 
+import org.jayware.e2.event.api.Parameters.Parameter;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import static java.util.Arrays.asList;
+
+
 public class Inspector
 {
+    public static final int TAB_SIZE = 3;
+
     public static String generateReport(Event event)
     {
         return generateReport(null, event);
@@ -28,22 +39,104 @@ public class Inspector
 
     public static String generateReport(String message, Event event)
     {
-        final StringBuilder messageBuilder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
 
+        appendMessage(message, builder);
+
+        appendHeading(event, builder);
+        appendHierarchy(event, builder);
+        appendParameters(event, builder);
+        appendEnd(builder);
+
+        return builder.toString();
+    }
+
+    private static void appendMessage(final String message, final StringBuilder builder)
+    {
         if (message != null)
         {
-            messageBuilder.append(message).append('\n');
+            builder.append(message).append('\n');
         }
+    }
 
-        messageBuilder.append('\t').append(event.isQuery() ? "Query: " : "Event: ").append(event.getType().getName()).append('\n');
-        messageBuilder.append('\t').append("Parameters: ");
-        for (Parameters.Parameter parameter : event.getParameters())
+    private static void appendHeading(Event event, StringBuilder builder)
+    {
+        builder.append(tabs(1)).append(event.getType().getSimpleName()).append(':');
+        builder.append(" <").append(event.getId()).append("> ");
+        builder.append(event.isQuery() ? "(Query)" : "(Event)").append('\n');
+    }
+
+    private static void appendHierarchy(Event event, StringBuilder builder)
+    {
+        final Queue<HierarchyLevel> hierarchy = new LinkedList<HierarchyLevel>();
+
+        builder.append('\n').append(tabs(2)).append("Hierarchy:\n");
+
+        hierarchy.add(new HierarchyLevel(0, asList((Class) event.getType())));
+        while (!hierarchy.isEmpty())
         {
-            messageBuilder.append('\n');
-            messageBuilder.append("\t\t").append("Name: ").append(parameter.getName()).append('\n');
-            messageBuilder.append("\t\t").append("Value: ").append(parameter.getValue()).append('\n');
+            final HierarchyLevel actual = hierarchy.poll();
+
+            for (Class type : actual.classes)
+            {
+                if (!type.equals(EventType.class))
+                {
+                    builder.append(tabs(3 + actual.level)).append(type.getName()).append('\n');
+                    hierarchy.add(new HierarchyLevel(actual.level + 1, asList(type.getInterfaces())));
+                }
+            }
         }
 
-        return messageBuilder.toString();
+        builder.append('\n');
+    }
+
+    private static void appendParameters(Event event, StringBuilder builder)
+    {
+        builder.append(tabs(2)).append("Parameters:");
+        for (Parameter parameter : event.getParameters())
+        {
+            appendParameter(parameter, builder);
+        }
+    }
+
+    private static void appendParameter(Parameter parameter, StringBuilder builder)
+    {
+        final String name = parameter.getName();
+        final Object value = parameter.getValue();
+        final Class<?> type = value != null ? value.getClass() : null;
+
+        builder.append('\n');
+        builder.append(tabs(3)).append("Name: ").append(name).append('\n');
+        builder.append(tabs(3)).append("Value: ").append(value != null ? value : "<null>").append('\n');
+        builder.append(tabs(3)).append("Type: ").append(value != null ? type.getName() : "<null>").append('\n');
+    }
+
+    private static void appendEnd(StringBuilder builder)
+    {
+        builder.append(tabs(1)).append("---");
+    }
+
+    private static char[] tabs(final int count)
+    {
+        final char[] tabs = new char[count * TAB_SIZE];
+
+        for (int i = 0; i < tabs.length; i++)
+        {
+            tabs[i] = ' ';
+        }
+
+        return tabs;
+    }
+
+    private static class HierarchyLevel
+    {
+        private final int level;
+        private final List<Class> classes;
+
+        private HierarchyLevel(final int level, final List<Class> classes)
+        {
+            this.level = level;
+            this.classes = classes;
+        }
     }
 }
