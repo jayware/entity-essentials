@@ -28,6 +28,7 @@ import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.Query.State;
 import org.jayware.e2.event.api.QueryBuilder;
 import org.jayware.e2.event.api.QueryBuilder.QueryBuilderTo;
+import org.jayware.e2.event.api.ReadOnlyParameters;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Consumer;
 
@@ -81,7 +82,7 @@ implements QueryBuilder, QueryBuilderTo
     }
 
     @Override
-    public QueryBuilder setAll(Parameters parameters)
+    public QueryBuilder setAll(ReadOnlyParameters parameters)
     {
         checkNotNull(parameters);
         myEventParameters.set(parameters);

@@ -33,7 +33,7 @@ public interface QueryBuilder
 
     QueryBuilder set(Parameter parameter);
 
-    QueryBuilder setAll(Parameters parameters);
+    QueryBuilder setAll(ReadOnlyParameters parameters);
 
     QueryBuilder on(State state, Consumer<ResultSet> consumer);
 

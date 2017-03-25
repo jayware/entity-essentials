@@ -154,11 +154,14 @@ implements ReadOnlyParameters
      *
      * @param parameters the {@link Parameter Parameters}.
      */
-    public void set(Parameters parameters)
+    public void set(ReadOnlyParameters parameters)
     {
         if (parameters != null)
         {
-            myParameters.putAll(parameters.myParameters);
+            for (Parameter parameter : parameters)
+            {
+                set(parameter);
+            }
         }
     }
 

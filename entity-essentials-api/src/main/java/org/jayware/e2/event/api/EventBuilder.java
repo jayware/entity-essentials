@@ -31,7 +31,7 @@ public interface EventBuilder
 
     EventBuilder set(Parameter parameter);
 
-    EventBuilder setAll(Parameters parameters);
+    EventBuilder setAll(ReadOnlyParameters parameters);
 
     EventBuilder reset();
 

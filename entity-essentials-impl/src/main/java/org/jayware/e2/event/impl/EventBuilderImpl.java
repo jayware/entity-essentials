@@ -27,6 +27,7 @@ import org.jayware.e2.event.api.EventBuilder.EventBuilderTo;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
+import org.jayware.e2.event.api.ReadOnlyParameters;
 
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -78,7 +79,7 @@ implements EventBuilder, EventBuilderTo
     }
 
     @Override
-    public EventBuilder setAll(Parameters parameters)
+    public EventBuilder setAll(ReadOnlyParameters parameters)
     {
         checkNotNull(parameters);
         myEventParameters.set(parameters);
