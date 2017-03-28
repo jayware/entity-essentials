@@ -187,6 +187,8 @@ public interface Context
      */
     <T> T get(Key<T> key, T defaultValue) throws IllegalArgumentException, IllegalStateException;
 
+    <T> T getOrCreate(Key<T> key, final ValueProvider<T> provider);
+
     /**
      * Returns whether this <code>Context</code> contains a mapping for the specified {@link Key}.
      *

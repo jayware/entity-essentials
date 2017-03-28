@@ -115,6 +115,12 @@ implements Context
     }
 
     @Override
+    public <T> T getOrCreate(final Key<T> key, final ValueProvider<T> provider)
+    {
+        return myContextState.get().getOrCreate(key, provider);
+    }
+
+    @Override
     public boolean contains(Key key)
     {
         return myContextState.get().contains(key);
@@ -346,6 +352,33 @@ implements Context
         }
 
         @Override
+        public <T> T getOrCreate(final Key<T> key, final ValueProvider<T> provider)
+        {
+            myUpdateLock.lock();
+            try
+            {
+                if (!myMap.containsKey(key))
+                {
+                    myWriteLock.lock();
+                    try
+                    {
+                        myMap.put(key, provider.provide(ContextImpl.this));
+                    }
+                    finally
+                    {
+                        myWriteLock.unlock();
+                    }
+                }
+
+                return (T) myMap.get(key);
+            }
+            finally
+            {
+                myUpdateLock.unlock();
+            }
+        }
+
+        @Override
         public boolean contains(Key key)
         {
             myUpdateLock.lock();
@@ -469,6 +502,12 @@ implements Context
 
         @Override
         public <T> T get(Key<T> key, T defaultValue)
+        {
+            throw new IllegalStateException("Context is disposed!");
+        }
+
+        @Override
+        public <T> T getOrCreate(final Key<T> key, final ValueProvider<T> provider)
         {
             throw new IllegalStateException("Context is disposed!");
         }
