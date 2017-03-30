@@ -22,7 +22,7 @@
 package org.jayware.e2.event.api;
 
 
-import static org.jayware.e2.event.api.Parameters.Parameter;
+import static org.jayware.e2.event.api.Inspector.generateReport;
 
 
 /**
@@ -38,28 +38,11 @@ extends RuntimeException
 {
     public SanityCheckFailedException(Event event, String reason)
     {
-        super(buildMessage(event, reason));
+        super(generateReport("Reason: " + reason, event));
     }
 
     public SanityCheckFailedException(Event event, String reason, Throwable cause)
     {
-        super(buildMessage(event, reason), cause);
-    }
-
-    private static String buildMessage(Event event, String reason)
-    {
-        StringBuilder messageBuilder = new StringBuilder();
-        messageBuilder.append('\n');
-        messageBuilder.append('\t').append("Event: ").append(event.getType()).append('\n');
-        messageBuilder.append('\t').append("Reason: ").append(reason).append('\n');
-        messageBuilder.append('\t').append("Parameters: ");
-        for (Parameter parameter : event.getParameters())
-        {
-            messageBuilder.append('\n');
-            messageBuilder.append("\t\t").append("Name: ").append(parameter.getName()).append('\n');
-            messageBuilder.append("\t\t").append("Value: ").append(parameter.getValue()).append('\n');
-        }
-
-        return messageBuilder.toString();
+        super(generateReport("Reason: " + reason, event), cause);
     }
 }

@@ -48,7 +48,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import static java.util.Collections.emptyMap;
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
@@ -84,6 +83,7 @@ implements EventManager
     {
         checkNotNull(type);
         checkNotNull(parameters);
+
         return new EventImpl(randomUUID(), type, parameters);
     }
 
@@ -92,6 +92,7 @@ implements EventManager
     {
         checkNotNull(type);
         checkNotNull(parameters);
+
         return new EventImpl(randomUUID(), type, parameters);
     }
 
@@ -100,6 +101,7 @@ implements EventManager
     throws IllegalArgumentException
     {
         checkNotNull(type);
+
         return createQueryBuilder(type);
     }
 
@@ -108,6 +110,7 @@ implements EventManager
     {
         checkNotNull(type);
         checkNotNull(parameters);
+
         return new QueryImpl(randomUUID(), type, parameters, Collections.<Query.State, Consumer<ResultSet>>emptyMap());
     }
 
@@ -138,22 +141,28 @@ implements EventManager
     @Override
     public void subscribe(Context context, Object subscriber, ReferenceType referenceType, EventFilter[] filters)
     {
+        final EventBus eventBus;
+
         checkNotNull(context);
         checkNotNull(subscriber);
         checkNotNull(referenceType);
         checkNotNull(filters);
 
-        final EventBus eventBus = getOrCreateEventBus(context);
+        eventBus = context.getOrCreate(EVENT_BUS, EVENT_BUS_VALUE_PROVIDER);
+
         eventBus.subscribe(subscriber, referenceType, filters);
     }
 
     @Override
     public void unsubscribe(Context context, Object subscriber)
     {
+        final EventBus eventBus;
+
         checkNotNull(context);
         checkNotNull(subscriber);
 
-        final EventBus eventBus = getOrCreateEventBus(context);
+        eventBus = context.getOrCreate(EVENT_BUS, EVENT_BUS_VALUE_PROVIDER);
+
         eventBus.unsubscribe(subscriber);
     }
 
@@ -178,11 +187,15 @@ implements EventManager
     @Override
     public void send(Event event)
     {
+        final Context context;
+        final EventBus eventBus;
+
         checkNotNull(event);
         sanityCheck(event);
 
-        final Context context = (Context) checkNotNull(event.getParameter(ContextParam));
-        final EventBus eventBus = getOrCreateEventBus(context);
+        context = (Context) checkNotNull(event.getParameter(ContextParam));
+        eventBus = context.getOrCreate(EVENT_BUS, EVENT_BUS_VALUE_PROVIDER);
+
         eventBus.send(event);
     }
 
@@ -208,11 +221,14 @@ implements EventManager
     @Override
     public void post(Event event)
     {
+        final Context context;
+        final EventBus eventBus;
+
         checkNotNull(event);
         sanityCheck(event);
 
-        final Context context = (Context) checkNotNull(event.getParameter(ContextParam));
-        final EventBus eventBus = getOrCreateEventBus(context);
+        context = (Context) checkNotNull(event.getParameter(ContextParam));
+        eventBus = context.getOrCreate(EVENT_BUS, EVENT_BUS_VALUE_PROVIDER);
 
         eventBus.post(event);
     }
@@ -244,15 +260,9 @@ implements EventManager
         sanityCheck(query);
 
         final Context context = (Context) checkNotNull(query.getParameter(ContextParam));
-        final EventBus eventBus = getOrCreateEventBus(context);
+        final EventBus eventBus = context.getOrCreate(EVENT_BUS, EVENT_BUS_VALUE_PROVIDER);
 
         return eventBus.query(query);
-    }
-
-    private EventBus getOrCreateEventBus(Context context)
-    {
-        context.putIfAbsent(EVENT_BUS, EVENT_BUS_VALUE_PROVIDER);
-        return context.get(EVENT_BUS);
     }
 
     private static void sanityCheck(Event event)
