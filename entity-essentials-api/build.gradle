@@ -34,7 +34,7 @@ ext.projectObjectModel = pom {
 
 dependencies {
 
-    compile 'org.slf4j:slf4j-api:1.7.24'
+    compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'org.testng:testng:6.11'
     testCompile 'org.assertj:assertj-core:3.6.2'
