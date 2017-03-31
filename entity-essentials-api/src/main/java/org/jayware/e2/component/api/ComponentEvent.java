@@ -48,13 +48,13 @@ extends RootEvent
      */
     String ComponentParam = "org.jayware.e2.event.param.Component";
 
-    interface PrepareComponentEvent extends ComponentEvent {}
+    interface PrepareComponentEvent extends ComponentEvent, Command {}
 
-    interface ComponentPreparedEvent extends ComponentEvent {}
+    interface ComponentPreparedEvent extends ComponentEvent, Notification {}
 
-    interface CreateComponentEvent extends ComponentEvent {}
+    interface CreateComponentEvent extends ComponentEvent, Command {}
 
-    interface ComponentCreatedEvent extends ComponentEvent {}
+    interface ComponentCreatedEvent extends ComponentEvent, Notification {}
 
     /**
      * Signals the adding of a component to an entity.
@@ -69,7 +69,7 @@ extends RootEvent
      *     <caption>Parameters</caption>
      * </table>
      */
-    interface AddComponentEvent extends ComponentEvent, EntityChangedEvent {}
+    interface AddComponentEvent extends ComponentEvent, EntityChangedEvent, Command {}
 
     /**
      * Signals that a component has been added to an entity.
@@ -84,7 +84,7 @@ extends RootEvent
      *     <caption>Parameters</caption>
      * </table>
      */
-    interface ComponentAddedEvent extends ComponentEvent, EntityChangedEvent {}
+    interface ComponentAddedEvent extends ComponentEvent, EntityChangedEvent, Notification {}
 
     /**
      * Signals the removal of all components with the specified type from the entity referenced by the given {@link EntityRef}.
@@ -99,7 +99,7 @@ extends RootEvent
      *     <caption>Parameters</caption>
      * </table>
      */
-    interface RemoveComponentEvent extends ComponentEvent, EntityChangedEvent {}
+    interface RemoveComponentEvent extends ComponentEvent, EntityChangedEvent, Command {}
 
     /**
      * Signals that a component has been removed from an entity.
@@ -114,7 +114,7 @@ extends RootEvent
      *     <caption>Parameters</caption>
      * </table>
      */
-    interface ComponentRemovedEvent extends ComponentEvent, EntityChangedEvent {}
+    interface ComponentRemovedEvent extends ComponentEvent, EntityChangedEvent, Notification {}
 
     interface ComponentChangeEvent
     extends ComponentEvent, EntityChangedEvent
@@ -122,12 +122,12 @@ extends RootEvent
 
     }
 
-    interface PullComponentEvent extends ComponentChangeEvent {}
+    interface PullComponentEvent extends ComponentChangeEvent, Command {}
 
-    interface PushComponentEvent extends ComponentChangeEvent {}
+    interface PushComponentEvent extends ComponentChangeEvent, Command {}
 
     interface ComponentPulledEvent
-    extends ComponentChangeEvent
+    extends ComponentChangeEvent, Notification
     {
         /**
          * The {@link Component} which is subject of the event before it was pulled.
@@ -136,7 +136,7 @@ extends RootEvent
     }
 
     interface ComponentPushedEvent
-    extends ComponentChangeEvent
+    extends ComponentChangeEvent, Notification
     {
         /**
          * The {@link Component} which is subject of the event before it was pushed.

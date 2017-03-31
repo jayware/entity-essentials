@@ -48,6 +48,24 @@ public interface EventType
         String ContextParam = "org.jayware.e2.api.event.param.Context";
     }
 
+    interface Command
+    extends RootEvent
+    {
+
+    }
+
+    interface Query
+    extends RootEvent
+    {
+
+    }
+
+    interface Notification
+    extends RootEvent
+    {
+
+    }
+
     class RootEventSanityChecker
     extends DeclarativeSanityChecker
     {

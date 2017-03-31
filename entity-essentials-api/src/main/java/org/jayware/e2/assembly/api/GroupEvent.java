@@ -30,7 +30,7 @@ extends AssemblyEvent
     String GroupParam = "org.jayware.e2.event.param.Group";
 
     interface CreateGroupEvent
-    extends GroupEvent
+    extends GroupEvent, Command
     {
         /**
          * The name ({@link String}) of the {@link Group} which is subject of the event.
@@ -38,11 +38,11 @@ extends AssemblyEvent
         String GroupNameParam = "org.jayware.e2.event.param.Group.name";
     }
 
-    interface GroupCreatedEvent extends GroupEvent {}
+    interface GroupCreatedEvent extends GroupEvent, Notification {}
 
-    interface DeleteGroupEvent extends GroupEvent {}
+    interface DeleteGroupEvent extends GroupEvent, Command {}
 
-    interface GroupDeletedEvent extends GroupEvent {}
+    interface GroupDeletedEvent extends GroupEvent, Notification {}
 
     interface GroupMembershipEvent
     extends GroupEvent
@@ -52,26 +52,12 @@ extends AssemblyEvent
          */
         String EntityRefParam = "org.jayware.e2.event.param.EntityRef";
 
+        interface AddEntityToGroupEvent extends GroupMembershipEvent, Command {}
 
-        interface AddEntityToGroupEvent extends GroupMembershipEvent
-        {
+        interface EntityToGroupAddedEvent extends GroupMembershipEvent, Notification {}
 
-        }
+        interface RemoveEntityFromGroupEvent extends GroupMembershipEvent, Command {}
 
-        interface EntityToGroupAddedEvent extends GroupMembershipEvent
-        {
-
-        }
-
-        interface RemoveEntityFromGroupEvent extends GroupMembershipEvent
-        {
-
-        }
-
-        interface EntityFromGroupRemovedEvent extends GroupMembershipEvent
-        {
-
-        }
-
+        interface EntityFromGroupRemovedEvent extends GroupMembershipEvent, Notification {}
     }
 }

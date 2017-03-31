@@ -70,7 +70,7 @@ extends RootEvent
      * </table>
      */
     @SanityCheck(CreateEntityEventSanityChecker.class)
-    interface CreateEntityEvent extends EntityEvent {}
+    interface CreateEntityEvent extends EntityEvent, Command {}
 
     /**
      * Signals that an entity has been created.
@@ -84,7 +84,7 @@ extends RootEvent
      * </table>
      */
     @SanityCheck(EntityCreatedEventSanityChecker.class)
-    interface EntityCreatedEvent extends EntityEvent {}
+    interface EntityCreatedEvent extends EntityEvent, Notification {}
 
     /**
      * Signals the deletion of an entity.
@@ -98,7 +98,7 @@ extends RootEvent
      * </table>
      */
     @SanityCheck(DeleteEntityEventSanityChecker.class)
-    interface DeleteEntityEvent extends EntityEvent {}
+    interface DeleteEntityEvent extends EntityEvent, Command {}
 
     /**
      * Signals that an entity has been deleted.
@@ -115,7 +115,7 @@ extends RootEvent
      * </table>
      */
     @SanityCheck(EntityDeletedEventSanityChecker.class)
-    interface EntityDeletedEvent extends EntityEvent {}
+    interface EntityDeletedEvent extends EntityEvent, Notification {}
 
     /**
      * Signals that an entity is going to be deleted.
@@ -129,7 +129,7 @@ extends RootEvent
      * </table>
      */
     @SanityCheck(EntityDeletingEventSanityChecker.class)
-    interface EntityDeletingEvent extends EntityEvent {}
+    interface EntityDeletingEvent extends EntityEvent, Notification {}
 
     /**
      * Signals the deletion of entities within a {@link Context}.
@@ -141,7 +141,7 @@ extends RootEvent
      *     <caption>Parameters</caption>
      * </table>
      */
-    interface DeleteEntitiesEvent extends EntityEvent {}
+    interface DeleteEntitiesEvent extends EntityEvent, Command {}
 
     /**
      * Signals that an entity has changed.
@@ -155,7 +155,7 @@ extends RootEvent
      * </table>
      */
     @SanityCheck(EntityChangedEventSanityChecker.class)
-    interface EntityChangedEvent extends EntityEvent {}
+    interface EntityChangedEvent extends EntityEvent, Notification {}
 
     /**
      * Signals that an {@link UUID} should be resolved to an {@link EntityRef}.
@@ -168,7 +168,7 @@ extends RootEvent
      * </table>
      */
     @SanityCheck(ResolveEntityEventSanityCheck.class)
-    interface ResolveEntityEvent extends EntityEvent {}
+    interface ResolveEntityEvent extends EntityEvent, Query {}
 
     /**
      * Signals that an {@link UUID} should be resolved to an {@link EntityRef}.
@@ -181,7 +181,7 @@ extends RootEvent
      *     <caption>Parameters</caption>
      * </table>
      */
-    interface FindEntitiesEvent extends EntityEvent {}
+    interface FindEntitiesEvent extends EntityEvent, Query {}
 
     class EntityEventSanityChecker
     extends DeclarativeSanityChecker

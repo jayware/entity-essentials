@@ -28,26 +28,26 @@ extends AssemblyEvent
 
     String NodePendantParam = "org.jayware.e2.event.param.NodePendantParam";
 
-    interface CreateTreeNodeEvent extends TreeEvent {}
+    interface CreateTreeNodeEvent extends TreeEvent, Command {}
 
-    interface TreeNodeCreatedEvent extends TreeEvent {}
+    interface TreeNodeCreatedEvent extends TreeEvent, Notification {}
 
-    interface DeleteTreeNodeEvent extends TreeEvent {}
+    interface DeleteTreeNodeEvent extends TreeEvent, Command {}
 
-    interface DeletingTreeNodeEvent extends TreeEvent {}
+    interface DeletingTreeNodeEvent extends TreeEvent, Notification {}
 
-    interface TreeNodeDeletedEvent extends TreeEvent {}
+    interface TreeNodeDeletedEvent extends TreeEvent, Notification {}
 
-    interface AddChildNodeEvent extends TreeEvent {}
+    interface AddChildNodeEvent extends TreeEvent, Command {}
 
-    interface ChildNodeAddedEvent extends TreeEvent {}
+    interface ChildNodeAddedEvent extends TreeEvent, Notification {}
 
-    interface RemoveChildNodeEvent extends TreeEvent {}
+    interface RemoveChildNodeEvent extends TreeEvent, Command {}
 
-    interface ChildNodeRemovedEvent extends TreeEvent {}
+    interface ChildNodeRemovedEvent extends TreeEvent, Notification {}
 
     interface FindChildrenQuery
-    extends TreeEvent
+    extends TreeEvent, Query
     {
         String ChildrenParam = "org.jayware.e2.query.param.ChildrenParam";
     }
