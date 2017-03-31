@@ -50,6 +50,7 @@ import java.util.Queue;
 
 import static java.util.UUID.randomUUID;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
+import static org.jayware.e2.event.api.Preconditions.checkEventNotNull;
 import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
 import static org.jayware.e2.event.impl.QueryBuilderImpl.createQueryBuilder;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -190,7 +191,7 @@ implements EventManager
         final Context context;
         final EventBus eventBus;
 
-        checkNotNull(event);
+        checkEventNotNull(event);
         sanityCheck(event);
 
         context = (Context) checkNotNull(event.getParameter(ContextParam));
@@ -224,7 +225,7 @@ implements EventManager
         final Context context;
         final EventBus eventBus;
 
-        checkNotNull(event);
+        checkEventNotNull(event);
         sanityCheck(event);
 
         context = (Context) checkNotNull(event.getParameter(ContextParam));
@@ -256,7 +257,7 @@ implements EventManager
     @Override
     public ResultSet query(Query query)
     {
-        checkNotNull(query);
+        checkEventNotNull(query);
         sanityCheck(query);
 
         final Context context = (Context) checkNotNull(query.getParameter(ContextParam));
