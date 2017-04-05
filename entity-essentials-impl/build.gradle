@@ -40,6 +40,7 @@ dependencies {
 
     compile project(':entity-essentials-api')
 
+    compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'org.ow2.asm:asm-all:5.2'
     compile "com.googlecode.concurrent-locks:concurrent-locks:1.0.0"
 
