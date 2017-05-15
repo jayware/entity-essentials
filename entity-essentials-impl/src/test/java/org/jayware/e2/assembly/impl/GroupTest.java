@@ -28,11 +28,13 @@ import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.entity.api.InvalidEntityRefException;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.assembly.impl.GroupImpl.createGroup;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class GroupTest
@@ -48,7 +50,7 @@ public class GroupTest
     private EntityRef testEntityA;
     private EntityRef testEntityB;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testContext = ContextProvider.getInstance().createContext();
@@ -71,107 +73,224 @@ public class GroupTest
         assertThat(testee.getName()).isEqualTo(GROUP_NAME);
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_getName_ThrowsInvalidGroupExceptionIfGroupIsInvalid()
     {
         testEntityManager.deleteEntity(testeeRef);
-        testee.getName();
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.getName();
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_setName_ThrowsInvalidGroupExceptionIfGroupIsInvalid()
     {
         testEntityManager.deleteEntity(testeeRef);
-        testee.setName("fubar");
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.setName("fubar");
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_add_ThrowsInvalidGroupExceptionIfContextIsDisposed()
     {
         testContext.dispose();
-        testee.add(testEntityA);
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.add(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_add_ThrowsInvalidGroupExceptionIfBackingEntityIsInvalid()
     {
         testEntityManager.deleteEntity(testeeRef);
-        testee.add(testEntityA);
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.add(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_add_ThrowsInvalidGroupExceptionIfBackingEntityDoesNotHaveGroupComponent()
     {
         testComponentManager.removeComponent(testeeRef, GroupComponent.class);
-        testee.add(testEntityA);
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.add(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_add_ThrowsIllegalArgumentExceptionIfNullIsPassed()
     {
-        testee.add(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.add(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidEntityRefException.class)
+    @Test
     public void test_add_ThrowsInvalidEntityRefExceptionIfPassedEntityIsInvalid()
     {
         testEntityManager.deleteEntity(testEntityA);
-        testee.add(testEntityA);
+
+        assertThrows(InvalidEntityRefException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.add(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_remove_ThrowsInvalidGroupExceptionIfContextIsDisposed()
     {
         testContext.dispose();
-        testee.remove(testEntityA);
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.remove(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_remove_ThrowsInvalidGroupExceptionIfBackingEntityIsInvalid()
     {
         testEntityManager.deleteEntity(testeeRef);
-        testee.remove(testEntityA);
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.remove(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_remove_ThrowsInvalidGroupExceptionIfBackingEntityDoesNotHaveGroupComponent()
     {
         testComponentManager.removeComponent(testeeRef, GroupComponent.class);
-        testee.remove(testEntityA);
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.remove(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_remove_ThrowsIllegalArgumentExceptionIfNullIsPassed()
     {
-        testee.remove(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.remove(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidEntityRefException.class)
+    @Test
     public void test_remove_ThrowsInvalidEntityRefExceptionIfPassedEntityIsInvalid()
     {
         testEntityManager.deleteEntity(testEntityA);
-        testee.remove(testEntityA);
+
+        assertThrows(InvalidEntityRefException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.remove(testEntityA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_members_ThrowsInvalidGroupExceptionIfContextIsDisposed()
     {
         testContext.dispose();
-        testee.members();
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.members();
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_members_ThrowsInvalidGroupExceptionIfBackingEntityIsInvalid()
     {
         testEntityManager.deleteEntity(testeeRef);
-        testee.members();
+
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.members();
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidGroupException.class)
+    @Test
     public void test_members_ThrowsInvalidGroupExceptionIfBackingEntityDoesNotHaveGroupComponent()
     {
         testComponentManager.removeComponent(testeeRef, GroupComponent.class);
-        testee.members();
+        assertThrows(InvalidGroupException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.members();
+            }
+        });
     }
 
     @Test

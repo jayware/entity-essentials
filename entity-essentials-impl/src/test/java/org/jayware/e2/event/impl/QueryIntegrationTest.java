@@ -27,9 +27,9 @@ import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.ResultSet;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Random;
@@ -42,7 +42,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
-import static org.jayware.e2.event.api.Query.State.Success;
 
 
 public class QueryIntegrationTest
@@ -55,7 +54,7 @@ public class QueryIntegrationTest
     private Context testContext;
     private TestHandler testHandler;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testContext = ContextProvider.getInstance().createContext();
@@ -65,7 +64,7 @@ public class QueryIntegrationTest
         testee.subscribe(testContext, testHandler);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown()
     {
         testContext.dispose();

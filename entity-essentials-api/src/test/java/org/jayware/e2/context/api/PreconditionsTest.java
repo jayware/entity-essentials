@@ -18,15 +18,17 @@
  */
 package org.jayware.e2.context.api;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.context.api.Preconditions.checkContextNotNullAndNotDisposed;
 import static org.jayware.e2.context.api.Preconditions.checkContextualNotNullAndBelongsToContext;
 import static org.jayware.e2.context.api.Preconditions.checkContextualsNotNullAndSameContext;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -41,7 +43,7 @@ public class PreconditionsTest
     private Contextual secondTestContextual;
     private Contextual otherTestContextual;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testContextA = mock(Context.class);
@@ -89,28 +91,49 @@ public class PreconditionsTest
         });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_checkContextNotNullAndNotDisposed_ReturnsWithNoExceptionIfContextIsNotNullAndNotDisposed()
     {
         final Context context = mock(Context.class);
         when(context.isDisposed()).thenReturn(false);
 
-        assertThat(checkContextNotNullAndNotDisposed(null)).isEqualTo(context);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                assertThat(checkContextNotNullAndNotDisposed(null)).isEqualTo(context);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_checkContextNotNullAndNotDisposed_ThrowsIllegalArgumentExceptionIfContextIsNull()
     {
-        checkContextNotNullAndNotDisposed(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextNotNullAndNotDisposed(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_checkContextNotNullAndNotDisposed_ThrowsIllegalStateExceptionIfContextIsDisposed()
     {
         final Context context = mock(Context.class);
         when(context.isDisposed()).thenReturn(true);
 
-        checkContextNotNullAndNotDisposed(context);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextNotNullAndNotDisposed(context);
+            }
+        });
     }
 
     @Test
@@ -119,42 +142,84 @@ public class PreconditionsTest
         checkContextualsNotNullAndSameContext(firstTestContextual, secondTestContextual);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_checkContextualsNotNullAndSameValidContext_ThrowsIllegalArgumentExceptionIfFirstContextualIsNull()
     {
-        checkContextualsNotNullAndSameContext(null, secondTestContextual);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualsNotNullAndSameContext(null, secondTestContextual);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_checkContextualsNotNullAndSameValidContext_ThrowsIllegalArgumentExceptionIfSecondContextualIsNull()
     {
-        checkContextualsNotNullAndSameContext(firstTestContextual, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualsNotNullAndSameContext(firstTestContextual, null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_checkContextualsNotNullAndSameValidContext_ThrowsIllegalArgumentExceptionIfBothContextualsAreNull()
     {
-        checkContextualsNotNullAndSameContext(null, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualsNotNullAndSameContext(null, null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_checkContextualsNotNullAndSameValidContext_ThrowsIllegalContextExceptionIfFirstContextualBelongsToAnotherContext()
     {
-        checkContextualsNotNullAndSameContext(otherTestContextual, secondTestContextual);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualsNotNullAndSameContext(otherTestContextual, secondTestContextual);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_checkContextualsNotNullAndSameValidContext_ThrowsIllegalContextExceptionIfSecondContextualBelongsToAnotherContext()
     {
-        checkContextualsNotNullAndSameContext(firstTestContextual, otherTestContextual);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualsNotNullAndSameContext(firstTestContextual, otherTestContextual);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_checkContextualsNotNullAndSameValidContext_ThrowsIllegalStateExceptionIfContextIsDisposed()
     {
         when(testContextA.isDisposed()).thenReturn(true);
 
-        checkContextualsNotNullAndSameContext(firstTestContextual, secondTestContextual);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualsNotNullAndSameContext(firstTestContextual, secondTestContextual);
+            }
+        });
     }
 
     @Test
@@ -163,21 +228,42 @@ public class PreconditionsTest
         assertThat(checkContextualNotNullAndBelongsToContext(firstTestContextual, testContextA)).isEqualTo(firstTestContextual);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_checkContextualNotNullAndBelongsToContext_ThrowsIllegalArgumentExceptionIfContextulIsNull()
     {
-        checkContextualNotNullAndBelongsToContext(null, testContextA);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualNotNullAndBelongsToContext(null, testContextA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_checkContextualNotNullAndBelongsToContext_ThrowsIllegalArgumentExceptionIfContextIsNull()
     {
-        checkContextualNotNullAndBelongsToContext(firstTestContextual, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualNotNullAndBelongsToContext(firstTestContextual, null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_checkContextualNotNullAndBelongsToContext_ThrowsIllegalContextExceptionIfContextualBelongsToAnotherContext()
     {
-        checkContextualNotNullAndBelongsToContext(firstTestContextual, testContextB);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                checkContextualNotNullAndBelongsToContext(firstTestContextual, testContextB);
+            }
+        });
     }
 }

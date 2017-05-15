@@ -18,7 +18,7 @@
  */
 package org.jayware.e2.util;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;

@@ -3,6 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC3'
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.netflix.nebula:gradle-lint-plugin:7.9.5'
@@ -83,6 +84,7 @@ configure ([
     project.apply plugin: 'findbugs'
     project.apply plugin: 'jacoco'
     project.apply plugin: 'org.sonarqube'
+    project.apply plugin: 'org.junit.platform.gradle.plugin'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -118,6 +120,10 @@ configure ([
     artifacts {
         archives sourcesJar
         archives javadocJar
+    }
+
+    junitPlatform {
+        platformVersion '1.0.0-RC3'
     }
 }
 

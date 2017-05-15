@@ -28,9 +28,9 @@ import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.util.Key;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.UUID;
 
@@ -62,7 +62,7 @@ public class ContextImplTest
     final Key<Object> keyA = createKey("foo");
     final Key<Object> keyB = createKey("bar");
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         initMocks(this);

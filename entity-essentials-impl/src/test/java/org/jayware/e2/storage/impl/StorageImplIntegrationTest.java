@@ -31,9 +31,9 @@ import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Filter;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
@@ -58,7 +58,7 @@ public class StorageImplIntegrationTest
 
     private final UUID testId = fromString("6a8bcaf4-82de-4ac1-b367-8b09d73fdf1c");
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         context = ContextProvider.getInstance().createContext();
@@ -71,7 +71,7 @@ public class StorageImplIntegrationTest
         eventManager.unsubscribe(context, componentStore);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown()
     {
         context.dispose();

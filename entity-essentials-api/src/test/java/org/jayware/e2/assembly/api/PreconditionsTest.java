@@ -21,7 +21,7 @@ package org.jayware.e2.assembly.api;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.jayware.e2.assembly.api.Preconditions.checkGroupNotNullAndValid;

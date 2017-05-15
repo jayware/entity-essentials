@@ -24,9 +24,9 @@ import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.EventType;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.util.ReferenceType;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -42,7 +42,7 @@ public class PerformanceTest
     private EventManager eventManager;
     private IncrementHandler handler;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         context = ContextProvider.getInstance().createContext();
@@ -52,7 +52,7 @@ public class PerformanceTest
         eventManager.subscribe(context, handler, ReferenceType.STRONG);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown()
     {
         context.dispose();

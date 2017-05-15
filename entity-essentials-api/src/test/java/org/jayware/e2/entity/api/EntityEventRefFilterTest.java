@@ -24,11 +24,13 @@ import mockit.Mocked;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityEvent.EntityDeletingEvent;
 import org.jayware.e2.event.api.Event;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.jayware.e2.entity.api.EntityEvent.EntityRefParam;
 import static org.jayware.e2.entity.api.EntityEventRefFilter.filterEntities;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class EntityEventRefFilterTest
@@ -119,15 +121,29 @@ public class EntityEventRefFilterTest
             .isTrue();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_include_With_VarArg_Throws_IllegalArgumentException_if_null_is_passed_in()
     {
-        testee = filterEntities().include((EntityRef[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee = filterEntities().include((EntityRef[]) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_exclude_With_VarArg_Throws_IllegalArgumentException_if_null_is_passed_in()
     {
-        testee = filterEntities().exclude((EntityRef[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee = filterEntities().exclude((EntityRef[]) null);
+            }
+        });
     }
 }

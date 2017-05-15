@@ -30,13 +30,12 @@ import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Query;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentParam;
 import static org.jayware.e2.component.api.ComponentEvent.ComponentTypeParam;
-import static org.jayware.e2.component.impl.ComponentManagerImpl.COMPONENT_FACTORY;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
 
@@ -54,7 +53,7 @@ public class ComponentStoreTest
 
     private ComponentStore testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         new Expectations()

@@ -24,8 +24,8 @@ import mockit.Verifications;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class AbstractComponentTest
     private @Mocked Contextual testContextual;
     private @Mocked EntityRef testRef;
 
-    @BeforeMethod
+    @BeforeEach
     private void setup()
     {
         new Expectations() {{

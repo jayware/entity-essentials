@@ -22,8 +22,8 @@ import mockit.Mocked;
 import org.jayware.e2.event.api.EventDispatcher;
 import org.jayware.e2.event.impl.SubscriptionFactoryImpl.SubscriptionImpl_StrongReference;
 import org.jayware.e2.event.impl.SubscriptionFactoryImpl.SubscriptionImpl_WeakReference;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.util.ReferenceType.STRONG;
@@ -37,7 +37,7 @@ public class SubscriptionFactoryImplTest
     private @Mocked Object testSubscriber;
     private @Mocked EventDispatcher testDispatcher;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = new SubscriptionFactoryImpl();

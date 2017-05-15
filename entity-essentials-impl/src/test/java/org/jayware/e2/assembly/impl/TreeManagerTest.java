@@ -25,14 +25,14 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.entity.api.InvalidEntityRefException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -49,7 +49,7 @@ public class TreeManagerTest
     private @Mock EntityRef testEntityRef;
     private @Mock EntityRef testNodeEntityRef;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         initMocks(this);
@@ -76,13 +76,20 @@ public class TreeManagerTest
         assertThat(testee.createTreeNodeFor(testEntityRef)).isNotNull();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createTreeNode_ThrowsIllegalArgumentExceptionIfPassedRefIsNull()
     {
-        testee.createTreeNodeFor(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createTreeNodeFor(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = InvalidEntityRefException.class)
+    @Test
     public void test_createTreeNode_ThrowsInvalidEntityRefExceptionIfPassedRefIsInvalid()
     {
         final EntityRef ref = mock(EntityRef.class);
@@ -90,7 +97,14 @@ public class TreeManagerTest
         when(ref.isInvalid()).thenReturn(true);
         when(ref.getContext()).thenReturn(testContext);
 
-        testee.createTreeNodeFor(ref);
+        assertThrows(InvalidEntityRefException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createTreeNodeFor(ref);
+            }
+        });
     }
 
     @Test
@@ -99,21 +113,42 @@ public class TreeManagerTest
         testee.deleteTreeNode(testNode);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_deleteTreeNode_ThrowsIllegalArgumentExceptionIfPassedTreeNodeIsNull()
     {
-        testee.deleteTreeNode(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.deleteTreeNode(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findChildrenOf_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        testee.findChildrenOf(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findChildrenOf(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_queryChildrenOf_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        testee.queryChildrenOf(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.queryChildrenOf(null);
+            }
+        });
     }
 }

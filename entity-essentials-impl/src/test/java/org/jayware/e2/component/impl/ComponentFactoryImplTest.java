@@ -25,8 +25,9 @@ import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentC;
 import org.jayware.e2.context.api.Context;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ComponentFactoryImplTest
@@ -42,7 +44,7 @@ public class ComponentFactoryImplTest
 
     ComponentFactoryImpl testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         testee = new ComponentFactoryImpl();
@@ -63,16 +65,30 @@ public class ComponentFactoryImplTest
         assertThat(component).isNotNull();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createComponent_From_Class_Fails_if_null_is_passed()
     {
-        testee.createComponent((Class) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createComponent((Class) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = MalformedComponentException.class)
+    @Test
     public void test_prepareComponent_Should_fail_when_parameter_types_do_not_match()
     {
-        testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
+        assertThrows(MalformedComponentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
+            }
+        });
     }
 
     @Test

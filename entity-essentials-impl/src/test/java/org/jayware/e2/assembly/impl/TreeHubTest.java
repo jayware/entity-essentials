@@ -31,8 +31,8 @@ import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.Query;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class TreeHubTest
     private @Mocked EntityRef testRefB;
     private @Mocked EntityRef testRefC;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     throws Exception
     {

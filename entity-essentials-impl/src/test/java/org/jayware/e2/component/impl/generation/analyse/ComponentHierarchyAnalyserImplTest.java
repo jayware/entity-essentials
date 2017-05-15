@@ -26,8 +26,8 @@ import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentACB;
 import org.jayware.e2.component.impl.TestComponents.TestComponentB;
 import org.jayware.e2.component.impl.TestComponents.TestComponentCB;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
@@ -39,7 +39,7 @@ public class ComponentHierarchyAnalyserImplTest
 {
     private ComponentHierarchyAnalyser testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         testee = new ComponentHierarchyAnalyserImpl();

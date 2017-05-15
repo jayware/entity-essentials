@@ -22,11 +22,11 @@ import mockit.Expectations;
 import mockit.Mocked;
 import org.assertj.core.api.Assertions;
 import org.jayware.e2.context.api.Context;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.jayware.e2.assertj.Common.ID;
 import static org.jayware.e2.assertj.Common.ID2;
-import static org.testng.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class ContextAssertionsTest

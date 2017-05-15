@@ -23,10 +23,10 @@ import mockit.Mocked;
 import org.assertj.core.api.Assertions;
 import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.context.api.Context;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
-import static org.testng.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class ComponentAssertionsTest

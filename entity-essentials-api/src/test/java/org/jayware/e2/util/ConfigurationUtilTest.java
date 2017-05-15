@@ -18,8 +18,8 @@
  */
 package org.jayware.e2.util;
 
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -33,7 +33,7 @@ public class ConfigurationUtilTest
     private Dictionary<String, String> testDictionary;
     private Properties testProperties;
 
-    @BeforeTest
+    @BeforeEach
     public void setup()
     {
         testDictionary = new Hashtable<String, String>();

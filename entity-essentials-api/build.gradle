@@ -33,15 +33,16 @@ ext.projectObjectModel = pom {
 }
 
 dependencies {
-    testCompile dependency.testng
+    testCompile dependency.junit
     testCompile dependency.jmockit
     testCompile dependency.assertj
     testCompile dependency.mockito
     testCompile dependency.awaitility
+
+    testRuntime dependency.junitRuntime // TODO: For IntelliJ until release of JUnit 5
 }
 
 test {
-    useTestNG() {}
     testLogging {
         displayGranularity 4
         events "started", "passed", "skipped", "failed"

@@ -27,8 +27,8 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.jayware.e2.component.api.Aspect.aspect;
 
@@ -44,7 +44,7 @@ public class Example
     public interface ComponentB extends Component {}
     public interface ComponentC extends Component {}
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         context = ContextProvider.getInstance().createContext();

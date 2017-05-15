@@ -22,8 +22,8 @@ import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorAnalyser;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
@@ -38,7 +38,7 @@ public class ComponentPropertyAccessorAnalyserTest
 {
     private ComponentPropertyAccessorAnalyser testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         testee = new ComponentPropertyAccessorAnalyserImpl();

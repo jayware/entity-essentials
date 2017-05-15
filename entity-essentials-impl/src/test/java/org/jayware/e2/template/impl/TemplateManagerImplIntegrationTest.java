@@ -29,8 +29,8 @@ import org.jayware.e2.template.api.ComponentTemplate;
 import org.jayware.e2.template.api.PropertyTemplate;
 import org.jayware.e2.template.api.TemplateManager;
 import org.jayware.e2.template.api.TemplateProvider;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class TemplateManagerImplIntegrationTest
 
     private @Mocked TemplateProvider testTemplateProvider;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         context = ContextProvider.getInstance().createContext();

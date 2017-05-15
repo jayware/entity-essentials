@@ -24,9 +24,9 @@ import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -44,14 +44,14 @@ public class EventBusIntegrationTest_MixedEvents
     private Context context;
     private EventManager eventManager;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         context = ContextProvider.getInstance().createContext();
         eventManager = context.getService(EventManager.class);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown()
     {
         context.dispose();

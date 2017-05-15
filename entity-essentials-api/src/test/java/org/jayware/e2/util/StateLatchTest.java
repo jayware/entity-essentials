@@ -19,8 +19,9 @@
 package org.jayware.e2.util;
 
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,28 +31,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.util.StateLatchTest.TestStates.StateA;
 import static org.jayware.e2.util.StateLatchTest.TestStates.StateB;
 import static org.jayware.e2.util.StateLatchTest.TestStates.StateC;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class StateLatchTest
 {
     private StateLatch<TestStates> testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = new StateLatch<TestStates>(TestStates.class);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_newStateLatch_ThrowsIllegalArgumentExceptionIfEnumTypeIsNull()
     {
-        new StateLatch<TestStates>(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                new StateLatch<TestStates>(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_newStateLatch_ThrowsIllegalArgumentExceptionIfInitialValueIsNull()
     {
-        new StateLatch<TestStates>(TestStates.class, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                new StateLatch<TestStates>(TestStates.class, null);
+            }
+        });
     }
 
     @Test
@@ -79,11 +95,17 @@ public class StateLatchTest
         testee.hasState(null);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_await_ThrowsIllegalArgumentExceptionIfNullIsPassed()
-    throws InterruptedException
     {
-        testee.await(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.await(null);
+            }
+        });
     }
 
     @Test
@@ -115,11 +137,18 @@ public class StateLatchTest
         }
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_awaitWithTimeout_ThrowsIllegalArgumentExceptionIfNullIsPassed()
     throws InterruptedException
     {
-        testee.await(null, 1, SECONDS);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.await(null, 1, SECONDS);
+            }
+        });
     }
 
     @Test
@@ -136,10 +165,17 @@ public class StateLatchTest
         assertThat(testee.getState()).isEqualTo(StateB);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_signal_ThrowsIllegalArgumentExceptionIfNullIsPassed()
     {
-        testee.signal(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.signal(null);
+            }
+        });
     }
 
     @Test

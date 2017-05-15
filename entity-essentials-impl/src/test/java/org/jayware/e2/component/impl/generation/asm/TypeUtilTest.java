@@ -18,10 +18,13 @@
  */
 package org.jayware.e2.component.impl.generation.asm;
 
-import org.testng.annotations.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.resolveOpcodePrimitiveType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.objectweb.asm.Opcodes.T_BOOLEAN;
 import static org.objectweb.asm.Opcodes.T_BYTE;
 import static org.objectweb.asm.Opcodes.T_CHAR;
@@ -34,10 +37,17 @@ import static org.objectweb.asm.Opcodes.T_SHORT;
 
 public class TypeUtilTest
 {
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_resolveOpcodePrimitiveType_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        resolveOpcodePrimitiveType(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                resolveOpcodePrimitiveType(null);
+            }
+        });
     }
 
     @Test

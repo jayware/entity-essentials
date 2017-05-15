@@ -26,11 +26,13 @@ import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.IllegalHandlerException;
 import org.jayware.e2.event.api.Param;
 import org.jayware.e2.event.api.Presence;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class EventDispatcherFactoryImplTest
@@ -39,7 +41,7 @@ public class EventDispatcherFactoryImplTest
 
     private TestSubscriber testSubscriber;
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         testee = new EventDispatcherFactoryImpl();
@@ -57,16 +59,30 @@ public class EventDispatcherFactoryImplTest
         assertFalse(dispatcher.accepts(TestEventTypeD.class));
     }
 
-    @Test(expectedExceptions = IllegalHandlerException.class)
+    @Test
     public void test_createEventDispatcher_FailsIfSubscriberIsNotAccessible()
     {
-        testee.createEventDispatcher(TestSubscriber_Unaccessible.class);
+        assertThrows(IllegalHandlerException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEventDispatcher(TestSubscriber_Unaccessible.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalHandlerException.class)
+    @Test
     public void test_createEventDispatcher_FailsIfAnUnknownParameterIsSpecified()
     {
-        testee.createEventDispatcher(TestSubscriber_UnknownParameter.class);
+        assertThrows(IllegalHandlerException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEventDispatcher(TestSubscriber_UnknownParameter.class);
+            }
+        });
     }
 
     @Test

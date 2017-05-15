@@ -22,12 +22,14 @@ package org.jayware.e2.event.impl;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Parameters;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.impl.EventManagerImpl.EVENT_BUS;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +41,7 @@ public class EventManagerTest
     private Context context;
     private EventBus eventbus;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         context = mock(Context.class);
@@ -57,10 +59,17 @@ public class EventManagerTest
         assertThat(testee.createEvent(TestEventTypeA.class)).isNotNull();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createEvent_ThrowsIllegalArgumentExceptionIfEventTypeIsNull()
     {
-        testee.createEvent(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEvent(null);
+            }
+        });
     }
 
     @Test
@@ -69,10 +78,17 @@ public class EventManagerTest
         assertThat(testee.createEvent(TestEventTypeA.class, new Parameters())).isNotNull();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createEvent_Parameters_ThrowsIllegalArgumentExceptionIfEventTypeIsNull()
     {
-        testee.createEvent(null, new Parameters());
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEvent(null, new Parameters());
+            }
+        });
     }
 
     @Test
@@ -81,10 +97,17 @@ public class EventManagerTest
         assertThat(testee.createEvent(TestEventTypeA.class, param("foo", "bar"))).isNotNull();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createEvent_ParameterArry_ThrowsIllegalArgumentExceptionIfEventTypeIsNull()
     {
-        testee.createEvent(null, param("foo", "bar"));
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEvent(null, param("foo", "bar"));
+            }
+        });
     }
 
     @Test
@@ -93,10 +116,17 @@ public class EventManagerTest
         assertThat(testee.createQuery(TestEventTypeA.class, new Parameters())).isNotNull();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createQuery_Parameters_ThrowsIllegalArgumentExceptionIfEventTypeIsNull()
     {
-        testee.createEvent(null, new Parameters());
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEvent(null, new Parameters());
+            }
+        });
     }
 
     @Test
@@ -105,9 +135,16 @@ public class EventManagerTest
         assertThat(testee.createQuery(TestEventTypeA.class, param("foo", "bar"))).isNotNull();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createQuery_ParameterArray_ThrowsIllegalArgumentExceptionIfEventTypeIsNull()
     {
-        testee.createEvent(null, param("foo", "bar"));
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEvent(null, param("foo", "bar"));
+            }
+        });
     }
 }

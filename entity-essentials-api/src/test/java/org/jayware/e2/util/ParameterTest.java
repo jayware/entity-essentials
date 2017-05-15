@@ -18,8 +18,8 @@
  */
 package org.jayware.e2.util;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
@@ -33,7 +33,7 @@ public class ParameterTest
     private Parameter testParameter2;
     private Parameter testParameter3;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     throws Exception
     {

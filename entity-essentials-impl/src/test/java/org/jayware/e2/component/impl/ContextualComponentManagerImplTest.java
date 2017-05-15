@@ -30,8 +30,9 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ContextualComponentManagerImplTest
@@ -52,19 +54,26 @@ public class ContextualComponentManagerImplTest
 
     private ContextualComponentManagerImpl testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = new ContextualComponentManagerImpl(testContext, testComponentManager);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_prepareComponent_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        testee.prepareComponent(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.prepareComponent(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_prepareComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -72,7 +81,14 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.prepareComponent(TestComponentA.class);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.prepareComponent(TestComponentA.class);
+            }
+        });
     }
 
 
@@ -87,13 +103,20 @@ public class ContextualComponentManagerImplTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createComponent_With_Class_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        testee.createComponent(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createComponent(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_createComponent_With_Class_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -101,7 +124,14 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.createComponent(TestComponentA.class);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createComponent(TestComponentA.class);
+            }
+        });
     }
 
 
@@ -116,13 +146,20 @@ public class ContextualComponentManagerImplTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_addComponent_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
     {
-        testee.addComponent(null, TestComponentA.class);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(null, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_addComponent_Throws_IllegalArgumentException_if_the_passed_Class_is_null()
     {
         new Expectations()
@@ -130,10 +167,17 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = true;
         }};
 
-        testee.addComponent(testRefA, (Class<Component>) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(testRefA, (Class<Component>) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_addComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -141,10 +185,17 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.addComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_addComponent_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -152,7 +203,14 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.addComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
     @Test
@@ -171,19 +229,33 @@ public class ContextualComponentManagerImplTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
     {
-        testee.addComponent(null, testAbstractComponent);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(null, testAbstractComponent);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalArgumentException_if_the_passed_Component_is_null()
     {
-        testee.addComponent(testRefA, (Component) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(testRefA, (Component) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -191,10 +263,17 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.addComponent(testRefA, testAbstractComponent);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(testRefA, testAbstractComponent);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -202,10 +281,17 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.addComponent(testRefA, testAbstractComponent);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(testRefA, testAbstractComponent);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_addComponent_With_EntityRef_and_Component_Throws_IllegalContextException_if_the_passed_Component_belongs_to_another_Context()
     {
         new Expectations()
@@ -214,7 +300,14 @@ public class ContextualComponentManagerImplTest
             testAbstractComponent.belongsTo(testContext); result = false;
         }};
 
-        testee.addComponent(testRefA, testAbstractComponent);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.addComponent(testRefA, testAbstractComponent);
+            }
+        });
     }
 
     @Test
@@ -234,13 +327,20 @@ public class ContextualComponentManagerImplTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_removeComponent_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
     {
-        testee.removeComponent(null, TestComponentA.class);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.removeComponent(null, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_removeComponent_Throws_IllegalArgumentException_if_the_passed_Class_is_null()
     {
         new Expectations()
@@ -248,10 +348,17 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = true;
         }};
 
-        testee.removeComponent(testRefA, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.removeComponent(testRefA, null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_removeComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -259,10 +366,17 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.removeComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.removeComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_removeComponent_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -270,7 +384,14 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.removeComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.removeComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
     @Test
@@ -289,13 +410,20 @@ public class ContextualComponentManagerImplTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_getComponent_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
     {
-        testee.getComponent(null, TestComponentA.class);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.getComponent(null, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_getComponent_Throws_IllegalArgumentException_if_the_passed_Class_is_null()
     {
         new Expectations()
@@ -303,10 +431,17 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = true;
         }};
 
-        testee.getComponent(testRefA, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.getComponent(testRefA, null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_getComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -314,10 +449,17 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.getComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.getComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_getComponent_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -325,7 +467,14 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.getComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.getComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
     @Test
@@ -340,13 +489,20 @@ public class ContextualComponentManagerImplTest
         assertThat(testee.getComponent(testRefA, TestComponentA.class)).isEqualTo(testComponentA);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findComponent_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
     {
-        testee.findComponent(null, TestComponentA.class);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findComponent(null, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findComponent_Throws_IllegalArgumentException_if_the_passed_Class_is_null()
     {
         new Expectations()
@@ -354,10 +510,17 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = true;
         }};
 
-        testee.findComponent(testRefA, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findComponent(testRefA, null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_findComponent_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -365,10 +528,17 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.findComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_findComponent_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -376,7 +546,14 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.findComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
     @Test
@@ -391,13 +568,20 @@ public class ContextualComponentManagerImplTest
         assertThat(testee.findComponent(testRefA, TestComponentA.class)).isEqualTo(testComponentA);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findComponent_With_EntityRef_and_VarArg_Throws_IllegalArgumentException_if_the_passed_EntityRef_is_null()
     {
-        testee.hasComponent(null, TestComponentA.class);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.hasComponent(null, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findComponent_With_EntityRef_and_VarArg_Throws_IllegalArgumentException_if_the_passed_Component_Classes_are_null()
     {
         new Expectations()
@@ -406,10 +590,17 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = true;
         }};
 
-        testee.hasComponent(testRefA, (Class<? extends Component>[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.hasComponent(testRefA, (Class<? extends Component>[]) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_hasComponent_With_EntityRef_and_VarArg_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -418,10 +609,17 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.hasComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.hasComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_hasComponent_With_EntityRef_and_VarArg_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -430,7 +628,14 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.hasComponent(testRefA, TestComponentA.class);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.hasComponent(testRefA, TestComponentA.class);
+            }
+        });
     }
 
     @Test
@@ -463,7 +668,7 @@ public class ContextualComponentManagerImplTest
         assertThat(capturedComponentTypes.get(0)).contains(TestComponentA.class);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_hasComponent_With_EntityRef_and_Collection_Throws_IllegalStateException_if_the_Context_to_which_the_ContextualComponentManager_belongs_to_has_been_disposed()
     {
         new Expectations()
@@ -472,10 +677,17 @@ public class ContextualComponentManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class));
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class));
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_hasComponent_With_EntityRef_and_Collection_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -484,7 +696,14 @@ public class ContextualComponentManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class));
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.hasComponent(testRefA, Arrays.<Class<? extends Component>>asList(TestComponentA.class, TestComponentB.class));
+            }
+        });
     }
 
     @Test

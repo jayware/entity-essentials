@@ -24,9 +24,9 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,7 +44,7 @@ public class TreeNodeTest
     private TreeNode testNodeB;
     private TreeNode testNodeC;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     throws Exception
     {
@@ -62,7 +62,7 @@ public class TreeNodeTest
         testNodeC = testTreeManager.createTreeNodeFor(testRefC);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown()
     {
         testContext.dispose();

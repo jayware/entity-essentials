@@ -25,26 +25,35 @@ import org.jayware.e2.context.api.ServiceUnavailableException;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class DefaultServiceProviderImplTest
 {
     private ServiceProvider testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = new DefaultServiceProviderImpl(getClass().getClassLoader());
     }
 
-    @Test(expectedExceptions = ServiceUnavailableException.class)
+    @Test
     public void test_getService_ThrowsServiceUnavailableExceptionIfASuitableServiceCouldNotBeFound()
     {
-        testee.getService(UnavailableTestService.class);
+        assertThrows(ServiceUnavailableException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.getService(UnavailableTestService.class);
+            }
+        });
     }
 
     @Test

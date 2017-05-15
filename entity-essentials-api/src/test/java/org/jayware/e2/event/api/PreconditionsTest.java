@@ -20,10 +20,10 @@ package org.jayware.e2.event.api;
 
 import mockit.Expectations;
 import mockit.Mocked;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.jayware.e2.event.api.Preconditions.checkEventNotNullAndHasOneOfTypes;
-import static org.testng.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class PreconditionsTest

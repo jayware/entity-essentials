@@ -21,10 +21,10 @@ package org.jayware.e2.entity.api;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.jayware.e2.context.api.Context;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testng.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
 
 
 public class PreconditionsTest

@@ -19,7 +19,7 @@
 package org.jayware.e2.event.api;
 
 import org.jayware.e2.event.api.Parameters.Parameter;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;

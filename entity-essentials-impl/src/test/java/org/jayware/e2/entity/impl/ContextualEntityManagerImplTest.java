@@ -28,14 +28,16 @@ import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.util.Filter;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ContextualEntityManagerImplTest
@@ -49,20 +51,27 @@ public class ContextualEntityManagerImplTest
 
     private ContextualEntityManagerImpl testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = new ContextualEntityManagerImpl(testContext, testEntityManager);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_createEntity_Throws_IllegalStateException_if_the_context_has_been_disposed()
     {
         new Expectations() {{
             testContext.isDisposed(); result = true;
         }};
 
-        testee.createEntity();
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.createEntity();
+            }
+        });
     }
 
     @Test
@@ -76,13 +85,20 @@ public class ContextualEntityManagerImplTest
         assertThat(testee.createEntity()).isEqualTo(testRefA);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_DeleteEntity_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        testee.deleteEntity(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.deleteEntity(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_DeleteEntity_Throws_IllegalStateException_if_its_Context_has_been_disposed()
     {
         new Expectations()
@@ -90,10 +106,17 @@ public class ContextualEntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.deleteEntity(testRefA);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.deleteEntity(testRefA);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalContextException.class)
+    @Test
     public void test_DeleteEntity_Throws_IllegalContextException_if_the_passed_EntityRef_belongs_to_another_Context()
     {
         new Expectations()
@@ -101,7 +124,14 @@ public class ContextualEntityManagerImplTest
             testRefA.belongsTo(testContext); result = false;
         }};
 
-        testee.deleteEntity(testRefA);
+        assertThrows(IllegalContextException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.deleteEntity(testRefA);
+            }
+        });
     }
 
     @Test
@@ -120,7 +150,7 @@ public class ContextualEntityManagerImplTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_DeleteEntities_Throws_IllegalStateException_if_its_Context_has_been_disposed()
     {
         new Expectations()
@@ -128,7 +158,14 @@ public class ContextualEntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.deleteEntities();
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.deleteEntities();
+            }
+        });
     }
 
     @Test
@@ -146,7 +183,7 @@ public class ContextualEntityManagerImplTest
         assertThat(testee.deleteEntities()).containsOnlyElementsOf(resultList);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_findEntities_Throws_IllegalStateException_if_its_Context_has_been_disposed()
     {
         new Expectations()
@@ -154,7 +191,14 @@ public class ContextualEntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.findEntities();
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities();
+            }
+        });
     }
 
     @Test
@@ -168,13 +212,20 @@ public class ContextualEntityManagerImplTest
         assertThat(testee.findEntities()).containsExactly(testRefB, testRefC);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findEntities_With_Aspect_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        testee.findEntities((Aspect) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities((Aspect) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_findEntities_With_Aspect_Throws_IllegalStateException_if_its_Context_has_been_disposed()
     {
         new Expectations()
@@ -182,7 +233,14 @@ public class ContextualEntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.findEntities(testAspect);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities(testAspect);
+            }
+        });
     }
 
     @Test
@@ -196,13 +254,20 @@ public class ContextualEntityManagerImplTest
         assertThat(testee.findEntities(testAspect)).containsExactly(testRefB, testRefC);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findEntities_With_Filters_Throws_IllegalArgumentException_if_null_is_passed()
     {
-        testee.findEntities((Filter<EntityRef>[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities((Filter<EntityRef>[]) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_findEntities_With_Filters_Throws_IllegalStateException_if_its_Context_has_been_disposed()
     {
         new Expectations()
@@ -210,7 +275,14 @@ public class ContextualEntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.findEntities(testFilterA, testFilterB);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities(testFilterA, testFilterB);
+            }
+        });
     }
 
     @Test
@@ -224,19 +296,33 @@ public class ContextualEntityManagerImplTest
         assertThat(testee.findEntities(testFilterA, testFilterB)).containsExactly(testRefB, testRefC);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findEntities_With_Aspect_And_Filters_Throws_IllegalArgumentException_if_null_is_passed_as_Filters()
     {
-        testee.findEntities(testAspect, (Filter<EntityRef>[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities(testAspect, (Filter<EntityRef>[]) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_findEntities_With_Aspect_And_Filters_Throws_IllegalArgumentException_if_null_is_passed_as_Aspect()
     {
-        testee.findEntities((Aspect) null, testFilterA, testFilterB);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities((Aspect) null, testFilterA, testFilterB);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_findEntities_With_Aspect_And_Filters_Throws_IllegalStateException_if_its_Context_has_been_disposed()
     {
         new Expectations()
@@ -244,7 +330,14 @@ public class ContextualEntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.findEntities(testAspect, testFilterA, testFilterB);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.findEntities(testAspect, testFilterA, testFilterB);
+            }
+        });
     }
 
     @Test

@@ -22,8 +22,9 @@ import mockit.Expectations;
 import mockit.Mocked;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.jayware.e2.component.api.Aspect.EMPTY;
 import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.component.api.Aspect.collectNames;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class AspectTest
@@ -43,7 +45,7 @@ public class AspectTest
     private @Mocked ComponentManager testComponentManager;
     private @Mocked EntityRef testRefA, testRefB;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         new Expectations()
@@ -52,10 +54,17 @@ public class AspectTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_withAllOf_VarArg_throws_IllegalArgumentException_if_null_is_passed()
     {
-        aspect().withAllOf((Class<? extends Component>[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                aspect().withAllOf((Class<? extends Component>[]) null);
+            }
+        });
     }
 
     @Test
@@ -76,10 +85,17 @@ public class AspectTest
         catch (IllegalAspectException e) {}
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_withOneOf_VarArg_throws_IllegalArgumentException_if_null_is_passed()
     {
-        aspect().withOneOf((Class<? extends Component>[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                aspect().withOneOf((Class<? extends Component>[]) null);
+            }
+        });
     }
 
     @Test
@@ -100,10 +116,17 @@ public class AspectTest
         catch (IllegalAspectException e) {}
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_withNoneOf_VarArg_throws_IllegalArgumentException_if_null_is_passed()
     {
-        aspect().withNoneOf((Class<? extends Component>[]) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                aspect().withNoneOf((Class<? extends Component>[]) null);
+            }
+        });
     }
 
     @Test
@@ -124,10 +147,17 @@ public class AspectTest
         catch (IllegalAspectException e) {}
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_withAllOf_Collection_throws_IllegalArgumentException_if_null_is_passed()
     {
-        aspect().withAllOf((Collection<Class<? extends Component>>) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                aspect().withAllOf((Collection<Class<? extends Component>>) null);
+            }
+        });
     }
 
     @Test
@@ -150,10 +180,17 @@ public class AspectTest
         catch (IllegalAspectException e) {}
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_withOneOf_Collection_throws_IllegalArgumentException_if_null_is_passed()
     {
-        aspect().withOneOf((Collection<Class<? extends Component>>) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                aspect().withOneOf((Collection<Class<? extends Component>>) null);
+            }
+        });
     }
 
     @Test
@@ -176,10 +213,17 @@ public class AspectTest
         catch (IllegalAspectException e) {}
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_withNoneOf_Collection_throws_IllegalArgumentException_if_null_is_passed()
     {
-        aspect().withNoneOf((Collection<Class<? extends Component>>) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                aspect().withNoneOf((Collection<Class<? extends Component>>) null);
+            }
+        });
     }
 
     @Test

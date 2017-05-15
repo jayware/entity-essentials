@@ -21,8 +21,8 @@ package org.jayware.e2.event.impl;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.jayware.e2.event.api.Subscription;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,7 +36,7 @@ public class SubscriptionBookkeeperImplTest
     private @Mocked Object testSubscriberA;
     private @Mocked Object testSubscriberB;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = new SubscriptionBookkeeperImpl();

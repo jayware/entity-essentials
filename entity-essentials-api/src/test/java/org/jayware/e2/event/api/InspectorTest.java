@@ -22,7 +22,7 @@ import mockit.Expectations;
 import mockit.Mocked;
 import org.jayware.e2.event.api.EventType.Command;
 import org.jayware.e2.event.api.Parameters.Parameter;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 

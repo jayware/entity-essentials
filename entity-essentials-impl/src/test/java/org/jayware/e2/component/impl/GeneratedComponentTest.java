@@ -32,13 +32,15 @@ import org.jayware.e2.component.impl.TestComponents.TestComponentC;
 import org.jayware.e2.component.impl.TestComponents.TestEnum;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.component.impl.TestComponents.TestEnum.A;
 import static org.jayware.e2.component.impl.TestComponents.TestEnum.B;
 import static org.jayware.e2.component.impl.TestComponents.TestEnum.C;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class GeneratedComponentTest
@@ -77,7 +79,7 @@ public class GeneratedComponentTest
 
     private TestComponentC testee, testeeA, testeeB;
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         componentFactory = new ComponentFactoryImpl();
@@ -163,10 +165,17 @@ public class GeneratedComponentTest
         assertThat(TestComponents.TestComponentB.class.isAssignableFrom(component.getClass())).isTrue();
     }
 
-    @Test(expectedExceptions = MalformedComponentException.class)
+    @Test
     public void test_combined_component_Fails_if_the_component_extends_a_type_which_declares_illegal_operations()
     {
-        componentFactory.prepareComponent(TestComponents.MalformedCombinedTestComponent.class);
+        assertThrows(MalformedComponentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                componentFactory.prepareComponent(TestComponents.MalformedCombinedTestComponent.class);
+            }
+        });
     }
 
     @Test

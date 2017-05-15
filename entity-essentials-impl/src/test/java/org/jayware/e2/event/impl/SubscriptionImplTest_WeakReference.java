@@ -21,8 +21,8 @@ package org.jayware.e2.event.impl;
 import mockit.Mocked;
 import org.jayware.e2.event.api.EventDispatcher;
 import org.jayware.e2.event.api.EventFilter;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,7 +36,7 @@ public class SubscriptionImplTest_WeakReference
     private @Mocked EventFilter testFilterA;
     private @Mocked EventFilter testFilterB;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     throws Exception
     {

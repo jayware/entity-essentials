@@ -23,19 +23,21 @@ import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventBuilder;
 import org.jayware.e2.event.api.Parameters;
 import org.jayware.e2.event.api.Parameters.Parameter;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.Parameters.param;
 import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class EventBuilderImplTest
 {
     private EventBuilder testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = createEventBuilder(TestEventTypeA.class);
@@ -67,33 +69,68 @@ public class EventBuilderImplTest
         assertThat(event.hasParameter("number2")).isFalse();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createEventBuilder_ThrowsIllegalArgumentExceptionIfEventTypeIsNull()
     {
-        createEventBuilder(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                createEventBuilder(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_set_ParameterName_ThrowsIllegalArgumentExceptionIfNameIsNull()
     {
-        testee.set((String) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.set((String) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_set_ParameterName_ThrowsIllegalArgumentExceptionIfNameIsEmpty()
     {
-        testee.set("");
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.set("");
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_set_Parameter_ThrowsIllegalArgumentExceptionIfParameterIsNull()
     {
-        testee.set((Parameter) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.set((Parameter) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_setAll_ThrowsIllegalArgumentExceptionIfParametersIsNull()
     {
-        testee.setAll(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.setAll(null);
+            }
+        });
     }
 }

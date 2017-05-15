@@ -23,7 +23,7 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.Handle;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;

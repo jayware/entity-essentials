@@ -39,17 +39,17 @@ dependencies {
 
     testCompile project(':entity-essentials-api')
 
-    testCompile dependency.testng
+    testCompile dependency.junit
     testCompile dependency.jmockit
     testCompile dependency.assertj
     testCompile dependency.mockito
 
     testRuntime project(":entity-essentials-impl")
     testRuntime dependency.logback
+    testRuntime dependency.junitRuntime // TODO: For IntelliJ until release of JUnit 5
 }
 
 test {
-    useTestNG() {}
     testLogging {
         displayGranularity 4
         events "started", "passed", "skipped", "failed"

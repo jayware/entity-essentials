@@ -25,9 +25,9 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,7 +40,7 @@ public class ComponentManagerIntegrationTest
     private EntityManager entityManager;
     private ComponentManager componentManager;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         context = ContextProvider.getInstance().createContext();
@@ -48,7 +48,7 @@ public class ComponentManagerIntegrationTest
         componentManager = context.getService(ComponentManager.class);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown()
     {
         context.dispose();

@@ -31,9 +31,10 @@ import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Parameters.Parameter;
 import org.jayware.e2.event.api.ResultSet;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,7 @@ import static org.jayware.e2.entity.api.EntityEvent.CreateEntityEvent.EntityRefP
 import static org.jayware.e2.entity.api.EntityEvent.EntityRefListParam;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class EntityManagerImplTest
@@ -61,7 +63,7 @@ public class EntityManagerImplTest
     private @Mocked EntityRef testRefA, testRefB, testRefC;
     private @Mocked ResultSet testResultSet;
 
-    @BeforeMethod
+    @BeforeEach
     public void setup()
     {
         context = ContextProvider.getInstance().createContext();
@@ -73,7 +75,7 @@ public class EntityManagerImplTest
         }};
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown()
     {
         context.dispose();
@@ -111,14 +113,21 @@ public class EntityManagerImplTest
         }};
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_deleteEntities_Throws_IllegalArgumentException_if_passed_context_is_null()
     throws Exception
     {
-        testee.deleteEntities(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.deleteEntities(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_deleteEntities_Throws_IllegalStateException_if_passed_context_has_been_disposed()
     throws Exception
     {
@@ -127,7 +136,14 @@ public class EntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.deleteEntities(testContext);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.deleteEntities(testContext);
+            }
+        });
     }
 
     @Test
@@ -164,13 +180,20 @@ public class EntityManagerImplTest
         assertThat(testee.findEntities(context)).containsExactlyInAnyOrder(refA, refB, refC);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_resolveEntity_With_UUID_Throws_IllegalArgrumentException_if_passed_Context_is_null()
     {
-        testee.resolveEntity(null, TEST_UUID);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.resolveEntity(null, TEST_UUID);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_resolveEntity_With_UUID_Throws_IllegalStateException_if_passed_Context_is_disposed()
     {
         new Expectations()
@@ -178,13 +201,27 @@ public class EntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.resolveEntity(testContext, TEST_UUID);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.resolveEntity(testContext, TEST_UUID);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_resolveEntity_With_UUID_Throws_IllegalArgrumentException_if_passed_UUID_is_null()
     {
-        testee.resolveEntity(testContext, null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.resolveEntity(testContext, null);
+            }
+        });
     }
 
     @Test
@@ -194,14 +231,21 @@ public class EntityManagerImplTest
         assertThat(testee.resolveEntity(context, TEST_UUID)).isEqualTo(expectedRef);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_asContextual_Throws_IllegalArgumentException_if_null_is_passed()
     throws Exception
     {
-        testee.asContextual(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.asContextual(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test
     public void test_asContextual_Throws_IllegalStateException_if_the_passed_Context_is_disposed()
     throws Exception
     {
@@ -209,6 +253,13 @@ public class EntityManagerImplTest
             testContext.isDisposed(); result = true;
         }};
 
-        testee.asContextual(testContext);
+        assertThrows(IllegalStateException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.asContextual(testContext);
+            }
+        });
     }
 }

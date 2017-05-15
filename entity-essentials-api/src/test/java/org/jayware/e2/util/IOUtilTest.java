@@ -21,7 +21,7 @@ package org.jayware.e2.util;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Verifications;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.Closeable;
 import java.io.File;

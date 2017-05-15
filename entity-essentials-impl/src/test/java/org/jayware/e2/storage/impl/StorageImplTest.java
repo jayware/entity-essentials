@@ -35,8 +35,8 @@ import org.jayware.e2.event.api.Query;
 import org.jayware.e2.storage.api.ComponentDatabase;
 import org.jayware.e2.storage.api.StorageException;
 import org.jayware.e2.util.Filter;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +70,7 @@ public class StorageImplTest
 
     private StorageImpl testee;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         new Expectations()

@@ -24,9 +24,9 @@ import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.QueryBuilder;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.util.Consumer;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.Parameters.param;
@@ -35,6 +35,7 @@ import static org.jayware.e2.event.api.Query.State.Ready;
 import static org.jayware.e2.event.api.Query.State.Running;
 import static org.jayware.e2.event.api.Query.State.Success;
 import static org.jayware.e2.event.impl.QueryBuilderImpl.createQueryBuilder;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class QueryBuilderTest
@@ -45,7 +46,7 @@ public class QueryBuilderTest
     private final TestConsumer testConsumer_Success = new TestConsumer();
     private final TestConsumer testConsumer_Failed = new TestConsumer();
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp()
     {
         testee = createQueryBuilder(TestEventTypeA.class);
@@ -84,46 +85,95 @@ public class QueryBuilderTest
         assertThat(((QueryImpl) query).getConsumers()).isEmpty();
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_createQueryBuilder_ThrowsIllegalArgumentExceptionIfEventTypeIsNull()
     {
-        createQueryBuilder(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                createQueryBuilder(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_set_ParameterName_ThrowsIllegalArgumentExceptionIfNameIsNull()
     {
-        testee.set((String) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.set((String) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_set_ParameterName_ThrowsIllegalArgumentExceptionIfNameIsEmpty()
     {
-        testee.set("");
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.set("");
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_set_Parameter_ThrowsIllegalArgumentExceptionIfParameterIsNull()
     {
-        testee.set((Parameters.Parameter) null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.set((Parameters.Parameter) null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_setAll_ThrowsIllegalArgumentExceptionIfParametersIsNull()
     {
-        testee.setAll(null);
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.setAll(null);
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_on_ThrowsIllegalArgumentExceptionIfStateIsNull()
     {
-        testee.on(null, new TestConsumer());
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.on(null, new TestConsumer());
+            }
+        });
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void test_on_ThrowsIllegalArgumentExceptionIfStateIsReady()
     {
-        testee.on(Ready, new TestConsumer());
+        assertThrows(IllegalArgumentException.class, new Executable()
+        {
+            @Override
+            public void execute()
+            {
+                testee.on(Ready, new TestConsumer());
+            }
+        });
     }
 
     private static class TestConsumer
