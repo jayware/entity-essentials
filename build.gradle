@@ -13,6 +13,8 @@ plugins {
     id "com.github.hierynomus.license" version "0.13.1"
 }
 
+apply from: 'dependencies.gradle'
+
 allprojects {
     apply plugin: 'license'
     apply plugin: 'nebula.lint'
@@ -33,10 +35,14 @@ allprojects {
         include "**/*.java"
     }
 
-    gradleLint.rules = [
-        'all-dependency',
-        'duplicate-dependency-class'
-    ]
+    gradleLint {
+        alwaysRun = false
+        autoLintAfterFailure = false
+        rules = [
+                'all-dependency',
+                'duplicate-dependency-class'
+        ]
+    }
 
     bintray {
         user = System.getProperty('bintray.user')
