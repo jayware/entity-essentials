@@ -5,6 +5,9 @@ install: true
 addons:
   sonarqube:
     organization: "jayware"
+    branches:
+      - master
+      - development
     token:
       secure: "LfkRtsMLBXy2Z9h/rBV0QZMFWrPxVfCi4PeVwd5FAjz7lAH0SnLchcRs22M0/XHPR7/mOmeGfIXOxk9gReUCoZBFvt20qH8/bo0PPsGPALon4M8ci7jNtTlq0lnYNEFGRTlaJOqrJbO2i2e4T2gA+YtstxvR/MqUHF5EaiWs8MROCrNhaZbtrpGSWXL1ufePKMcGIGalOHPkegcRlGKghfdsnlP2GeUbV42mxhFqIDBfSkiu+4LWjOxMZLMI84jBuKDPCy5V42OPsodqrE835C8ZF1x5fZQVq+51Qwz2/VnfHCIMYg6uPWK5ivmlJYdnh5okWLCcxgdPPK9GW7og3/4Wd62QlzVKVtG8Vig5d0CzlWUzTaEjdEVMb06hFmazkeb0qarjtXjPesJgb6r+kbcRVTPI9+kc11tYbcaRp7NI0+oZiTBDcug0+/hhfhzwC26v1OjWsOX24oPIXwJt2vRAkKTg8EaLQWqf7fApH7E9CINtxZTkY0nQzphNgSlQ0NsZfKxbnlkVa/CQ85e4X2MVYmnxQxYKO7auHLzHkqEhG2JSCTzkZQ+heKYRwhlvQ8uuOpf3pvXUFvf5uMndkg2l8JIwMo45IEYEx/Y9HiHVrUN0rWtH4IPwKo7eRHS4PR3l8/GVCgAfSOnDvfosgFsGb7tJMSrBj9WrT73TtNU="
 
