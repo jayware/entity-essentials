@@ -1,23 +1,42 @@
 language: java
+sudo: false
+install: true
 
-jdk:
-- oraclejdk8
+addons:
+  sonarqube:
+    organization: "jayware"
+    token:
+      secure: "LfkRtsMLBXy2Z9h/rBV0QZMFWrPxVfCi4PeVwd5FAjz7lAH0SnLchcRs22M0/XHPR7/mOmeGfIXOxk9gReUCoZBFvt20qH8/bo0PPsGPALon4M8ci7jNtTlq0lnYNEFGRTlaJOqrJbO2i2e4T2gA+YtstxvR/MqUHF5EaiWs8MROCrNhaZbtrpGSWXL1ufePKMcGIGalOHPkegcRlGKghfdsnlP2GeUbV42mxhFqIDBfSkiu+4LWjOxMZLMI84jBuKDPCy5V42OPsodqrE835C8ZF1x5fZQVq+51Qwz2/VnfHCIMYg6uPWK5ivmlJYdnh5okWLCcxgdPPK9GW7og3/4Wd62QlzVKVtG8Vig5d0CzlWUzTaEjdEVMb06hFmazkeb0qarjtXjPesJgb6r+kbcRVTPI9+kc11tYbcaRp7NI0+oZiTBDcug0+/hhfhzwC26v1OjWsOX24oPIXwJt2vRAkKTg8EaLQWqf7fApH7E9CINtxZTkY0nQzphNgSlQ0NsZfKxbnlkVa/CQ85e4X2MVYmnxQxYKO7auHLzHkqEhG2JSCTzkZQ+heKYRwhlvQ8uuOpf3pvXUFvf5uMndkg2l8JIwMo45IEYEx/Y9HiHVrUN0rWtH4IPwKo7eRHS4PR3l8/GVCgAfSOnDvfosgFsGb7tJMSrBj9WrT73TtNU="
 
 branches:
   only:
-  - master
-  - development
+    - master
+    - development
 
-script: "./gradlew check --info --continue"
+jdk:
+  - oraclejdk8
+
+script:
+  - "./gradlew check --info --continue"
 
 before_install:
-- pip install --user codecov
+  - pip install --user codecov
 
 after_success:
-- "./gradlew codeCoverageReport"
-- codecov
+  - "./gradlew codeCoverageReport"
+  - "./gradlew sonarqube"
+  - codecov
 
 notifications:
   hipchat:
     rooms:
       secure: cyUXqr2UGEMnGAnHRZEqiKwl+HYmlZfXkxCRI/oCuUzlP6TgDaiMGsQPowrQg6UO0dBQch5xmaOAAS0EeN6Bs+GFgVqN+v8Mk2TzcRe+wNK26k0uLDeDrurbTx+hmmYveWPPd5aKX6byyhySZj1wtufPug8sFOKjRe48ZO2EpORvNIm645gC1ReV7ZvE4x2BOgqrk/mirUTISdEv2tNU30ILYNE6tdVNABat29/2nvjzckVSXQgyhYCUxjMhTlquyKTx0FQYJCxfVYUjc15sI/m6n6J8jCfDQAw1ktns36RZMR3tbj55o9TlA9ZAO5Ngp2sjw8kF1J7elCKb5FVueWYCOIQtZyK1JTcZY0ytIvbcw4qy6s/SE+ChWFxI40x6odshXQJPhgbyMw12nJQNKbQiAo/E2WsYxMEi2q9QVf4Q3rMLgxE0DRFrFcO+b4wzLbMP237lwt1C3fJQFy9/fKeVgu4jVrc8eQqvDfItUZK2TP7narP13yN2XvHqc2Sx3JINf4JL8NA5zacjvx5RtoGdihdrsvosif9cKyGTAoxNf2eplMI2t41qBb1Ad7gjaxF0GaBoy1+aqfDRWjPFjd0Zfll3+m5f1Zpow0adEJwxaKpkxy+8xRddYeogl9xrxrT9Larg/Y9rpM9TO88dZxwzO6srJ6LWICjrAmm7uh0=
+
+script:
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
+    - '$HOME/.gradle'
+    - '.gradle'
