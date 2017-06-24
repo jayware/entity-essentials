@@ -22,9 +22,6 @@
 package org.jayware.e2.util;
 
 
-import static org.jayware.e2.util.ObjectUtil.equal;
-
-
 /**
  * A <code>Key</code>
  *
@@ -59,7 +56,7 @@ public class Key<V>
         }
 
         final Key<?> other = (Key<?>) obj;
-        return equal(myKey, other.myKey);
+        return ObjectUtil.equals(myKey, other.myKey);
     }
 
     @Override

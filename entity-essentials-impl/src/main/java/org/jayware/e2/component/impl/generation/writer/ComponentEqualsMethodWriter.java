@@ -95,7 +95,7 @@ public class ComponentEqualsMethodWriter
 
             if (isObjectType(propertyType))
             {
-                methodBuilder.invokeStaticMethod(ObjectUtil.class, "equal", boolean.class, Object.class, Object.class);
+                methodBuilder.invokeStaticMethod(ObjectUtil.class, "equals", boolean.class, Object.class, Object.class);
                 methodBuilder.jumpIfEquals(endIf);
             }
             else if (isArrayType(propertyType))

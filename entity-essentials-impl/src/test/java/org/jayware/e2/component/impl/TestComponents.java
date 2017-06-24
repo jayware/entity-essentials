@@ -308,7 +308,7 @@ public class TestComponents
                 else
                 {
                     final TestComponentA var2 = (TestComponentA) var1;
-                    return Arrays.equals(myArray, var2.getArray()) && ObjectUtil.equal(myEnum, var2.getTestEnum());
+                    return Arrays.equals(myArray, var2.getArray()) && ObjectUtil.equals(myEnum, var2.getTestEnum());
                 }
             }
         }

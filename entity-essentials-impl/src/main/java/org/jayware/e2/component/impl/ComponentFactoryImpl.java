@@ -71,6 +71,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Class.forName;
 import static java.util.Arrays.asList;
+import static org.jayware.e2.util.IOUtil.closeQuietly;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
@@ -414,6 +415,7 @@ implements ComponentFactory
 
         toStringMethodWriter.writeToStringMethodFor(componentGenerationPlan);
 
+        FileOutputStream fileOutputStream = null;
         try
         {
             final File classFile = componentGenerationPlan.getGeneratedClassFile();
@@ -427,19 +429,24 @@ implements ComponentFactory
                 }
             }
 
-            DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(classFile));
+            fileOutputStream = new FileOutputStream(classFile);
+            DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
             dataOutputStream.write(classWriter.toByteArray());
             dataOutputStream.flush();
-            dataOutputStream.close();
         }
         catch (IOException e)
         {
             throw new ComponentFactoryException("Failed to write class file to: " + myOutputDirectory.getAbsolutePath(), e);
         }
+        finally
+        {
+            closeQuietly(fileOutputStream);
+        }
 
+        URLClassLoader classLoader = null;
         try
         {
-            final ClassLoader classLoader = new URLClassLoader(new URL[]{myOutputDirectory.toURI().toURL()}, componentClass.getClassLoader());
+            classLoader = new URLClassLoader(new URL[]{myOutputDirectory.toURI().toURL()}, componentClass.getClassLoader());
             final Class<? extends Component> loadedClass = (Class<? extends Component>) classLoader.loadClass(componentGenerationPlan.getGeneratedClassName());
 
             myCache.put(componentClass.getName(), new ComponentInstancerImpl<Component, Component>(componentGenerationPlan, loadedClass));
@@ -449,6 +456,10 @@ implements ComponentFactory
         catch (Exception e)
         {
             throw new ComponentFactoryException("Failed to load class '" + classInternalName + "' from: " + myOutputDirectory.getAbsolutePath(), e);
+        }
+        finally
+        {
+            closeQuietly(classLoader);
         }
     }
 

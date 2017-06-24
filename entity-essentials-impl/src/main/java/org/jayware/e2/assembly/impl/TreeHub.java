@@ -419,7 +419,7 @@ implements Disposable
             }
 
             final TreeNodeImpl other = (TreeNodeImpl) o;
-            return ObjectUtil.equal(myNodeRef, other.myNodeRef);
+            return ObjectUtil.equals(myNodeRef, other.myNodeRef);
         }
 
         @Override

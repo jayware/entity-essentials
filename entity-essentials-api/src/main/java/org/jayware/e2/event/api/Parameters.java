@@ -232,8 +232,8 @@ implements ReadOnlyParameters
             }
 
             final Parameter parameter = (Parameter) obj;
-            return ObjectUtil.equal(name, parameter.name) &&
-                   ObjectUtil.equal(value, parameter.value);
+            return ObjectUtil.equals(name, parameter.name) &&
+                   ObjectUtil.equals(value, parameter.value);
         }
 
         @Override

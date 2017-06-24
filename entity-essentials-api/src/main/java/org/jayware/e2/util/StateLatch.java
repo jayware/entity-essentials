@@ -26,6 +26,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static java.lang.Thread.currentThread;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -74,6 +75,7 @@ public class StateLatch<S extends Enum<S>>
         }
         catch (InterruptedException e)
         {
+            currentThread().interrupt();
             return false;
         }
         finally
@@ -99,6 +101,7 @@ public class StateLatch<S extends Enum<S>>
         }
         catch (InterruptedException e)
         {
+            currentThread().interrupt();
             return false;
         }
         finally

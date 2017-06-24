@@ -64,6 +64,7 @@ import static java.nio.charset.Charset.forName;
 import static java.util.Arrays.asList;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import static org.jayware.e2.util.ConfigurationUtil.getPropertyOrDefault;
+import static org.jayware.e2.util.IOUtil.closeQuietly;
 import static org.jayware.e2.util.Parameter.parametersFrom;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
@@ -121,7 +122,7 @@ implements EventDispatcherFactory
         }
         catch (NoSuchAlgorithmException e)
         {
-            e.printStackTrace();
+            log.error("Failed to initialize EventDispatcherFactory!", e);
         }
     }
 
@@ -486,6 +487,7 @@ implements EventDispatcherFactory
             mv.visitEnd();
         }
 
+        FileOutputStream fileOutputStream = null;
         try
         {
             final File parentFile = classFile.getParentFile();
@@ -498,19 +500,25 @@ implements EventDispatcherFactory
                 }
             }
 
-            DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(classFile));
+            fileOutputStream = new FileOutputStream(classFile);
+            DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
             dataOutputStream.write(classWriter.toByteArray());
             dataOutputStream.flush();
-            dataOutputStream.close();
         }
         catch (IOException e)
         {
             log.error("Saving dispatcher class failed!", e);
         }
+        finally
+        {
+            closeQuietly(fileOutputStream);
+        }
 
+        URLClassLoader classLoader = null;
         try
         {
-            Class<? extends EventDispatcher> eventDispatcherClass = (Class<? extends EventDispatcher>) new URLClassLoader(new URL[]{myOutputDirectory.toURI().toURL()}, getClass().getClassLoader()).loadClass(className);
+            classLoader = new URLClassLoader(new URL[]{myOutputDirectory.toURI().toURL()}, getClass().getClassLoader());
+            Class<? extends EventDispatcher> eventDispatcherClass = (Class<? extends EventDispatcher>) classLoader.loadClass(className);
             targetDescriptor.eventDispatcher = eventDispatcherClass.newInstance();
 
             log.info("Created EventDispatcher for: '{}'. EventDispatcher class stored in: '{}' ", target, classFile.getAbsolutePath());
@@ -518,6 +526,10 @@ implements EventDispatcherFactory
         catch (Exception e)
         {
             throw new EventDispatcherFactoryException(e);
+        }
+        finally
+        {
+            closeQuietly(classLoader);
         }
     }
 

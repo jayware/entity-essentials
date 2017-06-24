@@ -387,7 +387,7 @@ implements Storage, Disposable
             }
 
             final EntityRef ref = (EntityRef) other;
-            return ObjectUtil.equal(myId, ref.getId()) && belongsTo(ref);
+            return ObjectUtil.equals(myId, ref.getId()) && belongsTo(ref);
         }
 
         @Override

@@ -144,8 +144,8 @@ public class ComponentPropertyGenerationPlan
         }
 
         final ComponentPropertyGenerationPlan that = (ComponentPropertyGenerationPlan) o;
-        return ObjectUtil.equal(myOwner, that.myOwner) &&
-               ObjectUtil.equal(myName, that.myName);
+        return ObjectUtil.equals(myOwner, that.myOwner) &&
+               ObjectUtil.equals(myName, that.myName);
     }
 
     @Override

@@ -18,23 +18,40 @@
  */
 package org.jayware.e2.util;
 
-import java.util.Arrays;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
-public class ObjectUtil
+public class IOUtil
 {
-    public static boolean equals(Object a, Object b)
+    private IOUtil()
     {
-        return a == b || a != null && a.equals(b);
+        throw new IllegalStateException("Utility class");
     }
 
-    public static int hashCode(Object... objects)
+    public static void closeQuietly(InputStream stream)
     {
-        return Arrays.hashCode(objects);
+        closeQuietly((Closeable) stream);
     }
 
-    public static Object getClassNameOf(final Object object)
+    public static void closeQuietly(OutputStream stream)
     {
-        return object.getClass().getName();
+        closeQuietly((Closeable) stream);
+    }
+
+    public static void closeQuietly(Closeable closeable) {
+        try
+        {
+            if (closeable != null)
+            {
+                closeable.close();
+            }
+        }
+        catch (IOException ignored)
+        {
+            // Ignored to be quiet.
+        }
     }
 }

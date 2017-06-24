@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 
+import static java.lang.Thread.currentThread;
 import static org.jayware.e2.event.api.EventDispatchException.throwEventDispatchException;
 import static org.jayware.e2.event.api.EventDispatchException.throwEventDispatchExceptionWithReport;
 
@@ -66,7 +67,10 @@ implements Runnable
         {
             isDispatched.await();
         }
-        catch (InterruptedException ignored) {}
+        catch (InterruptedException ignored)
+        {
+            currentThread().interrupt();
+        }
     }
 
     public void run()

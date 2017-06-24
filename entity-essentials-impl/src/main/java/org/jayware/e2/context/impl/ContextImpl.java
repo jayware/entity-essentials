@@ -150,7 +150,7 @@ implements Context
             return false;
         }
         final ContextImpl context = (ContextImpl) o;
-        return ObjectUtil.equal(myContextId, context.myContextId);
+        return ObjectUtil.equals(myContextId, context.myContextId);
     }
 
     @Override

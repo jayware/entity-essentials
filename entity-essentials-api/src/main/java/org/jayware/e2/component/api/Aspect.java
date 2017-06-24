@@ -34,7 +34,6 @@ import java.util.Set;
 import static java.lang.String.format;
 import static java.util.Collections.addAll;
 import static org.jayware.e2.entity.api.Preconditions.checkRefNotNullAndValid;
-import static org.jayware.e2.util.ObjectUtil.equal;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -218,9 +217,9 @@ public class Aspect
         }
 
         final Aspect other = (Aspect) obj;
-        return equal(getIntersectionSet(), other.getIntersectionSet()) &&
-               equal(getUnificationSet(), other.getUnificationSet()) &&
-               equal(getDifferenceSet(), other.getDifferenceSet());
+        return ObjectUtil.equals(getIntersectionSet(), other.getIntersectionSet()) &&
+               ObjectUtil.equals(getUnificationSet(), other.getUnificationSet()) &&
+               ObjectUtil.equals(getDifferenceSet(), other.getDifferenceSet());
     }
 
     @Override
