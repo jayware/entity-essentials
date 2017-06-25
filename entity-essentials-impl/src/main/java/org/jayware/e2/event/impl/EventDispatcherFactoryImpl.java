@@ -504,6 +504,7 @@ implements EventDispatcherFactory
             DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
             dataOutputStream.write(classWriter.toByteArray());
             dataOutputStream.flush();
+            dataOutputStream.close();
         }
         catch (IOException e)
         {
