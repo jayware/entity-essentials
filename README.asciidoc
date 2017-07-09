@@ -24,8 +24,8 @@
                 </a>
             </td>
             <td align="center">
-                <a href="https://www.versioneye.com/user/projects/56b464390a0ff50035ba7e9f?child=summary">
-                    <img src="https://www.versioneye.com/user/projects/56b464390a0ff50035ba7e9f/badge.svg?style=flat" alt="Dependency Status" />
+                <a href="https://www.versioneye.com/user/projects/596210eb6725bd00329f2815?child=summary">
+                    <img src="https://www.versioneye.com/user/projects/596210eb6725bd00329f2815/badge.svg?style=flat" alt="Dependency Status" />
                 </a>
             </td>
             <td align="center">
@@ -39,8 +39,8 @@
                 </a>
             </td>
             <td align="center">
-                <a href="https://www.versioneye.com/user/projects/56b465e30a0ff5002c85efe0?child=summary">
-                    <img src="https://www.versioneye.com/user/projects/56b465e30a0ff5002c85efe0/badge.svg?style=flat" alt="Dependency Status" />
+                <a href="https://www.versioneye.com/user/projects/56b4663e0a0ff5003b9750ff?child=summary">
+                    <img src="https://www.versioneye.com/user/projects/56b4663e0a0ff5003b9750ff/badge.svg?style=flat" alt="Dependency Status" />
                 </a>
             </td>
         </tr>
