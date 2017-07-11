@@ -242,7 +242,7 @@ implements ReadOnlyParameters
         @Override
         public String toString()
         {
-            final StringBuffer sb = new StringBuffer("Parameter{");
+            final StringBuilder sb = new StringBuilder("Parameter{");
             sb.append("name='").append(name).append('\'');
             sb.append(", value=").append(value);
             sb.append('}');
