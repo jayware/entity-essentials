@@ -41,8 +41,10 @@ import static org.jayware.e2.util.Preconditions.checkNotNull;
 public class ContextImpl
 implements Context
 {
-    private final UUID myContextId;
+    private static final String NULL_KEY_ERROR_MESSAGE = "Key mustn't be null!";
+    private static final String DISPOSED_CONTEXT_ERROR_MESSAGE = "Context is disposed!";
 
+    private final UUID myContextId;
     private final AtomicReference<Context> myContextState = new AtomicReference<Context>();
 
     public ContextImpl(ServiceProvider serviceProvider)
@@ -159,7 +161,7 @@ implements Context
     @Override
     public String toString()
     {
-        final StringBuffer sb = new StringBuffer("ContextImpl{");
+        final StringBuilder sb = new StringBuilder("ContextImpl{");
         sb.append("myContextId=").append(myContextId);
         sb.append(", myContextState=").append(myContextState);
         sb.append('}');
@@ -172,7 +174,6 @@ implements Context
         private final ServiceProvider myServiceProvider;
 
         private final ReadWriteUpdateLock myLock = new ReentrantReadWriteUpdateLock();
-        private final Lock myReadLock = myLock.readLock();
         private final Lock myWriteLock = myLock.writeLock();
         private final Lock myUpdateLock = myLock.updateLock();
 
@@ -234,7 +235,7 @@ implements Context
         @Override
         public <T> void put(Key<T> key, T value)
         {
-            checkNotNull(key, "Key mustn't be null!");
+            checkNotNull(key, NULL_KEY_ERROR_MESSAGE);
             myWriteLock.lock();
             try
             {
@@ -250,14 +251,14 @@ implements Context
         @Override
         public <T, I extends T> void put(Class<T> type, I value)
         {
-            checkNotNull(type, "Key mustn't be null!");
+            checkNotNull(type, NULL_KEY_ERROR_MESSAGE);
             put(createKey(type.getName()), value);
         }
 
         @Override
         public <T> boolean putIfAbsent(Key<T> key, T value)
         {
-            checkNotNull(key, "Key mustn't be null!");
+            checkNotNull(key, NULL_KEY_ERROR_MESSAGE);
 
             myWriteLock.lock();
             try
@@ -280,7 +281,7 @@ implements Context
         @Override
         public <T> boolean putIfAbsent(Key<T> key, ValueProvider<T> valueProvider)
         {
-            checkNotNull(key, "Key mustn't be null!");
+            checkNotNull(key, NULL_KEY_ERROR_MESSAGE);
             checkNotNull(valueProvider, "ValueProvider mustn't be null!");
 
             myWriteLock.lock();
@@ -304,7 +305,7 @@ implements Context
         @Override
         public <T> void remove(Key<T> key)
         {
-            checkNotNull(key, "Key mustn't be null!");
+            checkNotNull(key, NULL_KEY_ERROR_MESSAGE);
             myUpdateLock.lock();
             try
             {
@@ -320,7 +321,7 @@ implements Context
         @Override
         public <T> T get(Key<T> key)
         {
-            checkNotNull(key, "Key mustn't be null!");
+            checkNotNull(key, NULL_KEY_ERROR_MESSAGE);
             myUpdateLock.lock();
             try
             {
@@ -335,7 +336,7 @@ implements Context
         @Override
         public <T> T get(Key<T> key, T defaultValue)
         {
-            checkNotNull(key, "Key mustn't be null!");
+            checkNotNull(key, NULL_KEY_ERROR_MESSAGE);
             myUpdateLock.lock();
             try
             {
@@ -453,6 +454,7 @@ implements Context
         @Override
         public void dispose()
         {
+            // Nothing to do, context is already disposed.
         }
 
         @Override
@@ -464,55 +466,55 @@ implements Context
         @Override
         public <T> void put(Key<T> key, T value)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public <T, I extends T> void put(Class<T> type, I value)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public <T> boolean putIfAbsent(Key<T> key, T value)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public <T> boolean putIfAbsent(Key<T> key, ValueProvider<T> valueProvider)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public <T> void remove(Key<T> key)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public <T> T get(Key<T> key)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public <T> T get(Key<T> key, T defaultValue)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public <T> T getOrCreate(final Key<T> key, final ValueProvider<T> provider)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
         public boolean contains(Key key)
         {
-            throw new IllegalStateException("Context is disposed!");
+            throw new IllegalStateException(DISPOSED_CONTEXT_ERROR_MESSAGE);
         }
 
         @Override
