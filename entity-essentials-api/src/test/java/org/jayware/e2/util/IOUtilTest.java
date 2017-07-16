@@ -24,11 +24,18 @@ import mockit.Verifications;
 import org.testng.annotations.Test;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
+import static java.io.File.createTempFile;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.jayware.e2.util.IOUtil.closeQuietly;
 
 
 public class IOUtilTest
@@ -80,5 +87,26 @@ public class IOUtilTest
         IOUtil.closeQuietly((Closeable) null);
         IOUtil.closeQuietly((InputStream) null);
         IOUtil.closeQuietly((OutputStream) null);
+    }
+
+    @Test
+    public void test_writeBytes()
+    throws IOException
+    {
+        final byte[] expectedData = new byte[] {42, 73, 47, 11};
+        final ByteBuffer readData = ByteBuffer.allocate(expectedData.length);
+
+        final File testFile;
+        final FileChannel channel;
+
+        testFile = createTempFile("entity-essentials-api-IOUtilTest-", ".data");
+        IOUtil.writeBytes(testFile, expectedData);
+
+        channel = new RandomAccessFile(testFile, "rw").getChannel();
+        channel.read(readData);
+
+        assertThat(readData.array()).containsExactly(expectedData);
+
+        closeQuietly(channel);
     }
 }

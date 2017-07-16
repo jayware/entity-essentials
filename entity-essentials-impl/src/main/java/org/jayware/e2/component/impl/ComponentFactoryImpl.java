@@ -50,9 +50,7 @@ import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -69,6 +67,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.lang.Class.forName;
 import static java.util.Arrays.asList;
 import static org.jayware.e2.util.IOUtil.closeQuietly;
+import static org.jayware.e2.util.IOUtil.writeBytes;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
@@ -412,33 +411,13 @@ implements ComponentFactory
 
         toStringMethodWriter.writeToStringMethodFor(componentGenerationPlan);
 
-        FileOutputStream fileOutputStream = null;
         try
         {
-            final File classFile = componentGenerationPlan.getGeneratedClassFile();
-            final File parentFile = classFile.getParentFile();
-
-            if (!parentFile.exists())
-            {
-                if (!parentFile.mkdirs())
-                {
-                    throw new IOException("Failed to create output directory: " + parentFile.getAbsolutePath());
-                }
-            }
-
-            fileOutputStream = new FileOutputStream(classFile);
-            DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
-            dataOutputStream.write(classWriter.toByteArray());
-            dataOutputStream.flush();
-            dataOutputStream.close();
+            writeBytes(componentGenerationPlan.getGeneratedClassFile(), classWriter.toByteArray());
         }
         catch (IOException e)
         {
             throw new ComponentFactoryException("Failed to write class file to: " + myOutputDirectory.getAbsolutePath(), e);
-        }
-        finally
-        {
-            closeQuietly(fileOutputStream);
         }
 
         URLClassLoader classLoader = null;

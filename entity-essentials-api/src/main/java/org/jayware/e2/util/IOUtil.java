@@ -19,6 +19,9 @@
 package org.jayware.e2.util;
 
 import java.io.Closeable;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,6 +55,34 @@ public class IOUtil
         catch (IOException ignored)
         {
             // Ignored to be quiet.
+        }
+    }
+
+    public static void writeBytes(File file, byte[] data) throws IOException
+    {
+        FileOutputStream fileOutputStream = null;
+        try
+        {
+            final File parentFile = file.getParentFile();
+
+            if (!parentFile.exists() && !parentFile.mkdirs())
+            {
+                throw new IOException("Failed to create output directory: " + parentFile.getAbsolutePath());
+            }
+
+            fileOutputStream = new FileOutputStream(file);
+            DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
+            dataOutputStream.write(data);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+        }
+        catch (IOException e)
+        {
+            throw new IOException("Failed to write data to: " + file.getAbsolutePath(), e);
+        }
+        finally
+        {
+            closeQuietly(fileOutputStream);
         }
     }
 }

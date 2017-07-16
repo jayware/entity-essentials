@@ -37,9 +37,7 @@ import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -62,6 +60,7 @@ import static java.util.Arrays.asList;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import static org.jayware.e2.util.ConfigurationUtil.getPropertyOrDefault;
 import static org.jayware.e2.util.IOUtil.closeQuietly;
+import static org.jayware.e2.util.IOUtil.writeBytes;
 import static org.jayware.e2.util.Parameter.parametersFrom;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
@@ -484,32 +483,13 @@ implements EventDispatcherFactory
             mv.visitEnd();
         }
 
-        FileOutputStream fileOutputStream = null;
         try
         {
-            final File parentFile = classFile.getParentFile();
-
-            if (!parentFile.exists())
-            {
-                if (!parentFile.mkdirs())
-                {
-                    throw new IOException("Failed to create output directory: " + parentFile.getAbsolutePath());
-                }
-            }
-
-            fileOutputStream = new FileOutputStream(classFile);
-            DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
-            dataOutputStream.write(classWriter.toByteArray());
-            dataOutputStream.flush();
-            dataOutputStream.close();
+            writeBytes(classFile, classWriter.toByteArray());
         }
         catch (IOException e)
         {
-            log.error("Saving dispatcher class failed!", e);
-        }
-        finally
-        {
-            closeQuietly(fileOutputStream);
+            throw new EventDispatcherFactoryException("Saving dispatcher class failed!", e);
         }
 
         URLClassLoader classLoader = null;
