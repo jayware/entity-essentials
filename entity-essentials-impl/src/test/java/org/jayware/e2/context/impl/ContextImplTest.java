@@ -23,6 +23,7 @@ import org.jayware.e2.assembly.api.GroupManager;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ServiceProvider;
+import org.jayware.e2.context.api.ServiceUnavailableException;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.template.api.TemplateManager;
@@ -31,6 +32,9 @@ import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.UUID;
+
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.jayware.e2.context.api.Context.ValueProvider;
@@ -78,6 +82,20 @@ public class ContextImplTest
     }
 
     @Test
+    public void test_that_getId_does_not_return_null()
+    {
+        assertThat(testee.getId()).isNotNull();
+    }
+
+    @Test
+    public void test_that_getId_does_not_return_null_when_the_context_was_disposed()
+    {
+        testee.dispose();
+
+        assertThat(testee.getId()).isNotNull();
+    }
+
+    @Test
     public void testPut()
     {
         assertThat(testee.contains(keyA)).isFalse();
@@ -93,7 +111,7 @@ public class ContextImplTest
             testee.put((Key) null, "");
             fail("IllegalArgumentException expected!");
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ignored)
         {
 
         }
@@ -109,7 +127,23 @@ public class ContextImplTest
             testee.put(keyA, "test-value");
             fail("IllegalStateException expected!");
         }
-        catch (IllegalStateException e)
+        catch (IllegalStateException ignored)
+        {
+
+        }
+    }
+
+    @Test
+    public void test_that_put_with_Class_throws_an_IllegalStateException_when_the_context_was_disposed()
+    {
+        testee.dispose();
+
+        try
+        {
+            testee.put(Object.class, "test-value");
+            fail("IllegalStateException expected!");
+        }
+        catch (IllegalStateException ignored)
         {
 
         }
@@ -136,7 +170,7 @@ public class ContextImplTest
             testee.putIfAbsent(null, "");
             fail("IllegalArgumentException expected!");
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ignored)
         {
 
         }
@@ -152,7 +186,7 @@ public class ContextImplTest
             testee.putIfAbsent(keyA, "test-value");
             fail("IllegalStateException expected!");
         }
-        catch (IllegalStateException e)
+        catch (IllegalStateException ignored)
         {
 
         }
@@ -181,7 +215,7 @@ public class ContextImplTest
             testee.putIfAbsent((Key<String>) null, mock(ValueProvider.class));
             fail("IllegalArgumentException expected!");
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ignored)
         {
 
         }
@@ -197,12 +231,11 @@ public class ContextImplTest
             testee.putIfAbsent(key, (ValueProvider<String>) null);
             fail("IllegalArgumentException expected!");
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ignored)
         {
 
         }
     }
-
 
     @Test
     public void testPutIfValueProviderAbsentWhenDisposed()
@@ -214,7 +247,7 @@ public class ContextImplTest
             testee.putIfAbsent((Key<String>) null, mock(ValueProvider.class));
             fail("IllegalStateException expected!");
         }
-        catch (IllegalStateException e)
+        catch (IllegalStateException ignored)
         {
 
         }
@@ -246,7 +279,23 @@ public class ContextImplTest
             testee.remove(null);
             fail("IllegalArgumentException expected!");
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ignored)
+        {
+
+        }
+    }
+
+    @Test
+    public void test_that_remove_throws_an_IllegalStateException_when_the_context_was_disposed()
+    {
+        testee.dispose();
+
+        try
+        {
+            testee.remove(keyA);
+            fail("IllegalStateException expected!");
+        }
+        catch (IllegalStateException ignored)
         {
 
         }
@@ -267,7 +316,7 @@ public class ContextImplTest
             testee.get(null);
             fail("IllegalArgumentException expected!");
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ignored)
         {
 
         }
@@ -283,7 +332,7 @@ public class ContextImplTest
             testee.get(keyA);
             fail("IllegalStateException expected!");
         }
-        catch (IllegalStateException e)
+        catch (IllegalStateException ignored)
         {
 
         }
@@ -305,7 +354,7 @@ public class ContextImplTest
             testee.get(null, "");
             fail("IllegalArgumentException expected!");
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ignored)
         {
 
         }
@@ -321,7 +370,27 @@ public class ContextImplTest
             testee.get(keyA, "");
             fail("IllegalStateException expected!");
         }
-        catch (IllegalStateException e)
+        catch (IllegalStateException ignored)
+        {
+
+        }
+    }
+
+    @Test
+    public void test_that_getService_returns_the_expected_service()
+    {
+        assertThat(testee.getService(EntityManager.class)).isNotNull();
+    }
+
+    @Test
+    public void test_that_getService_throws_ServiceUnavailableException_if_their_is_no_service_with_the_passed_type()
+    {
+        try
+        {
+            testee.getService(ContextImplTest.class);
+            fail("ServiceUnavailableException expected!");
+        }
+        catch (ServiceUnavailableException ignored)
         {
 
         }
@@ -351,7 +420,7 @@ public class ContextImplTest
             testee.contains(keyA);
             fail("IllegalStateException expected!");
         }
-        catch (IllegalStateException e)
+        catch (IllegalStateException ignored)
         {
 
         }
@@ -361,9 +430,50 @@ public class ContextImplTest
             testee.contains(null);
             fail("IllegalStateException expected!");
         }
-        catch (IllegalStateException e)
+        catch (IllegalStateException ignored)
         {
 
         }
+    }
+
+    @Test
+    public void test_that_dispose_do_nothing_when_context_is_already_disposed()
+    {
+        testee.dispose();
+        testee.dispose();
+    }
+
+    @Test
+    public void test_that_two_contexts_are_equals_if_the_have_the_same_id()
+    {
+        final UUID uuid = randomUUID();
+
+        final ContextImpl contextA = new ContextImpl(uuid, serviceProvider);
+        final ContextImpl contextB = new ContextImpl(uuid, serviceProvider);
+        final ContextImpl contextC = new ContextImpl(randomUUID(), serviceProvider);
+
+        assertThat(contextA.equals(contextB)).isTrue();
+        assertThat(contextA.equals(contextC)).isFalse();
+
+        contextA.dispose();
+        contextB.dispose();
+        contextC.dispose();
+    }
+
+    @Test
+    public void test_that_two_contexts_return_the_same_hashcode_if_the_have_the_same_id()
+    {
+        final UUID uuid = randomUUID();
+
+        final ContextImpl contextA = new ContextImpl(uuid, serviceProvider);
+        final ContextImpl contextB = new ContextImpl(uuid, serviceProvider);
+        final ContextImpl contextC = new ContextImpl(randomUUID(), serviceProvider);
+
+        assertThat(contextA.hashCode()).isEqualTo(contextB.hashCode());
+        assertThat(contextA.hashCode()).isNotEqualTo(contextC.hashCode());
+
+        contextA.dispose();
+        contextB.dispose();
+        contextC.dispose();
     }
 }

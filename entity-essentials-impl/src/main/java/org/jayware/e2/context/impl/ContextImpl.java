@@ -34,6 +34,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 
+import static java.util.UUID.randomUUID;
 import static org.jayware.e2.util.Key.createKey;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
@@ -47,9 +48,14 @@ implements Context
     private final UUID myContextId;
     private final AtomicReference<Context> myContextState = new AtomicReference<Context>();
 
-    public ContextImpl(ServiceProvider serviceProvider)
+    ContextImpl(ServiceProvider serviceProvider)
     {
-        myContextId = UUID.randomUUID();
+        this(randomUUID(), serviceProvider);
+    }
+
+    ContextImpl(UUID contextId, ServiceProvider serviceProvider)
+    {
+        myContextId = contextId;
         myContextState.set(new DefaultContext(serviceProvider));
     }
 
@@ -138,18 +144,20 @@ implements Context
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(Object obj)
     {
-        if (this == o)
+        if (this == obj)
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+
+        if (obj == null || !(obj instanceof Context))
         {
             return false;
         }
-        final ContextImpl context = (ContextImpl) o;
-        return ObjectUtil.equals(myContextId, context.myContextId);
+
+        final Context context = (Context) obj;
+        return ObjectUtil.equals(myContextId, context.getId());
     }
 
     @Override
@@ -252,7 +260,7 @@ implements Context
         public <T, I extends T> void put(Class<T> type, I value)
         {
             checkNotNull(type, NULL_KEY_ERROR_MESSAGE);
-            put(createKey(type.getName()), value);
+            this.put(createKey(type.getName()), value);
         }
 
         @Override
@@ -393,7 +401,7 @@ implements Context
         @Override
         public <S> S getService(Class<? extends S> service)
         {
-            final S instance = findService(service);
+            final S instance = this.findService(service);
 
             if (instance == null)
             {
