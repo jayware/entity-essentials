@@ -32,6 +32,11 @@ public class Inspector
 {
     public static final int TAB_SIZE = 3;
 
+    private Inspector()
+    {
+
+    }
+
     public static String generateReport(Event event)
     {
         return generateReport(null, event);

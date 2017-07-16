@@ -31,7 +31,6 @@ public class IOUtil
 {
     private IOUtil()
     {
-        throw new IllegalStateException("Utility class");
     }
 
     public static void closeQuietly(InputStream stream)

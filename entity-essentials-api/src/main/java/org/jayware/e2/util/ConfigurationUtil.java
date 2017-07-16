@@ -24,11 +24,19 @@ import java.util.Properties;
 
 public class ConfigurationUtil
 {
-    public static <T> T getPropertyOrDefault(Dictionary<String, ?> properties, String property, T defaultValue) {
-        if (properties != null) {
-            Object propertyObject = properties.get(property);
+    private ConfigurationUtil()
+    {
 
-            if (propertyObject != null) {
+    }
+
+    public static <T> T getPropertyOrDefault(Dictionary<String, ?> properties, String property, T defaultValue)
+    {
+        if (properties != null)
+        {
+            final Object propertyObject = properties.get(property);
+
+            if (propertyObject != null)
+            {
                 return (T) propertyObject;
             }
         }
@@ -36,11 +44,14 @@ public class ConfigurationUtil
         return defaultValue;
     }
 
-    public static <T> T getPropertyOrDefault(Properties properties, String property, T defaultValue) {
-        if (properties != null) {
-            Object propertyObject = properties.get(property);
+    public static <T> T getPropertyOrDefault(Properties properties, String property, T defaultValue)
+    {
+        if (properties != null)
+        {
+            final Object propertyObject = properties.get(property);
 
-            if (propertyObject != null) {
+            if (propertyObject != null)
+            {
                 return (T) propertyObject;
             }
         }

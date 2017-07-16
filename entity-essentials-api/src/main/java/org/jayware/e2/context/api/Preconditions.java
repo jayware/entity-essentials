@@ -21,6 +21,11 @@ package org.jayware.e2.context.api;
 
 public class Preconditions
 {
+    private Preconditions()
+    {
+
+    }
+
     /**
      * Ensures that a {@link Context} passed as a parameter to the calling method is not null and not disposed.
      *

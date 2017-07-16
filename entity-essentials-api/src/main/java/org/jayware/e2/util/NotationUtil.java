@@ -25,6 +25,11 @@ import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 public class NotationUtil
 {
+    private NotationUtil()
+    {
+
+    }
+
     public static String shortNotationOf(final TimeUnit unit)
     {
         checkNotNull(unit);

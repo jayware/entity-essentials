@@ -24,6 +24,10 @@ import org.jayware.e2.context.api.Context;
 
 public class Preconditions
 {
+    private Preconditions()
+    {
+    }
+
     /**
      * Ensures that an {@link EntityRef} passed as a parameter to the calling method is not null and valid.
      *
