@@ -30,7 +30,6 @@ import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.ComponentManagerException;
 import org.jayware.e2.component.api.ComponentNotFoundException;
-import org.jayware.e2.component.api.ComponentPropertyAdapterProvider;
 import org.jayware.e2.component.api.ContextualComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
@@ -65,7 +64,6 @@ implements ComponentManager
 
     public static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
     public static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
-    public static final Key<ComponentPropertyAdapterProvider> PROPERTY_ADAPTER_PROVIDER = createKey("org.jayware.e2.PropertyAdapterProvider");
 
     @Override
     public <T extends Component> T createComponent(Context context, Class<T> type)
@@ -352,10 +350,5 @@ implements ComponentManager
     private ComponentStore getOrCreateComponentStore(EntityRef ref)
     {
         return getOrCreateComponentStore(ref.getContext());
-    }
-
-    private ComponentPropertyAdapterProvider getOrCreatePropertyAdapterProvider(Context context)
-    {
-        return context.get(PROPERTY_ADAPTER_PROVIDER);
     }
 }

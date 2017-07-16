@@ -24,7 +24,6 @@ import org.jayware.e2.context.api.ContextInitializer;
 
 import static org.jayware.e2.component.impl.ComponentManagerImpl.COMPONENT_FACTORY;
 import static org.jayware.e2.component.impl.ComponentManagerImpl.COMPONENT_STORE;
-import static org.jayware.e2.component.impl.ComponentManagerImpl.PROPERTY_ADAPTER_PROVIDER;
 
 
 public class ContextInitializerImpl
@@ -37,6 +36,5 @@ implements ContextInitializer
         context.put(COMPONENT_FACTORY, componentFactory);
         context.put(ComponentFactory.class, componentFactory);
         context.put(COMPONENT_STORE, new ComponentStore(context));
-        context.put(PROPERTY_ADAPTER_PROVIDER, new ComponentPropertyAdapterProviderImpl());
     }
 }
