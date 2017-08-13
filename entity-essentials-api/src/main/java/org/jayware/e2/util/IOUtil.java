@@ -60,6 +60,7 @@ public class IOUtil
     public static void writeBytes(File file, byte[] data) throws IOException
     {
         FileOutputStream fileOutputStream = null;
+        DataOutputStream dataOutputStream = null;
         try
         {
             final File parentFile = file.getParentFile();
@@ -70,7 +71,8 @@ public class IOUtil
             }
 
             fileOutputStream = new FileOutputStream(file);
-            DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
+            dataOutputStream = new DataOutputStream(fileOutputStream);
+
             dataOutputStream.write(data);
             dataOutputStream.flush();
             dataOutputStream.close();
@@ -81,6 +83,7 @@ public class IOUtil
         }
         finally
         {
+            closeQuietly(dataOutputStream);
             closeQuietly(fileOutputStream);
         }
     }
