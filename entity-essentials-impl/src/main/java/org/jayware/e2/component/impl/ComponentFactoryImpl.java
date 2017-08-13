@@ -25,6 +25,8 @@ import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.MalformedComponentException;
+import org.jayware.e2.component.api.generation.analyse.ComponentHierarchyAnalyser;
+import org.jayware.e2.component.impl.generation.analyse.ComponentHierarchyAnalyserImpl;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlanFactory;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
@@ -57,10 +59,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -102,12 +102,9 @@ implements ComponentFactory
         {
             myOutputDirectory = new File(System.getProperty("user.dir") + "/.generated");
 
-            if (!myOutputDirectory.exists())
+            if (!myOutputDirectory.exists() && !myOutputDirectory.mkdirs())
             {
-                if (!myOutputDirectory.mkdirs())
-                {
-                    throw new IOException("Failed to create output directory: " + myOutputDirectory.getAbsolutePath());
-                }
+                throw new IOException("Failed to create output directory: " + myOutputDirectory.getAbsolutePath());
             }
 
             myCache = new ConcurrentHashMap<String, ComponentInstancer<?>>();
@@ -207,27 +204,14 @@ implements ComponentFactory
     private ComponentGenerationPlan analyseComponent(Class<? extends Component> componentClass)
     {
         final ComponentGenerationPlan componentGenerationPlan = myGenerationPlanFactory.createComponentGenerationPlan(componentClass);
+        final ComponentHierarchyAnalyser hierarchyAnalyser = new ComponentHierarchyAnalyserImpl();
         final Map<String, ComponentPropertyGenerationPlan> propertyDescriptorMap = new HashMap<String, ComponentPropertyGenerationPlan>();
-        final Queue<Class> componentClasses = new LinkedList<Class>();
         final Set<Method> methods = new HashSet<Method>();
 
-        componentClasses.add(componentClass);
-        while (!componentClasses.isEmpty())
+        final Set<Class<? extends Component>> componentClasses = hierarchyAnalyser.analyse(componentClass);
+
+        for (Class<? extends Component> aClass : componentClasses)
         {
-            final Class aClass = componentClasses.poll();
-            for (Class interfaceClass : aClass.getInterfaces())
-            {
-                if (!(interfaceClass.isInterface()))
-                {
-                    throw new MalformedComponentException("Invalid inheritance of a non component interface: " + interfaceClass.getName());
-                }
-
-                if (!interfaceClass.equals(Component.class))
-                {
-                    componentClasses.add(interfaceClass);
-                }
-            }
-
             methods.addAll(asList(aClass.getDeclaredMethods()));
         }
 

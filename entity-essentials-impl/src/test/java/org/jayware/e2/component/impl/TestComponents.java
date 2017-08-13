@@ -62,8 +62,22 @@ public class TestComponents
         void setString(String value);
     }
 
+    public interface TestComponentCB
+    extends TestComponentB
+    {
+
+    }
+
     public interface TestComponentAB
     extends TestComponentA, TestComponentB
+    {
+        int getValue();
+
+        void setValue(int value);
+    }
+
+    public interface TestComponentACB
+    extends TestComponentA, TestComponentCB
     {
         int getValue();
 
@@ -235,6 +249,14 @@ public class TestComponents
         TestEnum[] getEnumArray();
 
         void setEnumArray(TestEnum[] value);
+    }
+
+    public interface AnalyserTestComponentInterface
+    extends Component
+    {
+        String getText();
+
+        void setText(String text);
     }
 
     public static class CustomComponentASubtype
