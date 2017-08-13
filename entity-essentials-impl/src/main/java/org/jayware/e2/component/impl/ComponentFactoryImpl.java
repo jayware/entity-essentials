@@ -26,7 +26,10 @@ import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.api.generation.analyse.ComponentHierarchyAnalyser;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorAnalyser;
 import org.jayware.e2.component.impl.generation.analyse.ComponentHierarchyAnalyserImpl;
+import org.jayware.e2.component.impl.generation.analyse.ComponentPropertyAccessorAnalyserImpl;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlanFactory;
 import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
@@ -66,6 +69,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Class.forName;
 import static java.util.Arrays.asList;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.READ;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.WRITE;
 import static org.jayware.e2.util.IOUtil.closeQuietly;
 import static org.jayware.e2.util.IOUtil.writeBytes;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -205,6 +210,7 @@ implements ComponentFactory
     {
         final ComponentGenerationPlan componentGenerationPlan = myGenerationPlanFactory.createComponentGenerationPlan(componentClass);
         final ComponentHierarchyAnalyser hierarchyAnalyser = new ComponentHierarchyAnalyserImpl();
+        final ComponentPropertyAccessorAnalyser accessorAnalyser = new ComponentPropertyAccessorAnalyserImpl();
         final Map<String, ComponentPropertyGenerationPlan> propertyDescriptorMap = new HashMap<String, ComponentPropertyGenerationPlan>();
         final Set<Method> methods = new HashSet<Method>();
 
@@ -217,19 +223,15 @@ implements ComponentFactory
 
         for (Method method : methods)
         {
+            final ComponentPropertyAccessor propertyAccessor = accessorAnalyser.analyse(method);
+
             final int parameterCount = method.getParameterTypes().length;
-            final String methodName = method.getName();
-            final String methodNamePrefix = methodName.substring(0, 3);
-            final boolean isGetter = "get".equals(methodNamePrefix);
-            final boolean isSetter = "set".equals(methodNamePrefix);
 
             ComponentPropertyGenerationPlan propertyGenerationPlan;
-            String propertyName;
+            String propertyName = propertyAccessor.getPropertyName();
 
-            if (isGetter || isSetter)
+            if (propertyAccessor.isAccessorType(READ) || propertyAccessor.isAccessorType(WRITE))
             {
-                propertyName = methodName.substring(3);
-                propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
                 propertyGenerationPlan = propertyDescriptorMap.get(propertyName);
 
                 if (propertyGenerationPlan == null)
@@ -238,7 +240,7 @@ implements ComponentFactory
                     propertyDescriptorMap.put(propertyName, propertyGenerationPlan);
                 }
 
-                if (isGetter)
+                if (propertyAccessor.isAccessorType(READ))
                 {
                     if (parameterCount != 0)
                     {
@@ -259,7 +261,7 @@ implements ComponentFactory
                     propertyGenerationPlan.setPropertyGetterMethod(method);
                     propertyGenerationPlan.setPropertyType(method.getReturnType());
                 }
-                else if (isSetter)
+                else if (propertyAccessor.isAccessorType(WRITE))
                 {
                     if (parameterCount != 1)
                     {

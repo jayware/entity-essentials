@@ -251,14 +251,6 @@ public class TestComponents
         void setEnumArray(TestEnum[] value);
     }
 
-    public interface AnalyserTestComponentInterface
-    extends Component
-    {
-        String getText();
-
-        void setText(String text);
-    }
-
     public static class CustomComponentASubtype
     implements TestComponentA
     {
