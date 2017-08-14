@@ -4,14 +4,14 @@ buildscript {
     }
     dependencies {
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
-        classpath 'com.netflix.nebula:gradle-lint-plugin:7.3.5'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.netflix.nebula:gradle-lint-plugin:7.9.5'
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
     }
 }
 
 plugins {
-    id "com.github.hierynomus.license" version "0.13.1"
+    id "com.github.hierynomus.license" version "0.14.0"
 }
 
 apply from: 'dependencies.gradle'
