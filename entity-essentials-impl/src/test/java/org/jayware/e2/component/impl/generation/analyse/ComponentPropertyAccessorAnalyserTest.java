@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.FLUENT_WRITE;
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.READ;
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.WRITE;
 
@@ -44,7 +45,7 @@ public class ComponentPropertyAccessorAnalyserTest
     }
 
     @Test
-    public void should_analyse_a_simple_getter()
+    public void should_analyse_a_simple_prefixed_getter()
     throws NoSuchMethodException
     {
         final Method method = TestComponent.class.getDeclaredMethod("getText");
@@ -58,7 +59,7 @@ public class ComponentPropertyAccessorAnalyserTest
     }
 
     @Test
-    public void should_analyse_a_simple_setter()
+    public void should_analyse_a_simple_prefixed_setter()
     throws NoSuchMethodException
     {
         final Method method = TestComponent.class.getDeclaredMethod("setText", String.class);
@@ -67,6 +68,20 @@ public class ComponentPropertyAccessorAnalyserTest
 
         assertThat(accessor.getAccessorName()).isEqualTo("setText");
         assertThat(accessor.getAccessorType()).isEqualTo(WRITE);
+        assertThat(accessor.getPropertyName()).isEqualTo("text");
+        assertThat(accessor.getPropertyType()).isEqualTo(String.class);
+    }
+
+    @Test
+    public void should_analyse_a_fluent_prefixed_setter()
+    throws NoSuchMethodException
+    {
+        final Method method = TestComponent.class.getDeclaredMethod("withText", String.class);
+
+        final ComponentPropertyAccessor accessor = testee.analyse(method);
+
+        assertThat(accessor.getAccessorName()).isEqualTo("withText");
+        assertThat(accessor.getAccessorType()).isEqualTo(FLUENT_WRITE);
         assertThat(accessor.getPropertyName()).isEqualTo("text");
         assertThat(accessor.getPropertyType()).isEqualTo(String.class);
     }
@@ -93,6 +108,8 @@ public class ComponentPropertyAccessorAnalyserTest
         String getText();
 
         void setText(String text);
+
+        TestComponent withText(String text);
 
         Object invalid(String bar);
     }

@@ -18,6 +18,7 @@
  */
 package org.jayware.e2.component.impl.generation.analyse;
 
+import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorAnalyser;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.FLUENT_WRITE;
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.READ;
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.WRITE;
 
@@ -39,8 +41,9 @@ implements ComponentPropertyAccessorAnalyser
     public ComponentPropertyAccessorAnalyserImpl()
     {
         Set<AccessorMatcher> matcherSet = new HashSet<AccessorMatcher>();
-        matcherSet.add(new SimpleGetterMatcher());
-        matcherSet.add(new SimpleSetterMatcher());
+        matcherSet.add(new SimplePrefixedGetterMatcher());
+        matcherSet.add(new SimplePrefixedSetterMatcher());
+        matcherSet.add(new FluentPrefixedSetterMatcher());
 
         matchers = Collections.unmodifiableSet(matcherSet);
     }
@@ -66,7 +69,7 @@ implements ComponentPropertyAccessorAnalyser
         ComponentPropertyAccessor parse(Method method);
     }
 
-    private static class SimpleGetterMatcher
+    private static class SimplePrefixedGetterMatcher
     implements AccessorMatcher
     {
         @Override
@@ -107,7 +110,7 @@ implements ComponentPropertyAccessorAnalyser
         }
     }
 
-    private static class SimpleSetterMatcher
+    private static class SimplePrefixedSetterMatcher
     implements AccessorMatcher
     {
         @Override
@@ -137,6 +140,48 @@ implements ComponentPropertyAccessorAnalyser
         private String parsePropertyName(final Method method)
         {
             String propertyName = method.getName().substring(3);
+            propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
+
+            return propertyName;
+        }
+
+        private Class parsePropertyType(final Method method)
+        {
+            return method.getParameterTypes()[0];
+        }
+    }
+
+
+    private static class FluentPrefixedSetterMatcher
+    implements AccessorMatcher
+    {
+        @Override
+        public boolean matches(Method method)
+        {
+            final String methodName = method.getName();
+            final Class<?> returnType = method.getReturnType();
+
+            return methodName.startsWith("with") && Component.class.isAssignableFrom(returnType) && method.getParameterTypes().length == 1;
+        }
+
+        @Override
+        public ComponentPropertyAccessor parse(final Method method)
+        {
+            final String accessorName = parseAccessorName(method);
+            final String propertyName = parsePropertyName(method);
+            final Class propertyType = parsePropertyType(method);
+
+            return new ComponentPropertyAccessorImpl(method, accessorName, FLUENT_WRITE, propertyName, propertyType);
+        }
+
+        private String parseAccessorName(final Method method)
+        {
+            return method.getName();
+        }
+
+        private String parsePropertyName(final Method method)
+        {
+            String propertyName = method.getName().substring(4);
             propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
 
             return propertyName;
