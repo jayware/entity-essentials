@@ -44,6 +44,7 @@ public class Aspect
      */
     public static final Aspect ANY = new Aspect()
     {
+        @Override
         public boolean matches(EntityRef ref)
         {
             return true;
@@ -55,6 +56,7 @@ public class Aspect
      */
     public static final Aspect EMPTY = new Aspect()
     {
+        @Override
         public boolean matches(EntityRef ref)
         {
             checkRefNotNullAndValid(ref);
@@ -63,6 +65,11 @@ public class Aspect
             return componentManager.getNumberOfComponents(ref) == 0;
         }
     };
+
+    private static final String ERROR_MESSAGE_COMPONENTS_NULL = "Components mustn't be null!";
+    private static final String INTERSECTION = "intersection";
+    private static final String UNIFICATION = "unification";
+    private static final String DIFFERENCE = "difference";
 
     protected final Set<Class<? extends Component>> myIntersectionSet;
     protected final Set<Class<? extends Component>> myUnificationSet;
@@ -110,42 +117,42 @@ public class Aspect
 
     public Aspect withAllOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
     {
-        checkNotNull(components, "Components mustn't be null!");
+        checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(combine(myIntersectionSet, components), myUnificationSet, myDifferenceSet));
     }
 
     public Aspect withAllOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
     {
-        checkNotNull(components, "Components mustn't be null!");
+        checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(combine(myIntersectionSet, components), myUnificationSet, myDifferenceSet));
     }
 
     public Aspect withOneOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
     {
-        checkNotNull(components, "Components mustn't be null!");
+        checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, combine(myUnificationSet, components), myDifferenceSet));
     }
 
     public Aspect withOneOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
     {
-        checkNotNull(components, "Components mustn't be null!");
+        checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, combine(myUnificationSet, components), myDifferenceSet));
     }
 
     public Aspect withNoneOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
     {
-        checkNotNull(components, "Components mustn't be null!");
+        checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, myUnificationSet, combine(myDifferenceSet, components)));
     }
 
     public Aspect withNoneOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
     {
-        checkNotNull(components, "Components mustn't be null!");
+        checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, myUnificationSet, combine(myDifferenceSet, components)));
     }
@@ -244,16 +251,7 @@ public class Aspect
         {
             stringBuilder.append(" allOf: [");
 
-            for (Iterator<Class<? extends Component>> iterator = aspect.myIntersectionSet.iterator(); iterator.hasNext(); )
-            {
-                final Class<? extends Component> component = iterator.next();
-                stringBuilder.append(component.getSimpleName());
-
-                if (iterator.hasNext())
-                {
-                    stringBuilder.append(", ");
-                }
-            }
+            appendComponentClasses(stringBuilder, aspect.myIntersectionSet.iterator());
 
             stringBuilder.append("]");
         }
@@ -262,16 +260,7 @@ public class Aspect
         {
             stringBuilder.append(" oneOf: [");
 
-            for (Iterator<Class<? extends Component>> iterator = aspect.myUnificationSet.iterator(); iterator.hasNext(); )
-            {
-                final Class<? extends Component> component = iterator.next();
-                stringBuilder.append(component.getSimpleName());
-
-                if (iterator.hasNext())
-                {
-                    stringBuilder.append(", ");
-                }
-            }
+            appendComponentClasses(stringBuilder, aspect.myUnificationSet.iterator());
 
             stringBuilder.append("]");
         }
@@ -280,16 +269,7 @@ public class Aspect
         {
             stringBuilder.append(" noneOf: [");
 
-            for (Iterator<Class<? extends Component>> iterator = aspect.myDifferenceSet.iterator(); iterator.hasNext(); )
-            {
-                final Class<? extends Component> component = iterator.next();
-                stringBuilder.append(component.getSimpleName());
-
-                if (iterator.hasNext())
-                {
-                    stringBuilder.append(", ");
-                }
-            }
+            appendComponentClasses(stringBuilder, aspect.myDifferenceSet.iterator());
 
             stringBuilder.append("]");
         }
@@ -297,6 +277,20 @@ public class Aspect
         stringBuilder.append("}");
 
         return stringBuilder.toString();
+    }
+
+    private static void appendComponentClasses(StringBuilder builder, Iterator<Class<? extends Component>> iterator)
+    {
+        while (iterator.hasNext())
+        {
+            final Class<? extends Component> component = iterator.next();
+            builder.append(component.getSimpleName());
+
+            if (iterator.hasNext())
+            {
+                builder.append(", ");
+            }
+        }
     }
 
     protected static Aspect checked(final Aspect aspect) throws IllegalAspectException
@@ -308,7 +302,7 @@ public class Aspect
 
         if (!temp.isEmpty())
         {
-            failCheck(aspect, temp, "intersection", "unification");
+            failCheck(aspect, temp, INTERSECTION, UNIFICATION);
         }
 
         temp.addAll(aspect.getIntersectionSet());
@@ -316,7 +310,7 @@ public class Aspect
 
         if (!temp.isEmpty())
         {
-            failCheck(aspect, temp, "intersection", "difference");
+            failCheck(aspect, temp, INTERSECTION, DIFFERENCE);
         }
 
         temp.addAll(aspect.getUnificationSet());
@@ -324,7 +318,7 @@ public class Aspect
 
         if (!temp.isEmpty())
         {
-            failCheck(aspect, temp, "unification", "intersection");
+            failCheck(aspect, temp, UNIFICATION, INTERSECTION);
         }
 
         temp.addAll(aspect.getUnificationSet());
@@ -332,7 +326,7 @@ public class Aspect
 
         if (!temp.isEmpty())
         {
-            failCheck(aspect, temp, "unification", "difference");
+            failCheck(aspect, temp, UNIFICATION, DIFFERENCE);
         }
 
         temp.addAll(aspect.getDifferenceSet());
@@ -340,7 +334,7 @@ public class Aspect
 
         if (!temp.isEmpty())
         {
-            failCheck(aspect, temp, "difference", "intersection");
+            failCheck(aspect, temp, DIFFERENCE, INTERSECTION);
         }
 
         temp.addAll(aspect.getDifferenceSet());
@@ -348,7 +342,7 @@ public class Aspect
 
         if (!temp.isEmpty())
         {
-            failCheck(aspect, temp, "difference", "unification");
+            failCheck(aspect, temp, DIFFERENCE, UNIFICATION);
         }
 
         return aspect;
@@ -356,12 +350,12 @@ public class Aspect
 
     private static void failCheck(Aspect aspect, Set<Class<? extends Component>> temp, Object... args)
     {
-        final String messageTemplate = "\t    The component %s is part of the %s and the %s set!";
+        final String MESSAGE_TEMPLATE = "\t    The component %s is part of the %s and the %s set!";
 
-        final StringBuffer message = new StringBuffer();
+        final StringBuilder message = new StringBuilder();
         for (Class<? extends Component> aClass : temp)
         {
-            message.append(format(messageTemplate, aClass.getSimpleName(), args[0], args[1]) + "\n");
+            message.append(format(MESSAGE_TEMPLATE, aClass.getSimpleName(), args[0], args[1]) + "\n");
         }
 
         throw new IllegalAspectException(aspect, message.toString());
