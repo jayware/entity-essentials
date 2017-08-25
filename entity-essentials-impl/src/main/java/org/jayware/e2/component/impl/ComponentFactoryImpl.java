@@ -133,11 +133,11 @@ implements ComponentFactory
 
             if (componentClasses != null)
             {
-                for (Class<?> clazz : componentClasses)
+                for (Class<? extends Component> clazz : componentClasses)
                 {
-                    if (!isComponentPrepared(componentClass) || forceClassGeneration)
+                    if (!isComponentPrepared(clazz) || forceClassGeneration)
                     {
-                        prepareComponent(componentClass);
+                        prepareComponent(clazz);
                     }
                 }
             }
