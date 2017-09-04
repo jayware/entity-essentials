@@ -21,28 +21,34 @@ package org.jayware.e2.util;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
+import static java.lang.System.arraycopy;
+
 
 public class ArrayUtil
 {
+    private ArrayUtil()
+    {
+    }
+
     public static <T> T[] newArray(T[] reference, int length)
     {
-        Class<?> type = reference.getClass().getComponentType();
-        T[] result = (T[]) Array.newInstance(type, length);
-        return result;
+        final Class<?> type = reference.getClass().getComponentType();
+        return (T[]) Array.newInstance(type, length);
     }
 
-    public static <T> T[] concat(T element, T[] array)
+    public static <T> T[] append(T element, T[] array)
     {
-        T[] result = newArray(array, array.length + 1);
-        result[0] = element;
-        System.arraycopy(array, 0, result, 1, array.length);
-        return result;
-    }
-
-    public static <T> T[] concat(T[] array, T element)
-    {
-        T[] result = Arrays.copyOf(array, array.length + 1);
+        final T[] result = Arrays.copyOf(array, array.length + 1);
         result[array.length] = element;
+        return result;
+    }
+
+    public static <T> T[] prepend(T element, T[] array)
+    {
+        final T[] result = newArray(array, array.length + 1);
+        result[0] = element;
+        arraycopy(array, 0, result, 1, array.length);
+
         return result;
     }
 }

@@ -28,6 +28,7 @@ import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
+import org.jayware.e2.util.ArrayUtil;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,7 +51,6 @@ import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
 import static org.jayware.e2.component.api.Aspect.aspect;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
-import static org.jayware.e2.util.ArrayUtil.concat;
 
 
 public class GroupHub
@@ -143,7 +143,7 @@ implements Disposable
             members = new EntityRef[0];
         }
 
-        members = concat(members, member);
+        members = ArrayUtil.append(member, members);
 
         groupComponent.setMembers(members);
         groupComponent.pushTo(group);
