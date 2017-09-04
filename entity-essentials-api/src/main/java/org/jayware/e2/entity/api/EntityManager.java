@@ -54,7 +54,7 @@ public interface EntityManager
      *
      * @throws TimeoutException if the {@link Entity} could not be created within a certain time.
      */
-    EntityRef createEntity(Context context) throws IllegalArgumentException, IllegalStateException, TimeoutException;
+    EntityRef createEntity(Context context);
 
     /**
      * Creates an {@link Entity} with the specified {@link UUID} in the given {@link Context}.
@@ -74,7 +74,7 @@ public interface EntityManager
      *
      * @throws TimeoutException if the {@link Entity} could not be created within a certain time.
      */
-    EntityRef createEntity(Context context, UUID id) throws IllegalArgumentException, IllegalStateException, TimeoutException;
+    EntityRef createEntity(Context context, UUID id);
 
     /**
      * Deletes the {@link Entity} denoted by the specified {@link EntityRef}.
@@ -94,7 +94,7 @@ public interface EntityManager
      *
      * @throws IllegalStateException if the passed {@link Context} has been disposed.
      */
-    List<EntityRef> deleteEntities(Context context) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> deleteEntities(Context context);
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities}  within the specified {@link Context}.
@@ -107,7 +107,7 @@ public interface EntityManager
      *
      * @throws IllegalStateException if the passed {@link Context} has been disposed.
      */
-    List<EntityRef> findEntities(Context context) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> findEntities(Context context);
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities} within the specified {@link Context}
@@ -120,7 +120,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
-    List<EntityRef> findEntities(Context context, Aspect aspect) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> findEntities(Context context, Aspect aspect);
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities} within the specified {@link Context}
@@ -133,7 +133,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
-    List<EntityRef> findEntities(Context context, Filter<EntityRef>... filters) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> findEntities(Context context, Filter<EntityRef>... filters);
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities} within the specified {@link Context}
@@ -147,7 +147,7 @@ public interface EntityManager
      *
      * @throws IllegalArgumentException if one of the parameters is <code>null</code>.
      */
-    List<EntityRef> findEntities(Context context, Aspect aspect, Filter<EntityRef>... filters) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> findEntities(Context context, Aspect aspect, Filter<EntityRef>... filters);
 
     /**
      * Resolves the {@link Entity} with the specified {@link UUID}.
@@ -168,7 +168,7 @@ public interface EntityManager
      *
      * @throws TimeoutException if the {@link Entity} could not be created within a certain time.
      */
-    EntityRef resolveEntity(Context context, UUID id) throws IllegalArgumentException, IllegalStateException, TimeoutException;
+    EntityRef resolveEntity(Context context, UUID id);
 
     /**
      * Returns a new instance of a {@link ContextualEntityManager} which belongs to the specified {@link Context}.
@@ -181,5 +181,5 @@ public interface EntityManager
      *
      * @throws IllegalStateException if the passed {@link Context} has been disposed.
      */
-    ContextualEntityManager asContextual(Context context) throws IllegalArgumentException, IllegalStateException;
+    ContextualEntityManager asContextual(Context context);
 }

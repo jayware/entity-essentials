@@ -22,7 +22,6 @@ package org.jayware.e2.assembly.api;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityRef;
-import org.jayware.e2.util.TimeoutException;
 
 import java.util.List;
 
@@ -50,7 +49,7 @@ public interface GroupManager
      * @throws IllegalArgumentException if the specified {@link Context} is <code>null</code>.
      * @throws IllegalStateException if the specified {@link Context} is disposed.
      */
-    Group createGroup(Context context) throws IllegalArgumentException, IllegalStateException;
+    Group createGroup(Context context);
 
     /**
      * Creates a {@link Group} with the given name in the specified {@link Context}.
@@ -64,7 +63,7 @@ public interface GroupManager
      * @throws IllegalArgumentException if the specified name ({@link String}) is <code>null</code> or empty.
      * @throws IllegalStateException if the specified {@link Context} is disposed.
      */
-    Group createGroup(Context context, String name) throws IllegalArgumentException, IllegalStateException;
+    Group createGroup(Context context, String name);
 
     /**
      * Deletes the specified {@link Group}.
@@ -74,7 +73,7 @@ public interface GroupManager
      * @throws IllegalArgumentException if the specified {@link Group} is <code>null</code>.
      * @throws IllegalStateException if the specified {@link Group} is invalid.
      */
-    void deleteGroup(Group group) throws IllegalArgumentException, IllegalStateException;
+    void deleteGroup(Group group);
 
     /**
      * Returns the {@link Group} with the given name in the specified {@link Context}.
@@ -94,7 +93,7 @@ public interface GroupManager
      * @throws IllegalStateException if the passed Context is disposed.
      * @throws GroupNotFoundException if a group with the specified name does not exist.
      */
-    Group getGroup(Context context, String name) throws IllegalArgumentException, IllegalStateException, GroupNotFoundException;
+    Group getGroup(Context context, String name);
 
     /**
      * Returns the {@link Group} with the given name in the specified {@link Context}.
@@ -113,7 +112,7 @@ public interface GroupManager
      * @throws IllegalArgumentException if the passed name is <code>null</code> or empty.
      * @throws IllegalStateException if the passed Context is disposed.
      */
-    Group findGroup(Context context, String name) throws IllegalArgumentException, IllegalStateException;
+    Group findGroup(Context context, String name);
 
     /**
      * Returns all {@link Group Groups} within the specified {@link Context}.
@@ -126,7 +125,7 @@ public interface GroupManager
      * @throws IllegalStateException if the passed {@link Context} has been disposed.
      * @throws GroupManagerException if something went wrong.
      */
-    List<Group> findGroups(Context context) throws IllegalArgumentException, IllegalStateException, TimeoutException, GroupManagerException;
+    List<Group> findGroups(Context context);
 
     /**
      * Returns all {@link Group Groups} to which the {@link Entity entity} denoted by the specified {@link EntityRef} belongs to.
@@ -139,7 +138,7 @@ public interface GroupManager
      * @throws IllegalStateException if the passed {@link EntityRef} is invalid.
      * @throws GroupManagerException if something went wrong.
      */
-    List<Group> findGroups(EntityRef ref) throws IllegalArgumentException, IllegalStateException, TimeoutException, GroupManagerException;
+    List<Group> findGroups(EntityRef ref);
 
     /**
      * Adds the {@link Entity} referenced by the passed {@link EntityRef} to the specified {@link Group}.
@@ -152,7 +151,7 @@ public interface GroupManager
      * @throws IllegalStateException if the specified {@link EntityRef} is invalid.
      * @throws InvalidGroupException if the specified {@link Group} is invalid.
      */
-    void addEntityToGroup(EntityRef ref, Group group) throws IllegalArgumentException, IllegalStateException, InvalidGroupException;
+    void addEntityToGroup(EntityRef ref, Group group);
 
     /**
      * Removes the {@link Entity} referenced by the passed {@link EntityRef} from the specified {@link Group}.
@@ -165,7 +164,7 @@ public interface GroupManager
      * @throws IllegalStateException if the specified {@link EntityRef} is invalid.
      * @throws InvalidGroupException if the specified {@link Group} is invalid.
      */
-    void removeEntityFromGroup(EntityRef ref, Group group) throws IllegalArgumentException, IllegalStateException, InvalidGroupException;
+    void removeEntityFromGroup(EntityRef ref, Group group);
 
     /**
      * Returns a unmodifiable {@link List} of {@link EntityRef EntityRefs} referencing the {@link Entity Entities}
@@ -179,7 +178,7 @@ public interface GroupManager
      * @throws IllegalArgumentException if the specified {@link Group} is <code>null</code>.
      * @throws InvalidGroupException if the specified {@link Group} is invalid.
      */
-    List<EntityRef> getEntitiesOfGroup(Group group) throws IllegalArgumentException, InvalidGroupException;
+    List<EntityRef> getEntitiesOfGroup(Group group);
 
     /**
      * Returns whether the {@link Entity} referenced by the passed {@link EntityRef} is a member of
@@ -196,7 +195,7 @@ public interface GroupManager
      * @throws IllegalStateException if the specified {@link EntityRef} is invalid.
      * @throws InvalidGroupException if the specified {@link Group} is invalid.
      */
-    boolean isEntityMemberOfGroup(EntityRef ref, Group group) throws IllegalArgumentException, IllegalStateException, InvalidGroupException;
+    boolean isEntityMemberOfGroup(EntityRef ref, Group group);
 
     /**
      * Returns a new instance of a {@link ContextualGroupManager} which belongs to the specified {@link Context}.
@@ -208,5 +207,5 @@ public interface GroupManager
      * @throws IllegalArgumentException if the passed {@link Context} is <code>null</code>.
      * @throws IllegalStateException if the passed {@link Context} has been disposed.
      */
-    ContextualGroupManager asContextual(Context context) throws IllegalArgumentException, IllegalStateException;
+    ContextualGroupManager asContextual(Context context);
 }

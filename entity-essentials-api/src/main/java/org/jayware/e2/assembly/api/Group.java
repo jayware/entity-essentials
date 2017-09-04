@@ -45,7 +45,7 @@ extends EntityRef, Iterable<EntityRef>
      *
      * @throws InvalidGroupException if this {@link Group} is invalid.
      */
-    String getName() throws InvalidGroupException;
+    String getName();
 
     /**
      * Sets the name of this {@link Group} to the specified name.
@@ -54,7 +54,7 @@ extends EntityRef, Iterable<EntityRef>
      *
      * @throws InvalidGroupException if this {@link Group} is invalid.
      */
-    void setName(String name) throws InvalidGroupException;
+    void setName(String name);
 
     /**
      * Adds the {@link Entity} designated by the specified {@link EntityRef} to this {@link Group}.
@@ -67,7 +67,7 @@ extends EntityRef, Iterable<EntityRef>
      * @throws IllegalContextException if the specified {@link EntityRef} does not belong to the same
      *                                 {@link Context} as this {@link Group}.
      */
-    void add(EntityRef ref) throws IllegalArgumentException, IllegalStateException, InvalidGroupException, IllegalContextException;
+    void add(EntityRef ref);
 
     /**
      * Removes the {@link Entity} designated by the specified {@link EntityRef} from this {@link Group}.
@@ -80,7 +80,7 @@ extends EntityRef, Iterable<EntityRef>
      * @throws IllegalContextException if the specified {@link EntityRef} does not belong to the same
      *                                 {@link Context} as this {@link Group}.
      */
-    void remove(EntityRef ref) throws IllegalArgumentException, IllegalStateException, InvalidGroupException, IllegalContextException;
+    void remove(EntityRef ref);
 
     /**
      * Returns a {@link List} containing the {@link EntityRef}s of all entities which are part of this {@link Group}.
@@ -89,5 +89,5 @@ extends EntityRef, Iterable<EntityRef>
      *
      * @throws InvalidGroupException if this {@link Group} is invalid.
      */
-    List<EntityRef> members() throws InvalidGroupException;
+    List<EntityRef> members();
 }

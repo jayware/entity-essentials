@@ -45,7 +45,7 @@ public interface EventManager
      *
      * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    EventBuilder createEvent(Class<? extends RootEvent> type) throws IllegalArgumentException;
+    EventBuilder createEvent(Class<? extends RootEvent> type);
 
     /**
      * Creates an {@link Event} with the specified {@link EventType} and the passed {@link Parameter Parameters}.
@@ -57,7 +57,7 @@ public interface EventManager
      *
      * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    Event createEvent(Class<? extends RootEvent> type, Parameter... parameters) throws IllegalArgumentException;
+    Event createEvent(Class<? extends RootEvent> type, Parameter... parameters);
 
     /**
      * Creates an {@link Event} with the specified {@link EventType} and the passed {@link Parameters}.
@@ -69,7 +69,7 @@ public interface EventManager
      *
      * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    Event createEvent(Class<? extends RootEvent> type, Parameters parameters) throws IllegalArgumentException;
+    Event createEvent(Class<? extends RootEvent> type, Parameters parameters);
 
     /**
      * Creates an {@link Query} with the specified {@link EventType}.
@@ -80,7 +80,7 @@ public interface EventManager
      *
      * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    QueryBuilder createQuery(Class<? extends RootEvent> type) throws IllegalArgumentException;
+    QueryBuilder createQuery(Class<? extends RootEvent> type);
 
     /**
      * Creates a {@link Query} with the specified {@link EventType} and the passed {@link Parameters}.
@@ -92,7 +92,7 @@ public interface EventManager
      *
      * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    Query createQuery(Class<? extends RootEvent> type, Parameter... parameters) throws IllegalArgumentException;
+    Query createQuery(Class<? extends RootEvent> type, Parameter... parameters);
 
     /**
      * Creates a {@link Query} with the specified {@link EventType} and the passed {@link Parameters}.
@@ -104,7 +104,7 @@ public interface EventManager
      *
      * @throws IllegalArgumentException if the passed {@link EventType} is null.
      */
-    Query createQuery(Class<? extends RootEvent> type, Parameters parameters) throws IllegalArgumentException;
+    Query createQuery(Class<? extends RootEvent> type, Parameters parameters);
 
     /**
      * Subscribes the specified {@link Object} for {@link Event Events} occurring in the specified {@link Context}.
@@ -208,7 +208,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void send(Class<? extends RootEvent> type, Parameter... parameters) throws SanityCheckFailedException;
+    void send(Class<? extends RootEvent> type, Parameter... parameters);
 
     /**
      * Sends an {@link Event} of the specified {@link EventType} with the passed {@link Parameters}.
@@ -221,7 +221,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void send(Class<? extends RootEvent> type, Parameters parameters) throws SanityCheckFailedException;
+    void send(Class<? extends RootEvent> type, Parameters parameters);
 
     /**
      * Sends the {@link Event} created from the information provided by the specified {@link EventBuilder}.
@@ -233,7 +233,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void send(EventBuilder builder) throws SanityCheckFailedException;
+    void send(EventBuilder builder);
 
     /**
      * Sends the specified {@link Event}.
@@ -245,7 +245,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void send(Event event) throws SanityCheckFailedException;
+    void send(Event event);
 
     /**
      * Posts an {@link Event} of the specified {@link EventType} with the passed {@link Parameter Parameters}.
@@ -258,7 +258,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void post(Class<? extends RootEvent> type, Parameter... parameters) throws SanityCheckFailedException;
+    void post(Class<? extends RootEvent> type, Parameter... parameters);
 
     /**
      * Posts an {@link Event} of the specified {@link EventType} with the passed {@link Parameters}.
@@ -271,7 +271,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void post(Class<? extends RootEvent> type, Parameters parameters) throws SanityCheckFailedException;
+    void post(Class<? extends RootEvent> type, Parameters parameters);
 
     /**
      * Posts the {@link Event} created from the information provided by the specified {@link EventBuilder}.
@@ -283,7 +283,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void post(EventBuilder builder) throws SanityCheckFailedException;
+    void post(EventBuilder builder);
 
     /**
      * Posts the specified {@link Event}.
@@ -295,7 +295,7 @@ public interface EventManager
      *
      * @throws SanityCheckFailedException if the event fails any sanity check.
      */
-    void post(Event event) throws SanityCheckFailedException;
+    void post(Event event);
 
     /**
      * Executes a {@link Query} with the specified {@link EventType} and the passed {@link Parameter Parameters}.
@@ -324,7 +324,7 @@ public interface EventManager
      *
      * @return the {@link ResultSet} of the {@link Query}.
      */
-    ResultSet query(QueryBuilder builder) throws SanityCheckFailedException;
+    ResultSet query(QueryBuilder builder);
 
     /**
      * Executes the specified {@link Query}.
@@ -333,5 +333,5 @@ public interface EventManager
      *
      * @return the {@link ResultSet} of the {@link Query}.
      */
-    ResultSet query(Query query) throws SanityCheckFailedException;
+    ResultSet query(Query query);
 }

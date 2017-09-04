@@ -20,7 +20,6 @@ package org.jayware.e2.template.api;
 
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
 
@@ -30,17 +29,11 @@ import org.jayware.e2.entity.api.EntityRef;
  */
 public interface TemplateManager
 {
-//    <T extends EntityTemplate> T exportEntity(EntityRef ref, T template) throws IllegalArgumentException, IllegalStateException, ExportException;
+    <T extends ComponentTemplate> T exportComponent(Component component, TemplateProvider provider);
 
-//    <T extends EntityTemplate> EntityRef importEntity(Context context, T template) throws IllegalArgumentException, IllegalStateException, ImportException;
+    <T extends ComponentTemplate> T exportComponent(EntityRef ref, Class<? extends Component> type, TemplateProvider provider);
 
-//    <T extends EntityTemplate> EntityRef importEntity(EntityRef ref, T template) throws IllegalArgumentException, IllegalStateException, ImportException;
+    <T extends ComponentTemplate> Component importComponent(Context context, T template);
 
-    <T extends ComponentTemplate> T exportComponent(Component component, TemplateProvider provider) throws IllegalArgumentException, IllegalStateException, ExportException;
-
-    <T extends ComponentTemplate> T exportComponent(EntityRef ref, Class<? extends Component> type, TemplateProvider provider) throws IllegalArgumentException, IllegalStateException, ComponentNotFoundException, ExportException;
-
-    <T extends ComponentTemplate> Component importComponent(Context context, T template) throws IllegalArgumentException, IllegalStateException, ImportException;
-
-    <T extends ComponentTemplate> Component importComponent(EntityRef ref, T template) throws IllegalArgumentException, IllegalStateException, ImportException;
+    <T extends ComponentTemplate> Component importComponent(EntityRef ref, T template);
 }

@@ -40,7 +40,7 @@ extends Contextual
      *
      * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
      */
-    EntityRef createEntity() throws IllegalStateException;
+    EntityRef createEntity();
 
     /**
      * Deletes the {@link Entity} denoted by the specified {@link EntityRef} within the {@link Context} of this {@link ContextualEntityManager}.
@@ -53,7 +53,7 @@ extends Contextual
      *
      * @throws IllegalContextException if the specified {@link EntityRef} belongs to another {@link Context}.
      */
-    void deleteEntity(EntityRef ref) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
+    void deleteEntity(EntityRef ref);
 
     /**
      * Deletes all {@link Entity Entities} from the {@link Context} of this {@link ContextualEntityManager}.
@@ -62,7 +62,7 @@ extends Contextual
      *
      * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
      */
-    List<EntityRef> deleteEntities() throws IllegalStateException;
+    List<EntityRef> deleteEntities();
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities}  within the {@link Context} of this
@@ -72,7 +72,7 @@ extends Contextual
      *
      * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
      */
-    List<EntityRef> findEntities() throws IllegalStateException;
+    List<EntityRef> findEntities();
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities} within the {@link Context} of this
@@ -86,7 +86,7 @@ extends Contextual
      *
      * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
      */
-    List<EntityRef> findEntities(Aspect aspect) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> findEntities(Aspect aspect);
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities} within the {@link Context} of this
@@ -100,7 +100,7 @@ extends Contextual
      *
      * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
      */
-    List<EntityRef> findEntities(Filter<EntityRef>... filters) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> findEntities(Filter<EntityRef>... filters);
 
     /**
      * Returns a {@link List} of {@link EntityRef}s for all {@link Entity Entities} within the {@link Context} of this {@link ContextualEntityManager}
@@ -115,5 +115,5 @@ extends Contextual
      *
      * @throws IllegalStateException if the {@link Context} of this {@link ContextualEntityManager} has been disposed.
      */
-    List<EntityRef> findEntities(Aspect aspect, Filter<EntityRef>... filters) throws IllegalArgumentException, IllegalStateException;
+    List<EntityRef> findEntities(Aspect aspect, Filter<EntityRef>... filters);
 }

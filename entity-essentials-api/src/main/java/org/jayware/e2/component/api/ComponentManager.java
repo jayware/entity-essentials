@@ -23,7 +23,6 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.Entity;
 import org.jayware.e2.entity.api.EntityRef;
-import org.jayware.e2.entity.api.InvalidEntityRefException;
 
 import java.util.Collection;
 import java.util.Set;
@@ -50,7 +49,7 @@ public interface ComponentManager
      * @param component a {@link Class} representing the {@link Component Component's} type.
      * @param <T> the type of the {@link Component}
      */
-    <T extends Component> void prepareComponent(Context context, Class<T> component) throws ComponentFactoryException, MalformedComponentException;
+    <T extends Component> void prepareComponent(Context context, Class<T> component);
 
     /**
      * Creates an instance of the {@link Component} specified type ({@link Class}) within the passed {@link Context}.
@@ -67,7 +66,7 @@ public interface ComponentManager
      *
      * @throws ComponentManagerException if something went wrong during the creation of the {@link Component}.
      */
-    <T extends Component> T createComponent(Context context, Class<T> component) throws IllegalArgumentException, IllegalStateException, ComponentManagerException;
+    <T extends Component> T createComponent(Context context, Class<T> component);
 
     /**
      * Adds the {@link Component} of the specified type to the {@link Entity} referenced by the passed {@link EntityRef}.
@@ -82,7 +81,7 @@ public interface ComponentManager
      *
      * @return a {@link Component} of the type <code>T</code>.
      */
-    <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws ComponentFactoryException, MalformedComponentException, InvalidEntityRefException;
+    <T extends Component> T addComponent(EntityRef ref, Class<T> component);
 
     /**
      * Adds the specified {@link Component} to the {@link Entity} referenced by the passed {@link EntityRef}.
@@ -107,7 +106,7 @@ public interface ComponentManager
      *
      * @throws ComponentManagerException if something went wrong during the creation of the {@link Component}.
      */
-    <T extends Component> T addComponent(EntityRef ref, T component) throws IllegalArgumentException, IllegalStateException, IllegalContextException, ComponentManagerException;
+    <T extends Component> T addComponent(EntityRef ref, T component);
 
     /**
      * Removes the {@link Component} with the specified type from the {@link Entity} referenced by the passed
@@ -143,9 +142,9 @@ public interface ComponentManager
      * @throws ComponentNotFoundException if the {@link Entity} referenced by the specified {@link EntityRef} doesn't
      *                                    have a {@link Component} of the appropriate type.
      */
-    <T extends Component> T getComponent(EntityRef ref, Class<T> component) throws ComponentNotFoundException;
+    <T extends Component> T getComponent(EntityRef ref, Class<T> component);
 
-    <T extends Component, W extends AbstractComponentWrapper<W, T>> W getComponent(EntityRef ref, W wrapper) throws ComponentNotFoundException;
+    <T extends Component, W extends AbstractComponentWrapper<W, T>> W getComponent(EntityRef ref, W wrapper);
 
     /**
      * Returns a {@link Collection} containing all {@link Component Components} associated to the specified
@@ -190,7 +189,7 @@ public interface ComponentManager
      *
      * @throws ComponentNotFoundException if the {@link Entity} does not have such a {@link Component}.
      */
-    <T extends Component> void pullComponent(EntityRef ref, T component) throws ComponentNotFoundException;
+    <T extends Component> void pullComponent(EntityRef ref, T component);
 
     /**
      * Pushes the specified {@link Component} to the {@link Entity} referenced by the passed {@link EntityRef}.
@@ -206,7 +205,7 @@ public interface ComponentManager
      *
      * @throws ComponentNotFoundException if the {@link Entity} does not have such a {@link Component}.
      */
-    <T extends Component> void pushComponent(EntityRef ref, T component) throws ComponentNotFoundException;
+    <T extends Component> void pushComponent(EntityRef ref, T component);
 
     /**
      * Returns whether a {@link Component} of the specified type is associated to the {@link Entity} referenced
@@ -275,5 +274,5 @@ public interface ComponentManager
      *
      * @throws IllegalStateException if the passed {@link Context} has been disposed.
      */
-    ContextualComponentManager asContextual(Context context) throws IllegalArgumentException, IllegalStateException;
+    ContextualComponentManager asContextual(Context context);
 }

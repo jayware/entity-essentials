@@ -45,7 +45,7 @@ extends Contextual
      *
      * @throws IllegalStateException If the {@link Context} to which this {@link ContextualComponentManager} belongs to has been disposed.
      */
-    <T extends Component> void prepareComponent(Class<T> component) throws IllegalArgumentException, IllegalStateException, ComponentFactoryException, MalformedComponentException;
+    <T extends Component> void prepareComponent(Class<T> component);
 
     /**
      * Creates an instance of the {@link Component} specified type ({@link Class}) within the {@link Context} of this
@@ -63,7 +63,7 @@ extends Contextual
      *
      * @throws ComponentManagerException if something went wrong during the creation of the {@link Component}.
      */
-    <T extends Component> T createComponent(Class<T> type) throws IllegalArgumentException, IllegalStateException, ComponentManagerException;
+    <T extends Component> T createComponent(Class<T> type);
 
     /**
      * Adds the {@link Component} of the specified type to the {@link Entity} referenced by the passed {@link EntityRef}.
@@ -88,7 +88,7 @@ extends Contextual
      *
      * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
      */
-    <T extends Component> T addComponent(EntityRef ref, Class<T> component) throws IllegalArgumentException, IllegalStateException, ComponentFactoryException, MalformedComponentException, IllegalContextException;
+    <T extends Component> T addComponent(EntityRef ref, Class<T> component);
 
     /**
      * Adds the specified {@link Component} to the {@link Entity} referenced by the passed {@link EntityRef}.
@@ -113,7 +113,7 @@ extends Contextual
      *
      * @throws ComponentManagerException if something went wrong during the creation of the {@link Component}.
      */
-    <T extends Component> T addComponent(EntityRef ref, T component) throws IllegalArgumentException, IllegalStateException, IllegalContextException, ComponentManagerException;
+    <T extends Component> T addComponent(EntityRef ref, T component);
 
     /**
      * Removes the {@link Component} with the specified type from the {@link Entity} referenced by the passed
@@ -133,7 +133,7 @@ extends Contextual
      *
      * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
      */
-    <T extends Component> void removeComponent(EntityRef ref, Class<T> component) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
+    <T extends Component> void removeComponent(EntityRef ref, Class<T> component);
 
     /**
      * Returns the {@link Component} of the specified type associated to the {@link Entity} referenced by the passed
@@ -159,7 +159,7 @@ extends Contextual
      *
      * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
      */
-    <T extends Component> T getComponent(EntityRef ref, Class<T> component) throws ComponentNotFoundException, IllegalArgumentException, IllegalStateException, IllegalContextException;
+    <T extends Component> T getComponent(EntityRef ref, Class<T> component);
 
     /**
      * Returns the component of the specified type associated to the {@link Entity} referenced by the passed
@@ -181,7 +181,7 @@ extends Contextual
      *
      * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
      */
-    <T extends Component> T findComponent(EntityRef ref, Class<T> component) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
+    <T extends Component> T findComponent(EntityRef ref, Class<T> component);
 
     /**
      * Returns a {@link Collection} containing all {@link Component Components} associated to the specified
@@ -199,7 +199,7 @@ extends Contextual
      *
      * @throws IllegalContextException If the specified {@link EntityRef} belongs to another {@link Context}.
      */
-    Collection<Component> getComponents(EntityRef ref) throws IllegalArgumentException, IllegalStateException, IllegalContextException;
+    Collection<Component> getComponents(EntityRef ref);
 
     /**
      * Returns whether all {@link Component Components} of the specified types are associated to the {@link Entity} referenced

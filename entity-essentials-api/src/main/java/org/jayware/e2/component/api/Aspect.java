@@ -115,49 +115,49 @@ public class Aspect
         return new Aspect(allOf, oneOf, noneOf);
     }
 
-    public Aspect withAllOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
+    public Aspect withAllOf(Class<? extends Component>... components)
     {
         checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(combine(myIntersectionSet, components), myUnificationSet, myDifferenceSet));
     }
 
-    public Aspect withAllOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
+    public Aspect withAllOf(Collection<Class<? extends Component>> components)
     {
         checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(combine(myIntersectionSet, components), myUnificationSet, myDifferenceSet));
     }
 
-    public Aspect withOneOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
+    public Aspect withOneOf(Class<? extends Component>... components)
     {
         checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, combine(myUnificationSet, components), myDifferenceSet));
     }
 
-    public Aspect withOneOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
+    public Aspect withOneOf(Collection<Class<? extends Component>> components)
     {
         checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, combine(myUnificationSet, components), myDifferenceSet));
     }
 
-    public Aspect withNoneOf(Class<? extends Component>... components) throws IllegalArgumentException, IllegalAspectException
+    public Aspect withNoneOf(Class<? extends Component>... components)
     {
         checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, myUnificationSet, combine(myDifferenceSet, components)));
     }
 
-    public Aspect withNoneOf(Collection<Class<? extends Component>> components) throws IllegalArgumentException, IllegalAspectException
+    public Aspect withNoneOf(Collection<Class<? extends Component>> components)
     {
         checkNotNull(components, ERROR_MESSAGE_COMPONENTS_NULL);
 
         return checked(new Aspect(myIntersectionSet, myUnificationSet, combine(myDifferenceSet, components)));
     }
 
-    public Aspect and(Aspect other) throws IllegalArgumentException, IllegalAspectException
+    public Aspect and(Aspect other)
     {
         return checked(aspect(combine(getIntersectionSet(), other.getIntersectionSet()), combine(getUnificationSet(), other.getUnificationSet()), combine(getDifferenceSet(), other.getDifferenceSet())));
     }
@@ -293,7 +293,7 @@ public class Aspect
         }
     }
 
-    protected static Aspect checked(final Aspect aspect) throws IllegalAspectException
+    protected static Aspect checked(final Aspect aspect)
     {
         final Set<Class<? extends Component>> temp = new HashSet<Class<? extends Component>>();
 
@@ -350,12 +350,12 @@ public class Aspect
 
     private static void failCheck(Aspect aspect, Set<Class<? extends Component>> temp, Object... args)
     {
-        final String MESSAGE_TEMPLATE = "\t    The component %s is part of the %s and the %s set!";
+        final String messageTemplate = "\t    The component %s is part of the %s and the %s set!";
 
         final StringBuilder message = new StringBuilder();
         for (Class<? extends Component> aClass : temp)
         {
-            message.append(format(MESSAGE_TEMPLATE, aClass.getSimpleName(), args[0], args[1]) + "\n");
+            message.append(format(messageTemplate, aClass.getSimpleName(), args[0], args[1]) + "\n");
         }
 
         throw new IllegalAspectException(aspect, message.toString());

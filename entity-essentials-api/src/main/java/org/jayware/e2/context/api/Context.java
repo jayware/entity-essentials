@@ -82,9 +82,9 @@ public interface Context
      * @throws IllegalArgumentException if the specified {@link Key} is <code>null</code>.
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    <T> void put(Key<T> key, T value) throws IllegalArgumentException, IllegalStateException;
+    <T> void put(Key<T> key, T value);
 
-    <T, I extends T> void put(Class<T> type, I value) throws IllegalArgumentException, IllegalStateException;
+    <T, I extends T> void put(Class<T> type, I value);
 
     /**
      * Associates the specified <code>value</code> with the specified {@link Key} in this <code>Context</code>.
@@ -104,7 +104,7 @@ public interface Context
      * @throws IllegalArgumentException if the specified {@link Key} is <code>null</code>.
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    <T> boolean putIfAbsent(Key<T> key, T value) throws IllegalArgumentException, IllegalStateException;
+    <T> boolean putIfAbsent(Key<T> key, T value);
 
     /**
      * Associates the specified <code>value</code> with the specified {@link Key} in this <code>Context</code>.
@@ -130,7 +130,7 @@ public interface Context
      * @throws IllegalArgumentException if the specified {@link Key} is <code>null</code>.
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    <T> boolean putIfAbsent(Key<T> key, ValueProvider<T> valueProvider) throws IllegalArgumentException, IllegalStateException;
+    <T> boolean putIfAbsent(Key<T> key, ValueProvider<T> valueProvider);
 
     /**
      * Removes the mapping for the specified {@link Key} from this <code>Context</code> if it is present.
@@ -144,7 +144,7 @@ public interface Context
      * @throws IllegalArgumentException if the specified {@link Key} is <code>null</code>.
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    <T> void remove(Key<T> key) throws IllegalArgumentException, IllegalStateException;
+    <T> void remove(Key<T> key);
 
     /**
      * Returns the <code>value</code> to which the specified {@link Key} is mapped, or <code>null</code> if
@@ -163,7 +163,7 @@ public interface Context
      * @throws IllegalArgumentException if the specified {@link Key} is <code>null</code>.
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    <T> T get(Key<T> key) throws IllegalArgumentException, IllegalStateException;
+    <T> T get(Key<T> key);
 
     /**
      * Returns the <code>value</code> to which the specified {@link Key} is mapped, or <code>defaultValue</code>
@@ -182,7 +182,7 @@ public interface Context
      * @throws IllegalArgumentException if the specified {@link Key} is <code>null</code>.
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    <T> T get(Key<T> key, T defaultValue) throws IllegalArgumentException, IllegalStateException;
+    <T> T get(Key<T> key, T defaultValue);
 
     <T> T getOrCreate(Key<T> key, final ValueProvider<T> provider);
 
@@ -195,7 +195,7 @@ public interface Context
      *
      * @throws IllegalStateException if this <code>Context</code> was disposed of.
      */
-    boolean contains(Key key) throws IllegalStateException;
+    boolean contains(Key key);
 
     /**
      * Returns the service which offers the interface denoted by the specified {@link Class}.
@@ -210,7 +210,7 @@ public interface Context
      *
      * @throws ServiceUnavailableException if no suitable service could be found.
      */
-    <S> S getService(Class<? extends S> service) throws ServiceUnavailableException;
+    <S> S getService(Class<? extends S> service);
 
     /**
      * Returns the service which offers the interface denoted by the specified {@link Class}.
