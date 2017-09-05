@@ -126,7 +126,7 @@ implements ComponentWrapper<W, C>
     public void pushTo(EntityRef ref)
     {
         prePush();
-        myComponent.pushTo(myEntity);
+        myComponent.pushTo(ref);
     }
 
     /**
