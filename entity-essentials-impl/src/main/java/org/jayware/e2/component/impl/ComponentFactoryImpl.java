@@ -101,7 +101,6 @@ implements ComponentFactory
     private final Logger log = LoggerFactory.getLogger(ComponentFactoryImpl.class);
 
     public ComponentFactoryImpl()
-    throws ComponentFactoryException
     {
         try
         {
@@ -122,7 +121,6 @@ implements ComponentFactory
 
     @Override
     public void prepareComponent(Class<? extends Component> componentClass, Class<? extends Component>... componentClasses)
-    throws ComponentFactoryException, MalformedComponentException
     {
         try
         {
@@ -150,7 +148,6 @@ implements ComponentFactory
 
     @Override
     public <T extends Component> ComponentInstancer<T> createComponent(Class<T> componentClass)
-    throws ComponentFactoryException, MalformedComponentException
     {
         checkNotNull(componentClass, "The component's class mustn't be null to create a component!");
 
@@ -181,7 +178,7 @@ implements ComponentFactory
 
     @Override
     public <C extends Component> ComponentInstancer<C> createComponent(String componentClass)
-    throws ComponentFactoryException, MalformedComponentException, ClassNotFoundException
+    throws ClassNotFoundException
     {
         checkNotNull(componentClass, "The component's class name mustn't be null to create a component!");
 
@@ -317,7 +314,6 @@ implements ComponentFactory
     }
 
     private void generateComponentClass(ComponentGenerationPlan componentGenerationPlan)
-    throws ComponentFactoryException, MalformedComponentException
     {
         final ComponentStaticInitializerWriter staticInitializerWriter = myWriterFactory.createComponentStaticInitializerWriter();
         final ComponentDefaultConstructorWriter defaultConstructorWriter = myWriterFactory.createComponentDefaultConstructorWriter();

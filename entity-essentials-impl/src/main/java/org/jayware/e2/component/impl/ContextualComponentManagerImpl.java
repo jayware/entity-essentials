@@ -20,15 +20,10 @@ package org.jayware.e2.component.impl;
 
 import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentManager;
-import org.jayware.e2.component.api.ComponentManagerException;
-import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.component.api.ContextualComponentManager;
-import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.Contextual;
-import org.jayware.e2.context.api.IllegalContextException;
 import org.jayware.e2.entity.api.EntityRef;
 
 import java.util.Arrays;
@@ -54,7 +49,6 @@ implements ContextualComponentManager
 
     @Override
     public <T extends Component> void prepareComponent(Class<T> component)
-    throws IllegalArgumentException, IllegalStateException, ComponentFactoryException, MalformedComponentException
     {
         checkNotNull(component);
         checkContextNotNullAndNotDisposed(myContext);
@@ -73,7 +67,6 @@ implements ContextualComponentManager
 
     @Override
     public <T extends Component> T addComponent(EntityRef ref, Class<T> component)
-    throws IllegalArgumentException, IllegalStateException, ComponentNotFoundException, ComponentFactoryException, MalformedComponentException, IllegalContextException
     {
         checkContextNotNullAndNotDisposed(myContext);
         checkContextualNotNullAndBelongsToContext(ref, myContext);
@@ -84,7 +77,6 @@ implements ContextualComponentManager
 
     @Override
     public <T extends Component> T addComponent(EntityRef ref, T component)
-    throws IllegalArgumentException, IllegalStateException, IllegalContextException, ComponentManagerException
     {
         checkNotNull(component);
         checkContextNotNullAndNotDisposed(myContext);
@@ -96,7 +88,6 @@ implements ContextualComponentManager
 
     @Override
     public <T extends Component> void removeComponent(EntityRef ref, Class<T> component)
-    throws IllegalArgumentException, IllegalStateException, IllegalContextException
     {
         checkContextNotNullAndNotDisposed(myContext);
         checkContextualNotNullAndBelongsToContext(ref, myContext);
@@ -107,7 +98,6 @@ implements ContextualComponentManager
 
     @Override
     public <T extends Component> T getComponent(EntityRef ref, Class<T> component)
-    throws ComponentNotFoundException, IllegalArgumentException, IllegalStateException, IllegalContextException
     {
         checkContextNotNullAndNotDisposed(myContext);
         checkContextualNotNullAndBelongsToContext(ref, myContext);
@@ -118,7 +108,6 @@ implements ContextualComponentManager
 
     @Override
     public <T extends Component> T findComponent(EntityRef ref, Class<T> component)
-    throws IllegalArgumentException, IllegalStateException, IllegalContextException
     {
         checkContextNotNullAndNotDisposed(myContext);
         checkContextualNotNullAndBelongsToContext(ref, myContext);
