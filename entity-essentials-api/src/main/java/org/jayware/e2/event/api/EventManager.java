@@ -115,7 +115,7 @@ public interface EventManager
      * use {@link WeakReference} for every subscriber. Therefore, if no other object holds an reference to the subscriber
      * object, the subscriber object will be garbage collected. To prevent the object from being garbage collected use
      * one of {@link EventManager#subscribe(Context, Object, ReferenceType)} or {@link EventManager#subscribe(Context, Object, ReferenceType, EventFilter...)}
-     * and pass {@link ReferenceType#Strong} as {@link ReferenceType} parameter. This forces an <code>EventManager</code>
+     * and pass {@link ReferenceType#STRONG} as {@link ReferenceType} parameter. This forces an <code>EventManager</code>
      * implementation to use strong references instead of weak ones. But be advised, <u>subscriptions with strong references
      * have to be revoked manually to avoid memory leaks.</u>
      *
@@ -135,7 +135,7 @@ public interface EventManager
      * use {@link WeakReference} for every subscriber. Therefore, if no other object holds an reference to the subscriber
      * object, the subscriber object will be garbage collected. To prevent the object from being garbage collected use
      * one of {@link EventManager#subscribe(Context, Object, ReferenceType)} or {@link EventManager#subscribe(Context, Object, ReferenceType, EventFilter...)}
-     * and pass {@link ReferenceType#Strong} as {@link ReferenceType} parameter. This forces an <code>EventManager</code>
+     * and pass {@link ReferenceType#STRONG} as {@link ReferenceType} parameter. This forces an <code>EventManager</code>
      * implementation to use strong references instead of weak ones. But be advised, <u>subscriptions with strong references
      * have to be revoked manually to avoid memory leaks.</u>
      *
@@ -154,7 +154,7 @@ public interface EventManager
      * <b>Note: </b> To avoid memory leaks due to undead subscribers, an <code>EventManager</code> implementation may
      * use {@link WeakReference} for every subscriber. Therefore, if no other object holds an reference to the subscriber
      * object, the subscriber object will be garbage collected. To prevent the object from being garbage collected this
-     * operation accepts an {@link ReferenceType} and the {@link ReferenceType#Strong} forces an <code>EventManager</code>
+     * operation accepts an {@link ReferenceType} and the {@link ReferenceType#STRONG} forces an <code>EventManager</code>
      * implementation to use strong references instead of weak ones. But be advised, <u>subscriptions with strong references
      * have to be revoked manually to avoid memory leaks.</u>
      *
@@ -174,7 +174,7 @@ public interface EventManager
      * <b>Note: </b> To avoid memory leaks due to undead subscribers, an <code>EventManager</code> implementation may
      * use {@link WeakReference} for every subscriber. Therefore, if no other object holds an reference to the subscriber
      * object, the subscriber object will be garbage collected. To prevent the object from being garbage collected this
-     * operation accepts an {@link ReferenceType} and the {@link ReferenceType#Strong} forces an <code>EventManager</code>
+     * operation accepts an {@link ReferenceType} and the {@link ReferenceType#STRONG} forces an <code>EventManager</code>
      * implementation to use strong references instead of weak ones. But be advised, <u>subscriptions with strong references
      * have to be revoked manually to avoid memory leaks.</u>
      *

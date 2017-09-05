@@ -26,6 +26,10 @@ import java.lang.management.ThreadMXBean;
 
 public class ThreadUtil
 {
+    private ThreadUtil()
+    {
+    }
+
     public static ThreadGroup getRootThreadGroup()
     {
         ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();

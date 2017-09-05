@@ -35,7 +35,7 @@ import java.io.IOException;
 
 import static org.jayware.e2.assembly.api.GroupEvent.GroupMembershipEvent.EntityRefParam;
 import static org.jayware.e2.assembly.api.GroupEvent.GroupParam;
-import static org.jayware.e2.util.ReferenceType.Strong;
+import static org.jayware.e2.util.ReferenceType.STRONG;
 
 
 public class EntityGroupsExample
@@ -53,7 +53,7 @@ public class EntityGroupsExample
         GroupManager groupManager = context.getService(GroupManager.class);
 
         /* Subscribe an event handler to see an output */
-        eventManager.subscribe(context, new ExampleHandler(), Strong);
+        eventManager.subscribe(context, new ExampleHandler(), STRONG);
 
         /* A couple of entities */
         EntityRef clark = entityManager.createEntity(context);

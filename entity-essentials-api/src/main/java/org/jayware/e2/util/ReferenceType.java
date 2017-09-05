@@ -21,6 +21,6 @@ package org.jayware.e2.util;
 
 public enum ReferenceType
 {
-    Strong,
-    Weak
+    STRONG,
+    WEAK
 }

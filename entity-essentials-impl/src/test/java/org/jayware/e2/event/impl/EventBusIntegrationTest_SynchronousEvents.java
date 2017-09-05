@@ -43,7 +43,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
-import static org.jayware.e2.util.ReferenceType.Strong;
+import static org.jayware.e2.util.ReferenceType.STRONG;
 
 
 public class EventBusIntegrationTest_SynchronousEvents
@@ -74,7 +74,7 @@ public class EventBusIntegrationTest_SynchronousEvents
         final CountDownLatch finishLatch = new CountDownLatch(count);
         final CountDownLatch startLatch = new CountDownLatch(1);
 
-        eventManager.subscribe(context, new Handler(), Strong);
+        eventManager.subscribe(context, new Handler(), STRONG);
         eventManager.subscribe(context, eventCounter);
 
         for (int i = 0; i < count; ++i)

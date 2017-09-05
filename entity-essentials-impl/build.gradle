@@ -50,6 +50,7 @@ dependencies {
     testCompile dependency.jmockit
     testCompile dependency.assertj
     testCompile dependency.mockito
+    testCompile dependency.awaitility
 
     testRuntime dependency.logback
 }

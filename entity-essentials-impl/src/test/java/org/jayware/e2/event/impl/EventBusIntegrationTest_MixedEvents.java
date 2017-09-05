@@ -22,28 +22,21 @@ import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextProvider;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
-import org.jayware.e2.event.api.EventType;
-import org.jayware.e2.event.api.EventType.RootEvent;
 import org.jayware.e2.event.api.Handle;
 import org.jayware.e2.event.api.Param;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.event.api.Parameters.param;
-import static org.jayware.e2.util.ReferenceType.Strong;
+import static org.jayware.e2.util.ReferenceType.STRONG;
 
 
 public class EventBusIntegrationTest_MixedEvents
@@ -72,7 +65,7 @@ public class EventBusIntegrationTest_MixedEvents
         final CountDownLatch finishLatch = new CountDownLatch(4 * count);
         final CountDownLatch startLatch = new CountDownLatch(1);
 
-        eventManager.subscribe(context, new Handler(), Strong);
+        eventManager.subscribe(context, new Handler(), STRONG);
 
         for (int i = 0; i < count; ++i)
         {

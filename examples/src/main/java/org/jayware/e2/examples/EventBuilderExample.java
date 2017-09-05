@@ -30,7 +30,7 @@ import org.jayware.e2.event.api.Param;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
 import static org.jayware.e2.examples.EventBuilderExample.ExampleEvent.ParamA;
 import static org.jayware.e2.examples.EventBuilderExample.ExampleEvent.ParamB;
-import static org.jayware.e2.util.ReferenceType.Strong;
+import static org.jayware.e2.util.ReferenceType.STRONG;
 
 
 public class EventBuilderExample
@@ -42,7 +42,7 @@ public class EventBuilderExample
         EventManager eventManager = context.getService(EventManager.class);
 
         /* Subscribe an event handler to see an output */
-        eventManager.subscribe(context, new ExampleHandler(), Strong);
+        eventManager.subscribe(context, new ExampleHandler(), STRONG);
 
         /* The EventBuilder is useful to build similar events of the same type. */
         final EventBuilder builder = eventManager.createEvent(ExampleEvent.class);

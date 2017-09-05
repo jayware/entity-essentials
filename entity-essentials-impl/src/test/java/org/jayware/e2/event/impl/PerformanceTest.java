@@ -49,7 +49,7 @@ public class PerformanceTest
         eventManager = context.getService(EventManager.class);
         handler = new IncrementHandler(RUNS);
 
-        eventManager.subscribe(context, handler, ReferenceType.Strong);
+        eventManager.subscribe(context, handler, ReferenceType.STRONG);
     }
 
     @AfterMethod

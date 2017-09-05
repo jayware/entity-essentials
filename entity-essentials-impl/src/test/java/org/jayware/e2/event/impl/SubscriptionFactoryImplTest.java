@@ -26,8 +26,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jayware.e2.util.ReferenceType.Strong;
-import static org.jayware.e2.util.ReferenceType.Weak;
+import static org.jayware.e2.util.ReferenceType.STRONG;
+import static org.jayware.e2.util.ReferenceType.WEAK;
 
 
 public class SubscriptionFactoryImplTest
@@ -46,10 +46,10 @@ public class SubscriptionFactoryImplTest
     @Test
     public void test_createSubscription_Returns_the_expected_Subscription_for_the_passed_ReferencesType()
     {
-        assertThat(testee.createSubscription(testSubscriber, Strong, null, testDispatcher))
+        assertThat(testee.createSubscription(testSubscriber, STRONG, null, testDispatcher))
             .isInstanceOf(SubscriptionImpl_StrongReference.class);
 
-        assertThat(testee.createSubscription(testSubscriber, Weak, null, testDispatcher))
+        assertThat(testee.createSubscription(testSubscriber, WEAK, null, testDispatcher))
             .isInstanceOf(SubscriptionImpl_WeakReference.class);
     }
 }

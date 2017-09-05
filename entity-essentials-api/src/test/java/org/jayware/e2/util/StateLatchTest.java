@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.util.StateLatchTest.TestStates.StateA;
@@ -103,7 +102,8 @@ public class StateLatchTest
         });
 
         blockedThread.start();
-        sleep(250);
+
+        Thread.sleep(250);
 
         try
         {
@@ -154,7 +154,6 @@ public class StateLatchTest
         {
             threads[i] = new Thread(new AwaitStateAndCountDownRunnable(latch, TestStates.values()[i]));
             threads[i].start();
-            sleep(100);
         }
 
         testee.signal(StateC);

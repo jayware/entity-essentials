@@ -37,6 +37,7 @@ dependencies {
     testCompile dependency.jmockit
     testCompile dependency.assertj
     testCompile dependency.mockito
+    testCompile dependency.awaitility
 }
 
 test {

@@ -26,6 +26,10 @@ package org.jayware.e2.util;
  */
 public class GlobUtil
 {
+    private GlobUtil()
+    {
+    }
+
     /**
      * Converts a standard POSIX Shell globbing pattern into a regular expression
      * pattern.

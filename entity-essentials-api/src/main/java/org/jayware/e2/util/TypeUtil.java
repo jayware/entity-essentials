@@ -23,6 +23,10 @@ import java.lang.reflect.Type;
 
 public class TypeUtil
 {
+    private TypeUtil()
+    {
+    }
+
     public static String getTypeName(Type type)
     {
         return getTypeName((Class) type);
@@ -53,9 +57,9 @@ public class TypeUtil
 
                 return sb.toString();
             }
-            catch (Throwable ignored)
+            catch (Exception ignored)
             {
-
+                // Nothing to do.
             }
         }
 

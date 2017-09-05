@@ -51,7 +51,7 @@ import static org.jayware.e2.event.api.Preconditions.checkEventNotNull;
 import static org.jayware.e2.event.impl.EventBuilderImpl.createEventBuilder;
 import static org.jayware.e2.event.impl.QueryBuilderImpl.createQueryBuilder;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
-import static org.jayware.e2.util.ReferenceType.Weak;
+import static org.jayware.e2.util.ReferenceType.WEAK;
 
 
 public class EventManagerImpl
@@ -96,7 +96,6 @@ implements EventManager
 
     @Override
     public QueryBuilder createQuery(Class<? extends RootEvent> type)
-    throws IllegalArgumentException
     {
         checkNotNull(type);
 
@@ -121,7 +120,7 @@ implements EventManager
     @Override
     public void subscribe(Context context, Object subscriber)
     {
-        subscribe(context, subscriber, Weak, EMPTY_FILTER_ARRAY);
+        subscribe(context, subscriber, WEAK, EMPTY_FILTER_ARRAY);
     }
 
     @Override
@@ -133,7 +132,7 @@ implements EventManager
     @Override
     public void subscribe(Context context, Object subscriber, EventFilter[] filters)
     {
-        subscribe(context, subscriber, Weak, filters);
+        subscribe(context, subscriber, WEAK, filters);
     }
 
     @Override

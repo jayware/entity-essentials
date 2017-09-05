@@ -28,8 +28,8 @@ import org.jayware.e2.util.ReferenceType;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.jayware.e2.util.ReferenceType.Strong;
-import static org.jayware.e2.util.ReferenceType.Weak;
+import static org.jayware.e2.util.ReferenceType.STRONG;
+import static org.jayware.e2.util.ReferenceType.WEAK;
 
 
 public class SubscriptionFactoryImpl
@@ -38,7 +38,7 @@ implements SubscriptionFactory
     @Override
     public Subscription createSubscription(final Object subscriber, final ReferenceType referenceType, final EventFilter[] filters, final EventDispatcher dispatcher)
     {
-        if (referenceType == Strong)
+        if (referenceType == STRONG)
         {
             return new SubscriptionImpl_StrongReference(subscriber, filters, dispatcher);
         }
@@ -85,7 +85,7 @@ implements SubscriptionFactory
         @Override
         public ReferenceType getReferenceType()
         {
-            return Strong;
+            return STRONG;
         }
 
         @Override
@@ -138,7 +138,7 @@ implements SubscriptionFactory
         @Override
         public ReferenceType getReferenceType()
         {
-            return Weak;
+            return WEAK;
         }
 
         @Override

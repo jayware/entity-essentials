@@ -32,7 +32,7 @@ import static java.lang.Math.random;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jayware.e2.event.api.EventType.RootEvent.ContextParam;
-import static org.jayware.e2.util.ReferenceType.Weak;
+import static org.jayware.e2.util.ReferenceType.WEAK;
 
 
 public class EventBusTest
@@ -50,7 +50,7 @@ public class EventBusTest
         final EventBus eventBus = new EventBus(context);
         final Handler handler = new Handler();
 
-        eventBus.subscribe(handler, Weak, new EventFilter[0]);
+        eventBus.subscribe(handler, WEAK, new EventFilter[0]);
 
         new Thread(new Runnable()
         {
