@@ -350,12 +350,13 @@ public class Aspect
 
     private static void failCheck(Aspect aspect, Set<Class<? extends Component>> temp, Object... args)
     {
-        final String messageTemplate = "\t    The component %s is part of the %s and the %s set!";
-
         final StringBuilder message = new StringBuilder();
         for (Class<? extends Component> aClass : temp)
         {
-            message.append(format(messageTemplate, aClass.getSimpleName(), args[0], args[1]) + "\n");
+            message.append(format(
+                "\t    The component %s is part of the %s and the %s set!",
+                aClass.getSimpleName(), args[0], args[1]) + "\n"
+            );
         }
 
         throw new IllegalAspectException(aspect, message.toString());
