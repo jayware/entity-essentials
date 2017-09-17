@@ -56,13 +56,6 @@ dependencies {
     testRuntime dependency.junitRuntime // TODO: For IntelliJ until release of JUnit 5
 }
 
-test {
-    testLogging {
-        displayGranularity 4
-        events "started", "passed", "skipped", "failed"
-    }
-}
-
 jmh {
     jmhVersion = '1.17'
 }

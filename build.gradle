@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC3'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.netflix.nebula:gradle-lint-plugin:7.9.5'
@@ -94,16 +94,34 @@ configure ([
         sourceSets = [project.sourceSets.main]
     }
 
-    task codeCoverageReport(type: JacocoReport, dependsOn: test) {
-        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-        sourceDirectories = files(sourceSets.main.java)
-        classDirectories = files(sourceSets.main.output.classesDir)
+    junitPlatform {
+        reportsDir file('build/test-results')
+    }
 
-        reports {
-            html.enabled false
-            csv.enabled false
-            xml.enabled true
-            xml.destination "${buildDir}/reports/jacoco/report.xml"
+    afterEvaluate {
+
+        jacoco {
+            toolVersion = "0.7.9"
+            applyTo junitPlatformTest
+        }
+
+        task codeCoverageReport(type:JacocoReport, dependsOn: junitPlatformTest){
+            executionData junitPlatformTest
+            sourceSets sourceSets.main
+            sourceDirectories = files(project.sourceSets.main.allSource.srcDirs)
+            classDirectories = files(project.sourceSets.main.output)
+            reports {
+                html.enabled false
+                csv.enabled false
+                xml.enabled true
+                xml.destination file("${buildDir}/reports/jacoco/report.xml")
+            }
+        }
+    }
+
+    sonarqube {
+        properties {
+            property "sonar.jacoco.reportPaths", file("${buildDir}/jacoco/junitPlatformTest.exec")
         }
     }
 
@@ -120,10 +138,6 @@ configure ([
     artifacts {
         archives sourcesJar
         archives javadocJar
-    }
-
-    junitPlatform {
-        platformVersion '1.0.0-RC3'
     }
 }
 
