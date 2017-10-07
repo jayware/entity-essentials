@@ -20,8 +20,8 @@ package org.jayware.e2.component.impl.generation.writer;
 
 
 import org.jayware.e2.component.api.AbstractComponent;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.context.api.Context;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -31,9 +31,9 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 public class ComponentDefaultConstructorWriter
 {
-    public void writeDefaultConstructorFor(ComponentGenerationPlan componentPlan)
+    public void writeDefaultConstructorFor(ComponentGenerationContext generationContext)
     {
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final ClassWriter classWriter = generationContext.getClassWriter();
 
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "<init>", "(" + Type.getDescriptor(Context.class) + ")V");
         methodBuilder.beginMethod();

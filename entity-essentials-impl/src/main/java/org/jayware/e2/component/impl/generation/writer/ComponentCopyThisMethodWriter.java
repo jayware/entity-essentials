@@ -20,7 +20,7 @@ package org.jayware.e2.component.impl.generation.writer;
 
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -35,12 +35,13 @@ import static org.objectweb.asm.Type.getDescriptor;
 
 public class ComponentCopyThisMethodWriter
 {
-    public void writeCopyThisMethodFor(ComponentGenerationPlan componentPlan)
+    public void writeCopyThisMethodFor(ComponentGenerationContext generationContext)
     {
-        final String classInternalName = componentPlan.getGeneratedClassInternalName();
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final String classInternalName = generationContext.getGeneratedClassInternalName();
+        final ClassWriter classWriter = generationContext.getClassWriter();
 
         final MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, "copy", "()" + getDescriptor(Component.class), null, null);
+
         mv.visitCode();
         mv.visitTypeInsn(NEW, classInternalName);
         mv.visitInsn(DUP);

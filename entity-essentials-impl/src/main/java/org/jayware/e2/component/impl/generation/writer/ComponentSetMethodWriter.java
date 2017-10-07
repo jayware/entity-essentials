@@ -20,10 +20,10 @@ package org.jayware.e2.component.impl.generation.writer;
 
 
 import org.jayware.e2.component.api.ComponentFactoryException;
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 
 import static org.jayware.e2.component.impl.generation.asm.MethodBuilder.createMethodBuilder;
@@ -44,24 +44,28 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 public class ComponentSetMethodWriter
 {
-    public void writeSetMethodFor(ComponentGenerationPlan componentPlan)
-    {
-        final String classInternalName = componentPlan.getGeneratedClassInternalName();
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+    private static final String EQUALS_METHOD_NAME = "equals";
 
-        final MethodBuilder builder = createMethodBuilder(classWriter, ACC_PUBLIC, "set", "(Ljava/lang/String;Ljava/lang/Object;)Z");
+    public void writeSetMethodFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
+    {
+        final String classInternalName = generationContext.getGeneratedClassInternalName();
+
+        final MethodBuilder builder = createMethodBuilder(generationContext.getClassWriter(),
+            ACC_PUBLIC, "set", "(Ljava/lang/String;Ljava/lang/Object;)Z"
+        );
+
         builder.beginMethod();
 
-        for (ComponentPropertyGenerationPlan propertyPlan : componentPlan.getComponentPropertyGenerationPlans())
+        for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
-            final String propertyName = propertyPlan.getPropertyName();
-            final Class<?> propertyType = propertyPlan.getPropertyType();
+            final String propertyName = propertyDescriptor.getPropertyName();
+            final Class<?> propertyType = propertyDescriptor.getPropertyType();
 
             final Label fail = new Label();
 
             builder.loadConstant(propertyName);
             builder.loadReferenceVariable(1);
-            builder.invokeVirtualMethod(String.class, "equals", boolean.class, Object.class);
+            builder.invokeVirtualMethod(String.class, EQUALS_METHOD_NAME, boolean.class, Object.class);
             builder.jumpIfEquals(fail);
 
             if (isObjectType(propertyType) || isObjectArrayType(propertyType))
@@ -104,7 +108,7 @@ public class ComponentSetMethodWriter
                 builder.loadConstant(boxed(propertyType));
                 builder.loadVariable(2, Object.class);
                 builder.invokeVirtualMethod(Object.class, "getClass", Class.class);
-                builder.invokeVirtualMethod(Class.class, "equals", boolean.class, Object.class);
+                builder.invokeVirtualMethod(Class.class, EQUALS_METHOD_NAME, boolean.class, Object.class);
                 builder.jumpIfEquals(fail);
 
                 builder.loadThis();
@@ -168,7 +172,7 @@ public class ComponentSetMethodWriter
                 builder.loadPrimitiveTypeConstant(arrayComponentType);
                 builder.loadVariable(3, Class.class);
                 builder.invokeVirtualMethod(Class.class, "getComponentType", Class.class);
-                builder.invokeVirtualMethod(Class.class, "equals", boolean.class, Object.class);
+                builder.invokeVirtualMethod(Class.class, EQUALS_METHOD_NAME, boolean.class, Object.class);
                 builder.jumpIfEquals(endIfTypeNotMatch);
 
                 builder.loadThis();

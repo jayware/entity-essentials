@@ -19,7 +19,8 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -30,12 +31,13 @@ import static org.objectweb.asm.Type.getType;
 
 public class ComponentTypeMethodWriter
 {
-    public void writeTypeMethodFor(ComponentGenerationPlan componentPlan)
+    public void writeTypeMethodFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
     {
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final ClassWriter classWriter = generationContext.getClassWriter();
         final MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, "type", "()Ljava/lang/Class;", null, null);
+
         mv.visitCode();
-        mv.visitLdcInsn(getType(componentPlan.getComponentType()));
+        mv.visitLdcInsn(getType(descriptor.getDeclaringComponent()));
         mv.visitInsn(ARETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

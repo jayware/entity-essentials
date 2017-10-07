@@ -19,9 +19,8 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.objectweb.asm.ClassWriter;
 
 import java.util.List;
 
@@ -31,13 +30,14 @@ import static org.objectweb.asm.Type.getDescriptor;
 
 public class ComponentGetPropertyNamesMethodWriter
 {
-    public void writeGetPropertyNamesMethodFor(ComponentGenerationPlan componentPlan)
+    public void writeGetPropertyNamesMethodFor(ComponentGenerationContext generationContext)
     {
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(generationContext.getClassWriter(),
+            ACC_PUBLIC, "getPropertyNames", "()" + getDescriptor(List.class)
+        );
 
-        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "getPropertyNames", "()" + getDescriptor(List.class));
         methodBuilder.beginMethod();
-        methodBuilder.loadStaticField(componentPlan.getGeneratedClassInternalName(), "ourPropertyNames", List.class);
+        methodBuilder.loadStaticField(generationContext.getGeneratedClassInternalName(), "ourPropertyNames", List.class);
         methodBuilder.returnReference();
         methodBuilder.endMethod();
     }

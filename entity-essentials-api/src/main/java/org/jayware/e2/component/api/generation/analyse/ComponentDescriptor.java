@@ -18,10 +18,22 @@
  */
 package org.jayware.e2.component.api.generation.analyse;
 
-import java.lang.reflect.Method;
+import org.jayware.e2.component.api.Component;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType;
+
+import java.util.List;
+import java.util.Map;
 
 
-public interface ComponentPropertyAccessorAnalyser
+public interface ComponentDescriptor
 {
-    ComponentPropertyAccessorDescriptor analyse(Method method);
+    Class<? extends Component> getDeclaringComponent();
+
+    List<ComponentPropertyDescriptor> getPropertyDescriptors();
+
+    Map<String, List<ComponentPropertyAccessorDescriptor>> getPropertyAccessorDescriptors();
+
+    List<ComponentPropertyAccessorDescriptor> getPropertyAccessorDescriptors(String name);
+
+    ComponentPropertyAccessorDescriptor getPropertyAccessorDescriptor(String propertyName, AccessorType type);
 }

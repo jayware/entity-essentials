@@ -25,14 +25,12 @@ import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentFactoryException;
 import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.MalformedComponentException;
-import org.jayware.e2.component.api.generation.analyse.ComponentHierarchyAnalyser;
-import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor;
-import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorAnalyser;
-import org.jayware.e2.component.impl.generation.analyse.ComponentHierarchyAnalyserImpl;
-import org.jayware.e2.component.impl.generation.analyse.ComponentPropertyAccessorAnalyserImpl;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlanFactory;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
+import org.jayware.e2.component.api.generation.analyse.ComponentAnalyser;
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.generation.analyse.ComponentAnalyserImpl;
+import org.jayware.e2.component.impl.generation.analyse.DefaultComponentAnalyserFactory;
 import org.jayware.e2.component.impl.generation.writer.ComponentCopyConstructorWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentCopyOtherMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentCopyThisMethodWriter;
@@ -57,20 +55,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Class.forName;
-import static java.util.Arrays.asList;
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.READ;
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.WRITE;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.READ;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.WRITE;
 import static org.jayware.e2.util.IOUtil.closeQuietly;
 import static org.jayware.e2.util.IOUtil.writeBytes;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
@@ -88,7 +81,7 @@ public class ComponentFactoryImpl
 implements ComponentFactory
 {
     private final ComponentWriterFactory myWriterFactory = new ComponentWriterFactory();
-    private final ComponentGenerationPlanFactory myGenerationPlanFactory = new ComponentGenerationPlanFactory();
+    private final ComponentAnalyser myComponentAnalyser = new ComponentAnalyserImpl(new DefaultComponentAnalyserFactory(null));
 
     private final File myOutputDirectory;
 
@@ -198,122 +191,12 @@ implements ComponentFactory
             if (!isComponentPrepared(componentClass))
             {
                 log.debug("Preparing Component: {}", componentClass.getName());
-                generateComponentClass(analyseComponent(componentClass));
+                generateComponentClass(myComponentAnalyser.analyse(componentClass));
             }
         }
     }
 
-    private ComponentGenerationPlan analyseComponent(Class<? extends Component> componentClass)
-    {
-        final ComponentGenerationPlan componentGenerationPlan = myGenerationPlanFactory.createComponentGenerationPlan(componentClass);
-        final ComponentHierarchyAnalyser hierarchyAnalyser = new ComponentHierarchyAnalyserImpl();
-        final ComponentPropertyAccessorAnalyser accessorAnalyser = new ComponentPropertyAccessorAnalyserImpl();
-        final Map<String, ComponentPropertyGenerationPlan> propertyDescriptorMap = new HashMap<String, ComponentPropertyGenerationPlan>();
-        final Set<Method> methods = new HashSet<Method>();
-
-        final Set<Class<? extends Component>> componentClasses = hierarchyAnalyser.analyse(componentClass);
-
-        for (Class<? extends Component> aClass : componentClasses)
-        {
-            methods.addAll(asList(aClass.getDeclaredMethods()));
-        }
-
-        for (Method method : methods)
-        {
-            final ComponentPropertyAccessor propertyAccessor = accessorAnalyser.analyse(method);
-
-            final int parameterCount = method.getParameterTypes().length;
-
-            ComponentPropertyGenerationPlan propertyGenerationPlan;
-            String propertyName = propertyAccessor.getPropertyName();
-
-            if (propertyAccessor.isAccessorType(READ) || propertyAccessor.isAccessorType(WRITE))
-            {
-                propertyGenerationPlan = propertyDescriptorMap.get(propertyName);
-
-                if (propertyGenerationPlan == null)
-                {
-                    propertyGenerationPlan = myGenerationPlanFactory.createComponentPropertyGenerationPlan(componentGenerationPlan, propertyName);
-                    propertyDescriptorMap.put(propertyName, propertyGenerationPlan);
-                }
-
-                if (propertyAccessor.isAccessorType(READ))
-                {
-                    if (parameterCount != 0)
-                    {
-                        throw new MalformedComponentException("Invalid getter for property '" + propertyGenerationPlan.getPropertyName() + "'! A getter mustn't have any parameter!");
-                    }
-
-                    if (propertyGenerationPlan.hasSetter())
-                    {
-                        final Method setter = propertyGenerationPlan.getPropertySetterMethod();
-                        final Class<?> parameterType = setter.getParameterTypes()[0];
-
-                        if (!parameterType.equals(method.getReturnType()))
-                        {
-                            throw new MalformedComponentException("Invalid getter for property '" + propertyGenerationPlan.getPropertyName() + "'! The return type of the getter does not match the parameter type of the setter!");
-                        }
-                    }
-
-                    propertyGenerationPlan.setPropertyGetterMethod(method);
-                    propertyGenerationPlan.setPropertyType(method.getReturnType());
-                }
-                else if (propertyAccessor.isAccessorType(WRITE))
-                {
-                    if (parameterCount != 1)
-                    {
-                        throw new MalformedComponentException("Invalid setter for property '" + propertyGenerationPlan.getPropertyName() + "'! A setter has to take exactly one parameter with the appropriate type!");
-                    }
-
-                    if (propertyGenerationPlan.hasGetter())
-                    {
-                        final Method getter = propertyGenerationPlan.getPropertyGetterMethod();
-                        final Class<?> returnType = getter.getReturnType();
-
-                        if (!returnType.equals(method.getParameterTypes()[0]))
-                        {
-                            throw new MalformedComponentException("Invalid setter for property '" + propertyGenerationPlan.getPropertyName() + "'! The parameter type of the setter does not match the return type of the getter!");
-                        }
-                    }
-
-                    propertyGenerationPlan.setPropertySetterMethod(method);
-                }
-            }
-            else
-            {
-                throw new MalformedComponentException("Method '" + method + "' is neither a setter nor a getter!");
-            }
-        }
-
-        for (ComponentPropertyGenerationPlan propertyGenerationPlan : propertyDescriptorMap.values())
-        {
-            if (propertyGenerationPlan.isComplete())
-            {
-                componentGenerationPlan.addComponentPropertyGenerationPlan(propertyGenerationPlan);
-            }
-            else
-            {
-                final String propertyName = propertyGenerationPlan.getPropertyName();
-
-                if (!propertyGenerationPlan.hasGetter())
-                {
-                    throw new MalformedComponentException("There is no getter for property: " + propertyName);
-                }
-                else if (!propertyGenerationPlan.hasSetter())
-                {
-                    throw new MalformedComponentException("There is no setter for property: " + propertyName);
-                }
-                else
-                {
-                    throw new MalformedComponentException("Incomplete ComponentPropertyGenerationPlan: " + propertyGenerationPlan);
-                }
-            }
-        }
-
-        return componentGenerationPlan;
-    }
-
-    private void generateComponentClass(ComponentGenerationPlan componentGenerationPlan)
+    private void generateComponentClass(ComponentDescriptor descriptor)
     {
         final ComponentStaticInitializerWriter staticInitializerWriter = myWriterFactory.createComponentStaticInitializerWriter();
         final ComponentDefaultConstructorWriter defaultConstructorWriter = myWriterFactory.createComponentDefaultConstructorWriter();
@@ -333,69 +216,77 @@ implements ComponentFactory
         final ComponentHashCodeMethodWriter hashCodeMethodWriter = myWriterFactory.createComponentHashcodeMethodWriter();
         final ComponentToStringMethodWriter toStringMethodWriter = myWriterFactory.createComponentToStringMethodWriter();
 
-        final Class<? extends Component> componentClass = componentGenerationPlan.getComponentType();
+        final Class<? extends Component> componentClass = descriptor.getDeclaringComponent();
+        final ComponentGenerationContext generationContext = new ComponentGenerationContext(descriptor, myOutputDirectory);
 
-        componentGenerationPlan.setOutputDirectory(myOutputDirectory);
-        componentGenerationPlan.setClassWriter(new ClassWriter(ClassWriter.COMPUTE_FRAMES));
-
-        final ClassWriter classWriter = componentGenerationPlan.getClassWriter();
-        final String classInternalName = componentGenerationPlan.getGeneratedClassInternalName();
+        final ClassWriter classWriter = generationContext.getClassWriter();
 
         classWriter.visit(
             V1_6,
             ACC_PUBLIC + ACC_SUPER,
-            componentGenerationPlan.getGeneratedClassInternalName(),
+            generationContext.getGeneratedClassInternalName(),
             null,
             getInternalName(AbstractComponent.class),
             new String[]{getInternalName(componentClass)}
         );
 
+        classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyNames", getDescriptor(List.class), null, null);
+        classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyTypes", getDescriptor(List.class), null, null);
+
+        for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
-            classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyNames", getDescriptor(List.class), null, null);
-            classWriter.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "ourPropertyTypes", getDescriptor(List.class), null, null);
+            propertyFieldWriter.writePropertyFieldFor(generationContext, propertyDescriptor);
         }
 
-        for (ComponentPropertyGenerationPlan propertyPlan : componentGenerationPlan.getComponentPropertyGenerationPlans())
+        staticInitializerWriter.writeStaticInitializerFor(generationContext, descriptor);
+
+        defaultConstructorWriter.writeDefaultConstructorFor(generationContext);
+        copyConstructorWriter.writeCopyConstructorFor(generationContext);
+
+        for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
-            propertyFieldWriter.writePropertyFieldFor(propertyPlan);
+            for (ComponentPropertyAccessorDescriptor accessorDescriptor : descriptor.getPropertyAccessorDescriptors(propertyDescriptor.getPropertyName()))
+            {
+                if (accessorDescriptor.getAccessorType() == READ)
+                {
+                    propertyGetterWriter.writePropertyGetterFor(generationContext, accessorDescriptor);
+                }
+                else if (accessorDescriptor.getAccessorType() == WRITE)
+                {
+                    propertySetterWriter.writePropertySetterFor(generationContext, accessorDescriptor);
+                }
+                else
+                {
+                    throw new UnsupportedOperationException();
+                }
+            }
         }
 
-        staticInitializerWriter.writeStaticInitializerFor(componentGenerationPlan);
+        getPropertyNamesMethodWriter.writeGetPropertyNamesMethodFor(generationContext);
 
-        defaultConstructorWriter.writeDefaultConstructorFor(componentGenerationPlan);
-        copyConstructorWriter.writeCopyConstructorFor(componentGenerationPlan);
+        getPropertyTypeNamesMethodWriter.writeGetPropertyTypeNamesMethodFor(generationContext);
 
-        for (ComponentPropertyGenerationPlan plan : componentGenerationPlan.getComponentPropertyGenerationPlans())
-        {
-            propertyGetterWriter.writePropertyGetterFor(plan);
-            propertySetterWriter.writePropertySetterFor(plan);
-        }
+        getMethodWriter.writeGetMethodFor(generationContext, descriptor);
 
-        getPropertyNamesMethodWriter.writeGetPropertyNamesMethodFor(componentGenerationPlan);
+        setMethodWriter.writeSetMethodFor(generationContext, descriptor);
 
-        getPropertyTypeNamesMethodWriter.writeGetPropertyTypeNamesMethodFor(componentGenerationPlan);
+        hasMethodWriter.writeHasMethodFor(generationContext);
 
-        getMethodWriter.writeGetMethodFor(componentGenerationPlan);
+        typeMethodWriter.writeTypeMethodFor(generationContext, descriptor);
 
-        setMethodWriter.writeSetMethodFor(componentGenerationPlan);
+        copyThisMethodWriter.writeCopyThisMethodFor(generationContext);
 
-        hasMethodWriter.writeHasMethodFor(componentGenerationPlan);
+        copyOtherMethodWriter.writeCopyOtherMethodFor(generationContext, descriptor);
 
-        typeMethodWriter.writeTypeMethodFor(componentGenerationPlan);
+        equalsMethodWriter.writeEqualsMethodFor(generationContext, descriptor);
 
-        copyThisMethodWriter.writeCopyThisMethodFor(componentGenerationPlan);
+        hashCodeMethodWriter.writeHashCodeMethodFor(generationContext, descriptor);
 
-        copyOtherMethodWriter.writeCopyOtherMethodFor(componentGenerationPlan);
-
-        equalsMethodWriter.writeEqualsMethodFor(componentGenerationPlan);
-
-        hashCodeMethodWriter.writeHashCodeMethodFor(componentGenerationPlan);
-
-        toStringMethodWriter.writeToStringMethodFor(componentGenerationPlan);
+        toStringMethodWriter.writeToStringMethodFor(generationContext, descriptor);
 
         try
         {
-            writeBytes(componentGenerationPlan.getGeneratedClassFile(), classWriter.toByteArray());
+            writeBytes(generationContext.getGeneratedClassFile(), classWriter.toByteArray());
         }
         catch (IOException e)
         {
@@ -406,15 +297,15 @@ implements ComponentFactory
         try
         {
             classLoader = new URLClassLoader(new URL[]{myOutputDirectory.toURI().toURL()}, componentClass.getClassLoader());
-            final Class<? extends Component> loadedClass = (Class<? extends Component>) classLoader.loadClass(componentGenerationPlan.getGeneratedClassName());
+            final Class<? extends Component> loadedClass = (Class<? extends Component>) classLoader.loadClass(generationContext.getGeneratedClassName());
 
-            myCache.put(componentClass.getName(), new ComponentInstancerImpl<Component, Component>(componentGenerationPlan, loadedClass));
+            myCache.put(componentClass.getName(), new ComponentInstancerImpl<Component, Component>(loadedClass));
 
             log.debug("Component prepared: {}", componentClass.getName());
         }
         catch (Exception e)
         {
-            throw new ComponentFactoryException("Failed to load class '" + classInternalName + "' from: " + myOutputDirectory.getAbsolutePath(), e);
+            throw new ComponentFactoryException("Failed to load class '" + generationContext.getGeneratedClassInternalName() + "' from: " + myOutputDirectory.getAbsolutePath(), e);
         }
         finally
         {
@@ -429,5 +320,55 @@ implements ComponentFactory
         "myOutputDirectory=" + myOutputDirectory +
         ", myCache=" + myCache +
         '}';
+    }
+
+    public static class ComponentGenerationContext
+    {
+        private final ClassWriter myClassWriter;
+        private final File myOutputDirectory;
+        private final File myGeneratedClassFile;
+        private final String myGeneratedClassName;
+        private final String myGeneratedClassPackageName;
+
+        public ComponentGenerationContext(ComponentDescriptor descriptor, File outputDirectory)
+        {
+            final Class<? extends Component> declaringComponent = descriptor.getDeclaringComponent();
+
+            myClassWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+            myOutputDirectory = outputDirectory;
+            myGeneratedClassPackageName = declaringComponent.getPackage().getName();
+            myGeneratedClassName = "_generated_" + declaringComponent.getSimpleName();
+            myGeneratedClassFile = new File(myOutputDirectory, getGeneratedClassInternalName() + ".class");
+        }
+
+        public ClassWriter getClassWriter()
+        {
+            return myClassWriter;
+        }
+
+        public File getGeneratedClassFile()
+        {
+            return myGeneratedClassFile;
+        }
+
+        public String getGeneratedClassName()
+        {
+            return getGeneratedClassPackageName() + "." + myGeneratedClassName;
+        }
+
+        public String getGeneratedClassInternalName()
+        {
+            return getGeneratedClassPackagePath() + myGeneratedClassName;
+        }
+
+        public String getGeneratedClassPackagePath()
+        {
+            return getGeneratedClassPackageName().replace(".", "/") + "/";
+        }
+
+        public String getGeneratedClassPackageName()
+        {
+            return myGeneratedClassPackageName;
+        }
     }
 }

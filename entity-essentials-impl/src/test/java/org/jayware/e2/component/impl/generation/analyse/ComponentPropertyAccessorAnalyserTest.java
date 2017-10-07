@@ -20,8 +20,8 @@ package org.jayware.e2.component.impl.generation.analyse;
 
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.MalformedComponentException;
-import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorAnalyser;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,9 +29,9 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.FLUENT_WRITE;
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.READ;
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.WRITE;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.FLUENT_WRITE;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.READ;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.WRITE;
 
 
 public class ComponentPropertyAccessorAnalyserTest
@@ -50,12 +50,13 @@ public class ComponentPropertyAccessorAnalyserTest
     {
         final Method method = TestComponent.class.getDeclaredMethod("getText");
 
-        final ComponentPropertyAccessor accessor = testee.analyse(method);
+        final ComponentPropertyAccessorDescriptor accessor = testee.analyse(method);
 
         assertThat(accessor.getAccessorName()).isEqualTo("getText");
         assertThat(accessor.getAccessorType()).isEqualTo(READ);
         assertThat(accessor.getPropertyName()).isEqualTo("text");
         assertThat(accessor.getPropertyType()).isEqualTo(String.class);
+        assertThat(accessor.getDeclaringComponent()).isEqualTo(TestComponent.class);
     }
 
     @Test
@@ -64,12 +65,13 @@ public class ComponentPropertyAccessorAnalyserTest
     {
         final Method method = TestComponent.class.getDeclaredMethod("setText", String.class);
 
-        final ComponentPropertyAccessor accessor = testee.analyse(method);
+        final ComponentPropertyAccessorDescriptor accessor = testee.analyse(method);
 
         assertThat(accessor.getAccessorName()).isEqualTo("setText");
         assertThat(accessor.getAccessorType()).isEqualTo(WRITE);
         assertThat(accessor.getPropertyName()).isEqualTo("text");
         assertThat(accessor.getPropertyType()).isEqualTo(String.class);
+        assertThat(accessor.getDeclaringComponent()).isEqualTo(TestComponent.class);
     }
 
     @Test
@@ -78,12 +80,13 @@ public class ComponentPropertyAccessorAnalyserTest
     {
         final Method method = TestComponent.class.getDeclaredMethod("withText", String.class);
 
-        final ComponentPropertyAccessor accessor = testee.analyse(method);
+        final ComponentPropertyAccessorDescriptor accessor = testee.analyse(method);
 
         assertThat(accessor.getAccessorName()).isEqualTo("withText");
         assertThat(accessor.getAccessorType()).isEqualTo(FLUENT_WRITE);
         assertThat(accessor.getPropertyName()).isEqualTo("text");
         assertThat(accessor.getPropertyType()).isEqualTo(String.class);
+        assertThat(accessor.getDeclaringComponent()).isEqualTo(TestComponent.class);
     }
 
     @Test

@@ -19,9 +19,8 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
-import org.objectweb.asm.ClassWriter;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
@@ -29,11 +28,8 @@ import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 
 public class ComponentPropertyFieldWriter
 {
-    public void writePropertyFieldFor(ComponentPropertyGenerationPlan plan)
+    public void writePropertyFieldFor(ComponentGenerationContext generationContext, ComponentPropertyDescriptor descriptor)
     {
-        final ComponentGenerationPlan componentGenerationPlan = plan.getComponentGenerationPlan();
-        final ClassWriter classWriter = componentGenerationPlan.getClassWriter();
-
-        classWriter.visitField(ACC_PRIVATE, plan.getPropertyName(), Type.getDescriptor(plan.getPropertyType()), null, null);
+        generationContext.getClassWriter().visitField(ACC_PRIVATE, descriptor.getPropertyName(), Type.getDescriptor(descriptor.getPropertyType()), null, null);
     }
 }

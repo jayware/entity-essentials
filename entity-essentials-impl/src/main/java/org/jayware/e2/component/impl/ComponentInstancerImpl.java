@@ -21,7 +21,6 @@ package org.jayware.e2.component.impl;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentInstancer;
 import org.jayware.e2.component.api.ComponentInstantiationException;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.context.api.Context;
 
 import java.lang.reflect.Constructor;
@@ -30,12 +29,10 @@ import java.lang.reflect.Constructor;
 public class ComponentInstancerImpl<C extends Component, T extends C>
 implements ComponentInstancer<C>
 {
-    private final ComponentGenerationPlan myComponentGenerationPlan;
     private final Class<T> myComponentClass;
 
-    public ComponentInstancerImpl(ComponentGenerationPlan componentGenerationPlan, Class<? extends Component> componentClass)
+    public ComponentInstancerImpl(Class<? extends Component> componentClass)
     {
-        myComponentGenerationPlan = componentGenerationPlan;
         myComponentClass = (Class<T>) componentClass;
     }
 

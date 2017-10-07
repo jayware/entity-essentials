@@ -19,6 +19,8 @@
 package org.jayware.e2.component.impl;
 
 import org.jayware.e2.component.api.ComponentFactory;
+import org.jayware.e2.component.api.generation.analyse.ComponentAnalyserFactory;
+import org.jayware.e2.component.impl.generation.analyse.DefaultComponentAnalyserFactory;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.context.api.ContextInitializer;
 
@@ -36,5 +38,6 @@ implements ContextInitializer
         context.put(COMPONENT_FACTORY, componentFactory);
         context.put(ComponentFactory.class, componentFactory);
         context.put(COMPONENT_STORE, new ComponentStore(context));
+        context.put(ComponentAnalyserFactory.class, new DefaultComponentAnalyserFactory(context));
     }
 }

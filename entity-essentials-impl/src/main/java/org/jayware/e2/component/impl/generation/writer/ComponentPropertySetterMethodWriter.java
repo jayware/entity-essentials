@@ -19,26 +19,26 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
-import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 
 public class ComponentPropertySetterMethodWriter
 {
-    public void writePropertySetterFor(ComponentPropertyGenerationPlan propertyPlan)
+    public void writePropertySetterFor(ComponentGenerationContext generationContext, ComponentPropertyAccessorDescriptor accessorDescriptor)
     {
-        final ComponentGenerationPlan componentPlan = propertyPlan.getComponentGenerationPlan();
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(generationContext.getClassWriter(),
+            ACC_PUBLIC, accessorDescriptor.getAccessorName(), Type.getType(accessorDescriptor.getAccessor()).getDescriptor()
+        );
 
-        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, propertyPlan.getPropertySetterMethodName(), propertyPlan.getPropertySetterMethodDescriptor());
         methodBuilder.beginMethod();
         methodBuilder.loadThis();
-        methodBuilder.loadVariable(1, propertyPlan.getPropertyType());
-        methodBuilder.storeField(componentPlan.getGeneratedClassInternalName(), propertyPlan.getPropertyName(), propertyPlan.getPropertyType());
+        methodBuilder.loadVariable(1, accessorDescriptor.getPropertyType());
+        methodBuilder.storeField(generationContext.getGeneratedClassInternalName(), accessorDescriptor.getPropertyName(), accessorDescriptor.getPropertyType());
         methodBuilder.returnVoid();
         methodBuilder.endMethod();
     }

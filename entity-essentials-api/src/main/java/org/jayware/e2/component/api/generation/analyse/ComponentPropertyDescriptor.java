@@ -18,10 +18,10 @@
  */
 package org.jayware.e2.component.api.generation.analyse;
 
-import java.lang.reflect.Method;
-
-
-public interface ComponentPropertyAccessorAnalyser
+public interface ComponentPropertyDescriptor
+extends ComponentDescriptorPart
 {
-    ComponentPropertyAccessorDescriptor analyse(Method method);
+    String getPropertyName();
+
+    Class getPropertyType();
 }

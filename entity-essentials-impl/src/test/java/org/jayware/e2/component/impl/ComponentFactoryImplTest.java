@@ -21,7 +21,6 @@ package org.jayware.e2.component.impl;
 
 import mockit.Mocked;
 import org.jayware.e2.component.api.ComponentInstancer;
-import org.jayware.e2.component.api.MalformedComponentException;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentC;
 import org.jayware.e2.context.api.Context;
@@ -74,19 +73,6 @@ public class ComponentFactoryImplTest
             public void execute()
             {
                 testee.createComponent((Class) null);
-            }
-        });
-    }
-
-    @Test
-    public void test_prepareComponent_Should_fail_when_parameter_types_do_not_match()
-    {
-        assertThrows(MalformedComponentException.class, new Executable()
-        {
-            @Override
-            public void execute()
-            {
-                testee.prepareComponent(TestComponents.TestComponentWithParameterTypeMismatch.class);
             }
         });
     }

@@ -20,9 +20,10 @@ package org.jayware.e2.component.impl.generation.writer;
 
 
 import org.jayware.e2.component.api.Component;
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.TypeUtil;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -43,28 +44,33 @@ import static org.objectweb.asm.Opcodes.NEW;
 
 public class ComponentToStringMethodWriter
 {
-    public void writeToStringMethodFor(ComponentGenerationPlan componentPlan)
+    private static final String APPEND_METHOD_NAME = "append";
+    private static final String STRING_BUILDER_INTERNAL_NAME = "java/lang/StringBuilder";
+    private static final String STRING_BUILDER_APPEND_METHOD_DESCRIPTOR = "(Ljava/lang/String;)Ljava/lang/StringBuilder;";
+
+    public void writeToStringMethodFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
     {
-        final Class<? extends Component> componentClass = componentPlan.getComponentType();
-        final String classInternalName = componentPlan.getGeneratedClassInternalName();
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final Class<? extends Component> componentClass = descriptor.getDeclaringComponent();
+        final String classInternalName = generationContext.getGeneratedClassInternalName();
+        final ClassWriter classWriter = generationContext.getClassWriter();
 
         final MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
         mv.visitCode();
-        mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
+        mv.visitTypeInsn(NEW, STRING_BUILDER_INTERNAL_NAME);
         mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+        mv.visitMethodInsn(INVOKESPECIAL, STRING_BUILDER_INTERNAL_NAME, "<init>", "()V", false);
         mv.visitLdcInsn(componentClass.getSimpleName() + "{");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, APPEND_METHOD_NAME, STRING_BUILDER_APPEND_METHOD_DESCRIPTOR, false);
 
-        int propertiesCount = 0;
-        for (ComponentPropertyGenerationPlan propertyPlan : componentPlan.getComponentPropertyGenerationPlans())
+        int progress = 0;
+        final int numberOfProperties = descriptor.getPropertyDescriptors().size();
+        for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
-            final String propertyName = propertyPlan.getPropertyName();
-            final Class<?> propertyType = propertyPlan.getPropertyType();
-            final String propertyTypeDescriptor = Type.getDescriptor(propertyPlan.getPropertyType());
+            final String propertyName = propertyDescriptor.getPropertyName();
+            final Class<?> propertyType = propertyDescriptor.getPropertyType();
+            final String propertyTypeDescriptor = Type.getDescriptor(propertyDescriptor.getPropertyType());
 
-            if (propertiesCount == 0)
+            if (progress == 0)
             {
                 mv.visitLdcInsn(propertyName + "='");
             }
@@ -73,7 +79,7 @@ public class ComponentToStringMethodWriter
                 mv.visitLdcInsn("', " + propertyName + "='");
             }
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, APPEND_METHOD_NAME, STRING_BUILDER_APPEND_METHOD_DESCRIPTOR, false);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, classInternalName, propertyName, propertyTypeDescriptor);
 
@@ -82,31 +88,31 @@ public class ComponentToStringMethodWriter
                 // StringBuilder does not support Short and Byte primitives.
                 if (isShortPrimitiveType(propertyType) || isBytePrimitiveType(propertyType))
                 {
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, APPEND_METHOD_NAME, "(I)Ljava/lang/StringBuilder;", false);
                 }
                 else
                 {
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(" + propertyTypeDescriptor + ")Ljava/lang/StringBuilder;", false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, APPEND_METHOD_NAME, "(" + propertyTypeDescriptor + ")Ljava/lang/StringBuilder;", false);
                 }
             }
             else
             {
                 mv.visitMethodInsn(INVOKESTATIC, "java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;", false);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, APPEND_METHOD_NAME, STRING_BUILDER_APPEND_METHOD_DESCRIPTOR, false);
             }
 
-            if (propertiesCount == componentPlan.getComponentPropertyGenerationPlans().size() - 1)
+            if (progress == numberOfProperties - 1)
             {
                 mv.visitIntInsn(BIPUSH, '\'');
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, APPEND_METHOD_NAME, "(C)Ljava/lang/StringBuilder;", false);
             }
 
-            ++propertiesCount;
+            ++progress;
         }
 
         mv.visitLdcInsn("}");
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, APPEND_METHOD_NAME, STRING_BUILDER_APPEND_METHOD_DESCRIPTOR, false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, STRING_BUILDER_INTERNAL_NAME, "toString", "()Ljava/lang/String;", false);
         mv.visitInsn(ARETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

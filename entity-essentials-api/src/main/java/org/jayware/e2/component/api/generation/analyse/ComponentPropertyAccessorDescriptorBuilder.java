@@ -18,26 +18,31 @@
  */
 package org.jayware.e2.component.api.generation.analyse;
 
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType;
+
 import java.lang.reflect.Method;
 
 
-public interface ComponentPropertyAccessor
+public interface ComponentPropertyAccessorDescriptorBuilder
 {
-    enum AccessorType {
-        READ,
-        WRITE,
-        FLUENT_WRITE;
+    ComponentPropertyAccessorDescriptorMethodNameBuilder accessor(Method accessor);
+
+    ComponentPropertyAccessorDescriptorPropertyBuilder property(String name);
+
+    ComponentPropertyAccessorDescriptor build();
+
+    interface ComponentPropertyAccessorDescriptorMethodNameBuilder
+    {
+        ComponentPropertyAccessorDescriptorMethodTypeBuilder name(String name);
+
+        interface ComponentPropertyAccessorDescriptorMethodTypeBuilder
+        {
+            ComponentPropertyAccessorDescriptorBuilder type(AccessorType type);
+        }
     }
 
-    Method getAccessor();
-
-    String getAccessorName();
-
-    AccessorType getAccessorType();
-
-    boolean isAccessorType(AccessorType type);
-
-    String getPropertyName();
-
-    Class getPropertyType();
+    interface ComponentPropertyAccessorDescriptorPropertyBuilder
+    {
+        ComponentPropertyAccessorDescriptorBuilder type(Class<?> type);
+    }
 }

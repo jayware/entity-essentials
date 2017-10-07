@@ -19,20 +19,20 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.objectweb.asm.ClassWriter;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 
 public class ComponentHasMethodWriter
 {
-    public void writeHasMethodFor(ComponentGenerationPlan componentPlan)
+    public void writeHasMethodFor(ComponentGenerationContext generationContext)
     {
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(generationContext.getClassWriter(),
+            ACC_PUBLIC, "has", "(Ljava/lang/String;)Z"
+        );
 
-        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "has", "(Ljava/lang/String;)Z");
         methodBuilder.beginMethod();
         methodBuilder.newInstanceOf(UnsupportedOperationException.class);
         methodBuilder.duplicateTopStackElement();

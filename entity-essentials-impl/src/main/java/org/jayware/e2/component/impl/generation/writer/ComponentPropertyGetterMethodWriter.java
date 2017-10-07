@@ -19,27 +19,26 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
-import org.objectweb.asm.ClassWriter;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Type.getType;
 
 
 public class ComponentPropertyGetterMethodWriter
 {
-    public void writePropertyGetterFor(ComponentPropertyGenerationPlan plan)
+    public void writePropertyGetterFor(ComponentGenerationContext generationContext, ComponentPropertyAccessorDescriptor accessorDescriptor)
     {
-        final ComponentGenerationPlan componentGenerationPlan = plan.getComponentGenerationPlan();
-        final ClassWriter classWriter = componentGenerationPlan.getClassWriter();
-
-        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, plan.getPropertyGetterMethodName(), plan.getPropertyGetterMethodDescriptor());
+        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(generationContext.getClassWriter(),
+            ACC_PUBLIC, accessorDescriptor.getAccessorName(), getType(accessorDescriptor.getAccessor()).getDescriptor()
+        );
 
         methodBuilder.beginMethod();
         methodBuilder.loadThis();
-        methodBuilder.loadField(componentGenerationPlan.getGeneratedClassInternalName(), plan.getPropertyName(), plan.getPropertyType());
-        methodBuilder.returnValue(plan.getPropertyType());
+        methodBuilder.loadField(generationContext.getGeneratedClassInternalName(), accessorDescriptor.getPropertyName(), accessorDescriptor.getPropertyType());
+        methodBuilder.returnValue(accessorDescriptor.getPropertyType());
         methodBuilder.endMethod();
     }
 }

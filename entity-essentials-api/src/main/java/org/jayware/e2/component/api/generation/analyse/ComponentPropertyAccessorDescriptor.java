@@ -21,7 +21,24 @@ package org.jayware.e2.component.api.generation.analyse;
 import java.lang.reflect.Method;
 
 
-public interface ComponentPropertyAccessorAnalyser
+public interface ComponentPropertyAccessorDescriptor
+extends ComponentDescriptorPart
 {
-    ComponentPropertyAccessorDescriptor analyse(Method method);
+    enum AccessorType {
+        READ,
+        WRITE,
+        FLUENT_WRITE;
+    }
+
+    Method getAccessor();
+
+    String getAccessorName();
+
+    AccessorType getAccessorType();
+
+    boolean hasAccessorType(AccessorType type);
+
+    String getPropertyName();
+
+    Class getPropertyType();
 }

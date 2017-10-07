@@ -18,11 +18,11 @@
  */
 package org.jayware.e2.component.impl.generation.writer;
 
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
 import org.jayware.e2.util.ObjectUtil;
-import org.objectweb.asm.ClassWriter;
 
 import java.util.Collection;
 
@@ -41,59 +41,63 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 public class ComponentHashCodeMethodWriter
 {
-    public void writeHashCodeMethodFor(ComponentGenerationPlan componentPlan)
+
+    public static final String VALUEOF_METHOD_NAME = "valueOf";
+
+    public void writeHashCodeMethodFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
     {
-        final ClassWriter classWriter = componentPlan.getClassWriter();
-        final MethodBuilder methodBuilder = createMethodBuilder(classWriter, ACC_PUBLIC, "hashCode", "()I");
+        final MethodBuilder methodBuilder = createMethodBuilder(generationContext.getClassWriter(),
+            ACC_PUBLIC, "hashCode", "()I"
+        );
 
         methodBuilder.beginMethod();
 
-        final Collection<ComponentPropertyGenerationPlan> propertyGenerationPlans = componentPlan.getComponentPropertyGenerationPlans();
+        final Collection<ComponentPropertyDescriptor> propertyGenerationPlans = descriptor.getPropertyDescriptors();
 
         methodBuilder.pushConstantValue(propertyGenerationPlans.size());
         methodBuilder.newArray(Object.class);
 
         int index = 0;
-        for (ComponentPropertyGenerationPlan propertyGenerationPlan : propertyGenerationPlans)
+        for (ComponentPropertyDescriptor propertyDescriptor : propertyGenerationPlans)
         {
-            final String propertyName = propertyGenerationPlan.getPropertyName();
-            final Class propertyType = propertyGenerationPlan.getPropertyType();
+            final String propertyName = propertyDescriptor.getPropertyName();
+            final Class propertyType = propertyDescriptor.getPropertyType();
 
             methodBuilder.dup();
             methodBuilder.pushConstantValue(index++);
 
             methodBuilder.loadThis();
-            methodBuilder.loadField(componentPlan.getGeneratedClassInternalName(), propertyName, propertyType);
+            methodBuilder.loadField(generationContext.getGeneratedClassInternalName(), propertyName, propertyType);
 
             if (isPrimitiveType(propertyType))
             {
                 if (isBooleanPrimitiveType(propertyType))
                 {
-                    methodBuilder.invokeStaticMethod(Boolean.class, "valueOf", Boolean.class, boolean.class);
+                    methodBuilder.invokeStaticMethod(Boolean.class, VALUEOF_METHOD_NAME, Boolean.class, boolean.class);
                 }
                 else if (isBytePrimitiveType(propertyType))
                 {
-                    methodBuilder.invokeStaticMethod(Byte.class, "valueOf", Byte.class, byte.class);
+                    methodBuilder.invokeStaticMethod(Byte.class, VALUEOF_METHOD_NAME, Byte.class, byte.class);
                 }
                 else if (isShortPrimitiveType(propertyType))
                 {
-                    methodBuilder.invokeStaticMethod(Short.class, "valueOf", Short.class, short.class);
+                    methodBuilder.invokeStaticMethod(Short.class, VALUEOF_METHOD_NAME, Short.class, short.class);
                 }
                 else if (isIntegerPrimitiveType(propertyType))
                 {
-                    methodBuilder.invokeStaticMethod(Integer.class, "valueOf", Integer.class, int.class);
+                    methodBuilder.invokeStaticMethod(Integer.class, VALUEOF_METHOD_NAME, Integer.class, int.class);
                 }
                 else if (isLongPrimitiveType(propertyType))
                 {
-                    methodBuilder.invokeStaticMethod(Long.class, "valueOf", Long.class, long.class);
+                    methodBuilder.invokeStaticMethod(Long.class, VALUEOF_METHOD_NAME, Long.class, long.class);
                 }
                 else if (isFloatPrimitiveType(propertyType))
                 {
-                    methodBuilder.invokeStaticMethod(Float.class, "valueOf", Float.class, float.class);
+                    methodBuilder.invokeStaticMethod(Float.class, VALUEOF_METHOD_NAME, Float.class, float.class);
                 }
                 else if (isDoublePrimitiveType(propertyType))
                 {
-                    methodBuilder.invokeStaticMethod(Double.class, "valueOf", Double.class, double.class);
+                    methodBuilder.invokeStaticMethod(Double.class, VALUEOF_METHOD_NAME, Double.class, double.class);
                 }
             }
 

@@ -19,9 +19,10 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
 import org.objectweb.asm.ClassWriter;
 
 import java.util.ArrayList;
@@ -34,40 +35,42 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 public class ComponentStaticInitializerWriter
 {
-    public void writeStaticInitializerFor(ComponentGenerationPlan componentPlan)
+    public void writeStaticInitializerFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
     {
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final ClassWriter classWriter = generationContext.getClassWriter();
 
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_STATIC, "<clinit>", "()V");
         methodBuilder.beginMethod();
 
-        final int namesList = 1, typesList = 2;
-        final String namesListField = "ourPropertyNames", typesListField = "ourPropertyTypes";
+        final int namesList = 1;
+        final int typesList = 2;
+        final String namesListField = "ourPropertyNames";
+        final String typesListField = "ourPropertyTypes";
 
         writeNewArrayListInstance(methodBuilder, namesList);
         writeNewArrayListInstance(methodBuilder, typesList);
 
-        for (ComponentPropertyGenerationPlan propertyPlan : componentPlan.getComponentPropertyGenerationPlans())
+        for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
             methodBuilder.loadReferenceVariable(namesList);
-            methodBuilder.loadConstant(propertyPlan.getPropertyName());
+            methodBuilder.loadConstant(propertyDescriptor.getPropertyName());
             methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
             methodBuilder.loadReferenceVariable(typesList);
 
-            if (isPrimitiveType(propertyPlan.getPropertyType()))
+            if (isPrimitiveType(propertyDescriptor.getPropertyType()))
             {
-                methodBuilder.loadPrimitiveTypeConstant(propertyPlan.getPropertyType());
+                methodBuilder.loadPrimitiveTypeConstant(propertyDescriptor.getPropertyType());
             }
             else
             {
-                methodBuilder.loadConstant(propertyPlan.getPropertyType());
+                methodBuilder.loadConstant(propertyDescriptor.getPropertyType());
             }
 
             methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
         }
 
-        writeStoreUnmodifiableArrayList(componentPlan.getGeneratedClassInternalName(), methodBuilder, namesList, namesListField);
-        writeStoreUnmodifiableArrayList(componentPlan.getGeneratedClassInternalName(), methodBuilder, typesList, typesListField);
+        writeStoreUnmodifiableArrayList(generationContext.getGeneratedClassInternalName(), methodBuilder, namesList, namesListField);
+        writeStoreUnmodifiableArrayList(generationContext.getGeneratedClassInternalName(), methodBuilder, typesList, typesListField);
 
         methodBuilder.returnVoid();
         methodBuilder.endMethod();

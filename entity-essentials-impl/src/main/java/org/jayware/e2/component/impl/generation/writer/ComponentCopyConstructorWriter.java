@@ -21,8 +21,8 @@ package org.jayware.e2.component.impl.generation.writer;
 
 import org.jayware.e2.component.api.AbstractComponent;
 import org.jayware.e2.component.api.Component;
+import org.jayware.e2.component.impl.ComponentFactoryImpl;
 import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
 import org.jayware.e2.context.api.Context;
 import org.objectweb.asm.ClassWriter;
 
@@ -31,11 +31,11 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 public class ComponentCopyConstructorWriter
 {
-    public void writeCopyConstructorFor(ComponentGenerationPlan componentPlan)
+    public void writeCopyConstructorFor(ComponentFactoryImpl.ComponentGenerationContext generationContext)
     {
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final ClassWriter classWriter = generationContext.getClassWriter();
 
-        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "<init>", "(L" + componentPlan.getGeneratedClassInternalName() + ";)V");
+        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "<init>", "(L" + generationContext.getGeneratedClassInternalName() + ";)V");
         methodBuilder.beginMethod();
         methodBuilder.loadThis();
         methodBuilder.duplicateTopStackElement();
@@ -43,7 +43,7 @@ public class ComponentCopyConstructorWriter
         methodBuilder.loadField(AbstractComponent.class, "myContext", Context.class);
         methodBuilder.invokeConstructor(AbstractComponent.class, Context.class);
         methodBuilder.loadReferenceVariable(1);
-        methodBuilder.invokeVirtualMethod(componentPlan.getGeneratedClassInternalName(), "copy", Component.class, Component.class);
+        methodBuilder.invokeVirtualMethod(generationContext.getGeneratedClassInternalName(), "copy", Component.class, Component.class);
         methodBuilder.returnVoid();
         methodBuilder.endMethod();
     }

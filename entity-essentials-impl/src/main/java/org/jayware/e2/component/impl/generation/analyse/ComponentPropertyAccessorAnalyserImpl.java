@@ -20,38 +20,43 @@ package org.jayware.e2.component.impl.generation.analyse;
 
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.MalformedComponentException;
-import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorAnalyser;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.FLUENT_WRITE;
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.READ;
-import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessor.AccessorType.WRITE;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.FLUENT_WRITE;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.READ;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.WRITE;
 
 
 public class ComponentPropertyAccessorAnalyserImpl
 implements ComponentPropertyAccessorAnalyser
 {
-    private final Set<AccessorMatcher> matchers;
+    private final Set<AccessorMatcher> myMatchers;
+    private final ComponentPropertyAccessorDescriptorBuilder myBuilder;
 
     public ComponentPropertyAccessorAnalyserImpl()
     {
-        Set<AccessorMatcher> matcherSet = new HashSet<AccessorMatcher>();
-        matcherSet.add(new SimplePrefixedGetterMatcher());
-        matcherSet.add(new SimplePrefixedSetterMatcher());
-        matcherSet.add(new FluentPrefixedSetterMatcher());
+        myBuilder = new ComponentPropertyAccessorDescriptorBuilderImpl();
 
-        matchers = Collections.unmodifiableSet(matcherSet);
+        Set<AccessorMatcher> matcherSet = new HashSet<AccessorMatcher>();
+        matcherSet.add(new SimplePrefixedGetterMatcher(myBuilder));
+        matcherSet.add(new SimplePrefixedSetterMatcher(myBuilder));
+        matcherSet.add(new FluentPrefixedSetterMatcher(myBuilder));
+
+        myMatchers = Collections.unmodifiableSet(matcherSet);
     }
 
     @Override
-    public ComponentPropertyAccessor analyse(Method method)
+    public ComponentPropertyAccessorDescriptor analyse(Method method)
     {
-        for (AccessorMatcher matcher : matchers)
+        for (AccessorMatcher matcher : myMatchers)
         {
             if (matcher.matches(method))
             {
@@ -66,12 +71,50 @@ implements ComponentPropertyAccessorAnalyser
     {
         boolean matches(Method method);
 
-        ComponentPropertyAccessor parse(Method method);
+        ComponentPropertyAccessorDescriptor parse(Method method);
     }
 
-    private static class SimplePrefixedGetterMatcher
+    private abstract static class AbstractAccessorMatcher
     implements AccessorMatcher
     {
+        private final ComponentPropertyAccessorDescriptorBuilder myBuilder;
+
+        private AbstractAccessorMatcher(ComponentPropertyAccessorDescriptorBuilder builder)
+        {
+            myBuilder = builder;
+        }
+
+        @Override
+        public boolean matches(final Method method)
+        {
+            throw new UnsupportedOperationException("AbstractAccessorMatcher.matches");
+        }
+
+        @Override
+        public ComponentPropertyAccessorDescriptor parse(final Method method)
+        {
+            return myBuilder.accessor(method).name(parseAccessorName(method)).type(parseAccessorType(method))
+                            .property(parsePropertyName(method)).type(parsePropertyType(method))
+                            .build();
+        }
+
+        protected abstract String parseAccessorName(Method method);
+
+        protected abstract AccessorType parseAccessorType(Method method);
+
+        protected abstract String parsePropertyName(Method method);
+
+        protected abstract Class parsePropertyType(Method method);
+    }
+
+    private static class SimplePrefixedGetterMatcher extends AbstractAccessorMatcher
+    implements AccessorMatcher
+    {
+        private SimplePrefixedGetterMatcher(ComponentPropertyAccessorDescriptorBuilder builder)
+        {
+            super(builder);
+        }
+
         @Override
         public boolean matches(Method method)
         {
@@ -82,21 +125,19 @@ implements ComponentPropertyAccessorAnalyser
         }
 
         @Override
-        public ComponentPropertyAccessor parse(final Method method)
-        {
-            final String accessorName = parseAccessorName(method);
-            final String propertyName = parsePropertyName(method);
-            final Class propertyType = parsePropertyType(method);
-
-            return new ComponentPropertyAccessorImpl(method, accessorName, READ, propertyName, propertyType);
-        }
-
-        private String parseAccessorName(final Method method)
+        protected String parseAccessorName(Method method)
         {
             return method.getName();
         }
 
-        private String parsePropertyName(final Method method)
+        @Override
+        protected AccessorType parseAccessorType(final Method method)
+        {
+            return READ;
+        }
+
+        @Override
+        protected String parsePropertyName(Method method)
         {
             String propertyName = method.getName().substring(3);
             propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
@@ -104,15 +145,21 @@ implements ComponentPropertyAccessorAnalyser
             return propertyName;
         }
 
-        private Class parsePropertyType(final Method method)
+        @Override
+        protected Class parsePropertyType(Method method)
         {
             return method.getReturnType();
         }
     }
 
-    private static class SimplePrefixedSetterMatcher
+    private static class SimplePrefixedSetterMatcher extends AbstractAccessorMatcher
     implements AccessorMatcher
     {
+        private SimplePrefixedSetterMatcher(ComponentPropertyAccessorDescriptorBuilder builder)
+        {
+            super(builder);
+        }
+
         @Override
         public boolean matches(Method method)
         {
@@ -123,21 +170,19 @@ implements ComponentPropertyAccessorAnalyser
         }
 
         @Override
-        public ComponentPropertyAccessor parse(final Method method)
-        {
-            final String accessorName = parseAccessorName(method);
-            final String propertyName = parsePropertyName(method);
-            final Class propertyType = parsePropertyType(method);
-
-            return new ComponentPropertyAccessorImpl(method, accessorName, WRITE, propertyName, propertyType);
-        }
-
-        private String parseAccessorName(final Method method)
+        protected String parseAccessorName(Method method)
         {
             return method.getName();
         }
 
-        private String parsePropertyName(final Method method)
+        @Override
+        protected AccessorType parseAccessorType(final Method method)
+        {
+            return WRITE;
+        }
+
+        @Override
+        protected String parsePropertyName(Method method)
         {
             String propertyName = method.getName().substring(3);
             propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
@@ -145,16 +190,21 @@ implements ComponentPropertyAccessorAnalyser
             return propertyName;
         }
 
-        private Class parsePropertyType(final Method method)
+        @Override
+        protected Class parsePropertyType(Method method)
         {
             return method.getParameterTypes()[0];
         }
     }
 
-
-    private static class FluentPrefixedSetterMatcher
+    private static class FluentPrefixedSetterMatcher extends AbstractAccessorMatcher
     implements AccessorMatcher
     {
+        private FluentPrefixedSetterMatcher(ComponentPropertyAccessorDescriptorBuilder builder)
+        {
+            super(builder);
+        }
+
         @Override
         public boolean matches(Method method)
         {
@@ -165,21 +215,19 @@ implements ComponentPropertyAccessorAnalyser
         }
 
         @Override
-        public ComponentPropertyAccessor parse(final Method method)
-        {
-            final String accessorName = parseAccessorName(method);
-            final String propertyName = parsePropertyName(method);
-            final Class propertyType = parsePropertyType(method);
-
-            return new ComponentPropertyAccessorImpl(method, accessorName, FLUENT_WRITE, propertyName, propertyType);
-        }
-
-        private String parseAccessorName(final Method method)
+        protected String parseAccessorName(Method method)
         {
             return method.getName();
         }
 
-        private String parsePropertyName(final Method method)
+        @Override
+        protected AccessorType parseAccessorType(Method method)
+        {
+            return FLUENT_WRITE;
+        }
+
+        @Override
+        protected String parsePropertyName(Method method)
         {
             String propertyName = method.getName().substring(4);
             propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
@@ -187,64 +235,10 @@ implements ComponentPropertyAccessorAnalyser
             return propertyName;
         }
 
-        private Class parsePropertyType(final Method method)
+        @Override
+        protected Class parsePropertyType(Method method)
         {
             return method.getParameterTypes()[0];
-        }
-    }
-
-    private static class ComponentPropertyAccessorImpl
-    implements ComponentPropertyAccessor
-    {
-        private final Method accessor;
-        private final String accessorName;
-        private final AccessorType accessorType;
-        private final String propertyName;
-        private final Class propertyType;
-
-        private ComponentPropertyAccessorImpl(Method accessor, String accessorName, AccessorType accessorType, String propertyName, Class propertyType)
-        {
-            this.accessor = accessor;
-            this.accessorName = accessorName;
-            this.accessorType = accessorType;
-            this.propertyName = propertyName;
-            this.propertyType = propertyType;
-        }
-
-        @Override
-        public Method getAccessor()
-        {
-            return accessor;
-        }
-
-        @Override
-        public String getAccessorName()
-        {
-            return accessorName;
-        }
-
-        @Override
-        public AccessorType getAccessorType()
-        {
-            return accessorType;
-        }
-
-        @Override
-        public boolean isAccessorType(final AccessorType type)
-        {
-            return accessorType.equals(type);
-        }
-
-        @Override
-        public String getPropertyName()
-        {
-            return propertyName;
-        }
-
-        @Override
-        public Class getPropertyType()
-        {
-            return propertyType;
         }
     }
 }

@@ -19,8 +19,9 @@
 package org.jayware.e2.component.impl.generation.writer;
 
 
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -48,19 +49,22 @@ import static org.objectweb.asm.Type.getInternalName;
 
 public class ComponentGetMethodWriter
 {
-    public void writeGetMethodFor(ComponentGenerationPlan componentPlan)
+
+    private static final String VALUEOF_METHOD_NAME = "valueOf";
+
+    public void writeGetMethodFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
     {
-        final String classInternalName = componentPlan.getGeneratedClassInternalName();
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final String classInternalName = generationContext.getGeneratedClassInternalName();
+        final ClassWriter classWriter = generationContext.getClassWriter();
         final MethodVisitor visitor = classWriter.visitMethod(ACC_PUBLIC, "get", "(Ljava/lang/String;)Ljava/lang/Object;", null, null);
 
         visitor.visitCode();
 
-        for (ComponentPropertyGenerationPlan propertyPlan : componentPlan.getComponentPropertyGenerationPlans())
+        for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
-            final String propertyName = propertyPlan.getPropertyName();
-            final Class<?> propertyType = propertyPlan.getPropertyType();
-            final String propertyTypeDescriptor = Type.getDescriptor(propertyPlan.getPropertyType());
+            final String propertyName = propertyDescriptor.getPropertyName();
+            final Class<?> propertyType = propertyDescriptor.getPropertyType();
+            final String propertyTypeDescriptor = Type.getDescriptor(propertyDescriptor.getPropertyType());
 
             final Label endIfPropertyNameEqualsLabel = new Label();
 
@@ -76,31 +80,31 @@ public class ComponentGetMethodWriter
             {
                 if (isBooleanPrimitiveType(propertyType))
                 {
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Boolean.class), "valueOf", "(Z)" + getDescriptor(Boolean.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Boolean.class), VALUEOF_METHOD_NAME, "(Z)" + getDescriptor(Boolean.class), false);
                 }
                 else if (isBytePrimitiveType(propertyType))
                 {
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Byte.class), "valueOf", "(B)" + getDescriptor(Byte.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Byte.class), VALUEOF_METHOD_NAME, "(B)" + getDescriptor(Byte.class), false);
                 }
                 else if (isShortPrimitiveType(propertyType))
                 {
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Short.class), "valueOf", "(S)" + getDescriptor(Short.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Short.class), VALUEOF_METHOD_NAME, "(S)" + getDescriptor(Short.class), false);
                 }
                 else if (isIntegerPrimitiveType(propertyType))
                 {
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), "valueOf", "(I)" + getDescriptor(Integer.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), VALUEOF_METHOD_NAME, "(I)" + getDescriptor(Integer.class), false);
                 }
                 else if (isLongPrimitiveType(propertyType))
                 {
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Long.class), "valueOf", "(J)" + getDescriptor(Long.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Long.class), VALUEOF_METHOD_NAME, "(J)" + getDescriptor(Long.class), false);
                 }
                 else if (isFloatPrimitiveType(propertyType))
                 {
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Float.class), "valueOf", "(F)" + getDescriptor(Float.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Float.class), VALUEOF_METHOD_NAME, "(F)" + getDescriptor(Float.class), false);
                 }
                 else if (isDoublePrimitiveType(propertyType))
                 {
-                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Double.class), "valueOf", "(D)" + getDescriptor(Double.class), false);
+                    visitor.visitMethodInsn(INVOKESTATIC, getInternalName(Double.class), VALUEOF_METHOD_NAME, "(D)" + getDescriptor(Double.class), false);
                 }
             }
 

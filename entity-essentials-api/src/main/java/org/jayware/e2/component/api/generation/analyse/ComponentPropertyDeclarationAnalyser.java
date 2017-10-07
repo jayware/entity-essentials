@@ -16,21 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jayware.e2.component.impl.generation.plan;
+package org.jayware.e2.component.api.generation.analyse;
+
+import java.lang.reflect.Field;
 
 
-import org.jayware.e2.component.api.Component;
-
-
-public class ComponentGenerationPlanFactory
+public interface ComponentPropertyDeclarationAnalyser
 {
-    public ComponentGenerationPlan createComponentGenerationPlan(Class<? extends Component> component)
-    {
-        return new ComponentGenerationPlan(component);
-    }
-
-    public ComponentPropertyGenerationPlan createComponentPropertyGenerationPlan(ComponentGenerationPlan plan, String propertyName)
-    {
-        return new ComponentPropertyGenerationPlan(plan, propertyName);
-    }
+    ComponentPropertyDescriptor analyse(Field field);
 }

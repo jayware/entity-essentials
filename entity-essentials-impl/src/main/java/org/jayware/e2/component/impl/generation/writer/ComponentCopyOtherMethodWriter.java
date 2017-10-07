@@ -20,13 +20,16 @@ package org.jayware.e2.component.impl.generation.writer;
 
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.impl.generation.plan.ComponentGenerationPlan;
-import org.jayware.e2.component.impl.generation.plan.ComponentPropertyGenerationPlan;
+import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
+import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.READ;
 import static org.jayware.e2.component.impl.generation.asm.TypeUtil.resolveOpcodePrimitiveType;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACONST_NULL;
@@ -60,10 +63,10 @@ import static org.objectweb.asm.Type.getType;
 
 public class ComponentCopyOtherMethodWriter
 {
-    public void writeCopyOtherMethodFor(ComponentGenerationPlan componentPlan)
+    public void writeCopyOtherMethodFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
     {
-        final Class<? extends Component> componentClass = componentPlan.getComponentType();
-        final ClassWriter classWriter = componentPlan.getClassWriter();
+        final Class<? extends Component> componentClass = descriptor.getDeclaringComponent();
+        final ClassWriter classWriter = generationContext.getClassWriter();
 
         final MethodVisitor visitor = classWriter.visitMethod(ACC_PUBLIC, "copy", "(" + getDescriptor(Component.class) + ")" + getDescriptor(Component.class), null, null);
         final Label endIfNotInstanceOf = new Label();
@@ -80,15 +83,16 @@ public class ComponentCopyOtherMethodWriter
         visitor.visitLabel(endIfNotInstanceOf);
         visitor.visitTypeInsn(CHECKCAST, getInternalName(componentClass));
         visitor.visitVarInsn(ASTORE, 2);
-        for (ComponentPropertyGenerationPlan propertyPlan : componentPlan.getComponentPropertyGenerationPlans())
+        for (ComponentPropertyDescriptor propertyPlan : descriptor.getPropertyDescriptors())
         {
             final String propertyName = propertyPlan.getPropertyName();
             final Class<?> propertyType = propertyPlan.getPropertyType();
             final String propertyTypeDescriptor = Type.getDescriptor(propertyPlan.getPropertyType());
+            final ComponentPropertyAccessorDescriptor accessorDescriptor = descriptor.getPropertyAccessorDescriptor(propertyName, READ);
 
             visitor.visitVarInsn(ALOAD, 0);
             visitor.visitVarInsn(ALOAD, 2);
-            visitor.visitMethodInsn(INVOKEINTERFACE, getInternalName(componentClass), propertyPlan.getPropertyGetterMethodName(), propertyPlan.getPropertyGetterMethodDescriptor(), true);
+            visitor.visitMethodInsn(INVOKEINTERFACE, getInternalName(componentClass), accessorDescriptor.getAccessorName(), Type.getType(accessorDescriptor.getAccessor()).getDescriptor(), true);
 
             final Label ifNotNull = new Label();
             final Label endIfNotNull = new Label();
@@ -136,7 +140,7 @@ public class ComponentCopyOtherMethodWriter
             }
 
             visitor.visitLabel(endIfNotNull);
-            visitor.visitFieldInsn(PUTFIELD, componentPlan.getGeneratedClassInternalName(), propertyName, propertyTypeDescriptor);
+            visitor.visitFieldInsn(PUTFIELD, generationContext.getGeneratedClassInternalName(), propertyName, propertyTypeDescriptor);
         }
         visitor.visitVarInsn(ALOAD, 0);
         visitor.visitInsn(ARETURN);
