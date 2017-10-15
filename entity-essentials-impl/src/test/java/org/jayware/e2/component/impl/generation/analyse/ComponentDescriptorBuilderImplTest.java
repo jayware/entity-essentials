@@ -19,7 +19,6 @@
 package org.jayware.e2.component.impl.generation.analyse;
 
 import mockit.Expectations;
-import mockit.Injectable;
 import mockit.Mocked;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
@@ -31,7 +30,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -49,7 +47,7 @@ class ComponentDescriptorBuilderImplTest
     private @Mocked ComponentPropertyAccessorDescriptor accessorDescriptorA;
     private @Mocked ComponentPropertyAccessorDescriptor accessorDescriptorB;
     private @Mocked ComponentPropertyAccessorDescriptor accessorDescriptorC;
-    private @Injectable Method accessorA, accessorC;
+    private String accessorA = "accessorA", accessorC = "accessorC";
 
     @BeforeEach
     void setUp()
@@ -77,11 +75,11 @@ class ComponentDescriptorBuilderImplTest
             accessorDescriptorA.getDeclaringComponent(); result = TestComponent.class;
             accessorDescriptorA.getPropertyName(); result = "text";
             accessorDescriptorA.getPropertyType(); result = String.class;
-            accessorDescriptorA.getAccessor(); result = accessorA;
+            accessorDescriptorA.getAccessorMethodDescriptor(); result = accessorA;
             accessorDescriptorC.getDeclaringComponent(); result = AnotherTestComponent.class;
             accessorDescriptorC.getPropertyName(); result = "text";
             accessorDescriptorC.getPropertyType(); result = String.class;
-            accessorDescriptorC.getAccessor(); result = accessorC;
+            accessorDescriptorC.getAccessorMethodDescriptor(); result = accessorC;
         }};
 
         descriptor = testee.describe(TestComponent.class).hierarchy(asList(TestComponent.class, AnotherTestComponent.class)).addAccessor(accessorDescriptorA).addAccessor(accessorDescriptorC).build();
@@ -92,7 +90,7 @@ class ComponentDescriptorBuilderImplTest
         assertThat(propertyDescriptors.get(0).getDeclaringComponent()).isEqualTo(TestComponent.class);
         assertThat(propertyDescriptors.get(0).getPropertyName()).isEqualTo("text");
         assertThat(propertyDescriptors.get(0).getPropertyType()).isEqualTo(String.class);
-        assertThat(descriptor.getPropertyAccessorDescriptors("text")).containsExactlyInAnyOrder(accessorDescriptorA, accessorDescriptorC);
+        assertThat(descriptor.getPropertyAccessorDescriptors("text")).contains(accessorDescriptorA, accessorDescriptorC);
     }
 
     @Test
@@ -216,10 +214,10 @@ class ComponentDescriptorBuilderImplTest
         new Expectations() {{
             accessorDescriptorA.getPropertyType(); result = String.class;
             accessorDescriptorA.getDeclaringComponent(); result = TestComponent.class;
-            accessorDescriptorA.getAccessor(); result = accessorA;
+            accessorDescriptorA.getAccessorMethodDescriptor(); result = accessorA;
             accessorDescriptorB.getPropertyType(); result = String.class;
             accessorDescriptorB.getDeclaringComponent(); result = TestComponent.class;
-            accessorDescriptorB.getAccessor(); result = accessorA;
+            accessorDescriptorB.getAccessorMethodDescriptor(); result = accessorA;
         }};
 
         assertThrows(IllegalStateException.class, new Executable()

@@ -18,8 +18,6 @@
  */
 package org.jayware.e2.component.api.generation.analyse;
 
-import java.lang.reflect.Method;
-
 
 public interface ComponentPropertyAccessorDescriptor
 extends ComponentDescriptorPart
@@ -30,7 +28,7 @@ extends ComponentDescriptorPart
         FLUENT_WRITE;
     }
 
-    Method getAccessor();
+    String getAccessorMethodDescriptor();
 
     String getAccessorName();
 

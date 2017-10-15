@@ -22,18 +22,26 @@ import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder.ComponentPropertyAccessorDescriptorBuilderTerminal;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder.ComponentPropertyAccessorDescriptorDeclaringComponentBuilder;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder.ComponentPropertyAccessorDescriptorMethodNameBuilder;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder.ComponentPropertyAccessorDescriptorMethodNameBuilder.ComponentPropertyAccessorDescriptorMethodTypeBuilder;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder.ComponentPropertyAccessorDescriptorPropertyBuilder;
+import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
+
+import static org.objectweb.asm.Type.getMethodDescriptor;
+import static org.objectweb.asm.Type.getType;
 
 
 public class ComponentPropertyAccessorDescriptorBuilderImpl
 implements ComponentPropertyAccessorDescriptorBuilder, ComponentPropertyAccessorDescriptorPropertyBuilder,
-           ComponentPropertyAccessorDescriptorMethodNameBuilder, ComponentPropertyAccessorDescriptorMethodTypeBuilder
+           ComponentPropertyAccessorDescriptorMethodNameBuilder, ComponentPropertyAccessorDescriptorMethodTypeBuilder,
+           ComponentPropertyAccessorDescriptorDeclaringComponentBuilder, ComponentPropertyAccessorDescriptorBuilderTerminal
 {
-    private Method myCurrentAccessor;
+    private Class<? extends Component> myCurrentDeclaringComponent;
+    private String myCurrentMethodDescriptor;
     private String myCurrentAccessorName;
     private AccessorType myCurrentAccessorType;
     private String myCurrentPropertyName;
@@ -42,7 +50,28 @@ implements ComponentPropertyAccessorDescriptorBuilder, ComponentPropertyAccessor
     @Override
     public ComponentPropertyAccessorDescriptorMethodNameBuilder accessor(Method accessor)
     {
-        myCurrentAccessor = accessor;
+        myCurrentMethodDescriptor = getMethodDescriptor(accessor);
+        myCurrentDeclaringComponent = (Class<? extends Component>) accessor.getDeclaringClass();
+        return this;
+    }
+
+    @Override
+    public ComponentPropertyAccessorDescriptorDeclaringComponentBuilder accessor(Class returnType, Class... parameters)
+    {
+        final Type[] parameterTypes = new Type[parameters.length];
+        for (int i = 0; i < parameters.length; i++)
+        {
+            parameterTypes[i] = getType(parameters[i]);
+        }
+
+        myCurrentMethodDescriptor = getMethodDescriptor(getType(returnType), parameterTypes);
+        return this;
+    }
+
+    @Override
+    public ComponentPropertyAccessorDescriptorMethodNameBuilder declaringComponent(Class<? extends Component> component)
+    {
+        myCurrentDeclaringComponent = component;
         return this;
     }
 
@@ -68,7 +97,7 @@ implements ComponentPropertyAccessorDescriptorBuilder, ComponentPropertyAccessor
     }
 
     @Override
-    public ComponentPropertyAccessorDescriptorBuilder type(Class<?> type)
+    public ComponentPropertyAccessorDescriptorBuilderTerminal type(Class<?> type)
     {
         myCurrentPropertyType = type;
         return this;
@@ -77,21 +106,23 @@ implements ComponentPropertyAccessorDescriptorBuilder, ComponentPropertyAccessor
     @Override
     public ComponentPropertyAccessorDescriptor build()
     {
-        return new ComponentPropertyAccessorDescriptorImpl(myCurrentAccessor, myCurrentAccessorName, myCurrentAccessorType, myCurrentPropertyName, myCurrentPropertyType);
+        return new ComponentPropertyAccessorDescriptorImpl(myCurrentDeclaringComponent, myCurrentMethodDescriptor, myCurrentAccessorName, myCurrentAccessorType, myCurrentPropertyName, myCurrentPropertyType);
     }
 
     private static class ComponentPropertyAccessorDescriptorImpl
     implements ComponentPropertyAccessorDescriptor
     {
-        private final Method accessor;
+        private final Class<? extends Component> declaringComponent;
+        private final String methodDescriptor;
         private final String accessorName;
         private final AccessorType accessorType;
         private final String propertyName;
         private final Class propertyType;
 
-        private ComponentPropertyAccessorDescriptorImpl(Method accessor, String accessorName, AccessorType accessorType, String propertyName, Class propertyType)
+        private ComponentPropertyAccessorDescriptorImpl(Class<? extends Component> declaringComponent, String methodDescriptor, String accessorName, AccessorType accessorType, String propertyName, Class propertyType)
         {
-            this.accessor = accessor;
+            this.declaringComponent = declaringComponent;
+            this.methodDescriptor = methodDescriptor;
             this.accessorName = accessorName;
             this.accessorType = accessorType;
             this.propertyName = propertyName;
@@ -99,9 +130,9 @@ implements ComponentPropertyAccessorDescriptorBuilder, ComponentPropertyAccessor
         }
 
         @Override
-        public Method getAccessor()
+        public String getAccessorMethodDescriptor()
         {
-            return accessor;
+            return methodDescriptor;
         }
 
         @Override
@@ -137,30 +168,41 @@ implements ComponentPropertyAccessorDescriptorBuilder, ComponentPropertyAccessor
         @Override
         public Class<? extends Component> getDeclaringComponent()
         {
-            return (Class<? extends Component>) accessor.getDeclaringClass();
+            return declaringComponent;
         }
 
         @Override
-        public boolean equals(Object obj)
+        public boolean equals(final Object o)
         {
-            if (this == obj)
+            if (this == o)
             {
                 return true;
             }
-            if (!(obj instanceof ComponentPropertyAccessorDescriptor))
+            if (!(o instanceof ComponentPropertyAccessorDescriptorImpl))
             {
                 return false;
             }
 
-            final ComponentPropertyAccessorDescriptor that = (ComponentPropertyAccessorDescriptor) obj;
+            final ComponentPropertyAccessorDescriptorImpl that = (ComponentPropertyAccessorDescriptorImpl) o;
 
-            return getAccessor().equals(that.getAccessor());
+            if (!getDeclaringComponent().equals(that.getDeclaringComponent()))
+            {
+                return false;
+            }
+            if (!methodDescriptor.equals(that.methodDescriptor))
+            {
+                return false;
+            }
+            return getAccessorName().equals(that.getAccessorName());
         }
 
         @Override
         public int hashCode()
         {
-            return accessor.hashCode();
+            int result = getDeclaringComponent().hashCode();
+            result = 31 * result + methodDescriptor.hashCode();
+            result = 31 * result + getAccessorName().hashCode();
+            return result;
         }
     }
 }

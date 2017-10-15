@@ -24,6 +24,7 @@ import org.jayware.e2.component.api.generation.analyse.ComponentDescriptorBuilde
 import org.jayware.e2.component.api.generation.analyse.ComponentDescriptorBuilder.ComponentDescriptorBuilderDescribe;
 import org.jayware.e2.component.api.generation.analyse.ComponentDescriptorPart;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptorBuilder;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder;
 
@@ -39,6 +40,8 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.READ;
+import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.WRITE;
 import static org.jayware.e2.util.Preconditions.checkNotNull;
 
 
@@ -51,6 +54,7 @@ implements ComponentDescriptorBuilder, ComponentDescriptorBuilderDescribe
     private final Map<String, List<ComponentPropertyAccessorDescriptor>> myPropertyAccessorDescriptors = new HashMap<String, List<ComponentPropertyAccessorDescriptor>>();
 
     private final ComponentPropertyDescriptorBuilder myPropertyDescriptorBuilder = new ComponentPropertyDescriptorBuilderImpl();
+    private final ComponentPropertyAccessorDescriptorBuilder myAccessorDescriptorBuilder = new ComponentPropertyAccessorDescriptorBuilderImpl();
 
     @Override
     public ComponentDescriptorBuilderDescribe describe(Class<? extends Component> component)
@@ -126,7 +130,7 @@ implements ComponentDescriptorBuilder, ComponentDescriptorBuilderDescribe
         {
             for (ComponentPropertyAccessorDescriptor otherDescriptor : accessors)
             {
-                if (descriptor.getAccessor().equals(otherDescriptor.getAccessor()))
+                if (descriptor.getAccessorMethodDescriptor().equals(otherDescriptor.getAccessorMethodDescriptor()))
                 {
                     throw new IllegalStateException();
                 }
@@ -141,6 +145,8 @@ implements ComponentDescriptorBuilder, ComponentDescriptorBuilderDescribe
     @Override
     public ComponentDescriptor build()
     {
+        addMissingAccessors();
+
         try
         {
             return new ComponentDescriptorImpl(myComponent, myPropertyDescriptors.values(), myPropertyAccessorDescriptors);
@@ -151,12 +157,68 @@ implements ComponentDescriptorBuilder, ComponentDescriptorBuilderDescribe
         }
     }
 
+    private void addMissingAccessors()
+    {
+        for (ComponentPropertyDescriptor propertyDescriptor : new HashSet<ComponentPropertyDescriptor>(myPropertyDescriptors.values()))
+        {
+            final String propertyName = propertyDescriptor.getPropertyName();
+            final Class propertyType = propertyDescriptor.getPropertyType();
+            final Class<? extends Component> declaringComponent = propertyDescriptor.getDeclaringComponent();
+            final List<ComponentPropertyAccessorDescriptor> accessorDescriptors = myPropertyAccessorDescriptors.get(propertyName);
+
+            boolean addGetter = true;
+            boolean addSetter = true;
+
+            if (accessorDescriptors != null)
+            {
+                for (ComponentPropertyAccessorDescriptor accessorDescriptor : accessorDescriptors)
+                {
+                    if (accessorDescriptor.getAccessorType() == READ)
+                    {
+                        addGetter = false;
+                    }
+                    else if (accessorDescriptor.getAccessorType() == WRITE)
+                    {
+                        addSetter = false;
+                    }
+                }
+            }
+
+            if (addGetter)
+            {
+                addAccessor(myAccessorDescriptorBuilder.accessor(propertyType)
+                                                       .declaringComponent(declaringComponent)
+                                                       .name(createMethodName("get", propertyName))
+                                                       .type(READ)
+                                                       .property(propertyName).type(propertyType)
+                                                       .build()
+                );
+            }
+
+            if (addSetter)
+            {
+                addAccessor(myAccessorDescriptorBuilder.accessor(void.class, propertyType)
+                                                       .declaringComponent(declaringComponent)
+                                                       .name(createMethodName("set", propertyName))
+                                                       .type(READ)
+                                                       .property(propertyName).type(propertyType)
+                                                       .build()
+                );
+            }
+        }
+    }
+
     private void reset()
     {
         myComponent = null;
         myHierarchy.clear();
         myPropertyDescriptors.clear();
         myPropertyAccessorDescriptors.clear();
+    }
+
+    private String createMethodName(String prefix, String propertyName)
+    {
+        return prefix + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
 
     private void checkBelongsToCurrentComponent(ComponentDescriptorPart part)

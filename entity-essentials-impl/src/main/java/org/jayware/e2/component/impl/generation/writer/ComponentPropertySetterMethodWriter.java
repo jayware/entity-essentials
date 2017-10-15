@@ -32,7 +32,7 @@ public class ComponentPropertySetterMethodWriter
     public void writePropertySetterFor(ComponentGenerationContext generationContext, ComponentPropertyAccessorDescriptor accessorDescriptor)
     {
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(generationContext.getClassWriter(),
-            ACC_PUBLIC, accessorDescriptor.getAccessorName(), Type.getType(accessorDescriptor.getAccessor()).getDescriptor()
+            ACC_PUBLIC, accessorDescriptor.getAccessorName(), Type.getType(accessorDescriptor.getAccessorMethodDescriptor()).getDescriptor()
         );
 
         methodBuilder.beginMethod();

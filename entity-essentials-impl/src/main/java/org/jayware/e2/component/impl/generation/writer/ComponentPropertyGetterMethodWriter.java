@@ -32,7 +32,7 @@ public class ComponentPropertyGetterMethodWriter
     public void writePropertyGetterFor(ComponentGenerationContext generationContext, ComponentPropertyAccessorDescriptor accessorDescriptor)
     {
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(generationContext.getClassWriter(),
-            ACC_PUBLIC, accessorDescriptor.getAccessorName(), getType(accessorDescriptor.getAccessor()).getDescriptor()
+            ACC_PUBLIC, accessorDescriptor.getAccessorName(), getType(accessorDescriptor.getAccessorMethodDescriptor()).getDescriptor()
         );
 
         methodBuilder.beginMethod();

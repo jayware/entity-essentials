@@ -92,7 +92,7 @@ public class ComponentCopyOtherMethodWriter
 
             visitor.visitVarInsn(ALOAD, 0);
             visitor.visitVarInsn(ALOAD, 2);
-            visitor.visitMethodInsn(INVOKEINTERFACE, getInternalName(componentClass), accessorDescriptor.getAccessorName(), Type.getType(accessorDescriptor.getAccessor()).getDescriptor(), true);
+            visitor.visitMethodInsn(INVOKEINTERFACE, getInternalName(componentClass), accessorDescriptor.getAccessorName(), Type.getType(accessorDescriptor.getAccessorMethodDescriptor()).getDescriptor(), true);
 
             final Label ifNotNull = new Label();
             final Label endIfNotNull = new Label();

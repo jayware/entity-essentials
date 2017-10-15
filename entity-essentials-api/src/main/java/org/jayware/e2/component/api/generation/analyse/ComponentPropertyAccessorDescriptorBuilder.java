@@ -18,6 +18,7 @@
  */
 package org.jayware.e2.component.api.generation.analyse;
 
+import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType;
 
 import java.lang.reflect.Method;
@@ -27,9 +28,14 @@ public interface ComponentPropertyAccessorDescriptorBuilder
 {
     ComponentPropertyAccessorDescriptorMethodNameBuilder accessor(Method accessor);
 
+    ComponentPropertyAccessorDescriptorDeclaringComponentBuilder accessor(Class returnType, Class... parameters);
+
     ComponentPropertyAccessorDescriptorPropertyBuilder property(String name);
 
-    ComponentPropertyAccessorDescriptor build();
+    interface ComponentPropertyAccessorDescriptorDeclaringComponentBuilder
+    {
+        ComponentPropertyAccessorDescriptorMethodNameBuilder declaringComponent(Class<? extends Component> component);
+    }
 
     interface ComponentPropertyAccessorDescriptorMethodNameBuilder
     {
@@ -43,6 +49,11 @@ public interface ComponentPropertyAccessorDescriptorBuilder
 
     interface ComponentPropertyAccessorDescriptorPropertyBuilder
     {
-        ComponentPropertyAccessorDescriptorBuilder type(Class<?> type);
+        ComponentPropertyAccessorDescriptorBuilderTerminal type(Class<?> type);
+    }
+
+    interface ComponentPropertyAccessorDescriptorBuilderTerminal
+    {
+        ComponentPropertyAccessorDescriptor build();
     }
 }
