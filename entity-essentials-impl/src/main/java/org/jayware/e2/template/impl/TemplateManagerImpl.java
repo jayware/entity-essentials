@@ -42,7 +42,6 @@ implements TemplateManager
 {
     @Override
     public <T extends ComponentTemplate> T exportComponent(Component component, TemplateProvider provider)
-    throws IllegalArgumentException, IllegalStateException, ExportException
     {
         checkNotNull(component, "Component to export mustn't be null!");
         checkNotNull(provider, "To export a Component the TemplateProvider mustn't be null!");
@@ -79,7 +78,6 @@ implements TemplateManager
 
     @Override
     public <T extends ComponentTemplate> T exportComponent(EntityRef ref, Class<? extends Component> type, TemplateProvider provider)
-    throws IllegalArgumentException, IllegalStateException, ExportException
     {
         checkRefNotNullAndValid(ref);
         checkNotNull(type, "To export a Component the type mustn't be null!");
@@ -103,7 +101,6 @@ implements TemplateManager
 
     @Override
     public <T extends ComponentTemplate> Component importComponent(Context context, T template)
-    throws IllegalArgumentException, IllegalStateException, ImportException
     {
         checkContextNotNullAndNotDisposed(context);
         checkNotNull(template, "To import a Component the template mustn't be null!");
@@ -129,7 +126,6 @@ implements TemplateManager
 
     @Override
     public <T extends ComponentTemplate> Component importComponent(EntityRef ref, T template)
-    throws IllegalArgumentException, IllegalStateException, ImportException
     {
         checkRefNotNullAndValid(ref);
         checkNotNull(template, "To import a Component the template mustn't be null!");
