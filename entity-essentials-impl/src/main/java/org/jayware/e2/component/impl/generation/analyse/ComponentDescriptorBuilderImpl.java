@@ -200,7 +200,7 @@ implements ComponentDescriptorBuilder, ComponentDescriptorBuilderDescribe
                 addAccessor(myAccessorDescriptorBuilder.accessor(void.class, propertyType)
                                                        .declaringComponent(declaringComponent)
                                                        .name(createMethodName("set", propertyName))
-                                                       .type(READ)
+                                                       .type(WRITE)
                                                        .property(propertyName).type(propertyType)
                                                        .build()
                 );

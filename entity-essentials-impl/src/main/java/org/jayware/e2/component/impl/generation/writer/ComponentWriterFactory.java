@@ -105,4 +105,14 @@ public class ComponentWriterFactory
     {
         return new ComponentToStringMethodWriter();
     }
+
+    public ComponentPropertyGetMethodWriter createComponentPropertyGetMethodWriter()
+    {
+        return new ComponentPropertyGetMethodWriter();
+    }
+
+    public ComponentPropertySetMethodWriter createComponentPropertySetMethodWriter()
+    {
+        return new ComponentPropertySetMethodWriter();
+    }
 }

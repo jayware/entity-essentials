@@ -19,10 +19,13 @@
 package org.jayware.e2.component.api.generation.analyse;
 
 import org.jayware.e2.component.api.Component;
+import org.jayware.e2.component.api.Property;
 
 
 public interface ComponentPropertyDescriptorBuilder
 {
+    ComponentPropertyDescriptorPropertyBuilder property(Property property);
+
     ComponentPropertyDescriptorTypeBuilder property(String name);
 
     ComponentPropertyDescriptor build();
@@ -35,5 +38,15 @@ public interface ComponentPropertyDescriptorBuilder
     interface ComponentPropertyDescriptorDeclaringComponentBuilder
     {
         ComponentPropertyDescriptorBuilder declaringComponent(Class<? extends Component> declaringComponent);
+    }
+
+    interface ComponentPropertyDescriptorPropertyBuilder
+    {
+        ComponentPropertyDescriptorNameBuilder name(String name);
+    }
+
+    interface ComponentPropertyDescriptorNameBuilder
+    {
+        ComponentPropertyDescriptor build();
     }
 }

@@ -42,7 +42,9 @@ import org.jayware.e2.component.impl.generation.writer.ComponentGetPropertyTypes
 import org.jayware.e2.component.impl.generation.writer.ComponentHasMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentHashCodeMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyFieldWriter;
+import org.jayware.e2.component.impl.generation.writer.ComponentPropertyGetMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertyGetterMethodWriter;
+import org.jayware.e2.component.impl.generation.writer.ComponentPropertySetMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentPropertySetterMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentSetMethodWriter;
 import org.jayware.e2.component.impl.generation.writer.ComponentStaticInitializerWriter;
@@ -208,6 +210,8 @@ implements ComponentFactory
         final ComponentGetPropertyTypesMethodWriter getPropertyTypeNamesMethodWriter = myWriterFactory.createGetPropertyTypeNamesMethodWriter();
         final ComponentGetMethodWriter getMethodWriter = myWriterFactory.createComponentGetMethodWriter();
         final ComponentSetMethodWriter setMethodWriter = myWriterFactory.createComponentSetMethodWriter();
+        final ComponentPropertyGetMethodWriter propertyGetMethodWriter = myWriterFactory.createComponentPropertyGetMethodWriter();
+        final ComponentPropertySetMethodWriter propertySetMethodWriter = myWriterFactory.createComponentPropertySetMethodWriter();
         final ComponentHasMethodWriter hasMethodWriter = myWriterFactory.createComponentHasMethodWriter();
         final ComponentTypeMethodWriter typeMethodWriter = myWriterFactory.createComponentTypeMethodWriter();
         final ComponentCopyOtherMethodWriter copyOtherMethodWriter = myWriterFactory.createComponentCopyOtherMethodWriter();
@@ -238,7 +242,7 @@ implements ComponentFactory
             propertyFieldWriter.writePropertyFieldFor(generationContext, propertyDescriptor);
         }
 
-        staticInitializerWriter.writeStaticInitializerFor(generationContext, descriptor);
+        staticInitializerWriter.writeStaticInitializer(generationContext, descriptor);
 
         defaultConstructorWriter.writeDefaultConstructorFor(generationContext);
         copyConstructorWriter.writeCopyConstructorFor(generationContext);
@@ -268,7 +272,11 @@ implements ComponentFactory
 
         getMethodWriter.writeGetMethodFor(generationContext, descriptor);
 
+        propertyGetMethodWriter.writePropertyGetMethod(generationContext, descriptor);
+
         setMethodWriter.writeSetMethodFor(generationContext, descriptor);
+
+        propertySetMethodWriter.writePropertySetMethod(generationContext, descriptor);
 
         hasMethodWriter.writeHasMethodFor(generationContext);
 

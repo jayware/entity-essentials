@@ -35,7 +35,7 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 public class ComponentStaticInitializerWriter
 {
-    public void writeStaticInitializerFor(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
+    public void writeStaticInitializer(ComponentGenerationContext generationContext, ComponentDescriptor descriptor)
     {
         final ClassWriter classWriter = generationContext.getClassWriter();
 
@@ -52,21 +52,8 @@ public class ComponentStaticInitializerWriter
 
         for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
-            methodBuilder.loadReferenceVariable(namesList);
-            methodBuilder.loadConstant(propertyDescriptor.getPropertyName());
-            methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
-            methodBuilder.loadReferenceVariable(typesList);
-
-            if (isPrimitiveType(propertyDescriptor.getPropertyType()))
-            {
-                methodBuilder.loadPrimitiveTypeConstant(propertyDescriptor.getPropertyType());
-            }
-            else
-            {
-                methodBuilder.loadConstant(propertyDescriptor.getPropertyType());
-            }
-
-            methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
+            writeAddName(methodBuilder, propertyDescriptor, namesList);
+            writeAddType(methodBuilder, propertyDescriptor, typesList);
         }
 
         writeStoreUnmodifiableArrayList(generationContext.getGeneratedClassInternalName(), methodBuilder, namesList, namesListField);
@@ -89,5 +76,28 @@ public class ComponentStaticInitializerWriter
         methodBuilder.duplicateTopStackElement();
         methodBuilder.invokeConstructor(ArrayList.class);
         methodBuilder.storeReferenceVariable(index);
+    }
+
+    private void writeAddName(final MethodBuilder methodBuilder, final ComponentPropertyDescriptor descriptor, final int namesList)
+    {
+        methodBuilder.loadReferenceVariable(namesList);
+        methodBuilder.loadConstant(descriptor.getPropertyName());
+        methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
+    }
+
+    private void writeAddType(final MethodBuilder methodBuilder, final ComponentPropertyDescriptor descriptor, final int fieldIndex)
+    {
+        methodBuilder.loadReferenceVariable(fieldIndex);
+
+        if (isPrimitiveType(descriptor.getPropertyType()))
+        {
+            methodBuilder.loadPrimitiveTypeConstant(descriptor.getPropertyType());
+        }
+        else
+        {
+            methodBuilder.loadConstant(descriptor.getPropertyType());
+        }
+
+        methodBuilder.invokeInterfaceMethod(List.class, "add", boolean.class, Object.class);
     }
 }

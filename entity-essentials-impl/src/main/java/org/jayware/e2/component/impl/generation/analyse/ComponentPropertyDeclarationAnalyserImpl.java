@@ -47,7 +47,7 @@ implements ComponentPropertyDeclarationAnalyser
 
                 if (property != null)
                 {
-                    return myBuilder.property(name).type(property.type).declaringComponent(property.component).build();
+                    return myBuilder.property(property).name(name).build();
                 }
 
                 throw new PropertyDeclarationException("Invalid Property declaration!");

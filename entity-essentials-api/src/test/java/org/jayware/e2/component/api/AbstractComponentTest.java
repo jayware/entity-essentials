@@ -153,19 +153,31 @@ public class AbstractComponentTest
         }
 
         @Override
-        public Object get(final String name)
+        public Object get(String name)
         {
             throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.get");
         }
 
         @Override
-        public boolean set(final String name, final Object value)
+        public <T> T get(final Property<T> property)
+        {
+            throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.get");
+        }
+
+        @Override
+        public boolean set(String name, Object value)
         {
             throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.set");
         }
 
         @Override
-        public boolean has(final String name)
+        public <T> boolean set(final Property<T> property, final T value)
+        {
+            throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.set");
+        }
+
+        @Override
+        public boolean has(String name)
         {
             throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.has");
         }
@@ -177,7 +189,7 @@ public class AbstractComponentTest
         }
 
         @Override
-        public <T extends Component> T copy(final T src)
+        public <T extends Component> T copy(T src)
         {
             throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.copy");
         }

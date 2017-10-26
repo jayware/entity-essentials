@@ -22,17 +22,29 @@ import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.Property;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder.ComponentPropertyDescriptorNameBuilder;
+import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder.ComponentPropertyDescriptorPropertyBuilder;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder.ComponentPropertyDescriptorTypeBuilder;
 
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder.ComponentPropertyDescriptorDeclaringComponentBuilder;
 
 
 public class ComponentPropertyDescriptorBuilderImpl
-implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBuilder, ComponentPropertyDescriptorDeclaringComponentBuilder
+implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBuilder, ComponentPropertyDescriptorDeclaringComponentBuilder, ComponentPropertyDescriptorPropertyBuilder, ComponentPropertyDescriptorNameBuilder
 {
     private String myCurrentName;
     private Class myCurrentType;
     private Class<? extends Component> myCurrentDeclaringComponent;
+    private Property myCurrentProperty = null;
+
+    @Override
+    public ComponentPropertyDescriptorPropertyBuilder property(Property property)
+    {
+        myCurrentType = property.type;
+        myCurrentDeclaringComponent = property.component;
+        myCurrentProperty = property;
+        return this;
+    }
 
     @Override
     public ComponentPropertyDescriptorTypeBuilder property(String name)
@@ -56,9 +68,16 @@ implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBu
     }
 
     @Override
+    public ComponentPropertyDescriptorNameBuilder name(String name)
+    {
+        myCurrentName = name;
+        return this;
+    }
+
+    @Override
     public ComponentPropertyDescriptor build()
     {
-        return new ComponentPropertyDescriptorImpl(myCurrentName, myCurrentType, myCurrentDeclaringComponent);
+        return new ComponentPropertyDescriptorImpl(myCurrentName, myCurrentType, myCurrentDeclaringComponent, myCurrentProperty);
     }
 
     private static class ComponentPropertyDescriptorImpl
@@ -67,17 +86,14 @@ implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBu
         private final String myName;
         private final Class myType;
         private final Class<? extends Component> myDeclaringComponent;
+        private final Property myProperty;
 
-        ComponentPropertyDescriptorImpl(String name, Property property)
-        {
-            this(name, property.type, property.component);
-        }
-
-        ComponentPropertyDescriptorImpl(String name, Class type, Class<? extends Component> declaringComponent)
+        ComponentPropertyDescriptorImpl(String name, Class type, Class<? extends Component> declaringComponent, Property property)
         {
             myName = name;
             myType = type;
             myDeclaringComponent = declaringComponent;
+            myProperty = property;
         }
 
         @Override
@@ -96,6 +112,12 @@ implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBu
         public Class<? extends Component> getDeclaringComponent()
         {
             return myDeclaringComponent;
+        }
+
+        @Override
+        public Property getProperty()
+        {
+            return myProperty;
         }
     }
 }

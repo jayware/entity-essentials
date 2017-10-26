@@ -18,10 +18,15 @@
  */
 package org.jayware.e2.component.api.generation.analyse;
 
+import org.jayware.e2.component.api.Property;
+
+
 public interface ComponentPropertyDescriptor
 extends ComponentDescriptorPart
 {
     String getPropertyName();
 
     Class getPropertyType();
+
+    Property getProperty();
 }

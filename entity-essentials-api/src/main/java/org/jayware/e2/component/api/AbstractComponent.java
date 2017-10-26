@@ -44,7 +44,11 @@ implements Component, Contextual
 
     public abstract Object get(String name);
 
+    public abstract <T> T get(Property<T> property);
+
     public abstract boolean set(String name, Object value);
+
+    public abstract <T> boolean set(Property<T> property, T value);
 
     public abstract boolean has(String name);
 

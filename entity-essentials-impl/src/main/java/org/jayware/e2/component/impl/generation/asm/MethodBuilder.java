@@ -438,6 +438,16 @@ public class MethodBuilder
         myVisitor.visitLdcInsn(value);
     }
 
+    public void pushFalse()
+    {
+        push_0i();
+    }
+
+    public void pushTrue()
+    {
+        push_1i();
+    }
+
     public void dup()
     {
         myVisitor.visitInsn(DUP);
