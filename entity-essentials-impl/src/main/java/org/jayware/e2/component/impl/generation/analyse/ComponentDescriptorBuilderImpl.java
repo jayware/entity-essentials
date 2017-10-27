@@ -84,7 +84,7 @@ implements ComponentDescriptorBuilder, ComponentDescriptorBuilderDescribe
 
         if (myPropertyDescriptors.containsKey(propertyName))
         {
-            throw new IllegalStateException("Property already exists!");
+            throw new IllegalStateException("ComponentProperty already exists!");
         }
 
         myPropertyDescriptors.put(propertyName, descriptor);

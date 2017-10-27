@@ -19,12 +19,12 @@
 package org.jayware.e2.component.api.generation.analyse;
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 
 
 public interface ComponentPropertyDescriptorBuilder
 {
-    ComponentPropertyDescriptorPropertyBuilder property(Property property);
+    ComponentPropertyDescriptorPropertyBuilder property(ComponentProperty property);
 
     ComponentPropertyDescriptorTypeBuilder property(String name);
 

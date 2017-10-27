@@ -20,7 +20,7 @@ package org.jayware.e2.component.impl.generation.writer;
 
 
 import org.jayware.e2.component.api.AbstractComponent;
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
 import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
@@ -38,20 +38,20 @@ public class ComponentPropertySetMethodWriter
     {
         final ClassWriter classWriter = generationContext.getClassWriter();
 
-        final String propertyClassDescriptor = Type.getDescriptor(Property.class);
+        final String propertyClassDescriptor = Type.getDescriptor(ComponentProperty.class);
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "set", "("+ propertyClassDescriptor + "Ljava/lang/Object;)Z");
 
         methodBuilder.beginMethod();
 
         for (ComponentPropertyDescriptor propertyDescriptor : descriptor.getPropertyDescriptors())
         {
-            final Property property = propertyDescriptor.getProperty();
+            final ComponentProperty property = propertyDescriptor.getProperty();
             final String propertyName = propertyDescriptor.getPropertyName();
             final Label endIfPropertyEquals = new Label();
 
             if (property != null)
             {
-                methodBuilder.loadStaticField(property.component, propertyName, Property.class);
+                methodBuilder.loadStaticField(property.component, propertyName, ComponentProperty.class);
                 methodBuilder.loadReferenceVariable(1);
                 methodBuilder.invokeVirtualMethod(Object.class, "equals", boolean.class, Object.class);
                 methodBuilder.jumpIfEquals(endIfPropertyEquals);

@@ -33,7 +33,7 @@ extends RuntimeException
 
     private static String createMessage(StackTraceElement invocation)
     {
-        String message = "Illegal invocation of Property.property(<type>)";
+        String message = "Illegal invocation of ComponentProperty.property(<type>)";
 
         if (invocation != null)
         {

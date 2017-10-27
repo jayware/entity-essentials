@@ -18,7 +18,7 @@
  */
 package org.jayware.e2.component.impl.generation.analyse;
 
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.component.api.PropertyDeclarationException;
 import org.jayware.e2.component.api.PropertyResolutionException;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDeclarationAnalyser;
@@ -39,27 +39,27 @@ implements ComponentPropertyDeclarationAnalyser
         final Class<?> type = field.getType();
         final String name = field.getName();
 
-        if (Property.class.equals(type))
+        if (ComponentProperty.class.equals(type))
         {
             try
             {
-                final Property property = (Property) field.get(null);
+                final ComponentProperty property = (ComponentProperty) field.get(null);
 
                 if (property != null)
                 {
                     return myBuilder.property(property).name(name).build();
                 }
 
-                throw new PropertyDeclarationException("Invalid Property declaration!");
+                throw new PropertyDeclarationException("Invalid ComponentProperty declaration!");
             }
             catch (IllegalAccessException e)
             {
-                throw new PropertyResolutionException("Failed to analyse Property!", e);
+                throw new PropertyResolutionException("Failed to analyse ComponentProperty!", e);
             }
         }
         else
         {
-            throw new IllegalArgumentException("The passed Field is not of type Property!");
+            throw new IllegalArgumentException("The passed Field is not of type ComponentProperty!");
         }
     }
 }

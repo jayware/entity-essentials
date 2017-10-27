@@ -19,7 +19,7 @@
 package org.jayware.e2.component.impl.generation.analyse;
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.component.api.PropertyDeclarationException;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDeclarationAnalyser;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.function.Executable;
 import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jayware.e2.component.api.Property.property;
+import static org.jayware.e2.component.api.ComponentProperty.property;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -107,10 +107,10 @@ class ComponentPropertyDeclarationAnalyserImplTest
     interface TestComponent
     extends Component
     {
-        Property text = property(String.class);
-        Property number = property(int.class);
-        Property array = property(float[].class);
-        Property invalid = null;
+        ComponentProperty text = property(String.class);
+        ComponentProperty number = property(int.class);
+        ComponentProperty array = property(float[].class);
+        ComponentProperty invalid = null;
 
         String aConstant = "Fubar";
     }

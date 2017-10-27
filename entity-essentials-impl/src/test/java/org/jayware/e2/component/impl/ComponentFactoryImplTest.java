@@ -22,7 +22,7 @@ package org.jayware.e2.component.impl;
 import mockit.Mocked;
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.api.ComponentInstancer;
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.component.impl.TestComponents.TestComponentA;
 import org.jayware.e2.component.impl.TestComponents.TestComponentC;
 import org.jayware.e2.context.api.Context;
@@ -119,7 +119,7 @@ public class ComponentFactoryImplTest
     public interface TestComponentX
     extends Component
     {
-        Property<Boolean> booleanValue = Property.property(Boolean.class);
-        Property<String> stringValue = Property.property(String.class);
+        ComponentProperty<Boolean> booleanValue = ComponentProperty.property(Boolean.class);
+        ComponentProperty<String> stringValue = ComponentProperty.property(String.class);
     }
 }

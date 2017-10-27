@@ -19,7 +19,7 @@
 package org.jayware.e2.component.impl.generation.analyse;
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptor;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder;
 import org.jayware.e2.component.api.generation.analyse.ComponentPropertyDescriptorBuilder.ComponentPropertyDescriptorNameBuilder;
@@ -35,10 +35,10 @@ implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBu
     private String myCurrentName;
     private Class myCurrentType;
     private Class<? extends Component> myCurrentDeclaringComponent;
-    private Property myCurrentProperty = null;
+    private ComponentProperty myCurrentProperty = null;
 
     @Override
-    public ComponentPropertyDescriptorPropertyBuilder property(Property property)
+    public ComponentPropertyDescriptorPropertyBuilder property(ComponentProperty property)
     {
         myCurrentType = property.type;
         myCurrentDeclaringComponent = property.component;
@@ -86,9 +86,9 @@ implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBu
         private final String myName;
         private final Class myType;
         private final Class<? extends Component> myDeclaringComponent;
-        private final Property myProperty;
+        private final ComponentProperty myProperty;
 
-        ComponentPropertyDescriptorImpl(String name, Class type, Class<? extends Component> declaringComponent, Property property)
+        ComponentPropertyDescriptorImpl(String name, Class type, Class<? extends Component> declaringComponent, ComponentProperty property)
         {
             myName = name;
             myType = type;
@@ -115,7 +115,7 @@ implements ComponentPropertyDescriptorBuilder, ComponentPropertyDescriptorTypeBu
         }
 
         @Override
-        public Property getProperty()
+        public ComponentProperty getProperty()
         {
             return myProperty;
         }

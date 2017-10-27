@@ -21,7 +21,7 @@ package org.jayware.e2.component.impl.generation.analyse;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.component.api.generation.analyse.ComponentAnalyser;
 import org.jayware.e2.component.api.generation.analyse.ComponentAnalyserFactory;
 import org.jayware.e2.component.api.generation.analyse.ComponentDescriptor;
@@ -33,7 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.jayware.e2.assertj.ComponentDescriptorAssertions.assertThat;
-import static org.jayware.e2.component.api.Property.property;
+import static org.jayware.e2.component.api.ComponentProperty.property;
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.READ;
 import static org.jayware.e2.component.api.generation.analyse.ComponentPropertyAccessorDescriptor.AccessorType.WRITE;
 
@@ -87,9 +87,9 @@ public class ComponentAnalyserImplTest
     interface TestComponentA
     extends TestComponentB
     {
-        Property text = property(String.class);
+        ComponentProperty text = property(String.class);
 
-        Property font = property(String.class);
+        ComponentProperty font = property(String.class);
 
         String getText();
 
@@ -101,7 +101,7 @@ public class ComponentAnalyserImplTest
     interface TestComponentB
     extends Component
     {
-        Property size = property(int.class);
+        ComponentProperty size = property(int.class);
 
         TestComponentB withSize(int size);
 

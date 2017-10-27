@@ -18,26 +18,26 @@
  */
 package org.jayware.e2.component.api;
 
-public class Property<T>
+public class ComponentProperty<T>
 {
     public final Class<T> type;
     public final Class<? extends Component> component;
 
-    private Property(Class<T> type, Class<? extends Component> component)
+    private ComponentProperty(Class<T> type, Class<? extends Component> component)
     {
         this.type = type;
         this.component = component;
     }
 
-    public static <T> Property<T> property(Class<T> type)
+    public static <T> ComponentProperty<T> property(Class<T> type)
     {
-        return new Property<T>(type, resolveDeclaringComponent());
+        return new ComponentProperty<T>(type, resolveDeclaringComponent());
     }
 
     @Override
     public String toString()
     {
-        return "Property{" +
+        return "ComponentProperty{" +
             "type='" + type.getName() + "', " +
             "component='" + component.getName() + "'" +
         '}';
@@ -85,7 +85,7 @@ public class Property<T>
 
     private static boolean isPropertyClass(String className)
     {
-        return Property.class.getName().equals(className);
+        return ComponentProperty.class.getName().equals(className);
     }
 
     private static boolean isComponent(Class<?> declaringClass)

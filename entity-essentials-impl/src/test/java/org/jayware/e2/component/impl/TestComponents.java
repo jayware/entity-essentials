@@ -19,13 +19,13 @@
 package org.jayware.e2.component.impl;
 
 import org.jayware.e2.component.api.Component;
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 import org.jayware.e2.entity.api.EntityRef;
 import org.jayware.e2.util.ObjectUtil;
 
 import java.util.Arrays;
 
-import static org.jayware.e2.component.api.Property.property;
+import static org.jayware.e2.component.api.ComponentProperty.property;
 
 
 public class TestComponents
@@ -121,7 +121,7 @@ public class TestComponents
     public interface TestComponentC
     extends Component
     {
-        Property<Boolean> primitiveBoolean = property(boolean.class);
+        ComponentProperty<Boolean> primitiveBoolean = property(boolean.class);
 
         boolean getPrimitiveBoolean();
 

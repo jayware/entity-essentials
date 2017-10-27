@@ -23,12 +23,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jayware.e2.component.api.Property.property;
+import static org.jayware.e2.component.api.ComponentProperty.property;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-@DisplayName("Property")
-class PropertyTest
+@DisplayName("ComponentProperty")
+class ComponentPropertyTest
 {
 
     @Test
@@ -61,6 +61,6 @@ class PropertyTest
     interface TestComponent
     extends Component
     {
-        Property<String> aProperty = property(String.class);
+        ComponentProperty<String> aProperty = property(String.class);
     }
 }

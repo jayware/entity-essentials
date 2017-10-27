@@ -159,7 +159,7 @@ public class AbstractComponentTest
         }
 
         @Override
-        public <T> T get(final Property<T> property)
+        public <T> T get(final ComponentProperty<T> property)
         {
             throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.get");
         }
@@ -171,7 +171,7 @@ public class AbstractComponentTest
         }
 
         @Override
-        public <T> boolean set(final Property<T> property, final T value)
+        public <T> boolean set(final ComponentProperty<T> property, final T value)
         {
             throw new UnsupportedOperationException("TestImplementationOfAbstractComponent.set");
         }

@@ -18,7 +18,7 @@
  */
 package org.jayware.e2.component.api.generation.analyse;
 
-import org.jayware.e2.component.api.Property;
+import org.jayware.e2.component.api.ComponentProperty;
 
 
 public interface ComponentPropertyDescriptor
@@ -28,5 +28,5 @@ extends ComponentDescriptorPart
 
     Class getPropertyType();
 
-    Property getProperty();
+    ComponentProperty getProperty();
 }
