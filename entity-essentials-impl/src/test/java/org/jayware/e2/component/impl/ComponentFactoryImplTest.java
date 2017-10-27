@@ -119,6 +119,7 @@ public class ComponentFactoryImplTest
     public interface TestComponentX
     extends Component
     {
-        Property<Boolean> fubar = Property.property(boolean.class);
+        Property<Boolean> booleanValue = Property.property(Boolean.class);
+        Property<String> stringValue = Property.property(String.class);
     }
 }

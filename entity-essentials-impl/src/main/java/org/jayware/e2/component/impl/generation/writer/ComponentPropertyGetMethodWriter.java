@@ -40,7 +40,6 @@ public class ComponentPropertyGetMethodWriter
 
         final String propertyClassDescriptor = Type.getDescriptor(Property.class);
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "get", "(" + propertyClassDescriptor + ")Ljava/lang/Object;");
-        final Label endIfPropertyEquals = new Label();
 
         methodBuilder.beginMethod();
 
@@ -48,6 +47,7 @@ public class ComponentPropertyGetMethodWriter
         {
             final Property property = propertyDescriptor.getProperty();
             final String propertyName = propertyDescriptor.getPropertyName();
+            final Label endIfPropertyEquals = new Label();
 
             if (property != null)
             {
@@ -59,10 +59,10 @@ public class ComponentPropertyGetMethodWriter
                 methodBuilder.loadConstant(propertyName);
                 methodBuilder.invokeVirtualMethod(AbstractComponent.class, "get", Object.class, String.class);
                 methodBuilder.returnReference();
+                methodBuilder.label(endIfPropertyEquals);
             }
         }
 
-        methodBuilder.label(endIfPropertyEquals);
         methodBuilder.pushNull();
         methodBuilder.returnReference();
         methodBuilder.endMethod();

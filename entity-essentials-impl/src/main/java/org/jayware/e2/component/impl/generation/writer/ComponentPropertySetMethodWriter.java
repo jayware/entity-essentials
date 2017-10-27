@@ -40,7 +40,6 @@ public class ComponentPropertySetMethodWriter
 
         final String propertyClassDescriptor = Type.getDescriptor(Property.class);
         final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "set", "("+ propertyClassDescriptor + "Ljava/lang/Object;)Z");
-        final Label endIfPropertyEquals = new Label();
 
         methodBuilder.beginMethod();
 
@@ -48,6 +47,7 @@ public class ComponentPropertySetMethodWriter
         {
             final Property property = propertyDescriptor.getProperty();
             final String propertyName = propertyDescriptor.getPropertyName();
+            final Label endIfPropertyEquals = new Label();
 
             if (property != null)
             {
@@ -61,10 +61,10 @@ public class ComponentPropertySetMethodWriter
                 methodBuilder.invokeVirtualMethod(AbstractComponent.class, "set", boolean.class, String.class, Object.class);
                 methodBuilder.pushTrue();
                 methodBuilder.returnValue(boolean.class);
+                methodBuilder.label(endIfPropertyEquals);
             }
         }
 
-        methodBuilder.label(endIfPropertyEquals);
         methodBuilder.pushFalse();
         methodBuilder.returnValue(boolean.class);
         methodBuilder.endMethod();
