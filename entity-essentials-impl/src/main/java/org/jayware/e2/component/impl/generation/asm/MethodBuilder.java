@@ -118,7 +118,12 @@ public class MethodBuilder
 
     public void newInstanceOf(Class<?> type)
     {
-        myVisitor.visitTypeInsn(NEW, getInternalName(type));
+        newInstanceOf(getInternalName(type));
+    }
+
+    public void newInstanceOf(String internalName)
+    {
+        myVisitor.visitTypeInsn(NEW, internalName);
     }
 
     public void pushNull()
@@ -168,7 +173,7 @@ public class MethodBuilder
         }
         else
         {
-            throw new RuntimeException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -429,7 +434,7 @@ public class MethodBuilder
         }
         else
         {
-            throw new RuntimeException();
+            throw new IllegalArgumentException();
         }
     }
 

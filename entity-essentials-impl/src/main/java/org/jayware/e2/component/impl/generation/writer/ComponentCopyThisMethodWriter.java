@@ -21,15 +21,11 @@ package org.jayware.e2.component.impl.generation.writer;
 
 import org.jayware.e2.component.api.Component;
 import org.jayware.e2.component.impl.ComponentFactoryImpl.ComponentGenerationContext;
+import org.jayware.e2.component.impl.generation.asm.MethodBuilder;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.DUP;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Type.getDescriptor;
 
 
@@ -40,15 +36,14 @@ public class ComponentCopyThisMethodWriter
         final String classInternalName = generationContext.getGeneratedClassInternalName();
         final ClassWriter classWriter = generationContext.getClassWriter();
 
-        final MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, "copy", "()" + getDescriptor(Component.class), null, null);
+        final MethodBuilder methodBuilder = MethodBuilder.createMethodBuilder(classWriter, ACC_PUBLIC, "copy", "()" + getDescriptor(Component.class));
 
-        mv.visitCode();
-        mv.visitTypeInsn(NEW, classInternalName);
-        mv.visitInsn(DUP);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKESPECIAL, classInternalName, "<init>", "(L" + classInternalName + ";)V", false);
-        mv.visitInsn(ARETURN);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
+        methodBuilder.beginMethod();
+        methodBuilder.newInstanceOf(classInternalName);
+        methodBuilder.dup();
+        methodBuilder.loadThis();
+        methodBuilder.custom().visitMethodInsn(INVOKESPECIAL, classInternalName, "<init>", "(L" + classInternalName + ";)V", false);
+        methodBuilder.returnReference();
+        methodBuilder.endMethod();
     }
 }
