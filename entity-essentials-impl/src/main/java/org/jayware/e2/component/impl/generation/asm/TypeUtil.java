@@ -35,6 +35,11 @@ import static org.objectweb.asm.Type.getType;
 
 public class TypeUtil
 {
+    private TypeUtil()
+    {
+
+    }
+
     public static int resolveOpcodePrimitiveType(Class clazz)
     {
         checkNotNull(clazz);
@@ -49,9 +54,9 @@ public class TypeUtil
             case Type.LONG: return T_LONG;
             case Type.FLOAT: return T_FLOAT;
             case Type.DOUBLE: return T_DOUBLE;
+            default:
+                return 0;
         }
-
-        return 0;
     }
 
     public static boolean isPrimitiveArrayType(Class<?> type)
@@ -186,7 +191,7 @@ public class TypeUtil
         }
         else
         {
-            throw new RuntimeException();
+            return type;
         }
     }
 
@@ -222,7 +227,7 @@ public class TypeUtil
         }
         else
         {
-            throw new RuntimeException();
+            throw new IllegalArgumentException();
         }
     }
 }

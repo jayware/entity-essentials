@@ -78,9 +78,10 @@ public class GeneratedComponentTest
     private ComponentFactoryImpl componentFactory;
 
     private TestComponentC testee, testeeA, testeeB;
+    private TestComponentA testComponetA;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         componentFactory = new ComponentFactoryImpl();
         componentFactory.prepareComponent(TestComponentA.class);
@@ -91,11 +92,11 @@ public class GeneratedComponentTest
 
         testeeA = componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
         testeeB = componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
-        System.out.println();
+        testComponetA = componentFactory.createComponent(TestComponentA.class).newInstance(testContext);
     }
 
     @Test
-    public void test_pullFrom()
+    void test_pullFrom()
     {
         final TestComponentA component;
 
@@ -115,7 +116,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_pushTo()
+    void test_pushTo()
     {
         final TestComponentA component;
 
@@ -135,7 +136,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_addTo()
+    void test_addTo()
     {
         final TestComponentA component;
 
@@ -155,7 +156,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_combined_component()
+    void test_combined_component()
     {
         final TestComponents.TestComponentAB component;
 
@@ -166,7 +167,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_combined_component_Fails_if_the_component_extends_a_type_which_declares_illegal_operations()
+    void test_combined_component_Fails_if_the_component_extends_a_type_which_declares_illegal_operations()
     {
         assertThrows(MalformedComponentException.class, new Executable()
         {
@@ -179,7 +180,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_set_Does_Not_set_an_unknown_property_and_returns_false()
+    void test_set_Does_Not_set_an_unknown_property_and_returns_false()
     throws Exception
     {
         final AbstractComponent component = (AbstractComponent) componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
@@ -188,7 +189,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_set_Accepts_null_value_for_primitive_properties_and_returns_true()
+    void test_set_Accepts_null_value_for_primitive_properties_and_returns_true()
     {
         final AbstractComponent component = (AbstractComponent) componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
 
@@ -202,7 +203,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_set_Accepts_boxed_value_for_primitive_properties_and_returns_true()
+    void test_set_Accepts_boxed_value_for_primitive_properties_and_returns_true()
     {
         final AbstractComponent component = (AbstractComponent) componentFactory.createComponent(TestComponentC.class).newInstance(testContext);
 
@@ -216,7 +217,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_equals_Returns_true_if_the_component_it_self_is_passed_in()
+    void test_equals_Returns_true_if_the_component_it_self_is_passed_in()
     throws Exception
     {
         final ComponentInstancer<TestComponentA> instancer = componentFactory.createComponent(TestComponentA.class);
@@ -226,7 +227,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_equals_Returns_true_if_another_component_with_the_same_data_is_passed_in()
+    void test_equals_Returns_true_if_another_component_with_the_same_data_is_passed_in()
     throws Exception
     {
         final ComponentInstancer<TestComponentA> instancer = componentFactory.createComponent(TestComponentA.class);
@@ -243,7 +244,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_equals_Returns_true_if_a_subtype_component_with_the_same_data_is_passed_in()
+    void test_equals_Returns_true_if_a_subtype_component_with_the_same_data_is_passed_in()
     throws Exception
     {
         final ComponentInstancer<TestComponentA> instancer = componentFactory.createComponent(TestComponentA.class);
@@ -260,7 +261,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_hashcode_Is_equals_for_two_components_with_the_same_data()
+    void test_hashcode_Is_equals_for_two_components_with_the_same_data()
     throws Exception
     {
         final ComponentInstancer<TestComponentA> instancer = componentFactory.createComponent(TestComponentA.class);
@@ -276,7 +277,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveBoolean_Property()
+    void test_PrimitiveBoolean_Property()
     {
         final boolean value = true;
 
@@ -295,7 +296,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveBooleanArray_Property()
+    void test_PrimitiveBooleanArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("primitiveBooleanArray", PRIMITIVE_BOOLEAN_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("primitiveBooleanArray")).isEqualTo(PRIMITIVE_BOOLEAN_ARRAY);
@@ -312,7 +313,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_BooleanObject_Property()
+    void test_BooleanObject_Property()
     {
         final Boolean value = Boolean.TRUE;
 
@@ -331,7 +332,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_BooleanObjectArray_Property()
+    void test_BooleanObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("booleanObjectArray", BOOLEAN_OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("booleanObjectArray")).isEqualTo(BOOLEAN_OBJECT_ARRAY);
@@ -347,7 +348,7 @@ public class GeneratedComponentTest
         assertThat(testeeA.hashCode()).isEqualTo(testeeB.hashCode());
     }
     @Test
-    public void test_PrimitiveByte_Property()
+    void test_PrimitiveByte_Property()
     {
         final byte value = 42;
 
@@ -366,7 +367,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveByteArray_Property()
+    void test_PrimitiveByteArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("primitiveByteArray", PRIMITIVE_BYTE_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("primitiveByteArray")).isEqualTo(PRIMITIVE_BYTE_ARRAY);
@@ -382,7 +383,7 @@ public class GeneratedComponentTest
         assertThat(testeeA.hashCode()).isEqualTo(testeeB.hashCode());
     }
     @Test
-    public void test_ByteObject_Property()
+    void test_ByteObject_Property()
     {
         final Byte value = 42;
 
@@ -401,7 +402,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_ByteObjectArray_Property()
+    void test_ByteObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("byteObjectArray", BYTE_OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("byteObjectArray")).isEqualTo(BYTE_OBJECT_ARRAY);
@@ -418,7 +419,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveShort_Property()
+    void test_PrimitiveShort_Property()
     {
         final short value = 42;
 
@@ -437,7 +438,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveShortArray_Property()
+    void test_PrimitiveShortArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("primitiveShortArray", PRIMITIVE_SHORT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("primitiveShortArray")).isEqualTo(PRIMITIVE_SHORT_ARRAY);
@@ -454,7 +455,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_ShortObject_Property()
+    void test_ShortObject_Property()
     {
         final Short value = 42;
 
@@ -473,7 +474,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_ShortObjectArray_Property()
+    void test_ShortObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("shortObjectArray", SHORT_OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("shortObjectArray")).isEqualTo(SHORT_OBJECT_ARRAY);
@@ -490,7 +491,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveInteger_Property()
+    void test_PrimitiveInteger_Property()
     {
         final int value = 42;
 
@@ -509,7 +510,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveIntegerArray_Property()
+    void test_PrimitiveIntegerArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("primitiveIntegerArray", PRIMITIVE_INTEGER_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("primitiveIntegerArray")).isEqualTo(PRIMITIVE_INTEGER_ARRAY);
@@ -526,7 +527,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_IntegerObject_Property()
+    void test_IntegerObject_Property()
     {
         final Integer value = new Integer(42);
 
@@ -545,7 +546,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_IntegerObjectArray_Property()
+    void test_IntegerObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("integerObjectArray", INTEGER_OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("integerObjectArray")).isEqualTo(INTEGER_OBJECT_ARRAY);
@@ -562,7 +563,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveLong_Property()
+    void test_PrimitiveLong_Property()
     {
         final long value = 42L;
 
@@ -581,7 +582,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveLongArray_Property()
+    void test_PrimitiveLongArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("primitiveLongArray", PRIMITIVE_LONG_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("primitiveLongArray")).isEqualTo(PRIMITIVE_LONG_ARRAY);
@@ -598,7 +599,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_LongObject_Property()
+    void test_LongObject_Property()
     {
         final Long value = 42L;
 
@@ -617,7 +618,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_LongObjectArray_Property()
+    void test_LongObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("longObjectArray", LONG_OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("longObjectArray")).isEqualTo(LONG_OBJECT_ARRAY);
@@ -634,7 +635,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveFloat_Property()
+    void test_PrimitiveFloat_Property()
     {
         final float value = 42f;
 
@@ -653,7 +654,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveFloatArray_Property()
+    void test_PrimitiveFloatArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("primitiveFloatArray", PRIMITIVE_FLOAT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("primitiveFloatArray")).isEqualTo(PRIMITIVE_FLOAT_ARRAY);
@@ -670,7 +671,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_FloatObject_Property()
+    void test_FloatObject_Property()
     {
         final Float value = 42f;
 
@@ -689,7 +690,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_FloatObjectArray_Property()
+    void test_FloatObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("floatObjectArray", FLOAT_OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("floatObjectArray")).isEqualTo(FLOAT_OBJECT_ARRAY);
@@ -706,7 +707,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveDouble_Property()
+    void test_PrimitiveDouble_Property()
     {
         final double value = 42d;
 
@@ -725,7 +726,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_PrimitiveDoubleArray_Property()
+    void test_PrimitiveDoubleArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("primitiveDoubleArray", PRIMITIVE_DOUBLE_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("primitiveDoubleArray")).isEqualTo(PRIMITIVE_DOUBLE_ARRAY);
@@ -742,7 +743,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_DoubleObject_Property()
+    void test_DoubleObject_Property()
     {
         final Double value = 42d;
 
@@ -761,7 +762,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_DoubleObjectArray_Property()
+    void test_DoubleObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("doubleObjectArray", DOUBLE_OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("doubleObjectArray")).isEqualTo(DOUBLE_OBJECT_ARRAY);
@@ -778,7 +779,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_ObjectArray_Property()
+    void test_ObjectArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("objectArray", OBJECT_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("objectArray")).isEqualTo(OBJECT_ARRAY);
@@ -795,7 +796,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_StringArray_Property()
+    void test_StringArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("stringArray", STRING_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("stringArray")).isEqualTo(STRING_ARRAY);
@@ -812,7 +813,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_Enum_Property()
+    void test_Enum_Property()
     {
         assertThat(((AbstractComponent) testee).set("enum", A)).isTrue();
         assertThat(((AbstractComponent) testee).get("enum")).isEqualTo(A);
@@ -829,7 +830,7 @@ public class GeneratedComponentTest
     }
 
     @Test
-    public void test_EnumArray_Property()
+    void test_EnumArray_Property()
     {
         assertThat(((AbstractComponent) testee).set("enumArray", ENUM_ARRAY)).isTrue();
         assertThat(((AbstractComponent) testee).get("enumArray")).isEqualTo(ENUM_ARRAY);
