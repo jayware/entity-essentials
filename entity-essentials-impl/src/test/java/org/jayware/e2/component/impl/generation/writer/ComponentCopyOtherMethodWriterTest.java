@@ -57,10 +57,14 @@ class ComponentCopyOtherMethodWriterTest
     void test_copy()
     {
         ((AbstractComponent) anotherComponent).set(TestComponent.text, "Hello World");
+        ((AbstractComponent) anotherComponent).set(TestComponent.someBooleans, new boolean[]{true, false, true});
+        ((AbstractComponent) anotherComponent).set("number", 4711);
 
         ((AbstractComponent) testComponent).copy(anotherComponent);
 
         assertThat(((AbstractComponent) testComponent).get(TestComponent.text)).isEqualTo("Hello World");
+        assertThat(((AbstractComponent) testComponent).get(TestComponent.someBooleans)).isEqualTo(new boolean[]{true, false, true});
+        assertThat(((AbstractComponent) testComponent).get("number")).isEqualTo(4711);
     }
 
     @Test
@@ -96,9 +100,11 @@ class ComponentCopyOtherMethodWriterTest
     {
         ComponentProperty<String> text = property(String.class);
 
-        void setInt(int value);
+        ComponentProperty<boolean[]> someBooleans = property(boolean[].class);
 
-        int getInt();
+        void setNumber(int value);
+
+        int getNumber();
     }
 
     public interface StrangerComponent
@@ -111,15 +117,15 @@ class ComponentCopyOtherMethodWriterTest
     implements TestComponent
     {
         @Override
-        public void setInt(final int value)
+        public void setNumber(final int value)
         {
-            throw new UnsupportedOperationException("CustomImpl.setInt");
+            throw new UnsupportedOperationException("CustomImpl.setNumber");
         }
 
         @Override
-        public int getInt()
+        public int getNumber()
         {
-            throw new UnsupportedOperationException("CustomImpl.getInt");
+            throw new UnsupportedOperationException("CustomImpl.getNumber");
         }
 
         @Override
