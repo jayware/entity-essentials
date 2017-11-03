@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SubscriptionImplTest_StrongReference
 {
-    private SubscriptionFactoryImpl.SubscriptionImpl_StrongReference testee;
+    private SubscriptionFactoryImpl.StrongReferenceSubscriptionImpl testee;
 
     private @Mocked Object testSubscriber;
     private @Mocked EventDispatcher testDispatcher;
@@ -40,7 +40,7 @@ public class SubscriptionImplTest_StrongReference
     public void setUp()
     throws Exception
     {
-        testee = new SubscriptionFactoryImpl.SubscriptionImpl_StrongReference(testSubscriber, new EventFilter[] {testFilterA, testFilterB}, testDispatcher);
+        testee = new SubscriptionFactoryImpl.StrongReferenceSubscriptionImpl(testSubscriber, new EventFilter[] {testFilterA, testFilterB}, testDispatcher);
     }
 
     @Test

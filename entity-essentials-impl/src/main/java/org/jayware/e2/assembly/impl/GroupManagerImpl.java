@@ -55,8 +55,6 @@ import static org.jayware.e2.util.Preconditions.checkStringNotEmpty;
 public class GroupManagerImpl
 implements GroupManager
 {
-    private static final long TIMEOUT_IN_MILLISECONDS = 5000;
-
     private static final Key<GroupHub> GROUP_HUB = Key.createKey("org.jayware.e2.GroupHub");
 
     private static final Context.ValueProvider<GroupHub> GROUP_HUB_VALUE_PROVIDER = new Context.ValueProvider<GroupHub>()
@@ -70,7 +68,6 @@ implements GroupManager
 
     @Override
     public Group createGroup(Context context)
-    throws IllegalArgumentException
     {
         return createGroup(context, UUID.randomUUID().toString());
     }
@@ -200,7 +197,6 @@ implements GroupManager
 
     @Override
     public void addEntityToGroup(EntityRef ref, Group group)
-    throws IllegalArgumentException
     {
         checkRefNotNullAndValid(ref);
         checkGroupNotNullAndValid(group);
@@ -219,7 +215,6 @@ implements GroupManager
 
     @Override
     public void removeEntityFromGroup(EntityRef ref, Group group)
-    throws IllegalArgumentException
     {
         checkRefNotNullAndValid(ref);
         checkGroupNotNullAndValid(group);

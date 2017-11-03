@@ -24,8 +24,6 @@ import org.jayware.e2.event.api.EventFilter;
 import org.jayware.e2.event.api.Query;
 import org.jayware.e2.event.api.ResultSet;
 import org.jayware.e2.event.api.Subscription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.jayware.e2.event.api.EventDispatchException.throwEventDispatchExceptionWithReport;
 import static org.jayware.e2.event.api.Query.State.Failed;
@@ -36,8 +34,6 @@ import static org.jayware.e2.event.api.Query.State.Success;
 public class QueryDispatch
 extends EventDispatch
 {
-    private static final Logger log = LoggerFactory.getLogger(QueryDispatch.class);
-
     private final QueryWrapper myQuery;
 
     public QueryDispatch(Context context, QueryImpl query, Iterable<Subscription> subscriptions)

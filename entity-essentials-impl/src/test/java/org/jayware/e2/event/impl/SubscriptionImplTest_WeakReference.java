@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SubscriptionImplTest_WeakReference
 {
-    private SubscriptionFactoryImpl.SubscriptionImpl_WeakReference testee;
+    private SubscriptionFactoryImpl.WeakReferenceSubscriptionImpl testee;
 
     private @Mocked Object testSubscriber;
     private @Mocked EventDispatcher testDispatcher;
@@ -40,7 +40,7 @@ public class SubscriptionImplTest_WeakReference
     public void setUp()
     throws Exception
     {
-        testee = new SubscriptionFactoryImpl.SubscriptionImpl_WeakReference(testSubscriber, new EventFilter[] {testFilterA, testFilterB}, testDispatcher);
+        testee = new SubscriptionFactoryImpl.WeakReferenceSubscriptionImpl(testSubscriber, new EventFilter[] {testFilterA, testFilterB}, testDispatcher);
     }
 
     @Test

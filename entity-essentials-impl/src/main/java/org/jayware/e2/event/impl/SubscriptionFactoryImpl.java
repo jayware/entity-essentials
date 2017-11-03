@@ -40,15 +40,15 @@ implements SubscriptionFactory
     {
         if (referenceType == STRONG)
         {
-            return new SubscriptionImpl_StrongReference(subscriber, filters, dispatcher);
+            return new StrongReferenceSubscriptionImpl(subscriber, filters, dispatcher);
         }
         else
         {
-            return new SubscriptionImpl_WeakReference(subscriber, filters, dispatcher);
+            return new WeakReferenceSubscriptionImpl(subscriber, filters, dispatcher);
         }
     }
 
-    static class SubscriptionImpl_StrongReference
+    static class StrongReferenceSubscriptionImpl
     implements Subscription
     {
         private final Object mySubscriber;
@@ -57,7 +57,7 @@ implements SubscriptionFactory
 
         private final AtomicBoolean myIsValid;
 
-        SubscriptionImpl_StrongReference(Object subscriber, EventFilter[] filters, EventDispatcher eventDispatcher)
+        StrongReferenceSubscriptionImpl(Object subscriber, EventFilter[] filters, EventDispatcher eventDispatcher)
         {
             mySubscriber = subscriber;
             myEventDispatcher = eventDispatcher;
@@ -101,7 +101,7 @@ implements SubscriptionFactory
         }
     }
 
-    static class SubscriptionImpl_WeakReference
+    static class WeakReferenceSubscriptionImpl
     implements Subscription
     {
         private final WeakReference<Object> mySubscriber;
@@ -110,7 +110,7 @@ implements SubscriptionFactory
 
         private final AtomicBoolean myIsValid;
 
-        SubscriptionImpl_WeakReference(Object subscriber, EventFilter[] filters, EventDispatcher eventDispatcher)
+        WeakReferenceSubscriptionImpl(Object subscriber, EventFilter[] filters, EventDispatcher eventDispatcher)
         {
             mySubscriber = new WeakReference<Object>(subscriber);
             myEventDispatcher = eventDispatcher;

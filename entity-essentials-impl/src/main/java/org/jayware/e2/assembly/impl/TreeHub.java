@@ -37,7 +37,6 @@ import org.jayware.e2.context.api.Contextual;
 import org.jayware.e2.context.api.Disposable;
 import org.jayware.e2.entity.api.EntityManager;
 import org.jayware.e2.entity.api.EntityRef;
-import org.jayware.e2.entity.api.InvalidEntityRefException;
 import org.jayware.e2.event.api.Event;
 import org.jayware.e2.event.api.EventManager;
 import org.jayware.e2.event.api.Handle;
@@ -62,8 +61,6 @@ import static org.jayware.e2.event.api.Presence.Optional;
 public class TreeHub
 implements Disposable
 {
-    private static final double CHILD_ARRAY_FRAGMENTATION_THRESHOLD = 0.5;
-
     private final Context myContext;
     private final EntityManager myEntityManager;
     private final ComponentManager myComponentManager;
@@ -371,7 +368,6 @@ implements Disposable
 
         @Override
         public UUID getId()
-        throws InvalidEntityRefException
         {
             return myPendantRef.getId();
         }

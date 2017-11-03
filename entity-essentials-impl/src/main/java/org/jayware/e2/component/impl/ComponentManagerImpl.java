@@ -29,7 +29,6 @@ import org.jayware.e2.component.api.ComponentEvent.RemoveComponentEvent;
 import org.jayware.e2.component.api.ComponentFactory;
 import org.jayware.e2.component.api.ComponentManager;
 import org.jayware.e2.component.api.ComponentManagerException;
-import org.jayware.e2.component.api.ComponentNotFoundException;
 import org.jayware.e2.component.api.ContextualComponentManager;
 import org.jayware.e2.context.api.Context;
 import org.jayware.e2.entity.api.EntityRef;
@@ -61,6 +60,7 @@ public class ComponentManagerImpl
 implements ComponentManager
 {
     private static final long TIMEOUT_IN_MILLIS = 5000;
+    private static final String QUERY_TIMEOUT_EXCEPTION_MESSAGE = "Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms";
 
     public static final Key<ComponentStore> COMPONENT_STORE = createKey("org.jayware.e2.ComponentStore");
     public static final Key<ComponentFactory> COMPONENT_FACTORY = createKey("org.jayware.e2.ComponentFactory");
@@ -81,7 +81,7 @@ implements ComponentManager
 
             if (!resultSet.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException(QUERY_TIMEOUT_EXCEPTION_MESSAGE);
             }
 
             return resultSet.get(ComponentParam);
@@ -134,7 +134,7 @@ implements ComponentManager
 
             if (!resultSet.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException(QUERY_TIMEOUT_EXCEPTION_MESSAGE);
             }
 
             return resultSet.get(ComponentParam);
@@ -166,7 +166,7 @@ implements ComponentManager
 
             if (!resultSet.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException(QUERY_TIMEOUT_EXCEPTION_MESSAGE);
             }
 
             return resultSet.get(ComponentParam);
@@ -197,7 +197,7 @@ implements ComponentManager
 
             if (!result.await(Success, TIMEOUT_IN_MILLIS, MILLISECONDS))
             {
-                throw new TimeoutException("Query did not succeed within " + TIMEOUT_IN_MILLIS + "ms");
+                throw new TimeoutException(QUERY_TIMEOUT_EXCEPTION_MESSAGE);
             }
 
             return result.find(ComponentParam);
@@ -220,7 +220,6 @@ implements ComponentManager
 
     @Override
     public <T extends Component, W extends AbstractComponentWrapper<W, T>> W getComponent(EntityRef ref, W wrapper)
-    throws ComponentNotFoundException
     {
         checkRefNotNullAndValid(ref);
         checkNotNull(wrapper);
@@ -278,7 +277,6 @@ implements ComponentManager
 
     @Override
     public <T extends Component> void pullComponent(EntityRef ref, T component)
-    throws ComponentNotFoundException
     {
         checkRefNotNullAndValid(ref);
         checkNotNull(component);

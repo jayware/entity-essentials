@@ -20,8 +20,8 @@ package org.jayware.e2.event.impl;
 
 import mockit.Mocked;
 import org.jayware.e2.event.api.EventDispatcher;
-import org.jayware.e2.event.impl.SubscriptionFactoryImpl.SubscriptionImpl_StrongReference;
-import org.jayware.e2.event.impl.SubscriptionFactoryImpl.SubscriptionImpl_WeakReference;
+import org.jayware.e2.event.impl.SubscriptionFactoryImpl.StrongReferenceSubscriptionImpl;
+import org.jayware.e2.event.impl.SubscriptionFactoryImpl.WeakReferenceSubscriptionImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,9 +47,9 @@ public class SubscriptionFactoryImplTest
     public void test_createSubscription_Returns_the_expected_Subscription_for_the_passed_ReferencesType()
     {
         assertThat(testee.createSubscription(testSubscriber, STRONG, null, testDispatcher))
-            .isInstanceOf(SubscriptionImpl_StrongReference.class);
+            .isInstanceOf(StrongReferenceSubscriptionImpl.class);
 
         assertThat(testee.createSubscription(testSubscriber, WEAK, null, testDispatcher))
-            .isInstanceOf(SubscriptionImpl_WeakReference.class);
+            .isInstanceOf(WeakReferenceSubscriptionImpl.class);
     }
 }

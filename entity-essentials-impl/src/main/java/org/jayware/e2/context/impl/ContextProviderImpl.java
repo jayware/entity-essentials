@@ -20,6 +20,7 @@ package org.jayware.e2.context.impl;
 
 
 import org.jayware.e2.context.api.Context;
+import org.jayware.e2.context.api.ContextInitializationException;
 import org.jayware.e2.context.api.ContextInitializer;
 import org.jayware.e2.context.api.ContextProvider;
 
@@ -60,7 +61,7 @@ extends ContextProvider
         catch (Exception e)
         {
             context.dispose();
-            throw new RuntimeException(e);
+            throw new ContextInitializationException("Failed to initialize context!", e);
         }
     }
 }
