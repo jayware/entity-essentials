@@ -1,0 +1,24 @@
+{ 
+  "gitbook": "3.2.3",
+  "root":      "./doc",
+  "structure": {
+    "readme":  "introduction.asciidoc",
+    "summary": "_toc.asciidoc"
+  },
+  "plugins": [ "theme-api", "versions" ],
+  "pluginsConfig": {
+    "theme-api": {
+      "theme": "dark"
+    },
+    "versions": {
+      "gitbookConfigURL": "https://raw.githubusercontent.com/jayware/entity-essentials/book.json",
+      "options": [
+        {
+          "value": "https://jayware.gitbooks.io/entity-essentials/content/v/0.7.0/",
+          "text": "Version 0.7.0",
+          "selected": true
+        }
+      ]
+    }
+  }
+}
