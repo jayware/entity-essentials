@@ -53,13 +53,14 @@ target
 #####################################
 #     Build, Binaries and Libs      #
 #####################################
-classes
-build
-bin
-lib
-generated
-.generated
-fwdir
+classes/
+build/
+bin/
+lib/
+generated/
+.generated/
+fwdir/
+out/
 
 
 #####################################
